@@ -1,20 +1,46 @@
 {
-  "name": "deal-tracker-app",
+  "name": "extensible-crm-platform",
   "version": "1.0.0",
-  "description": "Ontology-powered deal tracking and CRM intelligence system",
+  "description": "Extensible CRM platform with pluggable domain extensions",
   "main": "dist/index.js",
   "scripts": {
+    "dev": "ts-node-dev src/index.ts",
+    "build": "npm run build:crm-core && npm run build:extensions && npm run build:platform",
+    "build:crm-core": "tsc --build src/crm-core",
+    "build:extensions": "npm run build:financial",
+    "build:financial": "tsc --build src/extensions/financial",
+    "build:platform": "tsc --build src/platform",
+    "build:shared": "tsc --build src/shared",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist && rm -rf src/**/*.js",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "lint:crm-core": "eslint src/crm-core --ext .ts",
+    "lint:financial": "eslint src/extensions/financial --ext .ts",
+    "lint:platform": "eslint src/platform --ext .ts",
+    "format": "prettier --write 'src/**/*.{ts,tsx}'",
+    "format:check": "prettier --check 'src/**/*.{ts,tsx}'",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:e2e": "jest --config jest.e2e.config.js",
-    "build": "tsc",
-    "dev": "ts-node-dev src/index.ts",
-    "lint": "eslint src --ext .ts,.tsx",
-    "format": "prettier --write 'src/**/*.{ts,tsx}'",
-    "type-check": "tsc --noEmit"
+    "test:unit": "jest --config config/jest.unit.config.js",
+    "test:unit:watch": "jest --config config/jest.unit.config.js --watch",
+    "test:integration": "jest --config config/jest.integration.config.js",
+    "test:e2e": "jest --config config/jest.e2e.config.js",
+    "test:crm-core": "jest --config config/jest.unit.config.js test/unit/crm-core",
+    "test:financial": "jest --config config/jest.unit.config.js test/unit/extensions/financial",
+    "test:platform": "jest --config config/jest.unit.config.js test/unit/platform",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "extension:create": "node scripts/create-extension.js",
+    "extension:list": "node scripts/list-extensions.js",
+    "validate": "npm run type-check && npm run lint && npm run test:ci",
+    "prepare": "husky install"
   },
-  "keywords": ["crm", "ontology", "neo4j", "deal-tracking"],
+  "keywords": ["crm", "extensible", "platform", "domain-driven", "microservices", "modular"],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -22,12 +48,21 @@
     "@langchain/community": "^0.0.10",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "compression": "^1.7.4",
+    "express-rate-limit": "^7.1.5",
     "jsforce": "^2.0.0-beta.29",
     "neo4j-driver": "^5.15.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rdflib": "^2.2.33",
-    "spacy-js": "^1.0.0"
+    "redis": "^4.6.11",
+    "winston": "^3.11.0",
+    "joi": "^17.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.5",
@@ -35,15 +70,23 @@
     "@testing-library/user-event": "^14.5.1",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.10.5",
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "@types/compression": "^1.7.5",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/bcryptjs": "^2.4.6",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-react": "^7.33.2",
+    "husky": "^8.0.3",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "lint-staged": "^15.2.0",
     "nock": "^13.4.0",
     "prettier": "^3.1.1",
     "supertest": "^6.3.3",
@@ -51,5 +94,21 @@
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run validate"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 } 
