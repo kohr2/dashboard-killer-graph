@@ -1,0 +1,34 @@
+{
+  "FIBOInstrumentType": [
+    "EQUITY",
+    "BOND",
+    "DERIVATIVE",
+    "CURRENCY",
+    "COMMODITY",
+    "FUND"
+  ],
+  "FIBOInstitutionType": [
+    "BANK",
+    "INVESTMENT_FIRM",
+    "INSURANCE_COMPANY",
+    "PENSION_FUND",
+    "HEDGE_FUND",
+    "MUTUAL_FUND"
+  ],
+  "FIBOMarketDataType": [
+    "PRICE",
+    "VOLUME",
+    "BID",
+    "ASK",
+    "SPREAD",
+    "VOLATILITY"
+  ],
+  "FIBOTransactionType": [
+    "BUY",
+    "SELL",
+    "TRANSFER",
+    "DERIVATIVE_TRADE",
+    "CURRENCY_EXCHANGE",
+    "PAYMENT"
+  ]
+} 

@@ -29,6 +29,13 @@ export class Neo4jConnection {
     }
   }
 
+  getDriver(): Driver {
+    if (!this.driver) {
+      throw new Error('Neo4j driver not initialized. Call connect() first.');
+    }
+    return this.driver;
+  }
+
   getSession(): Session {
     if (!this.driver) {
       throw new Error('Neo4j driver not initialized. Call connect() first.');

@@ -1,0 +1,68 @@
+{
+  "DOLCECategory": [
+    "Endurant",
+    "Perdurant",
+    "Quality",
+    "Abstract",
+    "AgentivePhysicalObject",
+    "NonAgentivePhysicalObject"
+  ],
+  "RelationshipType": [
+    "CustomerRelationship",
+    "SupplierRelationship",
+    "PartnerRelationship",
+    "ProspectRelationship",
+    "Employment",
+    "Collaboration",
+    "Membership",
+    "Before",
+    "After",
+    "During",
+    "Overlaps"
+  ],
+  "KnowledgeType": [
+    "CustomerProfile",
+    "CustomerPreferences",
+    "CustomerBehavior",
+    "CustomerHistory",
+    "MarketIntelligence",
+    "CompetitiveAnalysis",
+    "ProductKnowledge",
+    "ProcessKnowledge",
+    "TransactionData",
+    "InteractionHistory",
+    "CommunicationLog"
+  ],
+  "ActivityType": [
+    "Identify",
+    "Attract",
+    "Acquire",
+    "Develop",
+    "Retain",
+    "LeadQualification",
+    "OpportunityManagement",
+    "ProposalPreparation",
+    "Negotiation",
+    "Closing",
+    "CampaignExecution",
+    "ContentCreation",
+    "MarketResearch",
+    "BrandManagement",
+    "CustomerSupport",
+    "IssueResolution",
+    "Maintenance",
+    "Training",
+    "DataCollection",
+    "DataAnalysis",
+    "Reporting",
+    "DocumentManagement"
+  ],
+  "SoftwareType": [
+    "CRMPlatform",
+    "SalesAutomation",
+    "MarketingAutomation",
+    "EmailSystem",
+    "KnowledgeGraph",
+    "API"
+  ]
+} 

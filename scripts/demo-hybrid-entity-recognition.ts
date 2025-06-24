@@ -10,39 +10,60 @@ import { HumanMessage } from "@langchain/core/messages";
 // --- Configuration ---
 const LLM_MODEL_NAME = "gpt-4-turbo"; 
 
-interface LLMValidationResult {
-  entity: string;
-  type: string;
-  isValid: boolean;
-  reason: string;
-  correctedValue?: string;
-  normalizedValue?: string;
+interface Deal {
+  dealName: string; // e.g., "Project Titan"
+  dealType: string; // e.g., "Carve-out", "Buyout"
+  processType: string; // e.g., "Auction", "Bilateral"
 }
 
-interface LLMEnhancedEntity {
-  entity: string;
-  type: string;
-  context: string;
-  explanation: string;
+interface Company {
+  companyName: string;
+  gicsCode?: string;
+  sector?: string;
+  revenue?: number;
+  ebitda?: number;
 }
 
-interface LLMRelationship {
-  source: string;
-  target: string;
-  relationship: string;
-  explanation: string;
-  confidence: number;
+interface Investor {
+  investorName: string;
+  investorType: 'Sponsor' | 'Bank' | 'Internal';
 }
 
-interface LLMAnalysisResult {
-  validatedEntities: LLMValidationResult[];
-  newEntities: LLMEnhancedEntity[];
-  relationships: LLMRelationship[];
+interface Fund {
+  fundName: string;
+}
+
+interface CommunicationEvent {
+  type: 'Email' | 'Call' | 'Meeting';
+  from: string;
+  to: string[];
+  date: string;
+  subject: string;
+}
+
+interface CrmActivity {
+  activityType: string; // e.g., "Submit IOI"
+  dueDate?: string;
+  assignedTo?: string;
+}
+
+interface DealAnalysis {
+  deal: Deal;
+  targetCompany: Company;
+  involvedParties: Investor[];
+  mentionedFunds: Fund[];
+  communicationHistory: CommunicationEvent[];
+  crmTasks: CrmActivity[];
+  competitors: Investor[];
   summary: string;
+  relationships: {
+    source: string;
+    target: string;
+    type: string;
+  }[];
 }
 
-
-class HybridExtractionService {
+export class HybridExtractionService {
   private spacyExtractor: SpacyEntityExtractionService;
   private llm: ChatOpenAI;
 
@@ -59,23 +80,23 @@ class HybridExtractionService {
 
   public async processText(text: string): Promise<{
     spacyResults: SpacyExtractedEntity[];
-    llmResults: LLMAnalysisResult;
+    llmResults: DealAnalysis;
     mergedEntities: any[];
   }> {
     // Step 1: Fast First Pass with spaCy
-    console.log('\n--- Step 1: spaCy First Pass ---');
+    console.log('\n--- Step 1: spaCy First Pass (Not used by LLM but good for context) ---');
     const spacyResult = await this.spacyExtractor.extractEntities(text);
     console.log(`   ✅ spaCy extracted ${spacyResult.entityCount} initial entities.`);
 
-    // Step 2: Deep Second Pass with LLM
-    console.log('\n--- Step 2: LLM Deep Dive ---');
-    const llmResults = await this.getLlmAnalysis(text, spacyResult.entities);
-    console.log(`   ✅ LLM validated ${llmResults.validatedEntities.length} entities, found ${llmResults.newEntities.length} new entities, and ${llmResults.relationships.length} relationships.`);
+    // Step 2: Deep Second Pass with LLM for Deal Analysis
+    console.log('\n--- Step 2: LLM Deep Dive for Deal Analysis ---');
+    const llmResults = await this.getLlmAnalysis(text);
+    console.log(`   ✅ LLM analysis complete for deal: ${llmResults.deal.dealName}`);
 
-    // Step 3: Merge Results
-    console.log('\n--- Step 3: Merging spaCy and LLM Results ---');
-    const mergedEntities = this.mergeResults(spacyResult.entities, llmResults);
-    console.log(`   ✅ Merged results into ${mergedEntities.length} final entities.`);
+    // Step 3: Merge Results for Graphing
+    console.log('\n--- Step 3: Merging LLM Results for Graphing ---');
+    const mergedEntities = this.mergeResults(llmResults);
+    console.log(`   ✅ Merged results into ${mergedEntities.length} final entities for the graph.`);
 
     return {
       spacyResults: spacyResult.entities,
@@ -84,122 +105,128 @@ class HybridExtractionService {
     };
   }
   
-  private async getLlmAnalysis(text: string, spacyEntities: SpacyExtractedEntity[]): Promise<LLMAnalysisResult> {
-    const prompt = this.createLlmPrompt(text, spacyEntities);
+  private async getLlmAnalysis(text: string): Promise<DealAnalysis> {
+    const prompt = this.createLlmPrompt(text);
     
-    console.log('   🗣️  Sending request to LLM...');
+    console.log('   🗣️  Sending request to LLM for full deal analysis...');
     const llmResponse = await this.llm.invoke([new HumanMessage(prompt)]);
     
     try {
-      // The LLM is instructed to return a JSON string.
       const jsonResponse = llmResponse.content.toString().match(/```json\n([\s\S]*?)\n```/);
       if (jsonResponse && jsonResponse[1]) {
-        return JSON.parse(jsonResponse[1]) as LLMAnalysisResult;
+        return JSON.parse(jsonResponse[1]) as DealAnalysis;
       }
       throw new Error("LLM did not return a valid JSON block.");
     } catch (error) {
       console.error("❌ Failed to parse LLM response:", error);
       console.error("Raw LLM Response:", llmResponse.content);
-      // Return a default empty result on failure
-      return {
-        validatedEntities: [],
-        newEntities: [],
+      return { // Return a default empty result on failure
+        deal: { dealName: 'Unknown Deal', dealType: '', processType: '' },
+        targetCompany: { companyName: 'Unknown Company' },
+        involvedParties: [],
+        mentionedFunds: [],
+        communicationHistory: [],
+        crmTasks: [],
+        competitors: [],
         relationships: [],
         summary: "Error processing LLM response."
       };
     }
   }
 
-  private createLlmPrompt(text: string, spacyEntities: SpacyExtractedEntity[]): string {
+  private createLlmPrompt(text: string): string {
     return `
-      You are an expert financial analyst AI with a specialization in Natural Language Processing. Your task is to perform an in-depth analysis of a given financial document.
+      You are an expert Private Equity (PE) analyst AI. Your task is to analyze an email thread and structure the information into a detailed JSON object based on a FIBO-aligned ontology.
 
-      A preliminary analysis has been done by a statistical NLP model (spaCy), which has identified the following entities. This initial list may be incomplete or contain errors.
-
-      **Original Document Text:**
+      **Original Email Text:**
       ---
       ${text}
       ---
 
-      **spaCy Preliminary Entities:**
-      ---
-      ${spacyEntities.map(e => `- "${e.value}" (${e.type})`).join('\n')}
-      ---
-
       **Your Tasks:**
 
-      1.  **Validate and Refine:** Go through the preliminary entities. For each one, determine if it's a correct entity in this context. If it's incorrect, mark it as invalid. If it's correct, provide a normalized, canonical version of the entity (e.g., "MSFT" -> "Microsoft Corporation").
-      2.  **Discover New Entities:** Read the document carefully and identify any important entities that the preliminary scan missed. Focus on complex, domain-specific concepts like "investment thesis," "risk factor," "market catalyst," or specific financial metrics.
-      3.  **Extract Complex Relationships:** Identify the key relationships between all entities (both validated and new). The relationships should be specific and directional (e.g., [SOURCE, RELATIONSHIP, TARGET]). Examples: ["Sarah Johnson", "MANAGES_PORTFOLIO_FOR", "Robert Chen"], ["NVIDIA", "HAS_PRICE_TARGET", "$950"]. Pay close attention to employment relationships (e.g., "Dr. Jennifer Liu, our Head of Tech Research" implies ["Dr. Jennifer Liu", "WORKS_FOR", "J.P. Morgan Research Department"]).
-      4.  **Summarize:** Provide a brief, one-sentence summary of the document's core subject.
+      1.  **Identify Core Entities:** Extract all relevant entities like Deals, Companies, Investors, and Funds.
+      2.  **Classify Investors:** Differentiate between the PE firm (Sponsor), the investment bank (Bank), and internal people.
+      3.  **Extract Deal & Company Data:** Capture financial metrics (Revenue, EBITDA), GICS codes, and process details (e.g., Auction).
+      4.  **Model Deal Flow:** Document all communication events (emails) and any explicit CRM tasks mentioned (e.g., follow-ups, deadlines).
+      5.  **Identify Relationships:** Extract key relationships like which company is the target of a deal, which fund is mentioned, who the competitors are, and which parties are involved in communications.
 
       **Output Format:**
-      Provide your response as a single, well-formed JSON object enclosed in a \`\`\`json block. Do not include any text outside of this JSON block. The JSON object should have the following structure:
+      Provide your response as a single, well-formed JSON object enclosed in a \`\`\`json block. Do not include any text outside of this JSON block. The structure should be:
 
       \`\`\`json
       {
-        "validatedEntities": [
+        "deal": {
+          "dealName": "The codename or name of the transaction",
+          "dealType": "e.g., 'Carve-out', 'Buyout'",
+          "processType": "e.g., 'Limited Auction', 'Bilateral'"
+        },
+        "targetCompany": {
+          "companyName": "The name of the company being acquired",
+          "gicsCode": "The GICS code, if mentioned",
+          "sector": "The GICS sector name",
+          "revenue": "Annual revenue as a number (e.g., 85000000)",
+          "ebitda": "EBITDA as a number (e.g., 22000000)"
+        },
+        "involvedParties": [
+          { "investorName": "Name of the PE Firm or internal person", "investorType": "Sponsor" },
+          { "investorName": "Name of the Investment Bank", "investorType": "Bank" }
+        ],
+        "mentionedFunds": [
+          { "fundName": "Name of the fund mentioned" }
+        ],
+        "communicationHistory": [
           {
-            "entity": "The original entity string from spaCy",
-            "type": "The original entity type",
-            "isValid": true | false,
-            "reason": "A brief explanation for your validation decision.",
-            "correctedValue": "The corrected or more precise value, if any.",
-            "normalizedValue": "The canonical/standardized name for the entity (e.g., a stock ticker to a full company name)."
+            "type": "Email",
+            "from": "Sender's name or email",
+            "to": ["Recipient's name or email"],
+            "date": "The date of the email in ISO 8601 format",
+            "subject": "The subject line of the email"
           }
         ],
-        "newEntities": [
+        "crmTasks": [
           {
-            "entity": "The newly discovered entity string.",
-            "type": "A specific, descriptive entity type (e.g., 'INVESTMENT_THESIS', 'COMPLIANCE_RULE').",
-            "context": "The sentence or phrase where the entity was found.",
-            "explanation": "Why this is an important entity to extract."
+            "activityType": "A description of the task (e.g., 'Submit Indication of Interest (IOI)')",
+            "dueDate": "The due date in ISO 8601 format",
+            "assignedTo": "The person or team assigned the task"
           }
         ],
+        "competitors": [
+          { "investorName": "Name of the competing firm", "investorType": "Sponsor" }
+        ],
+        "summary": "A one-sentence summary of the key information in the email thread.",
         "relationships": [
-          {
-            "source": "The normalized name of the source entity.",
-            "target": "The normalized name of the target entity.",
-            "relationship": "A specific, uppercase, snake-case relationship type (e.g., 'WORKS_FOR', 'HAS_PRICE_TARGET').",
-            "explanation": "The textual evidence supporting this relationship.",
-            "confidence": 0.0 - 1.0
-          }
-        ],
-        "summary": "A single, concise sentence summarizing the document."
+          {"source": "TargetCompanyName", "target": "DealName", "type": "IS_TARGET_OF"},
+          {"source": "FundName", "target": "DealName", "type": "IS_POTENTIAL_INVESTOR_IN"},
+          {"source": "CompetitorName", "target": "DealName", "type": "IS_COMPETING_FOR"}
+        ]
       }
       \`\`\`
     `;
   }
 
-  private mergeResults(spacyEntities: SpacyExtractedEntity[], llmResults: LLMAnalysisResult): any[] {
-    const merged: any = {};
-
-    // Process LLM validations
-    for (const validation of llmResults.validatedEntities) {
-      if (validation.isValid) {
-        const key = (validation.normalizedValue || validation.entity).toLowerCase();
-        merged[key] = {
-          value: validation.normalizedValue || validation.entity,
-          type: validation.type,
-          source: 'spaCy+LLM',
-          details: { ...validation }
-        };
-      }
-    }
-
-    // Process new LLM entities
-    for (const newEntity of llmResults.newEntities) {
-      const key = newEntity.entity.toLowerCase();
+  private mergeResults(llmResults: DealAnalysis): any[] {
+    const merged: { [key: string]: any } = {};
+  
+    const addEntity = (entity: any, defaultType: string, nameKey: string) => {
+      if (!entity || !entity[nameKey]) return;
+      const key = entity[nameKey].toLowerCase();
       if (!merged[key]) {
         merged[key] = {
-          value: newEntity.entity,
-          type: newEntity.type,
+          value: entity[nameKey],
+          type: entity.investorType || defaultType,
           source: 'LLM_Only',
-          details: { ...newEntity }
+          details: { ...entity }
         };
       }
-    }
-    
+    };
+  
+    addEntity(llmResults.deal, 'Deal', 'dealName');
+    addEntity(llmResults.targetCompany, 'Company', 'companyName');
+    (llmResults.involvedParties || []).forEach(p => addEntity(p, 'Investor', 'investorName'));
+    (llmResults.competitors || []).forEach(c => addEntity(c, 'Investor', 'investorName'));
+    (llmResults.mentionedFunds || []).forEach(f => addEntity(f, 'Fund', 'fundName'));
+  
     return Object.values(merged);
   }
 }
@@ -218,66 +245,67 @@ async function demonstrateHybridExtraction() {
 
   const hybridService = new HybridExtractionService(apiKey);
 
-  const sampleEmailText = `
-    Subject: Q1 2024 Market Outlook & Top Picks
+  const sampleEmailPath = join(__dirname, '../test-emails/deal-sourcing-tech-buyout.eml');
+  const sampleEmailText = readFileSync(sampleEmailPath, 'utf8');
 
-    Dear Valued Clients,
+  console.log(`--- Analyzing email: ${sampleEmailPath} ---`);
 
-    Our research team at JPMorgan maintains a BULLISH outlook on technology stocks for Q1 2024, driven by AI adoption and cloud infrastructure growth. Our investment thesis centers on identifying market leaders with strong pricing power.
-
-    Key Investment Themes & Top Picks:
-    1. Artificial Intelligence: NVIDIA (NVDA) is our top pick with a price target of $950. Their dominance in the data center GPU market is a significant moat.
-    2. Cloud: We recommend both Amazon (AMZN) and Microsoft (MSFT), with price targets of $185 and $420, respectively.
-    3. Cybersecurity: A key risk factor for the tech industry is the increasing threat of cyberattacks. We see CrowdStrike (CRWD) as a leader in this space.
-
-    The primary market catalyst remains the Federal Reserve's rate policy. We expect a dovish stance to be supportive of growth stocks.
-
-    For a detailed report, please contact Dr. Jennifer Liu, our Head of Tech Research.
-
-    Regards,
-    J.P. Morgan Research Department
-  `;
-
-  const { spacyResults, llmResults, mergedEntities } = await hybridService.processText(sampleEmailText);
+  const { llmResults } = await hybridService.processText(sampleEmailText);
 
   // --- Display Results ---
-  console.log('\n\n--- 📊 FINAL ANALYSIS & COMPARISON ---');
+  console.log('\n\n--- 📊 FINAL DEAL ANALYSIS ---');
   console.log('====================================================\n');
   
-  console.log(`LLM Summary: "${llmResults.summary}"\n`);
+  console.log(`Deal Summary: ${llmResults.summary}`);
+
+  console.log('\n📋 Deal Information:');
+  console.log(`   - Name: ${llmResults.deal.dealName}`);
+  console.log(`   - Type: ${llmResults.deal.dealType}`);
+  console.log(`   - Process: ${llmResults.deal.processType}`);
+
+  console.log('\n🏢 Target Company:');
+  console.log(`   - Name: ${llmResults.targetCompany.companyName}`);
+  console.log(`   - Sector: ${llmResults.targetCompany.sector} (GICS: ${llmResults.targetCompany.gicsCode})`);
+  console.log(`   - Revenue: $${(llmResults.targetCompany.revenue || 0).toLocaleString()}`);
+  console.log(`   - EBITDA: $${(llmResults.targetCompany.ebitda || 0).toLocaleString()}`);
+
+  console.log('\n👥 Involved Parties:');
+  for (const party of llmResults.involvedParties) {
+    console.log(`   - ${party.investorName} (${party.investorType})`);
+  }
   
-  // Display LLM-found relationships
-  console.log('🔗 LLM-Extracted Relationships:');
-  console.log('---------------------------------');
-  llmResults.relationships.forEach(rel => {
-    console.log(`   - [${rel.source}] --(${rel.relationship})--> [${rel.target}] (Confidence: ${rel.confidence * 100}%)`);
-  });
-  console.log('');
-  
-  // Display refined and new entities
-  console.log('✨ LLM-Enhanced Entities:');
-  console.log('---------------------------------');
-  const newLlmEntities = llmResults.newEntities.map(e => `   - ${e.entity} (${e.type}) [LLM Only]`);
-  const refinedEntities = llmResults.validatedEntities
-    .filter(e => e.isValid && e.normalizedValue && e.entity !== e.normalizedValue)
-    .map(e => `   - ${e.entity} -> ${e.normalizedValue} (${e.type}) [spaCy+LLM Refined]`);
+  if (llmResults.mentionedFunds && llmResults.mentionedFunds.length > 0) {
+    console.log('\n💰 Mentioned Funds:');
+    for (const fund of llmResults.mentionedFunds) {
+      console.log(`   - ${fund.fundName}`);
+    }
+  }
 
-  [...newLlmEntities, ...refinedEntities].forEach(line => console.log(line));
-  console.log('');
+  if (llmResults.competitors && llmResults.competitors.length > 0) {
+    console.log('\n⚔️  Competitors:');
+    for (const competitor of llmResults.competitors) {
+      console.log(`   - ${competitor.investorName} (${competitor.investorType})`);
+    }
+  }
 
-  // Display comparison
-  console.log('🔍 Validation of spaCy Entities:');
-  console.log('---------------------------------');
-  llmResults.validatedEntities.forEach(v => {
-      const status = v.isValid ? '✅ Valid' : '❌ Invalid';
-      console.log(`   - spaCy found "${v.entity}" (${v.type}): ${status} by LLM. Reason: ${v.reason}`);
-  });
+  if (llmResults.crmTasks && llmResults.crmTasks.length > 0) {
+    console.log('\n✅ CRM Tasks:');
+    for (const task of llmResults.crmTasks) {
+      console.log(`   - Activity: ${task.activityType}`);
+      if(task.dueDate) console.log(`     - Due: ${task.dueDate}`);
+      if(task.assignedTo) console.log(`     - Assigned To: ${task.assignedTo}`);
+    }
+  }
 
+  console.log('\n🔗 Extracted Relationships:');
+  for (const rel of llmResults.relationships) {
+    console.log(`   - [${rel.source}] --(${rel.type})--> [${rel.target}]`);
+  }
 
-  // Save final results to a file
+  // Save the structured LLM results directly
   const reportPath = join(__dirname, '../hybrid-extraction-report.json');
-  writeFileSync(reportPath, JSON.stringify({ spacyResults, llmResults, mergedEntities }, null, 2));
-  console.log(`\n\n📄 Full hybrid analysis report saved to: ${reportPath}`);
+  writeFileSync(reportPath, JSON.stringify(llmResults, null, 2));
+  console.log(`\n\n📄 Full deal analysis report saved to: ${reportPath}`);
 }
 
 if (require.main === module) {

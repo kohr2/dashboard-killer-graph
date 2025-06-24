@@ -1,12 +1,29 @@
 // FIBO (Financial Industry Business Ontology) Entities
 // Integration with O-CREAM-v2 for financial CRM functionality
 
-import { DOLCECategory, DOLCEEntity } from '../../../crm-core/domain/ontology/o-cream-v2';
+import { DOLCECategory, DOLCEEntity } from '../../../../crm-core/domain/ontology/o-cream-v2';
+import { ontologyService } from '../../../../platform/ontology/ontology.service';
+
+const ontology = ontologyService.getOntology();
+
+export type FIBOInstrumentType = (typeof ontology.FIBOInstrumentType)[number];
+export const FIBOInstrumentType = (ontology.FIBOInstrumentType || []).reduce((acc: Record<string, string>, cur: string) => ({ ...acc, [cur]: cur }), {} as Record<string, string>);
+
+export type FIBOInstitutionType = (typeof ontology.FIBOInstitutionType)[number];
+export const FIBOInstitutionType = (ontology.FIBOInstitutionType || []).reduce((acc: Record<string, string>, cur: string) => ({ ...acc, [cur]: cur }), {} as Record<string, string>);
+
+export type FIBOMarketDataType = (typeof ontology.FIBOMarketDataType)[number];
+export const FIBOMarketDataType = (ontology.FIBOMarketDataType || []).reduce((acc: Record<string, string>, cur: string) => ({ ...acc, [cur]: cur }), {} as Record<string, string>);
+
+export type FIBOTransactionType = (typeof ontology.FIBOTransactionType)[number];
+export const FIBOTransactionType = (ontology.FIBOTransactionType || []).reduce((acc: Record<string, string>, cur: string) => ({ ...acc, [cur]: cur }), {} as Record<string, string>);
 
 // FIBO Financial Instrument Entity
 export class FIBOFinancialInstrument implements DOLCEEntity {
   public readonly id: string;
-  public readonly dolceCategory: DOLCECategory = DOLCECategory.ABSTRACT;
+  public readonly category: DOLCECategory = 'Abstract';
+  public readonly createdAt: Date;
+  public readonly updatedAt: Date;
   
   constructor(
     public readonly instrumentType: FIBOInstrumentType,
@@ -19,6 +36,8 @@ export class FIBOFinancialInstrument implements DOLCEEntity {
     public readonly metadata?: Record<string, any>
   ) {
     this.id = `fibo_instrument_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
   }
 
   public getOntologicalType(): string {
@@ -45,7 +64,7 @@ export class FIBOFinancialInstrument implements DOLCEEntity {
   // FIBO-specific methods
   public calculateRisk(): FIBORiskProfile {
     // Simplified risk calculation based on instrument type
-    const riskMapping: Record<FIBOInstrumentType, number> = {
+    const riskMapping: Record<string, number> = {
       [FIBOInstrumentType.EQUITY]: 0.7,
       [FIBOInstrumentType.BOND]: 0.3,
       [FIBOInstrumentType.DERIVATIVE]: 0.9,
@@ -85,7 +104,9 @@ export class FIBOFinancialInstrument implements DOLCEEntity {
 // FIBO Financial Institution Entity
 export class FIBOFinancialInstitution implements DOLCEEntity {
   public readonly id: string;
-  public readonly dolceCategory: DOLCECategory = DOLCECategory.AGENTIVE_PHYSICAL_OBJECT;
+  public readonly category: DOLCECategory = 'AgentivePhysicalObject';
+  public readonly createdAt: Date;
+  public readonly updatedAt: Date;
   
   constructor(
     public readonly institutionType: FIBOInstitutionType,
@@ -97,6 +118,8 @@ export class FIBOFinancialInstitution implements DOLCEEntity {
     public readonly metadata?: Record<string, any>
   ) {
     this.id = `fibo_institution_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
   }
 
   public getOntologicalType(): string {
@@ -142,8 +165,10 @@ export class FIBOFinancialInstitution implements DOLCEEntity {
 // FIBO Market Data Entity
 export class FIBOMarketData implements DOLCEEntity {
   public readonly id: string;
-  public readonly dolceCategory: DOLCECategory = DOLCECategory.ABSTRACT;
-  
+  public readonly category: DOLCECategory = 'Abstract';
+  public readonly createdAt: Date;
+  public readonly updatedAt: Date;
+
   constructor(
     public readonly instrumentId: string,
     public readonly dataType: FIBOMarketDataType,
@@ -154,6 +179,8 @@ export class FIBOMarketData implements DOLCEEntity {
     public readonly metadata?: Record<string, any>
   ) {
     this.id = `fibo_market_data_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
   }
 
   public getOntologicalType(): string {
@@ -196,8 +223,10 @@ export class FIBOMarketData implements DOLCEEntity {
 // FIBO Transaction Entity
 export class FIBOTransaction implements DOLCEEntity {
   public readonly id: string;
-  public readonly dolceCategory: DOLCECategory = DOLCECategory.PERDURANT;
-  
+  public readonly category: DOLCECategory = 'Perdurant';
+  public readonly createdAt: Date;
+  public readonly updatedAt: Date;
+
   constructor(
     public readonly transactionType: FIBOTransactionType,
     public readonly amount: number,
@@ -211,6 +240,8 @@ export class FIBOTransaction implements DOLCEEntity {
     public readonly metadata?: Record<string, any>
   ) {
     this.id = `fibo_transaction_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
   }
 
   public getOntologicalType(): string {
@@ -276,43 +307,6 @@ export class FIBOTransaction implements DOLCEEntity {
     
     return flags;
   }
-}
-
-// FIBO Enums and Types
-export enum FIBOInstrumentType {
-  EQUITY = 'EQUITY',
-  BOND = 'BOND',
-  DERIVATIVE = 'DERIVATIVE',
-  CURRENCY = 'CURRENCY',
-  COMMODITY = 'COMMODITY',
-  FUND = 'FUND'
-}
-
-export enum FIBOInstitutionType {
-  BANK = 'BANK',
-  INVESTMENT_FIRM = 'INVESTMENT_FIRM',
-  INSURANCE_COMPANY = 'INSURANCE_COMPANY',
-  PENSION_FUND = 'PENSION_FUND',
-  HEDGE_FUND = 'HEDGE_FUND',
-  MUTUAL_FUND = 'MUTUAL_FUND'
-}
-
-export enum FIBOMarketDataType {
-  PRICE = 'PRICE',
-  VOLUME = 'VOLUME',
-  BID = 'BID',
-  ASK = 'ASK',
-  SPREAD = 'SPREAD',
-  VOLATILITY = 'VOLATILITY'
-}
-
-export enum FIBOTransactionType {
-  BUY = 'BUY',
-  SELL = 'SELL',
-  TRANSFER = 'TRANSFER',
-  DERIVATIVE_TRADE = 'DERIVATIVE_TRADE',
-  CURRENCY_EXCHANGE = 'CURRENCY_EXCHANGE',
-  PAYMENT = 'PAYMENT'
 }
 
 // FIBO Interfaces

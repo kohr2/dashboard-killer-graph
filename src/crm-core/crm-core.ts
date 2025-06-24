@@ -1,22 +1,18 @@
 // CRM Core - Main orchestrator for the CRM system
-import { ExtensionRegistry } from '../platform/extension-framework/extension-registry';
-import { EventBus } from '../platform/extension-framework/event-bus';
+import { ContactService } from './application/services/contact.service';
 
-export class CRMCore {
-  private extensionRegistry: ExtensionRegistry;
-  private eventBus: EventBus;
+export class CrmCore {
+  private static instance: CrmCore;
 
-  constructor() {
-    this.eventBus = new EventBus();
-    this.extensionRegistry = new ExtensionRegistry();
+  private constructor() {
+    // Initialization logic
   }
 
-  getExtensionRegistry(): ExtensionRegistry {
-    return this.extensionRegistry;
-  }
-
-  getEventBus(): EventBus {
-    return this.eventBus;
+  public static getInstance(): CrmCore {
+    if (!CrmCore.instance) {
+      CrmCore.instance = new CrmCore();
+    }
+    return CrmCore.instance;
   }
 
   async initialize(): Promise<void> {

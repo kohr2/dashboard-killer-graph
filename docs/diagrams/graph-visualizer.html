@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entity Relationship Graph Visualizer</title>
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <style type="text/css">
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+    }
+    #mynetwork {
+      width: 100%;
+      height: 100vh;
+      border: 1px solid lightgray;
+      background-color: #ffffff;
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+    .header {
+        padding: 10px 20px;
+        background-color: #333;
+        color: white;
+        font-size: 20px;
+    }
+    .graph-container {
+        flex-grow: 1;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        Entity Relationship Graph
+    </div>
+    <div class="graph-container" id="mynetwork"></div>
+</div>
+
+
+<script type="text/javascript">
+  async function drawGraph() {
+    // create a network
+    const container = document.getElementById('mynetwork');
+
+    // provide the data in the vis format
+    const graphData = await fetch('../../entity-relationship-graph.json').then(res => res.json());
+    
+    const data = {
+      nodes: new vis.DataSet(graphData.nodes),
+      edges: new vis.DataSet(graphData.edges)
+    };
+
+    const options = {
+      nodes: {
+        shape: 'dot',
+        size: 16,
+        font: {
+          size: 14,
+          color: '#333'
+        },
+        borderWidth: 2
+      },
+      edges: {
+        width: 2,
+        color: { inherit: 'from' },
+        arrows: {
+          to: { enabled: true, scaleFactor: 1, type: 'arrow' }
+        },
+        font: {
+            align: 'top'
+        }
+      },
+      physics: {
+        forceAtlas2Based: {
+          gravitationalConstant: -26,
+          centralGravity: 0.005,
+          springLength: 230,
+          springConstant: 0.18
+        },
+        maxVelocity: 146,
+        solver: 'forceAtlas2Based',
+        timestep: 0.35,
+        stabilization: { iterations: 150 }
+      },
+      interaction: {
+        tooltipDelay: 200,
+        hideEdgesOnDrag: true,
+        hover: true
+      },
+      groups: {
+        PERSON_NAME: { color: { background: '#FFC107' } },
+        JOB_TITLE: { color: { background: '#FF9800' } },
+        PHONE_NUMBER: { color: { background: '#FF5722' } },
+        DATE: { color: { background: '#CDDC39' } },
+        TIME: { color: { background: '#4CAF50' } },
+        FINANCIAL_INSTRUMENT: { color: { background: '#00BCD4' } },
+        MONETARY_AMOUNT: { color: { background: '#03A9F4' } },
+        FINANCIAL_INSTITUTION: { color: { background: '#2196F3' } },
+        COMPANY_NAME: { color: { background: '#3F51B5' } },
+        NUMBER: { color: { background: '#673AB7' } },
+        LOCATION: { color: { background: '#9C27B0' } },
+        EMAIL_ADDRESS: { color: { background: '#E91E63' } }
+      }
+    };
+
+    const network = new vis.Network(container, data, options);
+
+    network.on("stabilizationProgress", function(params) {
+        console.log(`Stabilization progress: ${params.iterations / params.total * 100}%`);
+    });
+    network.once("stabilizationIterationsDone", function() {
+        console.log("Graph stabilization finished.");
+    });
+  }
+
+  drawGraph();
+</script>
+
+</body>
+</html> 

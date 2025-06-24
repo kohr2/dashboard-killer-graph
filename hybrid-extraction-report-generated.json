@@ -1,0 +1,45 @@
+{
+  "deal": {
+    "dealName": "Project Titan",
+    "dealType": "Carve-out",
+    "processType": "limited auction"
+  },
+  "targetCompany": {
+    "companyName": "Titan Industrial Analytics",
+    "sector": "Technology (GICS: 511210 - Systems Software)",
+    "revenue": 85000000,
+    "ebitda": 22000000
+  },
+  "involvedParties": [
+    {
+      "investorName": "example-pe-firm.com",
+      "investorType": "Sponsor"
+    },
+    {
+      "investorName": "investment-bank.com",
+      "investorType": "Bank"
+    }
+  ],
+  "mentionedFunds": [],
+  "communicationHistory": [
+    {
+      "type": "Email",
+      "from": "claudia.gomez@investment-bank.com",
+      "to": [
+        "investment.team@example-pe-firm.com"
+      ],
+      "date": "2025-06-24T13:15:00.000Z",
+      "subject": "Confidential Opportunity: Project Titan - Leader in Industrial IoT"
+    }
+  ],
+  "crmTasks": [],
+  "competitors": [],
+  "summary": "A new investment opportunity, \"Project Titan\", has been identified. The target is Titan Industrial Analytics, operating in the Technology (GICS: 511210 - Systems Software) sector. The company has reported revenues of $85M and an EBITDA of $22M.",
+  "relationships": [
+    {
+      "source": "Titan Industrial Analytics",
+      "target": "Project Titan",
+      "type": "IS_TARGET_OF"
+    }
+  ]
+}

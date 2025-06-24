@@ -24,6 +24,8 @@ export enum EntityType {
   CURRENCY = 'CURRENCY',
   INVOICE_NUMBER = 'INVOICE_NUMBER',
   ACCOUNT_NUMBER = 'ACCOUNT_NUMBER',
+  STOCK_SYMBOL = 'STOCK_SYMBOL',
+  CREDIT_CARD_NUMBER = 'CREDIT_CARD_NUMBER',
   
   // Temporal Information
   DATE = 'DATE',
@@ -58,7 +60,19 @@ export enum EntityType {
   // Other
   PERCENTAGE = 'PERCENTAGE',
   QUANTITY = 'QUANTITY',
-  PRIORITY_LEVEL = 'PRIORITY_LEVEL'
+  PRIORITY_LEVEL = 'PRIORITY_LEVEL',
+
+  // spaCy specific
+  ORG = 'ORG',
+  GPE = 'GPE',
+  LOC = 'LOC',
+  PRODUCT = 'PRODUCT',
+  EVENT = 'EVENT',
+  WORK_OF_ART = 'WORK_OF_ART',
+  LAW = 'LAW',
+  LANGUAGE = 'LANGUAGE',
+  NORP = 'NORP',
+  FAC = 'FAC'
 }
 
 export interface EntityExtractionResult {

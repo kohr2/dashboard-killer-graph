@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 // Contact Service - Application Layer
 // Business logic for contact operations with O-CREAM-v2 integration
 

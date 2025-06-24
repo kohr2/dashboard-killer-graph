@@ -2,9 +2,11 @@
   "extends": "../../config/tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../dist/crm-core",
-    "rootDir": ".",
-    "types": ["node"]
+    "rootDir": "."
   },
   "include": ["**/*.ts"],
-  "exclude": ["**/*.test.ts"]
+  "exclude": ["**/*.test.ts"],
+  "references": [
+    { "path": "../platform" }
+  ]
 } 

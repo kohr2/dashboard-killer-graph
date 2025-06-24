@@ -81,7 +81,12 @@ class Neo4jGraphBuilder {
       const edgeCount = await this.ingestRelationships(session, edges);
       console.log(`   ✅ Ingested ${edgeCount} relationships`);
 
-      // 5. Log graph statistics
+      // 5. Remove generic Entity label
+      console.log('\n🏷️  Removing generic :Entity labels...');
+      await this.removeEntityLabel(session);
+      console.log('   ✅ Generic labels removed.');
+
+      // 6. Log graph statistics
       const graphStats = await this.getGraphStatistics(session);
       console.log('\n📊 Neo4j Graph Statistics:');
       console.log(`   • Total Nodes: ${graphStats.nodeCount}`);
@@ -187,16 +192,23 @@ class Neo4jGraphBuilder {
     return createdCount;
   }
 
+  private async removeEntityLabel(session: Session): Promise<void> {
+    await session.run('MATCH (n:Entity) REMOVE n:Entity');
+  }
+
   private async getGraphStatistics(session: Session): Promise<any> {
+    // Add a small delay to allow schema changes to propagate
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     const nodeCountResult = await session.run('MATCH (n) RETURN count(n) as count');
     const relationshipCountResult = await session.run('MATCH ()-[r]->() RETURN count(r) as count');
-    const labelsResult = await session.run('CALL db.labels()');
+    const labelsResult = await session.run('MATCH (n) UNWIND labels(n) as label RETURN collect(distinct label) as labels');
     const relationshipTypesResult = await session.run('CALL db.relationshipTypes()');
     
     return {
       nodeCount: nodeCountResult.records[0].get('count').toNumber(),
       relationshipCount: relationshipCountResult.records[0].get('count').toNumber(),
-      labels: labelsResult.records.map(r => r.get('label')),
+      labels: labelsResult.records[0].get('labels'),
       relationshipTypes: relationshipTypesResult.records.map(r => r.get('relationshipType'))
     };
   }

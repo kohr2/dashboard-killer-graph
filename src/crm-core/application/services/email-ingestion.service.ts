@@ -4,8 +4,9 @@
 import { ContactRepository } from '../../domain/repositories/contact-repository';
 import { CommunicationRepository } from '../../domain/repositories/communication-repository';
 import { Communication } from '../../domain/entities/communication';
+import { Contact } from '../../domain/entities/contact';
 import { OCreamContactEntity } from '../../domain/entities/contact-ontology';
-import { oCreamV2, DOLCECategory, KnowledgeType, ActivityType, createInformationElement } from '../../domain/ontology/o-cream-v2';
+import { oCreamV2, DOLCECategory, KnowledgeType, ActivityType, createInformationElement, InformationElement, CRMActivity } from '../../domain/ontology/o-cream-v2';
 
 export interface IncomingEmail {
   messageId: string;
@@ -131,12 +132,12 @@ export class EmailIngestionService {
       const lastName = lastNameParts.join(' ') || 'Unknown';
 
       // Create new contact
-      contact = new (require('../../domain/entities/contact').Contact)({
+      const newContact = new Contact({
         name: `${firstName} ${lastName}`,
         email: emailAddress
       });
 
-      contact = await this.contactRepository.save(contact);
+      contact = await this.contactRepository.save(newContact);
       console.log(`👤 Created new contact: ${emailAddress}`);
     }
 
@@ -229,8 +230,8 @@ export class EmailIngestionService {
     communication: Communication,
     senderContact: any,
     analysis: EmailIngestionResult['ontologyInsights']
-  ): Promise<any[]> {
-    const knowledgeElements: any[] = [];
+  ): Promise<InformationElement[]> {
+    const knowledgeElements: InformationElement[] = [];
 
     // 1. Communication Log Knowledge Element
     const commLogKE = createInformationElement({
@@ -249,107 +250,39 @@ export class EmailIngestionService {
         sentiment: analysis.sentiment,
         priority: analysis.priority,
         threadId: email.threadId,
-        inReplyTo: email.inReplyTo
+        inReplyTo: email.inReplyTo,
+        topics: analysis.topics,
+        entities: analysis.entities
       },
-      format: 'json',
-      source: 'Email System',
+      source: `Email Provider: ${this.extractEmailProvider(email.from)}`,
       reliability: 0.95,
       confidentiality: 'internal',
-      relatedEntities: [senderContact.getId(), communication.getId()],
-      metadata: {
-        emailProvider: this.extractEmailProvider(email.from),
-        hasAttachments: (email.attachments?.length || 0) > 0,
-        threadLength: email.references?.length || 0
-      }
+      relatedEntities: [communication.getId(), senderContact.getId()],
     });
-
-    oCreamV2.addEntity(commLogKE);
     knowledgeElements.push(commLogKE);
+    oCreamV2.addEntity(commLogKE);
 
-    // 2. Customer Interaction History
-    const interactionKE = createInformationElement({
-      title: `Customer Interaction: ${email.from}`,
-      type: KnowledgeType.INTERACTION_HISTORY,
-      content: {
-        contactId: senderContact.getId(),
-        interactionType: 'email',
-        timestamp: email.receivedAt,
-        summary: email.subject,
-        sentiment: analysis.sentiment,
-        topics: analysis.topics,
-        outcome: 'received',
-        followUpRequired: analysis.priority === 'high'
-      },
-      format: 'json',
-      source: 'Email System',
-      reliability: 0.9,
-      confidentiality: 'internal',
-      relatedEntities: [senderContact.getId()],
-      metadata: {
-        automaticallyGenerated: true,
-        extractedEntities: analysis.entities
-      }
-    });
-
-    oCreamV2.addEntity(interactionKE);
-    knowledgeElements.push(interactionKE);
-
-    // 3. If email contains business content, create business knowledge
-    if (analysis.emailClassification === 'business_proposal' || analysis.emailClassification === 'financial') {
-      const businessKE = createInformationElement({
-        title: `Business Communication: ${email.subject}`,
-        type: KnowledgeType.TRANSACTION_DATA,
-        content: {
-          communicationType: analysis.emailClassification,
-          businessContext: analysis.topics,
-          extractedEntities: analysis.entities,
-          priority: analysis.priority,
-          requiresAction: analysis.priority === 'high',
-          relatedCommunication: communication.getId()
-        },
-        format: 'json',
-        source: 'Email Analysis',
-        reliability: 0.8,
-        confidentiality: 'confidential',
-        relatedEntities: [senderContact.getId()],
-        metadata: {
-          analysisVersion: '1.0',
-          extractionMethod: 'keyword_pattern'
-        }
-      });
-
-      oCreamV2.addEntity(businessKE);
-      knowledgeElements.push(businessKE);
-    }
-
-    // 4. Process attachments if any
-    if (email.attachments && email.attachments.length > 0) {
+    // 2. Attachments as Document Knowledge Elements
+    if (email.attachments) {
       for (const attachment of email.attachments) {
-        const attachmentKE = createInformationElement({
-          title: `Email Attachment: ${attachment.filename}`,
-          type: KnowledgeType.DOCUMENT_MANAGEMENT,
-          content: {
-            filename: attachment.filename,
-            contentType: attachment.contentType,
-            size: attachment.size,
-            emailMessageId: email.messageId,
-            communicationId: communication.getId(),
-            extractedAt: new Date()
-          },
-          format: 'binary',
-          source: 'Email Attachment',
-          reliability: 1.0,
-          confidentiality: 'confidential',
-          relatedEntities: [senderContact.getId(), communication.getId()],
-          metadata: {
-            fileExtension: attachment.filename.split('.').pop(),
-            isDocument: this.isDocumentFile(attachment.filename),
-            requiresProcessing: this.requiresProcessing(attachment.contentType)
-          }
-        });
-
-        oCreamV2.addEntity(attachmentKE);
-        knowledgeElements.push(attachmentKE);
+        if (this.isDocumentFile(attachment.filename)) {
+          const docKE = createInformationElement({
+            title: `Document: ${attachment.filename}`,
+            type: KnowledgeType.PROCESS_KNOWLEDGE, // Using a generic type
+            content: {
+              filename: attachment.filename,
+              contentType: attachment.contentType,
+              size: attachment.size,
+              requiresProcessing: this.requiresProcessing(attachment.contentType)
+            },
+            source: 'Email Attachment',
+            reliability: 0.9,
+            confidentiality: 'internal',
+            relatedEntities: [communication.getId()]
+          });
+          knowledgeElements.push(docKE);
+          oCreamV2.addEntity(docKE);
+        }
       }
     }
 
@@ -362,69 +295,53 @@ export class EmailIngestionService {
     communication: Communication,
     senderContact: any,
     recipientContacts: any[]
-  ): Promise<any[]> {
-    const activities: any[] = [];
+  ): Promise<CRMActivity[]> {
+    const activities: CRMActivity[] = [];
 
-    // 1. Email Reception Activity
-    const receptionActivity = {
+    // 1. Ingestion Activity
+    const ingestionActivity: CRMActivity = {
       id: this.generateId(),
-      category: DOLCECategory.PERDURANT,
       type: ActivityType.DATA_COLLECTION,
-      name: 'Email Received',
-      description: `Email received from ${email.from}: ${email.subject}`,
+      category: DOLCECategory.PERDURANT,
+      name: 'Email Ingestion',
+      description: `Ingested email with subject: ${email.subject}`,
       participants: [senderContact.getId(), ...recipientContacts.map(c => c.getId())],
-      startTime: email.receivedAt,
-      endTime: email.receivedAt,
-      status: 'completed' as const,
+      resources: [communication.getId()],
+      status: 'completed',
       success: true,
       context: {
         emailMessageId: email.messageId,
-        communicationId: communication.getId(),
-        emailProvider: this.extractEmailProvider(email.from),
-        hasAttachments: (email.attachments?.length || 0) > 0
+        threadId: email.threadId,
       },
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: email.receivedAt,
+      updatedAt: new Date(),
     };
+    activities.push(ingestionActivity);
+    oCreamV2.addEntity(ingestionActivity);
 
-    oCreamV2.addEntity(receptionActivity);
-    activities.push(receptionActivity);
-
-    // 2. Customer Communication Activity
-    const communicationActivity = {
-      id: this.generateId(),
-      category: DOLCECategory.PERDURANT,
-      type: ActivityType.CUSTOMER_SUPPORT,
-      name: 'Customer Email Communication',
-      description: `Email communication with ${email.from}`,
-      participants: [senderContact.getId()],
-      startTime: email.receivedAt,
-      endTime: email.receivedAt,
-      status: 'completed' as const,
-      success: true,
-      outcome: `Email received: ${email.subject}`,
-      context: {
-        communicationType: 'email',
-        direction: 'inbound',
-        subject: email.subject,
-        priority: this.analyzeEmail(email).priority
-      },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    oCreamV2.addEntity(communicationActivity);
-    activities.push(communicationActivity);
-
-    // 3. Add activities to contact's activity history
-    const oCreamContact = oCreamV2.getEntity(senderContact.getId()) as OCreamContactEntity;
-    if (oCreamContact) {
-      oCreamContact.addActivity(receptionActivity.id);
-      oCreamContact.addActivity(communicationActivity.id);
-      oCreamContact.addCommunicationActivity(communication.getId());
+    // 2. Follow-up Activity (if priority is high)
+    if (this.analyzeEmail(email).priority === 'high') {
+      const followupActivity: CRMActivity = {
+        id: this.generateId(),
+        type: ActivityType.CUSTOMER_SUPPORT,
+        category: DOLCECategory.PERDURANT,
+        name: 'High-Priority Follow-up',
+        description: `Requires immediate follow-up: ${email.subject}`,
+        participants: [senderContact.getId()],
+        status: 'planned',
+        success: false,
+        context: {
+          originalEmailId: email.messageId,
+        },
+        startTime: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      activities.push(followupActivity);
+      oCreamV2.addEntity(followupActivity);
     }
-
-    console.log(`⚡ Created ${activities.length} activities`);
+    
+    console.log(`🏃 Created ${activities.length} activities`);
     return activities;
   }
 
@@ -466,7 +383,7 @@ export class EmailIngestionService {
   private async storeInKnowledgeGraph(
     email: IncomingEmail,
     communication: Communication,
-    knowledgeElements: any[]
+    knowledgeElements: InformationElement[]
   ): Promise<void> {
     // This would integrate with Neo4j or other graph databases
     // For now, we're storing in the O-CREAM-v2 ontology

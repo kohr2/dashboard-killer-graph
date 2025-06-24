@@ -80,12 +80,14 @@ export interface SpacyEntityExtractionResult {
   entityTypes: EntityType[];
   confidence: number;
   processingTime: number;
+  extensionResults?: Record<string, any>;
   metadata: {
     textLength: number;
-    extractionMethod: string;
+    extractionMethod: 'spacy' | 'regex';
     nlpModel: string;
     languageDetected?: string;
     spacyVersion?: string;
+    patterns?: string[];
   };
 }
 
@@ -154,8 +156,9 @@ export class SpacyEntityExtractionService {
         processingTime,
         metadata: {
           textLength: text.length,
-          extractionMethod: 'spacy_nlp',
+          extractionMethod: 'spacy',
           nlpModel: options?.model || this.defaultModel,
+          languageDetected: 'en',
           spacyVersion: '3.8.2'
         }
       };
@@ -172,8 +175,8 @@ export class SpacyEntityExtractionService {
    * Extract entities specifically for email content
    */
   public async extractEmailEntities(
-    emailSubject: string, 
-    emailBody: string, 
+    emailSubject: string,
+    emailBody: string,
     headers?: Record<string, string>
   ): Promise<SpacyEntityExtractionResult> {
     // Combine email parts with proper weighting
@@ -187,7 +190,8 @@ export class SpacyEntityExtractionService {
 
     // Add email-specific post-processing
     result.entities = this.enhanceEmailEntities(result.entities, emailSubject, emailBody);
-    result.metadata.extractionMethod = 'spacy_email_optimized';
+    result.metadata.extractionMethod = 'spacy';
+    result.metadata.patterns = ['email_headers', 'email_signatures'];
     
     return result;
   }
@@ -264,17 +268,17 @@ export class SpacyEntityExtractionService {
       const pythonProcess = spawn('python3', args);
       
       let stdout = '';
-      let stderr = '';
+        let stderr = '';
       
       pythonProcess.stdout.on('data', (data) => {
         stdout += data.toString();
       });
       
-      pythonProcess.stderr.on('data', (data) => {
-        stderr += data.toString();
-      });
-      
-      pythonProcess.on('close', (code) => {
+        pythonProcess.stderr.on('data', (data) => {
+          stderr += data.toString();
+        });
+
+        pythonProcess.on('close', (code) => {
         if (code === 0) {
           try {
             const result = JSON.parse(stdout);
@@ -318,7 +322,7 @@ export class SpacyEntityExtractionService {
           endIndex: position + spacyEntity.value.length,
           context: spacyEntity.context,
           spacyLabel: spacyEntity.spacy_label,
-          metadata: {
+      metadata: {
             originalSpacyType: spacyEntity.type,
             extractionMethod: 'spacy_ner'
           }
@@ -490,6 +494,8 @@ export class SpacyEntityExtractionService {
       });
     }
     
+    const usedPatterns = ['email_headers', 'email_signatures'];
+
     return {
       entities,
       entityCount: entities.length,
@@ -498,8 +504,9 @@ export class SpacyEntityExtractionService {
       processingTime,
       metadata: {
         textLength: text.length,
-        extractionMethod: 'regex_fallback',
-        nlpModel: 'none'
+        extractionMethod: 'regex',
+        nlpModel: 'none',
+        patterns: usedPatterns
       }
     };
   }

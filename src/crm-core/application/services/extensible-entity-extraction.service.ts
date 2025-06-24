@@ -178,8 +178,8 @@ export class ExtensibleEntityExtractionService {
     const startTime = Date.now();
     
     // Extract core entities with spaCy
-    const coreResult = await this.coreExtractor.extractEntitiesWithSpacy(text, {
-      model: options?.coreModel || 'en_core_web_lg'
+    const coreResult = await this.coreExtractor.extractEntities(text, {
+      model: options?.coreModel
     });
 
     // Extract extension-specific entities
@@ -191,7 +191,7 @@ export class ExtensibleEntityExtractionService {
 
     // Merge and deduplicate results
     const mergedEntities = this.mergeEntityResults(
-      coreResult.entities,
+      coreResult.entities as any,
       extensionResults.entities
     );
 
@@ -224,9 +224,9 @@ export class ExtensibleEntityExtractionService {
       // Metadata
       metadata: {
         textLength: text.length,
-        coreMethod: `spacy_${options?.coreModel || 'en_core_web_lg'}`,
-        enabledExtensions: options?.enabledExtensions || Array.from(this.extensionRegistry.keys()),
-        validationEnabled: options?.includeValidation || false
+        extractionMethod: 'hybrid_spacy_extensions',
+        languageDetected: coreResult.metadata.languageDetected,
+        patterns: coreResult.metadata.patterns || [],
       }
     };
   }
@@ -562,13 +562,13 @@ export class ExtensibleEntityExtractionService {
 
   private mapCategoryToKnowledgeType(category: string): KnowledgeType {
     const mapping: Record<string, KnowledgeType> = {
-      'FINANCIAL': KnowledgeType.BUSINESS_KNOWLEDGE,
-      'HEALTHCARE': KnowledgeType.CUSTOMER_KNOWLEDGE,
-      'LEGAL': KnowledgeType.BUSINESS_KNOWLEDGE,
-      'GENERAL': KnowledgeType.CUSTOMER_KNOWLEDGE
+      'FINANCIAL': KnowledgeType.MARKET_INTELLIGENCE,
+      'HEALTHCARE': KnowledgeType.PRODUCT_KNOWLEDGE,
+      'LEGAL': KnowledgeType.PROCESS_KNOWLEDGE,
+      'GENERAL': KnowledgeType.CUSTOMER_BEHAVIOR
     };
     
-    return mapping[category] || KnowledgeType.CUSTOMER_KNOWLEDGE;
+    return mapping[category] || KnowledgeType.CUSTOMER_PROFILE;
   }
 
   private calculateDomainCoverage(extensionName: string, entities: ExtractedEntity[]): number {

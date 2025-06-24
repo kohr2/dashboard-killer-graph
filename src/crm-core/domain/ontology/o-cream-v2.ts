@@ -1,14 +1,23 @@
 // O-CREAM-v2 (Ontology for Customer Relationship Management v2)
 // Based on DOLCE foundational ontology
+import { ontologyService } from '@platform/ontology/ontology.service';
 
-export enum DOLCECategory {
-  ENDURANT = 'Endurant',
-  PERDURANT = 'Perdurant',
-  QUALITY = 'Quality',
-  ABSTRACT = 'Abstract',
-  AGENTIVE_PHYSICAL_OBJECT = 'AgentivePhysicalObject',
-  NON_AGENTIVE_PHYSICAL_OBJECT = 'NonAgentivePhysicalObject'
-}
+const ontology = ontologyService.getOntology();
+
+export type DOLCECategory = (typeof ontology.DOLCECategory)[number];
+export const DOLCECategory = (ontology.DOLCECategory || []).reduce((acc: Record<string, string>, cur: string) => ({ ...acc, [cur]: cur }), {} as Record<string, string>);
+
+export type RelationshipType = (typeof ontology.RelationshipType)[number];
+export const RelationshipType = (ontology.RelationshipType || []).reduce((acc: Record<string, string>, cur: string) => ({ ...acc, [cur]: cur }), {} as Record<string, string>);
+
+export type KnowledgeType = (typeof ontology.KnowledgeType)[number];
+export const KnowledgeType = (ontology.KnowledgeType || []).reduce((acc: Record<string, string>, cur: string) => ({ ...acc, [cur]: cur }), {} as Record<string, string>);
+
+export type ActivityType = (typeof ontology.ActivityType)[number];
+export const ActivityType = (ontology.ActivityType || []).reduce((acc: Record<string, string>, cur: string) => ({ ...acc, [cur]: cur }), {} as Record<string, string>);
+
+export type SoftwareType = (typeof ontology.SoftwareType)[number];
+export const SoftwareType = (ontology.SoftwareType || []).reduce((acc: Record<string, string>, cur: string) => ({ ...acc, [cur]: cur }), {} as Record<string, string>);
 
 export interface DOLCEEntity {
   id: string;
@@ -17,80 +26,8 @@ export interface DOLCEEntity {
   updatedAt: Date;
 }
 
-export enum RelationshipType {
-  // Business relationships
-  CUSTOMER_RELATIONSHIP = 'CustomerRelationship',
-  SUPPLIER_RELATIONSHIP = 'SupplierRelationship',
-  PARTNER_RELATIONSHIP = 'PartnerRelationship',
-  PROSPECT_RELATIONSHIP = 'ProspectRelationship',
-  
-  // Social relationships
-  EMPLOYMENT = 'Employment',
-  COLLABORATION = 'Collaboration',
-  MEMBERSHIP = 'Membership',
-  
-  // Temporal relationships
-  BEFORE = 'Before',
-  AFTER = 'After',
-  DURING = 'During',
-  OVERLAPS = 'Overlaps'
-}
-
-export enum KnowledgeType {
-  // Customer knowledge
-  CUSTOMER_PROFILE = 'CustomerProfile',
-  CUSTOMER_PREFERENCES = 'CustomerPreferences',
-  CUSTOMER_BEHAVIOR = 'CustomerBehavior',
-  CUSTOMER_HISTORY = 'CustomerHistory',
-  
-  // Business knowledge
-  MARKET_INTELLIGENCE = 'MarketIntelligence',
-  COMPETITIVE_ANALYSIS = 'CompetitiveAnalysis',
-  PRODUCT_KNOWLEDGE = 'ProductKnowledge',
-  PROCESS_KNOWLEDGE = 'ProcessKnowledge',
-  
-  // Transactional knowledge
-  TRANSACTION_DATA = 'TransactionData',
-  INTERACTION_HISTORY = 'InteractionHistory',
-  COMMUNICATION_LOG = 'CommunicationLog'
-}
-
-export enum ActivityType {
-  // Customer relationship activities
-  IDENTIFY = 'Identify',
-  ATTRACT = 'Attract',
-  ACQUIRE = 'Acquire',
-  DEVELOP = 'Develop',
-  RETAIN = 'Retain',
-  
-  // Sales activities
-  LEAD_QUALIFICATION = 'LeadQualification',
-  OPPORTUNITY_MANAGEMENT = 'OpportunityManagement',
-  PROPOSAL_PREPARATION = 'ProposalPreparation',
-  NEGOTIATION = 'Negotiation',
-  CLOSING = 'Closing',
-  
-  // Marketing activities
-  CAMPAIGN_EXECUTION = 'CampaignExecution',
-  CONTENT_CREATION = 'ContentCreation',
-  MARKET_RESEARCH = 'MarketResearch',
-  BRAND_MANAGEMENT = 'BrandManagement',
-  
-  // Service activities
-  CUSTOMER_SUPPORT = 'CustomerSupport',
-  ISSUE_RESOLUTION = 'IssueResolution',
-  MAINTENANCE = 'Maintenance',
-  TRAINING = 'Training',
-  
-  // Information management activities
-  DATA_COLLECTION = 'DataCollection',
-  DATA_ANALYSIS = 'DataAnalysis',
-  REPORTING = 'Reporting',
-  DOCUMENT_MANAGEMENT = 'DocumentManagement'
-}
-
 export interface InformationElement extends DOLCEEntity {
-  category: DOLCECategory.ABSTRACT;
+  category: 'Abstract';
   type: KnowledgeType;
   title: string;
   content: any;
@@ -104,7 +41,7 @@ export interface InformationElement extends DOLCEEntity {
 }
 
 export interface CRMActivity extends DOLCEEntity {
-  category: DOLCECategory.PERDURANT;
+  category: 'Perdurant';
   type: ActivityType;
   name: string;
   description?: string;
@@ -146,17 +83,8 @@ export interface OCreamRelationship {
 }
 
 // Software module
-export enum SoftwareType {
-  CRM_PLATFORM = 'CRMPlatform',
-  SALES_AUTOMATION = 'SalesAutomation',
-  MARKETING_AUTOMATION = 'MarketingAutomation',
-  EMAIL_SYSTEM = 'EmailSystem',
-  KNOWLEDGE_GRAPH = 'KnowledgeGraph',
-  API = 'API'
-}
-
 export interface SoftwareSystem extends DOLCEEntity {
-  category: DOLCECategory.NON_AGENTIVE_PHYSICAL_OBJECT;
+  category: 'NonAgentivePhysicalObject';
   type: SoftwareType;
   name: string;
   version: string;
@@ -170,7 +98,7 @@ export class OCreamV2Ontology {
   private static instance: OCreamV2Ontology;
   private entities: Map<string, DOLCEEntity> = new Map();
   private relationships: Map<string, OCreamRelationship> = new Map();
-  private typeIndex: Map<DOLCECategory, Set<string>> = new Map();
+  private typeIndex: Map<string, Set<string>> = new Map();
   private relationshipIndex: Map<string, Set<string>> = new Map();
 
   constructor() {
@@ -191,8 +119,8 @@ export class OCreamV2Ontology {
     return {
       entityCount: this.entities.size,
       relationshipCount: this.relationships.size,
-      knowledgeElementCount: this.getEntitiesByType(DOLCECategory.ABSTRACT).length,
-      activityCount: this.getEntitiesByType(DOLCECategory.PERDURANT).length,
+      knowledgeElementCount: this.getEntitiesByType('Abstract').length,
+      activityCount: this.getEntitiesByType('Perdurant').length,
       typeDistribution: Object.fromEntries(
         Array.from(this.typeIndex.entries()).map(([type, ids]) => [type, ids.size])
       )
@@ -354,7 +282,7 @@ export class OCreamV2Ontology {
 // Factory function for creating information elements
 export function createInformationElement(data: Partial<InformationElement>): InformationElement {
   return {
-    category: DOLCECategory.ABSTRACT,
+    category: 'Abstract',
     type: KnowledgeType.CUSTOMER_PROFILE,
     title: 'Untitled Information',
     content: {},
