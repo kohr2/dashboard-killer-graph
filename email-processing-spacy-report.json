@@ -1,0 +1,756 @@
+{
+  "timestamp": "2025-06-24T19:20:23.635Z",
+  "processingMethod": "spacy_nlp",
+  "model": "en_core_web_lg",
+  "summary": {
+    "totalEmails": 3,
+    "totalEntities": 95,
+    "totalContacts": 7,
+    "totalKnowledgeElements": 98,
+    "averageProcessingTime": 3226.3333333333335,
+    "averageEntitiesPerEmail": 31.666666666666668
+  },
+  "emailAnalysis": [
+    {
+      "subject": "Portfolio Review Meeting - Goldman Sachs Holdings",
+      "from": "sarah.johnson@goldmansachs.com",
+      "date": "2024-01-15T14:30:00.000Z",
+      "entitiesExtracted": 35,
+      "entities": [
+        {
+          "type": "PERSON_NAME",
+          "value": "Robert Smith",
+          "confidence": 0.99,
+          "spacy_label": "PERSON",
+          "context": "Dear Mr. Robert Smith , \n\n Your quarterly portfolio"
+        },
+        {
+          "type": "DATE",
+          "value": "quarterly",
+          "confidence": 0.99,
+          "spacy_label": "DATE",
+          "context": "Robert Smith , \n\n Your quarterly portfolio review is scheduled for"
+        },
+        {
+          "type": "FINANCIAL_INSTRUMENT",
+          "value": "portfolio",
+          "confidence": 0.89,
+          "spacy_label": "FINANCIAL_INSTRUMENT",
+          "context": "Smith , \n\n Your quarterly portfolio review is scheduled for Tuesday"
+        },
+        {
+          "type": "DATE",
+          "value": "Tuesday, January 23rd, 2024",
+          "confidence": 0.99,
+          "spacy_label": "DATE",
+          "context": "portfolio review is scheduled for Tuesday , January 23rd , 2024 at 2:00 PM EST ."
+        },
+        {
+          "type": "TIME",
+          "value": "2:00 PM EST",
+          "confidence": 0.9,
+          "spacy_label": "TIME",
+          "context": "January 23rd , 2024 at 2:00 PM EST . \n\n Current holdings as"
+        },
+        {
+          "type": "DATE",
+          "value": "January 15th, 2024",
+          "confidence": 0.99,
+          "spacy_label": "DATE",
+          "context": "\n\n Current holdings as of January 15th , 2024 : \n - Goldman Sachs"
+        },
+        {
+          "type": "FINANCIAL_INSTITUTION",
+          "value": "Goldman Sachs",
+          "confidence": 0.99,
+          "spacy_label": "FINANCIAL_ORG",
+          "context": ", 2024 : \n - Goldman Sachs Group Inc. ( NYSE :"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "NYSE",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "Goldman Sachs Group Inc. ( NYSE : GS ) - 1,000"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "GS",
+          "confidence": 0.97,
+          "spacy_label": "ORG",
+          "context": "Group Inc. ( NYSE : GS ) - 1,000 shares valued"
+        },
+        {
+          "type": "NUMBER",
+          "value": "1,000",
+          "confidence": 0.85,
+          "spacy_label": "CARDINAL",
+          "context": "NYSE : GS ) - 1,000 shares valued at $ 350,000"
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "350,000",
+          "confidence": 0.99,
+          "spacy_label": "MONEY",
+          "context": "1,000 shares valued at $ 350,000 \n - Apple Inc. ("
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "Apple Inc.",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "at $ 350,000 \n - Apple Inc. ( NASDAQ : AAPL )"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "AAPL",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "Apple Inc. ( NASDAQ : AAPL ) - 500 shares valued"
+        },
+        {
+          "type": "NUMBER",
+          "value": "500",
+          "confidence": 0.83,
+          "spacy_label": "CARDINAL",
+          "context": "NASDAQ : AAPL ) - 500 shares valued at $ 125,000"
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "125,000",
+          "confidence": 0.99,
+          "spacy_label": "MONEY",
+          "context": "500 shares valued at $ 125,000  \n - Microsoft Corporation ("
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "MSFT",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "Microsoft Corporation ( NASDAQ : MSFT ) - 750 shares valued"
+        },
+        {
+          "type": "NUMBER",
+          "value": "750",
+          "confidence": 0.83,
+          "spacy_label": "CARDINAL",
+          "context": "NASDAQ : MSFT ) - 750 shares valued at $ 200,000"
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "200,000",
+          "confidence": 0.99,
+          "spacy_label": "MONEY",
+          "context": "750 shares valued at $ 200,000 \n - Tesla Inc. ("
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "Tesla Inc.",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "at $ 200,000 \n - Tesla Inc. ( NASDAQ : TSLA )"
+        },
+        {
+          "type": "STOCK_SYMBOL",
+          "value": "TSLA",
+          "confidence": 0.95,
+          "spacy_label": "STOCK_SYMBOL",
+          "context": "00,000\n- Tesla Inc. (NASDAQ: TSLA) - 100 shares valued"
+        },
+        {
+          "type": "NUMBER",
+          "value": "100",
+          "confidence": 0.83,
+          "spacy_label": "CARDINAL",
+          "context": "NASDAQ : TSLA ) - 100 shares valued at $ 75,000"
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "75,000",
+          "confidence": 0.99,
+          "spacy_label": "MONEY",
+          "context": "100 shares valued at $ 75,000 \n\n Total portfolio value :"
+        },
+        {
+          "type": "FINANCIAL_INSTRUMENT",
+          "value": "portfolio",
+          "confidence": 0.89,
+          "spacy_label": "FINANCIAL_INSTRUMENT",
+          "context": "at $ 75,000 \n\n Total portfolio value : $ 2,500,000 USD"
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "$2,500,000 USD",
+          "confidence": 0.99,
+          "spacy_label": "MONEY",
+          "context": "\n\n Total portfolio value : $ 2,500,000 USD \n Year - to -"
+        },
+        {
+          "type": "PERCENTAGE",
+          "value": "+12.5%",
+          "confidence": 0.86,
+          "spacy_label": "PERCENT",
+          "context": "to - date return : +12.5 % \n Risk assessment : Moderate"
+        },
+        {
+          "type": "NUMBER",
+          "value": "1.2",
+          "confidence": 0.83,
+          "spacy_label": "CARDINAL",
+          "context": ": Moderate ( Beta : 1.2 ) \n\n Please contact me"
+        },
+        {
+          "type": "EMAIL_ADDRESS",
+          "value": "sarah.johnson@goldmansachs.com",
+          "confidence": 0.98,
+          "spacy_label": "EMAIL",
+          "context": "contact me at sarah.johnson@goldmansachs.com or call (212)"
+        },
+        {
+          "type": "PHONE_NUMBER",
+          "value": "212) 555-0123",
+          "confidence": 0.9,
+          "spacy_label": "PHONE",
+          "context": "s.com or call (212) 555-0123 if you have an"
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "Sarah Johnson",
+          "confidence": 0.99,
+          "spacy_label": "PERSON",
+          "context": "\n\n Best regards , \n Sarah Johnson , CFA \n Senior Portfolio"
+        },
+        {
+          "type": "JOB_TITLE",
+          "value": "CFA",
+          "confidence": 0.88,
+          "spacy_label": "JOB_TITLE",
+          "context": ", \n Sarah Johnson , CFA \n Senior Portfolio Manager \n"
+        },
+        {
+          "type": "JOB_TITLE",
+          "value": "Senior Portfolio Manager",
+          "confidence": 0.95,
+          "spacy_label": "JOB_TITLE",
+          "context": "Sarah Johnson , CFA \n Senior Portfolio Manager \n Goldman Sachs Private Wealth"
+        },
+        {
+          "type": "FINANCIAL_INSTITUTION",
+          "value": "Goldman Sachs",
+          "confidence": 0.99,
+          "spacy_label": "FINANCIAL_ORG",
+          "context": "\n Senior Portfolio Manager \n Goldman Sachs Private Wealth Management \n 200"
+        },
+        {
+          "type": "NUMBER",
+          "value": "200",
+          "confidence": 0.83,
+          "spacy_label": "CARDINAL",
+          "context": "Sachs Private Wealth Management \n 200 West Street , New York"
+        },
+        {
+          "type": "LOCATION",
+          "value": "New York",
+          "confidence": 0.99,
+          "spacy_label": "GPE",
+          "context": "\n 200 West Street , New York , NY 10282"
+        },
+        {
+          "type": "LOCATION",
+          "value": "NY",
+          "confidence": 0.97,
+          "spacy_label": "GPE",
+          "context": "Street , New York , NY 10282"
+        }
+      ],
+      "contactsProcessed": 2,
+      "knowledgeElementsCreated": 36,
+      "processingTime": 3218,
+      "classification": "INVESTMENT_ADVISORY",
+      "insights": [
+        "Contains Financial Data",
+        "Compliance Related",
+        "Investment Advisory"
+      ]
+    },
+    {
+      "subject": "URGENT: Compliance Alert - Large Transaction Review Required",
+      "from": "compliance.team@morganstanley.com",
+      "date": "2024-01-16T09:15:00.000Z",
+      "entitiesExtracted": 25,
+      "entities": [
+        {
+          "type": "FINANCIAL_INSTRUMENT",
+          "value": "transaction",
+          "confidence": 0.9,
+          "spacy_label": "FINANCIAL_INSTRUMENT",
+          "context": "URGENT COMPLIANCE ALERT \n\n Large transaction detected requiring immediate review :"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "ACME Corporation",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "review : \n\n Client : ACME Corporation ( Account # : 987654321"
+        },
+        {
+          "type": "NUMBER",
+          "value": "987654321",
+          "confidence": 0.89,
+          "spacy_label": "CARDINAL",
+          "context": "Corporation ( Account # : 987654321 ) \n Transaction Type :"
+        },
+        {
+          "type": "FINANCIAL_INSTRUMENT",
+          "value": "Transaction",
+          "confidence": 0.95,
+          "spacy_label": "FINANCIAL_INSTRUMENT",
+          "context": "# : 987654321 ) \n Transaction Type : International wire transfer"
+        },
+        {
+          "type": "FINANCIAL_INSTRUMENT",
+          "value": "wire transfer",
+          "confidence": 0.9,
+          "spacy_label": "FINANCIAL_INSTRUMENT",
+          "context": "\n Transaction Type : International wire transfer \n Amount : $ 5,000,000"
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "$5,000,000 USD",
+          "confidence": 0.99,
+          "spacy_label": "MONEY",
+          "context": "wire transfer \n Amount : $ 5,000,000 USD \n Destination : Deutsche Bank"
+        },
+        {
+          "type": "FINANCIAL_INSTITUTION",
+          "value": "Deutsche Bank",
+          "confidence": 0.99,
+          "spacy_label": "FINANCIAL_ORG",
+          "context": "5,000,000 USD \n Destination : Deutsche Bank AG , Frankfurt , Germany"
+        },
+        {
+          "type": "LOCATION",
+          "value": "Frankfurt",
+          "confidence": 0.99,
+          "spacy_label": "GPE",
+          "context": ": Deutsche Bank AG , Frankfurt , Germany ( SWIFT :"
+        },
+        {
+          "type": "LOCATION",
+          "value": "Germany",
+          "confidence": 0.99,
+          "spacy_label": "GPE",
+          "context": "Bank AG , Frankfurt , Germany ( SWIFT : DEUTDEFF )"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "Tech Startup Inc.",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "Purpose : Acquisition funding for Tech Startup Inc. \n Initiated by : John"
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "John Doe",
+          "confidence": 0.98,
+          "spacy_label": "PERSON",
+          "context": "Inc. \n Initiated by : John Doe , CFO ( john.doe@acme-corp.com )"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "CFO",
+          "confidence": 0.98,
+          "spacy_label": "ORG",
+          "context": "by : John Doe , CFO ( john.doe@acme-corp.com ) \n Authorization"
+        },
+        {
+          "type": "EMAIL_ADDRESS",
+          "value": "john.doe@acme-corp.com",
+          "confidence": 0.98,
+          "spacy_label": "EMAIL",
+          "context": "John Doe, CFO (john.doe@acme-corp.com)\nAuthorization"
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "$1M",
+          "confidence": 0.98,
+          "spacy_label": "MONEY",
+          "context": ": \n - Amount exceeds $ 1 M threshold \n - International transfer"
+        },
+        {
+          "type": "ORDINAL_NUMBER",
+          "value": "First",
+          "confidence": 0.9,
+          "spacy_label": "ORDINAL",
+          "context": "- risk jurisdiction \n - First - time counterparty relationship \n"
+        },
+        {
+          "type": "FINANCIAL_INSTRUMENT",
+          "value": "Transaction",
+          "confidence": 0.95,
+          "spacy_label": "FINANCIAL_INSTRUMENT",
+          "context": "time counterparty relationship \n - Transaction outside normal business pattern \n\n"
+        },
+        {
+          "type": "TIME",
+          "value": "24 hours",
+          "confidence": 0.88,
+          "spacy_label": "TIME",
+          "context": "Review must be completed within 24 hours of this notification . \n"
+        },
+        {
+          "type": "EMAIL_ADDRESS",
+          "value": "compliance@morganstanley.com",
+          "confidence": 0.98,
+          "spacy_label": "EMAIL",
+          "context": "liance Team at compliance@morganstanley.com or (212) 555-0"
+        },
+        {
+          "type": "DATE",
+          "value": "555-0200",
+          "confidence": 0.99,
+          "spacy_label": "DATE",
+          "context": "compliance@morganstanley.com or ( 212 ) 555 - 0200 \n\n Morgan Stanley Compliance Department"
+        },
+        {
+          "type": "FINANCIAL_INSTITUTION",
+          "value": "Morgan Stanley",
+          "confidence": 0.99,
+          "spacy_label": "FINANCIAL_ORG",
+          "context": ") 555 - 0200 \n\n Morgan Stanley Compliance Department \n 1585 Broadway"
+        },
+        {
+          "type": "DATE",
+          "value": "1585",
+          "confidence": 0.99,
+          "spacy_label": "DATE",
+          "context": "Morgan Stanley Compliance Department \n 1585 Broadway , New York ,"
+        },
+        {
+          "type": "FAC",
+          "value": "Broadway",
+          "confidence": 0.93,
+          "spacy_label": "FAC",
+          "context": "Stanley Compliance Department \n 1585 Broadway , New York , NY"
+        },
+        {
+          "type": "LOCATION",
+          "value": "New York",
+          "confidence": 0.99,
+          "spacy_label": "GPE",
+          "context": "Department \n 1585 Broadway , New York , NY 10036"
+        },
+        {
+          "type": "LOCATION",
+          "value": "NY",
+          "confidence": 0.97,
+          "spacy_label": "GPE",
+          "context": "Broadway , New York , NY 10036"
+        },
+        {
+          "type": "DATE",
+          "value": "10036",
+          "confidence": 0.99,
+          "spacy_label": "DATE",
+          "context": ", New York , NY 10036"
+        }
+      ],
+      "contactsProcessed": 3,
+      "knowledgeElementsCreated": 26,
+      "processingTime": 3208,
+      "classification": "COMPLIANCE_ALERT",
+      "insights": [
+        "High Priority",
+        "Contains Financial Data",
+        "Compliance Related"
+      ]
+    },
+    {
+      "subject": "Investment Advisory - Q1 2024 Tech Sector Opportunities",
+      "from": "research.department@jpmorgan.com",
+      "date": "2024-01-17T08:00:00.000Z",
+      "entitiesExtracted": 35,
+      "entities": [
+        {
+          "type": "COMPANY_NAME",
+          "value": "Q1 2024 Technology Sector",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "Q1 2024 Technology Sector Investment Advisory \n\n Dear Valued"
+        },
+        {
+          "type": "FINANCIAL_INSTRUMENT",
+          "value": "Investment",
+          "confidence": 0.95,
+          "spacy_label": "FINANCIAL_INSTRUMENT",
+          "context": "Q1 2024 Technology Sector Investment Advisory \n\n Dear Valued Clients"
+        },
+        {
+          "type": "DATE",
+          "value": "Q1 2024",
+          "confidence": 0.99,
+          "spacy_label": "DATE",
+          "context": "in the technology sector for Q1 2024 : \n\n TOP PICKS :"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "NVIDIA Corporation",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "PICKS : \n 1 . NVIDIA Corporation ( NASDAQ : NVDA )"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "NVDA",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "NVIDIA Corporation ( NASDAQ : NVDA ) - Target price :"
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "875",
+          "confidence": 0.98,
+          "spacy_label": "MONEY",
+          "context": "- Target price : $ 875 ( +15 % upside )"
+        },
+        {
+          "type": "PERCENTAGE",
+          "value": "+15%",
+          "confidence": 0.84,
+          "spacy_label": "PERCENT",
+          "context": "price : $ 875 ( +15 % upside ) \n    • AI"
+        },
+        {
+          "type": "PERCENTAGE",
+          "value": "+200%",
+          "confidence": 0.85,
+          "spacy_label": "PERCENT",
+          "context": "Data center revenue growth : +200 % YoY \n    • Current P"
+        },
+        {
+          "type": "NUMBER",
+          "value": "45x",
+          "confidence": 0.83,
+          "spacy_label": "CARDINAL",
+          "context": "Current P / E : 45x ( vs sector avg :"
+        },
+        {
+          "type": "NUMBER",
+          "value": "25x",
+          "confidence": 0.83,
+          "spacy_label": "CARDINAL",
+          "context": "( vs sector avg : 25x ) \n\n 2 . Amazon.com"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "Amazon.com Inc.",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "25x ) \n\n 2 . Amazon.com Inc. ( NASDAQ : AMZN )"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "NASDAQ",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "2 . Amazon.com Inc. ( NASDAQ : AMZN ) - Target"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "AMZN",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "Amazon.com Inc. ( NASDAQ : AMZN ) - Target price :"
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "180",
+          "confidence": 0.98,
+          "spacy_label": "MONEY",
+          "context": "- Target price : $ 180 ( +20 % upside )"
+        },
+        {
+          "type": "PERCENTAGE",
+          "value": "15%",
+          "confidence": 0.83,
+          "spacy_label": "PERCENT",
+          "context": "• Prime membership growth : 15 % YoY \n    • Free cash"
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "35B",
+          "confidence": 0.98,
+          "spacy_label": "MONEY",
+          "context": "Free cash flow : $ 35B ( up 25 % )"
+        },
+        {
+          "type": "PERCENTAGE",
+          "value": "25%",
+          "confidence": 0.83,
+          "spacy_label": "PERCENT",
+          "context": ": $ 35B ( up 25 % ) \n\n 3 . Tesla"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "Tesla Inc.",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "% ) \n\n 3 . Tesla Inc. ( NASDAQ : TSLA )"
+        },
+        {
+          "type": "STOCK_SYMBOL",
+          "value": "TSLA",
+          "confidence": 0.95,
+          "spacy_label": "STOCK_SYMBOL",
+          "context": "25%)\n\n3. Tesla Inc. (NASDAQ: TSLA) - Target price: $27"
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "275",
+          "confidence": 0.98,
+          "spacy_label": "MONEY",
+          "context": "- Target price : $ 275 ( +35 % upside )"
+        },
+        {
+          "type": "PERCENTAGE",
+          "value": "+35%",
+          "confidence": 0.84,
+          "spacy_label": "PERCENT",
+          "context": "price : $ 275 ( +35 % upside ) \n    • Model"
+        },
+        {
+          "type": "PERCENTAGE",
+          "value": "+40%",
+          "confidence": 0.84,
+          "spacy_label": "PERCENT",
+          "context": "Energy storage business growth : +40 % QoQ \n    • Autonomous driving"
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "QoQ",
+          "confidence": 0.93,
+          "spacy_label": "PERSON",
+          "context": "business growth : +40 % QoQ \n    • Autonomous driving beta"
+        },
+        {
+          "type": "PERCENTAGE",
+          "value": "+8%",
+          "confidence": 0.83,
+          "spacy_label": "PERCENT",
+          "context": "outperformance vs S&P 500 ( +8 % vs +5 % ) \n"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "Fed",
+          "confidence": 0.98,
+          "spacy_label": "ORG",
+          "context": "+5 % ) \n - Fed rate cuts supportive of growth"
+        },
+        {
+          "type": "DATE",
+          "value": "Election year",
+          "confidence": 0.99,
+          "spacy_label": "DATE",
+          "context": "of growth stocks \n - Election year volatility : moderate risk \n\n"
+        },
+        {
+          "type": "EMAIL_ADDRESS",
+          "value": "research@jpmorgan.com",
+          "confidence": 0.98,
+          "spacy_label": "EMAIL",
+          "context": "nager or email research@jpmorgan.com for detailed a"
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "Michael Chen",
+          "confidence": 0.99,
+          "spacy_label": "PERSON",
+          "context": "detailed analysis . \n\n Dr. Michael Chen , PhD \n Chief Technology"
+        },
+        {
+          "type": "WORK_OF_ART",
+          "value": "PhD",
+          "confidence": 0.88,
+          "spacy_label": "WORK_OF_ART",
+          "context": "\n\n Dr. Michael Chen , PhD \n Chief Technology Analyst \n"
+        },
+        {
+          "type": "FINANCIAL_INSTITUTION",
+          "value": "JPMorgan",
+          "confidence": 0.99,
+          "spacy_label": "FINANCIAL_ORG",
+          "context": "\n Chief Technology Analyst \n JPMorgan Chase & Co. \n 383"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "Chase & Co.",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "Chief Technology Analyst \n JPMorgan Chase & Co. \n 383 Madison Avenue ,"
+        },
+        {
+          "type": "NUMBER",
+          "value": "383",
+          "confidence": 0.83,
+          "spacy_label": "CARDINAL",
+          "context": "JPMorgan Chase & Co. \n 383 Madison Avenue , New York"
+        },
+        {
+          "type": "LOCATION",
+          "value": "New York",
+          "confidence": 0.99,
+          "spacy_label": "GPE",
+          "context": "\n 383 Madison Avenue , New York , NY 10017 \n Phone"
+        },
+        {
+          "type": "COMPANY_NAME",
+          "value": "NY 10017",
+          "confidence": 0.99,
+          "spacy_label": "ORG",
+          "context": "Avenue , New York , NY 10017 \n Phone : ( 212"
+        },
+        {
+          "type": "PHONE_NUMBER",
+          "value": "212) 555-0301",
+          "confidence": 0.9,
+          "spacy_label": "PHONE",
+          "context": "10017\nPhone: (212) 555-0301"
+        }
+      ],
+      "contactsProcessed": 2,
+      "knowledgeElementsCreated": 36,
+      "processingTime": 3253,
+      "classification": "INVESTMENT_ADVISORY",
+      "insights": [
+        "Contains Financial Data",
+        "Investment Advisory"
+      ]
+    }
+  ],
+  "ontologyStatistics": {
+    "entityCount": 98,
+    "relationshipCount": 0,
+    "knowledgeElementCount": 98,
+    "activityCount": 0,
+    "typeDistribution": {
+      "Endurant": 0,
+      "Perdurant": 0,
+      "Quality": 0,
+      "Abstract": 98,
+      "AgentivePhysicalObject": 0,
+      "NonAgentivePhysicalObject": 0
+    }
+  },
+  "spacyCapabilities": {
+    "namedEntityRecognition": true,
+    "contextualUnderstanding": true,
+    "financialDomainPatterns": true,
+    "multilingualSupport": false,
+    "customEntityTypes": [
+      "STOCK_SYMBOL",
+      "FINANCIAL_ORG",
+      "FINANCIAL_INSTRUMENT",
+      "JOB_TITLE"
+    ]
+  }
+}

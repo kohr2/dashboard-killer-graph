@@ -15,6 +15,7 @@ interface ContactData {
   name: string;
   email: string;
   phone?: string;
+  organizationId?: string;
 }
 
 export class Contact {
@@ -22,6 +23,7 @@ export class Contact {
   private name: string;
   private email: string;
   private phone?: string;
+  public organizationId?: string;
   private createdAt: Date;
   private updatedAt: Date;
   
@@ -48,6 +50,7 @@ export class Contact {
     this.name = data.name.trim();
     this.email = data.email.toLowerCase().trim();
     this.phone = data.phone;
+    this.organizationId = data.organizationId;
     
     // Set timestamps
     const now = new Date();
@@ -106,6 +109,7 @@ export class Contact {
       name: this.name,
       email: this.email,
       phone: this.phone,
+      organizationId: this.organizationId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
     };

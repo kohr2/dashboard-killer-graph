@@ -1,0 +1,2016 @@
+{
+  "nodes": [
+    {
+      "id": "Robert Chen",
+      "label": "Robert Chen",
+      "type": "PERSON_NAME",
+      "confidence": 0.99,
+      "group": "PERSON_NAME",
+      "size": 19.8
+    },
+    {
+      "id": "senior portfolio manager",
+      "label": "senior portfolio manager",
+      "type": "JOB_TITLE",
+      "confidence": 0.9,
+      "group": "JOB_TITLE",
+      "size": 18
+    },
+    {
+      "id": "Sarah Johnson",
+      "label": "Sarah Johnson",
+      "type": "PERSON_NAME",
+      "confidence": 0.99,
+      "group": "PERSON_NAME",
+      "size": 19.8
+    },
+    {
+      "id": "CFA",
+      "label": "CFA",
+      "type": "JOB_TITLE",
+      "confidence": 0.88,
+      "group": "JOB_TITLE",
+      "size": 17.6
+    },
+    {
+      "id": "212) 555-0199",
+      "label": "212) 555-0199",
+      "type": "PHONE_NUMBER",
+      "confidence": 0.9,
+      "group": "PHONE_NUMBER",
+      "size": 18
+    },
+    {
+      "id": "quarterly",
+      "label": "quarterly",
+      "type": "DATE",
+      "confidence": 0.99,
+      "group": "DATE",
+      "size": 19.8
+    },
+    {
+      "id": "Tuesday, March 15th, 2024",
+      "label": "Tuesday, March 15th, 2024",
+      "type": "DATE",
+      "confidence": 0.99,
+      "group": "DATE",
+      "size": 19.8
+    },
+    {
+      "id": "2:00 PM EST",
+      "label": "2:00 PM EST",
+      "type": "TIME",
+      "confidence": 0.9,
+      "group": "TIME",
+      "size": 18
+    },
+    {
+      "id": "Portfolio",
+      "label": "Portfolio",
+      "type": "FINANCIAL_INSTRUMENT",
+      "confidence": 0.94,
+      "group": "FINANCIAL_INSTRUMENT",
+      "size": 18.799999999999997
+    },
+    {
+      "id": "2,850,000",
+      "label": "2,850,000",
+      "type": "MONETARY_AMOUNT",
+      "confidence": 0.99,
+      "group": "MONETARY_AMOUNT",
+      "size": 19.8
+    },
+    {
+      "id": "Goldman Sachs",
+      "label": "Goldman Sachs",
+      "type": "FINANCIAL_INSTITUTION",
+      "confidence": 0.99,
+      "group": "FINANCIAL_INSTITUTION",
+      "size": 19.8
+    },
+    {
+      "id": "AAPL",
+      "label": "AAPL",
+      "type": "COMPANY_NAME",
+      "confidence": 0.99,
+      "group": "COMPANY_NAME",
+      "size": 19.8
+    },
+    {
+      "id": "1,200",
+      "label": "1,200",
+      "type": "NUMBER",
+      "confidence": 0.85,
+      "group": "NUMBER",
+      "size": 17
+    },
+    {
+      "id": "180,000",
+      "label": "180,000",
+      "type": "MONETARY_AMOUNT",
+      "confidence": 0.99,
+      "group": "MONETARY_AMOUNT",
+      "size": 19.8
+    },
+    {
+      "id": "MSFT",
+      "label": "MSFT",
+      "type": "COMPANY_NAME",
+      "confidence": 0.99,
+      "group": "COMPANY_NAME",
+      "size": 19.8
+    },
+    {
+      "id": "800",
+      "label": "800",
+      "type": "NUMBER",
+      "confidence": 0.83,
+      "group": "NUMBER",
+      "size": 16.599999999999998
+    },
+    {
+      "id": "240,000",
+      "label": "240,000",
+      "type": "MONETARY_AMOUNT",
+      "confidence": 0.99,
+      "group": "MONETARY_AMOUNT",
+      "size": 19.8
+    },
+    {
+      "id": "NVDA",
+      "label": "NVDA",
+      "type": "COMPANY_NAME",
+      "confidence": 0.99,
+      "group": "COMPANY_NAME",
+      "size": 19.8
+    },
+    {
+      "id": "300",
+      "label": "300",
+      "type": "NUMBER",
+      "confidence": 0.83,
+      "group": "NUMBER",
+      "size": 16.599999999999998
+    },
+    {
+      "id": "210,000",
+      "label": "210,000",
+      "type": "MONETARY_AMOUNT",
+      "confidence": 0.99,
+      "group": "MONETARY_AMOUNT",
+      "size": 19.8
+    },
+    {
+      "id": "investment",
+      "label": "investment",
+      "type": "FINANCIAL_INSTRUMENT",
+      "confidence": 0.9,
+      "group": "FINANCIAL_INSTRUMENT",
+      "size": 18
+    },
+    {
+      "id": "Michael Rodriguez",
+      "label": "Michael Rodriguez",
+      "type": "PERSON_NAME",
+      "confidence": 0.99,
+      "group": "PERSON_NAME",
+      "size": 19.8
+    },
+    {
+      "id": "New York",
+      "label": "New York",
+      "type": "LOCATION",
+      "confidence": 0.99,
+      "group": "LOCATION",
+      "size": 19.8
+    },
+    {
+      "id": "NY",
+      "label": "NY",
+      "type": "LOCATION",
+      "confidence": 0.97,
+      "group": "LOCATION",
+      "size": 19.4
+    },
+    {
+      "id": "10005",
+      "label": "10005",
+      "type": "NUMBER",
+      "confidence": 0.85,
+      "group": "NUMBER",
+      "size": 17
+    },
+    {
+      "id": "Jennifer Liu",
+      "label": "Jennifer Liu",
+      "type": "PERSON_NAME",
+      "confidence": 0.99,
+      "group": "PERSON_NAME",
+      "size": 19.8
+    },
+    {
+      "id": "CAMS",
+      "label": "CAMS",
+      "type": "LOCATION",
+      "confidence": 0.99,
+      "group": "LOCATION",
+      "size": 19.8
+    },
+    {
+      "id": "jennifer.liu@goldmansachs.com",
+      "label": "jennifer.liu@goldmansachs.com",
+      "type": "EMAIL_ADDRESS",
+      "confidence": 0.98,
+      "group": "EMAIL_ADDRESS",
+      "size": 19.6
+    },
+    {
+      "id": "212) 555-0288",
+      "label": "212) 555-0288",
+      "type": "PHONE_NUMBER",
+      "confidence": 0.9,
+      "group": "PHONE_NUMBER",
+      "size": 18
+    },
+    {
+      "id": "Wire transfer",
+      "label": "Wire transfer",
+      "type": "FINANCIAL_INSTRUMENT",
+      "confidence": 0.95,
+      "group": "FINANCIAL_INSTRUMENT",
+      "size": 19
+    },
+    {
+      "id": "500,000",
+      "label": "500,000",
+      "type": "MONETARY_AMOUNT",
+      "confidence": 0.99,
+      "group": "MONETARY_AMOUNT",
+      "size": 19.8
+    },
+    {
+      "id": "JPMorgan",
+      "label": "JPMorgan",
+      "type": "FINANCIAL_INSTITUTION",
+      "confidence": 0.99,
+      "group": "FINANCIAL_INSTITUTION",
+      "size": 19.8
+    },
+    {
+      "id": "Transaction",
+      "label": "Transaction",
+      "type": "FINANCIAL_INSTRUMENT",
+      "confidence": 0.95,
+      "group": "FINANCIAL_INSTRUMENT",
+      "size": 19
+    },
+    {
+      "id": "24 hours",
+      "label": "24 hours",
+      "type": "TIME",
+      "confidence": 0.88,
+      "group": "TIME",
+      "size": 17.6
+    },
+    {
+      "id": "212) 555-0100",
+      "label": "212) 555-0100",
+      "type": "PHONE_NUMBER",
+      "confidence": 0.9,
+      "group": "PHONE_NUMBER",
+      "size": 18
+    },
+    {
+      "id": "wealth.management@goldmansachs.com",
+      "label": "wealth.management@goldmansachs.com",
+      "type": "EMAIL_ADDRESS",
+      "confidence": 0.98,
+      "group": "EMAIL_ADDRESS",
+      "size": 19.6
+    }
+  ],
+  "edges": [
+    {
+      "from": "Robert Chen",
+      "to": "senior portfolio manager",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 8,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Robert Chen",
+      "to": "Sarah Johnson",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 33,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Robert Chen",
+      "to": "CFA",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 48,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Robert Chen",
+      "to": "212) 555-0199",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 73,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Robert Chen",
+      "to": "quarterly",
+      "label": "SCHEDULED FOR",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 104,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Robert Chen",
+      "to": "Tuesday, March 15th, 2024",
+      "label": "SCHEDULED FOR",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 133,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "senior portfolio manager",
+      "to": "Sarah Johnson",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 1,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "senior portfolio manager",
+      "to": "CFA",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 16,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "senior portfolio manager",
+      "to": "212) 555-0199",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 41,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "senior portfolio manager",
+      "to": "quarterly",
+      "label": "SCHEDULED FOR",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 72,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "senior portfolio manager",
+      "to": "Tuesday, March 15th, 2024",
+      "label": "SCHEDULED FOR",
+      "weight": 0.9834999999999999,
+      "confidence": 0.9834999999999999,
+      "distance": 101,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "senior portfolio manager",
+      "to": "2:00 PM EST",
+      "label": "SCHEDULED FOR",
+      "weight": 0.97,
+      "confidence": 0.97,
+      "distance": 130,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Sarah Johnson",
+      "to": "CFA",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 2,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Sarah Johnson",
+      "to": "212) 555-0199",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 27,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Sarah Johnson",
+      "to": "quarterly",
+      "label": "SCHEDULED FOR",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 58,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Sarah Johnson",
+      "to": "Tuesday, March 15th, 2024",
+      "label": "SCHEDULED FOR",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 87,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Sarah Johnson",
+      "to": "2:00 PM EST",
+      "label": "SCHEDULED FOR",
+      "weight": 0.9834999999999999,
+      "confidence": 0.9834999999999999,
+      "distance": 116,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "CFA",
+      "to": "212) 555-0199",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 22,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "CFA",
+      "to": "quarterly",
+      "label": "SCHEDULED FOR",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 53,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "CFA",
+      "to": "Tuesday, March 15th, 2024",
+      "label": "SCHEDULED FOR",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 82,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "CFA",
+      "to": "2:00 PM EST",
+      "label": "SCHEDULED FOR",
+      "weight": 0.967,
+      "confidence": 0.967,
+      "distance": 111,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "212) 555-0199",
+      "to": "quarterly",
+      "label": "SCHEDULED FOR",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 18,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "212) 555-0199",
+      "to": "Tuesday, March 15th, 2024",
+      "label": "SCHEDULED FOR",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 47,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "212) 555-0199",
+      "to": "2:00 PM EST",
+      "label": "SCHEDULED FOR",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 76,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "212) 555-0199",
+      "to": "Portfolio",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.9759999999999999,
+      "confidence": 0.9759999999999999,
+      "distance": 137,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "quarterly",
+      "to": "Tuesday, March 15th, 2024",
+      "label": "SCHEDULED FOR",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 20,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "quarterly",
+      "to": "2:00 PM EST",
+      "label": "SCHEDULED FOR",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 49,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "quarterly",
+      "to": "Portfolio",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.9894999999999999,
+      "confidence": 0.9894999999999999,
+      "distance": 110,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "quarterly",
+      "to": "2,850,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 128,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "quarterly",
+      "to": "Goldman Sachs",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.8969999999999999,
+      "confidence": 0.8969999999999999,
+      "distance": 150,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Tuesday, March 15th, 2024",
+      "to": "2:00 PM EST",
+      "label": "SCHEDULED FOR",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 4,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Tuesday, March 15th, 2024",
+      "to": "Portfolio",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.9894999999999999,
+      "confidence": 0.9894999999999999,
+      "distance": 65,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Tuesday, March 15th, 2024",
+      "to": "2,850,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 83,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Tuesday, March 15th, 2024",
+      "to": "Goldman Sachs",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.897,
+      "confidence": 0.897,
+      "distance": 105,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "2:00 PM EST",
+      "to": "Portfolio",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.976,
+      "confidence": 0.976,
+      "distance": 50,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "2:00 PM EST",
+      "to": "2,850,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.9835,
+      "confidence": 0.9835,
+      "distance": 68,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "2:00 PM EST",
+      "to": "Goldman Sachs",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.9835,
+      "confidence": 0.9835,
+      "distance": 90,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Portfolio",
+      "to": "2,850,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 9,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Portfolio",
+      "to": "Goldman Sachs",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 31,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Portfolio",
+      "to": "AAPL",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.8895,
+      "confidence": 0.8895,
+      "distance": 112,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Portfolio",
+      "to": "1,200",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.8685,
+      "confidence": 0.8685,
+      "distance": 119,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Portfolio",
+      "to": "180,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.8895,
+      "confidence": 0.8895,
+      "distance": 143,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "2,850,000",
+      "to": "Goldman Sachs",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 13,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "2,850,000",
+      "to": "AAPL",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 94,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "2,850,000",
+      "to": "1,200",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.8759999999999999,
+      "confidence": 0.8759999999999999,
+      "distance": 101,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "2,850,000",
+      "to": "180,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.897,
+      "confidence": 0.897,
+      "distance": 125,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Goldman Sachs",
+      "to": "AAPL",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 68,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Goldman Sachs",
+      "to": "1,200",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.976,
+      "confidence": 0.976,
+      "distance": 75,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Goldman Sachs",
+      "to": "180,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 99,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Goldman Sachs",
+      "to": "MSFT",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.897,
+      "confidence": 0.897,
+      "distance": 142,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Goldman Sachs",
+      "to": "800",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.873,
+      "confidence": 0.873,
+      "distance": 149,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "AAPL",
+      "to": "1,200",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 3,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "AAPL",
+      "to": "180,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 27,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "AAPL",
+      "to": "MSFT",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 70,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "AAPL",
+      "to": "800",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.9729999999999999,
+      "confidence": 0.9729999999999999,
+      "distance": 77,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "AAPL",
+      "to": "240,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 99,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "AAPL",
+      "to": "NVDA",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.897,
+      "confidence": 0.897,
+      "distance": 141,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "AAPL",
+      "to": "300",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.973,
+      "confidence": 0.973,
+      "distance": 148,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "1,200",
+      "to": "180,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 19,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "1,200",
+      "to": "MSFT",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.976,
+      "confidence": 0.976,
+      "distance": 62,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "1,200",
+      "to": "800",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.952,
+      "confidence": 0.952,
+      "distance": 69,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "1,200",
+      "to": "240,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.976,
+      "confidence": 0.976,
+      "distance": 91,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "1,200",
+      "to": "NVDA",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.8759999999999999,
+      "confidence": 0.8759999999999999,
+      "distance": 133,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "1,200",
+      "to": "300",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.952,
+      "confidence": 0.952,
+      "distance": 140,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "180,000",
+      "to": "MSFT",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 36,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "180,000",
+      "to": "800",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 43,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "180,000",
+      "to": "240,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 65,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "180,000",
+      "to": "NVDA",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.897,
+      "confidence": 0.897,
+      "distance": 107,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "180,000",
+      "to": "300",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.973,
+      "confidence": 0.973,
+      "distance": 114,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "180,000",
+      "to": "210,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 136,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "MSFT",
+      "to": "800",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 3,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "MSFT",
+      "to": "240,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 25,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "MSFT",
+      "to": "NVDA",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 67,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "MSFT",
+      "to": "300",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 74,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "MSFT",
+      "to": "210,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 96,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "MSFT",
+      "to": "investment",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.9834999999999999,
+      "confidence": 0.9834999999999999,
+      "distance": 120,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "MSFT",
+      "to": "Michael Rodriguez",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 139,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "800",
+      "to": "240,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 19,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "800",
+      "to": "NVDA",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.9729999999999999,
+      "confidence": 0.9729999999999999,
+      "distance": 61,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "800",
+      "to": "300",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 68,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "800",
+      "to": "210,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 90,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "800",
+      "to": "investment",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.9594999999999999,
+      "confidence": 0.9594999999999999,
+      "distance": 114,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "800",
+      "to": "Michael Rodriguez",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.973,
+      "confidence": 0.973,
+      "distance": 133,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "240,000",
+      "to": "NVDA",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 35,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "240,000",
+      "to": "300",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 42,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "240,000",
+      "to": "210,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 64,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "240,000",
+      "to": "investment",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 88,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "240,000",
+      "to": "Michael Rodriguez",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 107,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "240,000",
+      "to": "New York",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 146,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "NVDA",
+      "to": "300",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 3,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "NVDA",
+      "to": "210,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 25,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "NVDA",
+      "to": "investment",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 49,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "NVDA",
+      "to": "Michael Rodriguez",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 68,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "NVDA",
+      "to": "New York",
+      "label": "BASED IN",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 107,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "300",
+      "to": "210,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 19,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "300",
+      "to": "investment",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 43,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "300",
+      "to": "Michael Rodriguez",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 62,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "300",
+      "to": "New York",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.973,
+      "confidence": 0.973,
+      "distance": 101,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "300",
+      "to": "NY",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 147,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "300",
+      "to": "10005",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.952,
+      "confidence": 0.952,
+      "distance": 150,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "210,000",
+      "to": "investment",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 17,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "210,000",
+      "to": "Michael Rodriguez",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 36,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "210,000",
+      "to": "New York",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 75,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "210,000",
+      "to": "NY",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 121,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "210,000",
+      "to": "10005",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 124,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "investment",
+      "to": "Michael Rodriguez",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 9,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "investment",
+      "to": "New York",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 48,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "investment",
+      "to": "NY",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 94,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "investment",
+      "to": "10005",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 97,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Michael Rodriguez",
+      "to": "New York",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 22,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Michael Rodriguez",
+      "to": "NY",
+      "label": "REVIEWS",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 68,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Michael Rodriguez",
+      "to": "10005",
+      "label": "REVIEWS",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 71,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Michael Rodriguez",
+      "to": "Jennifer Liu",
+      "label": "REVIEWS",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 140,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "New York",
+      "to": "NY",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 38,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "New York",
+      "to": "10005",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 41,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "New York",
+      "to": "Jennifer Liu",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 110,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "New York",
+      "to": "CAMS",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 124,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "New York",
+      "to": "jennifer.liu@goldmansachs.com",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 132,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "NY",
+      "to": "10005",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 1,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "NY",
+      "to": "Jennifer Liu",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 70,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "NY",
+      "to": "CAMS",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 84,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "NY",
+      "to": "jennifer.liu@goldmansachs.com",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 92,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "NY",
+      "to": "212) 555-0288",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 126,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "NY",
+      "to": "Wire transfer",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 142,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "10005",
+      "to": "Jennifer Liu",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 64,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "10005",
+      "to": "CAMS",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 78,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "10005",
+      "to": "jennifer.liu@goldmansachs.com",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 86,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "10005",
+      "to": "212) 555-0288",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 120,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "10005",
+      "to": "Wire transfer",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 136,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Jennifer Liu",
+      "to": "CAMS",
+      "label": "REVIEWS",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 2,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Jennifer Liu",
+      "to": "jennifer.liu@goldmansachs.com",
+      "label": "REVIEWS",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 10,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Jennifer Liu",
+      "to": "212) 555-0288",
+      "label": "REVIEWS",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 44,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Jennifer Liu",
+      "to": "Wire transfer",
+      "label": "REVIEWS",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 60,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Jennifer Liu",
+      "to": "500,000",
+      "label": "REVIEWS",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 93,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Jennifer Liu",
+      "to": "JPMorgan",
+      "label": "REVIEWS",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 104,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "CAMS",
+      "to": "jennifer.liu@goldmansachs.com",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 4,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "CAMS",
+      "to": "212) 555-0288",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 38,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "CAMS",
+      "to": "Wire transfer",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 54,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "CAMS",
+      "to": "500,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 87,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "CAMS",
+      "to": "JPMorgan",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 98,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "jennifer.liu@goldmansachs.com",
+      "to": "212) 555-0288",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 5,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "jennifer.liu@goldmansachs.com",
+      "to": "Wire transfer",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 21,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "jennifer.liu@goldmansachs.com",
+      "to": "500,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 54,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "jennifer.liu@goldmansachs.com",
+      "to": "JPMorgan",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 65,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "jennifer.liu@goldmansachs.com",
+      "to": "Transaction",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 145,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "212) 555-0288",
+      "to": "Wire transfer",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 3,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "212) 555-0288",
+      "to": "500,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 36,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "212) 555-0288",
+      "to": "JPMorgan",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 47,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "212) 555-0288",
+      "to": "Transaction",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 127,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Wire transfer",
+      "to": "500,000",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 20,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Wire transfer",
+      "to": "JPMorgan",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 31,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Wire transfer",
+      "to": "Transaction",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 111,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "500,000",
+      "to": "JPMorgan",
+      "label": "TRANSFERS TO",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 4,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "500,000",
+      "to": "Transaction",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 84,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "500,000",
+      "to": "24 hours",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.8805,
+      "confidence": 0.8805,
+      "distance": 150,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "JPMorgan",
+      "to": "Transaction",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 72,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "JPMorgan",
+      "to": "24 hours",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.9805,
+      "confidence": 0.9805,
+      "distance": 138,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "Transaction",
+      "to": "24 hours",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.9744999999999999,
+      "confidence": 0.9744999999999999,
+      "distance": 55,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "24 hours",
+      "to": "212) 555-0100",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.867,
+      "confidence": 0.867,
+      "distance": 106,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "24 hours",
+      "to": "wealth.management@goldmansachs.com",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.879,
+      "confidence": 0.879,
+      "distance": 127,
+      "color": "#4CAF50"
+    },
+    {
+      "from": "212) 555-0100",
+      "to": "wealth.management@goldmansachs.com",
+      "label": "ASSOCIATED WITH",
+      "weight": 0.99,
+      "confidence": 0.99,
+      "distance": 8,
+      "color": "#4CAF50"
+    }
+  ],
+  "clusters": [
+    {
+      "id": "person_cluster_Robert_Chen",
+      "name": "Robert Chen Network",
+      "type": "PERSON_NETWORK",
+      "nodes": [
+        "Robert Chen",
+        "senior portfolio manager",
+        "Sarah Johnson",
+        "CFA",
+        "212) 555-0199",
+        "quarterly",
+        "Tuesday, March 15th, 2024"
+      ],
+      "strength": 0.16666666666666666
+    },
+    {
+      "id": "person_cluster_Sarah_Johnson",
+      "name": "Sarah Johnson Network",
+      "type": "PERSON_NETWORK",
+      "nodes": [
+        "Sarah Johnson",
+        "Robert Chen",
+        "senior portfolio manager",
+        "CFA",
+        "212) 555-0199",
+        "quarterly",
+        "Tuesday, March 15th, 2024",
+        "2:00 PM EST"
+      ],
+      "strength": 0.19444444444444445
+    },
+    {
+      "id": "person_cluster_Michael_Rodriguez",
+      "name": "Michael Rodriguez Network",
+      "type": "PERSON_NETWORK",
+      "nodes": [
+        "Michael Rodriguez",
+        "MSFT",
+        "800",
+        "240,000",
+        "NVDA",
+        "300",
+        "210,000",
+        "investment",
+        "New York",
+        "NY",
+        "10005",
+        "Jennifer Liu"
+      ],
+      "strength": 0.3055555555555556
+    },
+    {
+      "id": "person_cluster_Jennifer_Liu",
+      "name": "Jennifer Liu Network",
+      "type": "PERSON_NETWORK",
+      "nodes": [
+        "Jennifer Liu",
+        "Michael Rodriguez",
+        "New York",
+        "NY",
+        "10005",
+        "CAMS",
+        "jennifer.liu@goldmansachs.com",
+        "212) 555-0288",
+        "Wire transfer",
+        "500,000",
+        "JPMorgan"
+      ],
+      "strength": 0.2777777777777778
+    },
+    {
+      "id": "org_cluster_Goldman_Sachs",
+      "name": "Goldman Sachs Network",
+      "type": "ORGANIZATION_NETWORK",
+      "nodes": [
+        "Goldman Sachs",
+        "quarterly",
+        "Tuesday, March 15th, 2024",
+        "2:00 PM EST",
+        "Portfolio",
+        "2,850,000",
+        "AAPL",
+        "1,200",
+        "180,000",
+        "MSFT",
+        "800"
+      ],
+      "strength": 0.2777777777777778
+    },
+    {
+      "id": "org_cluster_AAPL",
+      "name": "AAPL Network",
+      "type": "ORGANIZATION_NETWORK",
+      "nodes": [
+        "AAPL",
+        "Portfolio",
+        "2,850,000",
+        "Goldman Sachs",
+        "1,200",
+        "180,000",
+        "MSFT",
+        "800",
+        "240,000",
+        "NVDA",
+        "300"
+      ],
+      "strength": 0.2777777777777778
+    },
+    {
+      "id": "org_cluster_MSFT",
+      "name": "MSFT Network",
+      "type": "ORGANIZATION_NETWORK",
+      "nodes": [
+        "MSFT",
+        "Goldman Sachs",
+        "AAPL",
+        "1,200",
+        "180,000",
+        "800",
+        "240,000",
+        "NVDA",
+        "300",
+        "210,000",
+        "investment",
+        "Michael Rodriguez"
+      ],
+      "strength": 0.3055555555555556
+    },
+    {
+      "id": "org_cluster_NVDA",
+      "name": "NVDA Network",
+      "type": "ORGANIZATION_NETWORK",
+      "nodes": [
+        "NVDA",
+        "AAPL",
+        "1,200",
+        "180,000",
+        "MSFT",
+        "800",
+        "240,000",
+        "300",
+        "210,000",
+        "investment",
+        "Michael Rodriguez",
+        "New York"
+      ],
+      "strength": 0.3055555555555556
+    },
+    {
+      "id": "org_cluster_JPMorgan",
+      "name": "JPMorgan Network",
+      "type": "ORGANIZATION_NETWORK",
+      "nodes": [
+        "JPMorgan",
+        "Jennifer Liu",
+        "CAMS",
+        "jennifer.liu@goldmansachs.com",
+        "212) 555-0288",
+        "Wire transfer",
+        "500,000",
+        "Transaction",
+        "24 hours"
+      ],
+      "strength": 0.2222222222222222
+    },
+    {
+      "id": "financial_cluster",
+      "name": "Financial Network",
+      "type": "FINANCIAL_NETWORK",
+      "nodes": [
+        "Portfolio",
+        "2,850,000",
+        "180,000",
+        "240,000",
+        "210,000",
+        "investment",
+        "Wire transfer",
+        "500,000",
+        "Transaction",
+        "212) 555-0199",
+        "quarterly",
+        "Tuesday, March 15th, 2024",
+        "2:00 PM EST",
+        "2,850,000",
+        "Goldman Sachs",
+        "AAPL",
+        "1,200",
+        "180,000",
+        "quarterly",
+        "Tuesday, March 15th, 2024",
+        "2:00 PM EST",
+        "Portfolio",
+        "Goldman Sachs",
+        "AAPL",
+        "1,200",
+        "180,000",
+        "Portfolio",
+        "2,850,000",
+        "Goldman Sachs",
+        "AAPL",
+        "1,200",
+        "MSFT",
+        "800",
+        "240,000",
+        "NVDA",
+        "300",
+        "210,000",
+        "AAPL",
+        "1,200",
+        "180,000",
+        "MSFT",
+        "800",
+        "NVDA",
+        "300",
+        "210,000",
+        "investment",
+        "Michael Rodriguez",
+        "New York",
+        "180,000",
+        "MSFT",
+        "800",
+        "240,000",
+        "NVDA",
+        "300",
+        "investment",
+        "Michael Rodriguez",
+        "New York",
+        "NY",
+        "10005",
+        "MSFT",
+        "800",
+        "240,000",
+        "NVDA",
+        "300",
+        "210,000",
+        "Michael Rodriguez",
+        "New York",
+        "NY",
+        "10005",
+        "NY",
+        "10005",
+        "Jennifer Liu",
+        "CAMS",
+        "jennifer.liu@goldmansachs.com",
+        "212) 555-0288",
+        "500,000",
+        "JPMorgan",
+        "Transaction",
+        "Jennifer Liu",
+        "CAMS",
+        "jennifer.liu@goldmansachs.com",
+        "212) 555-0288",
+        "Wire transfer",
+        "JPMorgan",
+        "Transaction",
+        "24 hours",
+        "jennifer.liu@goldmansachs.com",
+        "212) 555-0288",
+        "Wire transfer",
+        "500,000",
+        "JPMorgan",
+        "24 hours"
+      ],
+      "strength": 0.25
+    }
+  ],
+  "metadata": {
+    "totalEntities": 36,
+    "totalRelationships": 161,
+    "totalClusters": 10,
+    "averageConfidence": 0.9776583850931673
+  }
+}

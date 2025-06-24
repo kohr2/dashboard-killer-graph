@@ -1,0 +1,189 @@
+{
+  "timestamp": "2025-06-24T19:15:09.288Z",
+  "summary": {
+    "totalEmails": 3,
+    "totalEntities": 24,
+    "totalContacts": 6,
+    "totalKnowledgeElements": 27
+  },
+  "emailAnalysis": [
+    {
+      "subject": "Portfolio Review Meeting - Goldman Sachs Holdings",
+      "from": "sarah.johnson@goldmansachs.com",
+      "date": "2024-01-15T14:30:00.000Z",
+      "entitiesExtracted": 12,
+      "entities": [
+        {
+          "type": "COMPANY_NAME",
+          "value": "Goldman Sachs Group",
+          "confidence": 0.8
+        },
+        {
+          "type": "STOCK_SYMBOL",
+          "value": "GS",
+          "confidence": 0.9
+        },
+        {
+          "type": "STOCK_SYMBOL",
+          "value": "AAPL",
+          "confidence": 0.9
+        },
+        {
+          "type": "STOCK_SYMBOL",
+          "value": "MSFT",
+          "confidence": 0.9
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "$350,000",
+          "confidence": 0.85
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "$125,000",
+          "confidence": 0.85
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "$200,000",
+          "confidence": 0.85
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "$2,500,000",
+          "confidence": 0.85
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "Dear Mr",
+          "confidence": 0.7
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "Goldman Sachs",
+          "confidence": 0.7
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "Sarah Johnson",
+          "confidence": 0.7
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "Senior Portfolio",
+          "confidence": 0.7
+        }
+      ],
+      "contactsProcessed": 2,
+      "knowledgeElementsCreated": 13,
+      "classification": "INVESTMENT_ADVISORY",
+      "insights": [
+        "Contains Financial Data",
+        "Compliance Related",
+        "Investment Advisory"
+      ]
+    },
+    {
+      "subject": "Compliance Alert - Transaction Review Required",
+      "from": "compliance@morganstanley.com",
+      "date": "2024-01-16T09:15:00.000Z",
+      "entitiesExtracted": 4,
+      "entities": [
+        {
+          "type": "COMPANY_NAME",
+          "value": "Deutsche Bank AG",
+          "confidence": 0.8
+        },
+        {
+          "type": "MONETARY_AMOUNT",
+          "value": "$5,000,000",
+          "confidence": 0.85
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "Compliance Review",
+          "confidence": 0.7
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "Compliance Team",
+          "confidence": 0.7
+        }
+      ],
+      "contactsProcessed": 2,
+      "knowledgeElementsCreated": 5,
+      "classification": "COMPLIANCE_ALERT",
+      "insights": [
+        "High Priority",
+        "Contains Financial Data",
+        "Compliance Related"
+      ]
+    },
+    {
+      "subject": "Investment Advisory - Tech Sector Opportunities",
+      "from": "research@jpmorgan.com",
+      "date": "2024-01-17T08:00:00.000Z",
+      "entitiesExtracted": 8,
+      "entities": [
+        {
+          "type": "COMPANY_NAME",
+          "value": "NVIDIA Corporation",
+          "confidence": 0.8
+        },
+        {
+          "type": "STOCK_SYMBOL",
+          "value": "NVDA",
+          "confidence": 0.9
+        },
+        {
+          "type": "STOCK_SYMBOL",
+          "value": "AMZN",
+          "confidence": 0.9
+        },
+        {
+          "type": "STOCK_SYMBOL",
+          "value": "TSLA",
+          "confidence": 0.9
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "Tech Sector",
+          "confidence": 0.7
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "Weekly Update",
+          "confidence": 0.7
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "Key Opportunities",
+          "confidence": 0.7
+        },
+        {
+          "type": "PERSON_NAME",
+          "value": "Research Team",
+          "confidence": 0.7
+        }
+      ],
+      "contactsProcessed": 2,
+      "knowledgeElementsCreated": 9,
+      "classification": "MARKET_RESEARCH",
+      "insights": []
+    }
+  ],
+  "ontologyStatistics": {
+    "entityCount": 27,
+    "relationshipCount": 0,
+    "knowledgeElementCount": 27,
+    "activityCount": 0,
+    "typeDistribution": {
+      "Endurant": 0,
+      "Perdurant": 0,
+      "Quality": 0,
+      "Abstract": 27,
+      "AgentivePhysicalObject": 0,
+      "NonAgentivePhysicalObject": 0
+    }
+  }
+}

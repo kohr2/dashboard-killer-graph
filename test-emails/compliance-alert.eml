@@ -1,0 +1,78 @@
+Message-ID: <compliance-alert-003@bank.com>
+From: "Risk Management" <risk@globalbank.com>
+To: "Compliance Team" <compliance@globalbank.com>
+CC: "John Smith" <john.smith@globalbank.com>, "Maria Rodriguez" <maria.rodriguez@globalbank.com>
+Subject: URGENT: Large Transaction Alert - Enhanced Due Diligence Required
+Date: Wed, 17 Mar 2024 09:15:00 -0400
+X-Priority: 1
+Content-Type: text/plain; charset=UTF-8
+
+COMPLIANCE ALERT - IMMEDIATE ACTION REQUIRED
+
+Alert ID: COMP-2024-0317-001
+Generated: March 17, 2024 09:15 EST
+Classification: Large Transaction Monitoring
+
+TRANSACTION SUMMARY:
+==================
+Client: Offshore Holdings Ltd.
+Account: 987654321
+Transaction Type: Wire Transfer (Incoming)
+Amount: $2,750,000 USD
+Originating Bank: Cayman National Bank
+BIC/SWIFT: CNBACAYK
+Reference: WT-2024-789456
+
+ALERT TRIGGERS:
+==============
+1. Transaction amount exceeds $1M threshold
+2. Originating jurisdiction: Cayman Islands (High-risk)
+3. Client risk rating: Medium-High
+4. Unusual transaction pattern detected
+
+ENHANCED DUE DILIGENCE REQUIREMENTS:
+===================================
+- Source of funds verification required
+- Beneficial ownership confirmation needed
+- PEP (Politically Exposed Person) screening
+- Sanctions list checking (OFAC, EU, UN)
+- FATCA reporting assessment
+
+REGULATORY CONSIDERATIONS:
+=========================
+- BSA/AML reporting may be required
+- CTR filing threshold exceeded ($10K+)
+- SAR consideration if suspicious activity identified
+- FINCEN 314(a) request may be necessary
+
+RISK INDICATORS:
+===============
+- Geographic risk: High (Cayman Islands)
+- Transaction risk: Medium-High ($2.75M)
+- Client risk: Medium-High
+- Overall risk score: 7.8/10
+
+IMMEDIATE ACTIONS REQUIRED:
+==========================
+1. Hold transaction pending review
+2. Contact client for source of funds documentation
+3. Perform enhanced customer due diligence (EDD)
+4. Review transaction purpose and business rationale
+5. Complete risk assessment within 24 hours
+
+COMPLIANCE DEADLINES:
+====================
+- Initial review: March 17, 2024 17:00 EST
+- EDD completion: March 18, 2024 17:00 EST
+- Regulatory filing (if required): March 19, 2024
+
+Contact Information:
+Risk Management: +1-212-555-0789
+Compliance Hotline: +1-212-555-0999
+Case Manager: John Smith (ext. 1234)
+
+This alert is confidential and subject to attorney-client privilege.
+Do not forward without authorization.
+
+Global Bank Risk Management Department
+Licensed by OCC, Member FDIC
