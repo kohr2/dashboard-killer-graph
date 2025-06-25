@@ -4,7 +4,8 @@ const { compilerOptions } = require('../tsconfig.json');
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['<rootDir>/../src', '<rootDir>/../test'],
+  rootDir: '..',
+  roots: ['<rootDir>/src', '<rootDir>/test'],
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
@@ -16,11 +17,7 @@ module.exports = {
     '!src/**/*.d.ts',
     '!src/**/index.ts'
   ],
-  coverageDirectory: '../coverage',
-  coverageReporters: ['text', 'lcov'],
-  verbose: true,
   clearMocks: true,
   restoreMocks: true,
-  errorOnDeprecated: true,
-  testTimeout: 10000
+  errorOnDeprecated: true
 }; 

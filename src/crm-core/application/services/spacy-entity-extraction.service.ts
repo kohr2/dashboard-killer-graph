@@ -12,6 +12,7 @@ export interface SpacyExtractedEntity {
   context: string;
   spacyLabel: string;
   metadata?: Record<string, any>;
+  source?: string;
 }
 
 export enum EntityType {

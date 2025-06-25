@@ -24,12 +24,24 @@ class ExtractionRequest(BaseModel):
 class Entity(BaseModel):
     type: str
     value: str
-    confidence: float
+    confidence: Optional[float] = None
     # Optional fields for the refined model
     start: Optional[int] = None
     end: Optional[int] = None
     spacy_label: Optional[str] = None
     context: Optional[str] = None
+
+class Relationship(BaseModel):
+    source: str
+    target: str
+    type: str
+    confidence: Optional[float] = None
+    explanation: Optional[str] = None
+
+class GraphResponse(BaseModel):
+    entities: List[Entity]
+    relationships: List[Relationship]
+    refinement_info: str
 
 class RefinedExtractionResponse(BaseModel):
     raw_entities: List[Entity]
@@ -77,6 +89,66 @@ class SpacyEntityExtractor:
     def _map_entity_label(self, spacy_label: str) -> str:
         mapping = { "PERSON": "PERSON_NAME", "ORG": "COMPANY_NAME", "GPE": "LOCATION", "MONEY": "MONETARY_AMOUNT" }
         return mapping.get(spacy_label, spacy_label)
+
+# --- LLM Graph Extraction Logic ---
+def extract_graph_with_llm(text: str, spacy_entities: List[Dict]) -> Dict[str, Any]:
+    if not client:
+        raise HTTPException(status_code=503, detail="OpenAI client not configured.")
+
+    entities_json_str = json.dumps(spacy_entities, indent=2)
+
+    prompt = f"""
+    You are a financial analyst creating a knowledge graph from an email.
+    Your task is to perform two steps:
+    1.  **Clean Entities**: Review the provided list of entities and remove any that are clearly incorrect (e.g., greetings like "Hi Team", generic terms like "the deal"). Each entity in the output list MUST be a JSON object containing `type`, `value`, and a `confidence` score (e.g., 0.9).
+    2.  **Extract Relationships**: Identify meaningful relationships between the cleaned entities. The relationship type should be a standard verb phrase in uppercase snake_case (e.g., WORKS_FOR, ACQUIRED, INVESTED_IN). Each relationship MUST be a JSON object with `source`, `target`, `type`, `explanation`, and a `confidence` score (e.g., 0.9).
+
+    Return a valid JSON object with two keys:
+    -   `"cleaned_entities"`: A list of JSON objects, where each object is an entity.
+    -   `"relationships"`: A list of relationships. The source and target must be values from the cleaned entities list.
+
+    **Original Text:**
+    ---
+    {text}
+    ---
+
+    **Entities JSON:**
+    ---
+    {entities_json_str}
+    ---
+    """
+    
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0,
+            response_format={"type": "json_object"}
+        )
+        
+        response_str = response.choices[0].message.content
+        if response_str:
+            graph_data = json.loads(response_str)
+            # Validate and fix the structure if needed
+            if isinstance(graph_data, dict):
+                entities = graph_data.get("cleaned_entities", [])
+                relationships = graph_data.get("relationships", [])
+
+                # Add default confidence if missing
+                for entity in entities:
+                    if isinstance(entity, dict) and "confidence" not in entity:
+                        entity["confidence"] = 0.9
+                for rel in relationships:
+                    if isinstance(rel, dict) and "confidence" not in rel:
+                        rel["confidence"] = 0.9
+                
+                return {"cleaned_entities": entities, "relationships": relationships}
+        
+        # Return a default empty structure if parsing fails
+        return {"cleaned_entities": [], "relationships": []}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"LLM graph extraction error: {str(e)}")
 
 # --- LLM Refinement Logic ---
 def refine_entities_with_llm(text: str, spacy_entities: List[Dict]) -> List[Dict]:
@@ -167,6 +239,24 @@ async def refine_entities_endpoint(request: ExtractionRequest):
         "raw_entities": raw_entities,
         "refined_entities": refined_entities,
         "refinement_info": f"Refined {len(raw_entities)} raw entities down to {len(refined_entities)}."
+    }
+
+@app.post("/extract-graph", response_model=GraphResponse, summary="Extract Entities and Relationships with LLM")
+async def extract_graph_endpoint(request: ExtractionRequest):
+    """
+    Extracts entities, refines them, and extracts relationships between them to build a graph.
+    - **text**: The input string to process.
+    """
+    # Step 1: Raw extraction with spaCy
+    raw_entities = extractor.extract_entities(request.text)
+    
+    # Step 2: Extract graph (entities + relationships) with LLM
+    graph_data = extract_graph_with_llm(request.text, raw_entities)
+    
+    return {
+        "entities": graph_data.get("cleaned_entities", []),
+        "relationships": graph_data.get("relationships", []),
+        "refinement_info": f"Extracted {len(graph_data.get('cleaned_entities', []))} entities and {len(graph_data.get('relationships', []))} relationships."
     }
 
 @app.get("/health")

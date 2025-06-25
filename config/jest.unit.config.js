@@ -18,5 +18,7 @@ module.exports = {
     }
   },
   coverageReporters: ['text', 'lcov', 'html'],
-  setupFilesAfterEnv: ['<rootDir>/../test/setup.ts']
+  setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
+  verbose: true,
+  testTimeout: 10000
 }; 

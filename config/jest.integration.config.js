@@ -2,7 +2,7 @@ module.exports = {
   ...require('./jest.base.config.js'),
   displayName: 'Integration Tests',
   testMatch: ['**/test/integration/**/*.test.ts'],
-  setupFilesAfterEnv: ['<rootDir>/../test/setup-integration.ts'],
+  setupFilesAfterEnv: ['<rootDir>/test/setup-integration.ts'],
   testTimeout: 30000,
   maxWorkers: 1, // Run integration tests sequentially
   collectCoverageFrom: [
@@ -18,5 +18,6 @@ module.exports = {
       lines: 75,
       statements: 75
     }
-  }
+  },
+  verbose: true
 }; 

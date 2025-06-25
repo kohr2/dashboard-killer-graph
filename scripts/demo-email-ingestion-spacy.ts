@@ -6,6 +6,7 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 import { simpleParser } from 'mailparser';
 import axios from 'axios';
+import { writeFileSync } from 'fs';
 
 // Simplified interface to match the service output
 interface SpacyEmailProcessingResult {
@@ -21,11 +22,22 @@ interface SpacyEmailProcessingResult {
   processingTime: number;
 }
 
+// New structure for the final report
+interface HybridReport {
+  mergedEntities: SpacyExtractedEntity[];
+  llmResults: {
+    relationships: any[];
+  };
+}
+
 async function demonstrateSpacyEmailIngestionPipeline() {
-  console.log('📧 Email Ingestion Pipeline Demo - LLM Refined Version');
-  console.log('=' .repeat(100));
+  console.log('📧 Email Ingestion Pipeline Demo - Full Flow to JSON');
+  console.log('='.repeat(100));
 
   const nlpServiceUrl = 'http://localhost:8000';
+  const reportPath = join(process.cwd(), 'hybrid-extraction-report.json');
+  const allExtractedEntities: SpacyExtractedEntity[] = [];
+  const allRelationships: any[] = [];
   
   console.log('\n🧠 Testing NLP microservice connection...');
   try {
@@ -63,27 +75,65 @@ async function demonstrateSpacyEmailIngestionPipeline() {
     }
 
     try {
-        console.log("   [4] Sending request to /refine-entities...");
-        const response = await axios.post(`${nlpServiceUrl}/refine-entities`, { text: emailBody }, { timeout: 30000 });
+        console.log("   [4] Sending request to /extract-graph...");
+        const response = await axios.post(`${nlpServiceUrl}/extract-graph`, { text: emailBody }, { timeout: 60000 }); // 60 second timeout
         console.log("   [5] Received response from service.");
         
-        const { raw_entities, refined_entities } = response.data;
+        const { entities, relationships } = response.data;
 
-        console.log("\n\n--- FINAL RESULT ---");
-        console.log(`\n🧠 Raw Entities Extracted (${raw_entities.length}):`);
-        displayEntities(raw_entities);
+        console.log(`\n✨ Found ${entities.length} entities and ${relationships.length} relationships:`);
+        displayEntities(entities);
+        if (relationships.length > 0) {
+            console.log('  • Relationships:');
+            relationships.forEach((r: any) => {
+                console.log(`    - (${r.source}) -> [${r.type}] -> (${r.target})`);
+            });
+        }
         
-        console.log(`\n✨ LLM Refined Entities (${refined_entities.length}):`);
-        displayEntities(refined_entities);
+        // Add entities to the master list
+        entities.forEach((entity: SpacyExtractedEntity) => {
+            allExtractedEntities.push({
+                ...entity,
+                source: emailFile // Add source email to the entity
+            });
+        });
+        
+        // Add relationships to the master list
+        allRelationships.push(...relationships);
 
     } catch (error: any) {
       if (axios.isCancel(error)) {
-        console.error(`   ❌ Request timed out after 30 seconds.`);
+        console.error(`   ❌ Request timed out after 60 seconds.`);
       } else {
-        console.error(`   ❌ Error calling refinement service:`, error.response?.data?.detail || error.message);
+        console.error(`   ❌ Error calling graph extraction service:`, error.response?.data?.detail || error.message);
       }
     }
   }
+
+  // Deduplicate entities based on value and type
+  const entityMap = new Map<string, SpacyExtractedEntity>();
+  allExtractedEntities.forEach(entity => {
+      const key = `${entity.value}|${entity.type}`;
+      if (!entityMap.has(key)) {
+          entityMap.set(key, entity);
+      }
+  });
+  const mergedEntities = Array.from(entityMap.values());
+
+  const finalReport: HybridReport = {
+    mergedEntities: mergedEntities,
+    llmResults: {
+      relationships: allRelationships,
+    },
+  };
+
+  console.log('\n' + '='.repeat(100));
+  console.log('✅ All emails processed. Generating final report...');
+  writeFileSync(reportPath, JSON.stringify(finalReport, null, 2));
+  console.log(`   📄 Report saved to: ${reportPath}`);
+  console.log(`   📊 Total unique entities found: ${mergedEntities.length}`);
+  console.log(`   🔗 Total relationships found: ${allRelationships.length}`);
+  console.log('='.repeat(100));
 
   console.log('\n\n🎉 Demo Complete!');
 }

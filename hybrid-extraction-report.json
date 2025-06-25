@@ -1,0 +1,2253 @@
+{
+  "mergedEntities": [
+    {
+      "type": "WORK_OF_ART",
+      "value": "Project Helix",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "01-helix-sourcing.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "HelixFlow Solutions",
+      "confidence": 0.9,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "01-helix-sourcing.eml"
+    },
+    {
+      "type": "SECTOR",
+      "value": "Application Software",
+      "confidence": 0.9,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "01-helix-sourcing.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$40M",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "01-helix-sourcing.eml"
+    },
+    {
+      "type": "PERCENT",
+      "value": "80%",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "01-helix-sourcing.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Vista Equity Partners",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "01-helix-sourcing.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "David Chen",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "01-helix-sourcing.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Morgan Stanley Technology Group",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "01-helix-sourcing.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Project Helix",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "02-helix-follow-up.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Bob",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "02-helix-follow-up.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "David",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "02-helix-follow-up.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Jane Miller",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "02-helix-follow-up.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "15 Jan 2025 09:00:00",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "03-blueowl-history-deal1.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Blue Owl Capital",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "03-blueowl-history-deal1.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Nightingale Health Services",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "03-blueowl-history-deal1.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$450M Enterprise Value",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "03-blueowl-history-deal1.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Project Gotham",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "04-gotham-nda-status.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Gotham Security's",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "04-gotham-nda-status.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Lisa",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "04-gotham-nda-status.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Project Apex",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "05-blackstone-follow-up-task.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Blackstone",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "05-blackstone-follow-up-task.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Sarah",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "05-blackstone-follow-up-task.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Tom",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "05-blackstone-follow-up-task.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Audax Private Equity",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "06-audax-history-deal1.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Forge Industrial",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "06-audax-history-deal1.eml"
+    },
+    {
+      "type": "SECTOR",
+      "value": "Industrial Machinery",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "06-audax-history-deal1.eml"
+    },
+    {
+      "type": "WORK_OF_ART",
+      "value": "Project Anvil",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "07-new-deal-for-audax-likelihood.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Anvil Fasteners Inc.",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "07-new-deal-for-audax-likelihood.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$60M",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "07-new-deal-for-audax-likelihood.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Audax",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "07-new-deal-for-audax-likelihood.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Jane",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "08-helix-competitive-intel.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Blue Owl",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "09-blueowl-history-deal2.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Compass Payments",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "09-blueowl-history-deal2.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$120M",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "09-blueowl-history-deal2.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "Jul 2025",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "10-gotham-nda-executed.eml"
+    },
+    {
+      "type": "TIME",
+      "value": "16:45:00",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "10-gotham-nda-executed.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Gotham Security",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "10-gotham-nda-executed.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "Fri, 12 Jul 2025",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "11-helix-loi-submitted.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "500M",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "11-helix-loi-submitted.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "30-day",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "11-helix-loi-submitted.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Morgan Stanley",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "11-helix-loi-submitted.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "early next week",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "11-helix-loi-submitted.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "Tue, 05 Nov 2024",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "12-blueowl-history-deal3-passed.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Project Jetstream",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "12-blueowl-history-deal3-passed.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Mike",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "12-blueowl-history-deal3-passed.eml"
+    },
+    {
+      "type": "LOCATION",
+      "value": "BOSTON",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "13-audax-wins-anvil-deal.eml"
+    },
+    {
+      "type": "LOCATION",
+      "value": "MA",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "13-audax-wins-anvil-deal.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Project Anvil",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "13-audax-wins-anvil-deal.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Tactical Opportunities",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "15-blackstone-logistics-deal.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "BXTO",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "15-blackstone-logistics-deal.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$250 million",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "15-blackstone-logistics-deal.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "LogiChain Solutions",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "15-blackstone-logistics-deal.eml"
+    },
+    {
+      "type": "WORK_OF_ART",
+      "value": "Project Lifeline",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "16-blueowl-similar-deal.eml"
+    },
+    {
+      "type": "WORK_OF_ART",
+      "value": "Project Nightingale",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "16-blueowl-similar-deal.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Lifeline Home Health Group",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "16-blueowl-similar-deal.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Rick",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "17-gotham-diligence-kickoff.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Thoma Bravo",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "17-gotham-diligence-kickoff.eml"
+    },
+    {
+      "type": "WORK_OF_ART",
+      "value": "Project Evergreen",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "18-audax-history-deal2-passed.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Pete",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "18-audax-history-deal2-passed.eml"
+    },
+    {
+      "type": "LOCATION",
+      "value": "SAN FRANCISCO",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "19-gotham-deal-won.eml"
+    },
+    {
+      "type": "FAC",
+      "value": "Project Apex",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "20-blackstone-follow-up-complete.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Offshore Holdings Ltd.",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "compliance-alert.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$2,750,000 USD",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "compliance-alert.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Cayman National Bank",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "compliance-alert.eml"
+    },
+    {
+      "type": "LOCATION",
+      "value": "Cayman Islands",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "compliance-alert.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "OFAC",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "compliance-alert.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "EU",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "compliance-alert.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "UN",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "compliance-alert.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "FATCA",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "compliance-alert.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "AML",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "compliance-alert.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "John Smith",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "compliance-alert.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Global Bank Risk Management Department",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "compliance-alert.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "OCC",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "compliance-alert.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "FDIC",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "compliance-alert.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Project Titan",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "deal-sourcing-tech-buyout.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Titan Industrial Analytics",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "deal-sourcing-tech-buyout.eml"
+    },
+    {
+      "type": "SECTOR",
+      "value": "Technology",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "deal-sourcing-tech-buyout.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$85M",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "deal-sourcing-tech-buyout.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$22M",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "deal-sourcing-tech-buyout.eml"
+    },
+    {
+      "type": "PERCENT",
+      "value": "25.9%",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "deal-sourcing-tech-buyout.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Claudia Gomez",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "deal-sourcing-tech-buyout.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Global TMT Group",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "deal-sourcing-tech-buyout.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "Jun 2025",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "fwd-nda-and-cim-request.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Claudia",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "fwd-nda-and-cim-request.eml"
+    },
+    {
+      "type": "WORK_OF_ART",
+      "value": "Example Capital Partners V",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "fwd-nda-and-cim-request.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "26 Jun 2025",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "internal-strategy-audax-bid.eml"
+    },
+    {
+      "type": "CARDINAL",
+      "value": "8.0x - 9.0x EBITDA",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "internal-strategy-audax-bid.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "2025-07-10",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "internal-strategy-audax-bid.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Example Capital Partners V",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "internal-strategy-audax-bid.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Johnson",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "Q1 2024",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "2,750,000",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "PERCENT",
+      "value": "65%",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "PERCENT",
+      "value": "25%",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "PERCENT",
+      "value": "10%",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "PERCENT",
+      "value": "+7.1%",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "FINANCIAL_ORG",
+      "value": "Goldman Sachs",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "GS",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "350.25",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "PERCENT",
+      "value": "3.5%",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "96,250",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Apple Inc.",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "415.50",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "450",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "LOCATION",
+      "value": "U.S.",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "CARDINAL",
+      "value": "912828XG0",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "PERCENT",
+      "value": "4.2%",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "275,000",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "500,000",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "CARDINAL",
+      "value": "1.0845",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "CARDINAL",
+      "value": "0.95",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "45,000",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "CARDINAL",
+      "value": "1.34",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "CARDINAL",
+      "value": "0.78",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "CARDINAL",
+      "value": "0.65",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "LAW",
+      "value": "MiFID II",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Sarah Chen",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Morgan Stanley Investment Management",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "investment-advisory.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "David Kim",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "TechStart Inc.",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$5,000,000 USD",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "March 10, 2024",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$12,500,000",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$8,750,000",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$2,800,000",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$1,950,000",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$2,450,000",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "LOCATION",
+      "value": "Austin",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$3,200,000",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$1,800,000",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "$950,000",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "CARDINAL",
+      "value": "785",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Jennifer Martinez",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Wells Fargo Bank",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "loan-application.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Financial Advisory Team",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "meeting-request.eml"
+    },
+    {
+      "type": "CARDINAL",
+      "value": "Q2",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "meeting-request.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "1,850,000",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "meeting-request.eml"
+    },
+    {
+      "type": "PERCENT",
+      "value": "70%",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "meeting-request.eml"
+    },
+    {
+      "type": "PERCENT",
+      "value": "20%",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "meeting-request.eml"
+    },
+    {
+      "type": "PERCENT",
+      "value": "35%",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "meeting-request.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "Tuesday",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "meeting-request.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "Wednesday",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "meeting-request.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "April 1st",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "meeting-request.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "Friday",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "meeting-request.eml"
+    },
+    {
+      "type": "TIME",
+      "value": "90 minutes",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "meeting-request.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Michael Thompson",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "meeting-request.eml"
+    },
+    {
+      "type": "PERSON_NAME",
+      "value": "Susan Thompson",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "meeting-request.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Acme Corporation",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "trade-confirmation.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "Microsoft Corporation",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "trade-confirmation.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "NASDAQ",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "trade-confirmation.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "JP Morgan Securities LLC",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "trade-confirmation.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "JP Morgan Clearing Corp",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "trade-confirmation.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "FINRA",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "trade-confirmation.eml"
+    },
+    {
+      "type": "COMPANY_NAME",
+      "value": "State Street Bank & Trust",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "trade-confirmation.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "1,038,750.00",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "trade-confirmation.eml"
+    },
+    {
+      "type": "MONETARY_AMOUNT",
+      "value": "125.00",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "trade-confirmation.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "March 18, 2024",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "trade-confirmation.eml"
+    },
+    {
+      "type": "DATE",
+      "value": "March 16, 2024",
+      "confidence": 0.85,
+      "start": null,
+      "end": null,
+      "spacy_label": null,
+      "context": null,
+      "source": "trade-confirmation.eml"
+    }
+  ],
+  "llmResults": {
+    "relationships": [
+      {
+        "source": "David Chen",
+        "target": "Morgan Stanley Technology Group",
+        "type": "WORKS_FOR",
+        "confidence": 0.9,
+        "explanation": "David Chen is an employee of Morgan Stanley Technology Group."
+      },
+      {
+        "source": "Project Helix",
+        "target": "HelixFlow Solutions",
+        "type": "REPRESENTS",
+        "confidence": 0.9,
+        "explanation": "Project Helix is an investment opportunity in HelixFlow Solutions."
+      },
+      {
+        "source": "HelixFlow Solutions",
+        "target": "Application Software",
+        "type": "OPERATES_IN",
+        "confidence": 0.9,
+        "explanation": "HelixFlow Solutions operates in the Application Software sector."
+      },
+      {
+        "source": "HelixFlow Solutions",
+        "target": "$40M",
+        "type": "HAS_ARR",
+        "confidence": 0.9,
+        "explanation": "HelixFlow Solutions has an Annual Recurring Revenue of $40M."
+      },
+      {
+        "source": "HelixFlow Solutions",
+        "target": "80%",
+        "type": "GROWTH_RATE",
+        "confidence": 0.9,
+        "explanation": "HelixFlow Solutions is growing at a rate of 80% year over year."
+      },
+      {
+        "source": "Vista Equity Partners",
+        "target": "Project Helix",
+        "type": "INTERESTED_IN",
+        "confidence": 0.85,
+        "explanation": "Vista Equity Partners is a potential investor in Project Helix."
+      },
+      {
+        "source": "Vista Equity Partners",
+        "target": "HelixFlow Solutions",
+        "type": "INTERESTED_IN",
+        "confidence": 0.9,
+        "explanation": "Vista Equity Partners is interested in HelixFlow Solutions as it aligns with their investment thesis."
+      },
+      {
+        "source": "Jane Miller",
+        "target": "Vista Equity Partners",
+        "type": "WORKS_FOR",
+        "confidence": 0.9,
+        "explanation": "Jane Miller is a partner at Vista Equity Partners."
+      },
+      {
+        "source": "Bob",
+        "target": "David",
+        "type": "COORDINATES_WITH",
+        "confidence": 0.9,
+        "explanation": "Bob is instructed to coordinate with David's team for scheduling."
+      },
+      {
+        "source": "Project Helix",
+        "target": "HelixFlow Solutions",
+        "type": "RELATED_TO",
+        "confidence": 0.85,
+        "explanation": "Project Helix is related to HelixFlow Solutions as part of the management presentation scheduling."
+      },
+      {
+        "source": "Blue Owl Capital",
+        "target": "Nightingale Health Services",
+        "type": "ACQUIRED",
+        "confidence": 0.9,
+        "explanation": "Blue Owl Capital completed the acquisition of Nightingale Health Services."
+      },
+      {
+        "source": "Blue Owl Capital",
+        "target": "$450M Enterprise Value",
+        "type": "TRANSACTION_VALUE",
+        "confidence": 0.9,
+        "explanation": "The acquisition of Nightingale Health Services by Blue Owl Capital was valued at $450M."
+      },
+      {
+        "source": "Gotham Security's",
+        "target": "Project Gotham",
+        "type": "INVOLVED_IN",
+        "confidence": 0.9,
+        "explanation": "Gotham Security's legal team is involved in the Project Gotham NDA."
+      },
+      {
+        "source": "Lisa",
+        "target": "Project Gotham",
+        "type": "WORKING_ON",
+        "confidence": 0.9,
+        "explanation": "Lisa is providing a status update on Project Gotham."
+      },
+      {
+        "source": "Blackstone",
+        "target": "Project Apex",
+        "type": "SUBMITTED_IOI_FOR",
+        "confidence": 0.9,
+        "explanation": "Blackstone submitted a competing IOI for Project Apex."
+      },
+      {
+        "source": "Sarah",
+        "target": "Blackstone",
+        "type": "FOLLOW_UP_WITH",
+        "confidence": 0.9,
+        "explanation": "Sarah is assigned to follow up with Blackstone on their interest in Project Apex."
+      },
+      {
+        "source": "Sarah",
+        "target": "Tom",
+        "type": "CONNECT_WITH",
+        "confidence": 0.9,
+        "explanation": "Sarah is instructed to connect with Tom, an associate at Blackstone."
+      },
+      {
+        "source": "Audax Private Equity",
+        "target": "Forge Industrial",
+        "type": "OWNS",
+        "confidence": 0.9,
+        "explanation": "Audax Private Equity owns Forge Industrial as its portfolio company."
+      },
+      {
+        "source": "Forge Industrial",
+        "target": "Industrial Machinery",
+        "type": "OPERATES_IN",
+        "confidence": 0.9,
+        "explanation": "Forge Industrial operates in the Industrial Machinery sector."
+      },
+      {
+        "source": "Audax Private Equity",
+        "target": "Forge Industrial",
+        "type": "ACQUIRED",
+        "confidence": 0.9,
+        "explanation": "Forge Industrial, a portfolio company of Audax Private Equity, has acquired a leading supplier of precision machine parts."
+      },
+      {
+        "source": "Project Anvil",
+        "target": "Anvil Fasteners Inc.",
+        "type": "REPRESENTS",
+        "confidence": 0.9,
+        "explanation": "Project Anvil is the name of the opportunity related to Anvil Fasteners Inc."
+      },
+      {
+        "source": "Anvil Fasteners Inc.",
+        "target": "Industrial Machinery",
+        "type": "OPERATES_IN",
+        "confidence": 0.9,
+        "explanation": "Anvil Fasteners Inc. operates in the Industrial Machinery sector."
+      },
+      {
+        "source": "Anvil Fasteners Inc.",
+        "target": "$60M",
+        "type": "HAS_REVENUE",
+        "confidence": 0.9,
+        "explanation": "Anvil Fasteners Inc. has a revenue of $60M."
+      },
+      {
+        "source": "Audax",
+        "target": "Anvil Fasteners Inc.",
+        "type": "POTENTIAL_BIDDER",
+        "confidence": 0.9,
+        "explanation": "Audax is considered a likely bidder for Anvil Fasteners Inc."
+      },
+      {
+        "source": "Bob",
+        "target": "Vista Equity Partners",
+        "type": "WORKS_FOR",
+        "confidence": 0.9,
+        "explanation": "Bob is an analyst at Vista Equity Partners."
+      },
+      {
+        "source": "Vista Equity Partners",
+        "target": "Project Helix",
+        "type": "EVALUATING",
+        "confidence": 0.85,
+        "explanation": "Vista Equity Partners is involved in the management presentation for Project Helix."
+      },
+      {
+        "source": "Blackstone",
+        "target": "Project Helix",
+        "type": "EVALUATING",
+        "confidence": 0.85,
+        "explanation": "Blackstone is also evaluating the opportunity with Project Helix."
+      },
+      {
+        "source": "Blue Owl",
+        "target": "Compass Payments",
+        "type": "INVESTED_IN",
+        "confidence": 0.9,
+        "explanation": "Blue Owl made a growth equity investment in Compass Payments."
+      },
+      {
+        "source": "Blue Owl",
+        "target": "$120M",
+        "type": "INVESTMENT_AMOUNT",
+        "confidence": 0.9,
+        "explanation": "The investment amount by Blue Owl in Compass Payments is $120M."
+      },
+      {
+        "source": "Gotham Security",
+        "target": "Jul 2025",
+        "type": "NDA_APPROVED",
+        "confidence": 0.9,
+        "explanation": "The NDA with Gotham Security was approved in July 2025."
+      },
+      {
+        "source": "Gotham Security",
+        "target": "16:45:00",
+        "type": "NDA_EXECUTED",
+        "confidence": 0.9,
+        "explanation": "The NDA with Gotham Security was executed at 16:45:00."
+      },
+      {
+        "source": "Vista Equity Partners",
+        "target": "Project Helix",
+        "type": "SUBMITTED_LOI_FOR",
+        "confidence": 0.9,
+        "explanation": "Vista Equity Partners submitted a Letter of Intent for Project Helix."
+      },
+      {
+        "source": "Vista Equity Partners",
+        "target": "Morgan Stanley",
+        "type": "AWAITING_RESPONSE_FROM",
+        "confidence": 0.9,
+        "explanation": "Vista Equity Partners is awaiting a response from Morgan Stanley regarding the LOI."
+      },
+      {
+        "source": "Jane Miller",
+        "target": "Vista Equity Partners",
+        "type": "WORKS_FOR",
+        "confidence": 0.9,
+        "explanation": "Jane Miller is a partner at Vista Equity Partners."
+      },
+      {
+        "source": "Vista Equity Partners",
+        "target": "500M",
+        "type": "VALUED_AT",
+        "confidence": 0.9,
+        "explanation": "Vista Equity Partners' bid for Project Helix is based on a pre-money valuation of $500M."
+      },
+      {
+        "source": "Vista Equity Partners",
+        "target": "30-day",
+        "type": "REQUESTED_EXCLUSIVITY_PERIOD",
+        "confidence": 0.9,
+        "explanation": "Vista Equity Partners requested a 30-day exclusivity period to complete confirmatory diligence."
+      },
+      {
+        "source": "Mike",
+        "target": "Blue Owl",
+        "type": "WORKS_FOR",
+        "confidence": 0.9,
+        "explanation": "Mike is identified as an analyst at Blue Owl."
+      },
+      {
+        "source": "Blue Owl",
+        "target": "Project Jetstream",
+        "type": "PASSED_ON",
+        "confidence": 0.9,
+        "explanation": "Blue Owl decided to pass on the opportunity with Project Jetstream."
+      },
+      {
+        "source": "Audax Private Equity",
+        "target": "Anvil Fasteners Inc.",
+        "type": "ACQUIRED",
+        "confidence": 0.9,
+        "explanation": "Audax Private Equity has completed the acquisition of Anvil Fasteners Inc."
+      },
+      {
+        "source": "Project Anvil",
+        "target": "Anvil Fasteners Inc.",
+        "type": "TARGET_OF",
+        "confidence": 0.85,
+        "explanation": "Anvil Fasteners Inc. is the target in Project Anvil (Buyout)."
+      },
+      {
+        "source": "Morgan Stanley",
+        "target": "Project Helix",
+        "type": "INFORMED_ABOUT",
+        "confidence": 0.9,
+        "explanation": "Morgan Stanley informed about the decision regarding Project Helix."
+      },
+      {
+        "source": "Blackstone",
+        "target": "Project Helix",
+        "type": "ACQUIRED",
+        "confidence": 0.9,
+        "explanation": "Blackstone's offer was accepted for Project Helix."
+      },
+      {
+        "source": "Jane Miller",
+        "target": "Vista Equity Partners",
+        "type": "WORKS_FOR",
+        "confidence": 0.9,
+        "explanation": "Jane Miller is a partner at Vista Equity Partners."
+      },
+      {
+        "source": "BXTO",
+        "target": "LogiChain Solutions",
+        "type": "INVESTED_IN",
+        "confidence": 0.9,
+        "explanation": "BXTO made a $250 million strategic investment in LogiChain Solutions."
+      },
+      {
+        "source": "Blackstone",
+        "target": "Tactical Opportunities",
+        "type": "OWNS",
+        "confidence": 0.9,
+        "explanation": "Blackstone owns the Tactical Opportunities fund."
+      },
+      {
+        "source": "Tactical Opportunities",
+        "target": "BXTO",
+        "type": "IS_A",
+        "confidence": 0.9,
+        "explanation": "BXTO is a fund under Tactical Opportunities."
+      },
+      {
+        "source": "Project Lifeline",
+        "target": "Lifeline Home Health Group",
+        "type": "TARGETS",
+        "confidence": 0.9,
+        "explanation": "Project Lifeline is targeting Lifeline Home Health Group for a buyout."
+      },
+      {
+        "source": "Project Lifeline",
+        "target": "Project Nightingale",
+        "type": "SIMILAR_TO",
+        "confidence": 0.9,
+        "explanation": "Project Lifeline is similar to the successful Project Nightingale investment."
+      },
+      {
+        "source": "Rick",
+        "target": "Thoma Bravo",
+        "type": "WORKS_FOR",
+        "confidence": 0.9,
+        "explanation": "Rick is identified as a Partner at Thoma Bravo."
+      },
+      {
+        "source": "Lisa",
+        "target": "Project Gotham",
+        "type": "RESPONSIBLE_FOR",
+        "confidence": 0.9,
+        "explanation": "Lisa is responsible for building the financial model for Project Gotham."
+      },
+      {
+        "source": "Rick",
+        "target": "Project Gotham",
+        "type": "HANDLES",
+        "confidence": 0.9,
+        "explanation": "Rick will handle the customer calls for Project Gotham."
+      },
+      {
+        "source": "Pete",
+        "target": "Project Evergreen",
+        "type": "RECOMMENDED_TO_PASS_ON",
+        "confidence": 0.9,
+        "explanation": "Pete recommended passing on the investment in Project Evergreen."
+      },
+      {
+        "source": "Audax",
+        "target": "Project Evergreen",
+        "type": "DECIDED_NOT_TO_INVEST_IN",
+        "confidence": 0.9,
+        "explanation": "Audax decided not to invest in Project Evergreen as it does not fit their core strategy."
+      },
+      {
+        "source": "Thoma Bravo",
+        "target": "Gotham Security",
+        "type": "ACQUIRED",
+        "confidence": 0.9,
+        "explanation": "Thoma Bravo announced the successful acquisition of Gotham Security."
+      },
+      {
+        "source": "Sarah",
+        "target": "Blackstone",
+        "type": "FOLLOWED_UP_WITH",
+        "confidence": 0.9,
+        "explanation": "Sarah was responsible for following up with Blackstone."
+      },
+      {
+        "source": "Blackstone",
+        "target": "Project Apex",
+        "type": "ASSOCIATED_WITH",
+        "confidence": 0.85,
+        "explanation": "Blackstone was involved in a follow-up for Project Apex."
+      },
+      {
+        "source": "Tom",
+        "target": "Blackstone",
+        "type": "WORKS_FOR",
+        "confidence": 0.85,
+        "explanation": "Tom is an associate at Blackstone."
+      },
+      {
+        "source": "Offshore Holdings Ltd.",
+        "target": "$2,750,000 USD",
+        "type": "INVOLVED_IN_TRANSACTION",
+        "confidence": 0.9,
+        "explanation": "Offshore Holdings Ltd. is the client involved in the transaction of $2,750,000 USD."
+      },
+      {
+        "source": "Cayman National Bank",
+        "target": "Cayman Islands",
+        "type": "LOCATED_IN",
+        "confidence": 0.9,
+        "explanation": "Cayman National Bank is located in the Cayman Islands."
+      },
+      {
+        "source": "Cayman Islands",
+        "target": "High-risk",
+        "type": "RISK_CATEGORY",
+        "confidence": 0.9,
+        "explanation": "Cayman Islands is considered a high-risk jurisdiction."
+      },
+      {
+        "source": "Global Bank Risk Management Department",
+        "target": "John Smith",
+        "type": "EMPLOYS",
+        "confidence": 0.9,
+        "explanation": "John Smith is a case manager at Global Bank Risk Management Department."
+      },
+      {
+        "source": "Global Bank Risk Management Department",
+        "target": "OCC",
+        "type": "LICENSED_BY",
+        "confidence": 0.9,
+        "explanation": "Global Bank Risk Management Department is licensed by OCC."
+      },
+      {
+        "source": "Global Bank Risk Management Department",
+        "target": "FDIC",
+        "type": "MEMBER_OF",
+        "confidence": 0.9,
+        "explanation": "Global Bank Risk Management Department is a member of FDIC."
+      },
+      {
+        "source": "Project Titan",
+        "target": "Titan Industrial Analytics",
+        "type": "REPRESENTS",
+        "confidence": 0.9,
+        "explanation": "Project Titan is the name of the investment opportunity involving Titan Industrial Analytics."
+      },
+      {
+        "source": "Titan Industrial Analytics",
+        "target": "Technology",
+        "type": "OPERATES_IN",
+        "confidence": 0.9,
+        "explanation": "Titan Industrial Analytics operates in the Technology sector."
+      },
+      {
+        "source": "Titan Industrial Analytics",
+        "target": "$85M",
+        "type": "HAS_REVENUE",
+        "confidence": 0.9,
+        "explanation": "Titan Industrial Analytics has a revenue of $85M for FY2024A."
+      },
+      {
+        "source": "Titan Industrial Analytics",
+        "target": "$22M",
+        "type": "HAS_EBITDA",
+        "confidence": 0.9,
+        "explanation": "Titan Industrial Analytics has an EBITDA of $22M."
+      },
+      {
+        "source": "Titan Industrial Analytics",
+        "target": "25.9%",
+        "type": "HAS_EBITDA_MARGIN",
+        "confidence": 0.9,
+        "explanation": "Titan Industrial Analytics has an EBITDA margin of 25.9%."
+      },
+      {
+        "source": "Claudia Gomez",
+        "target": "Global TMT Group",
+        "type": "WORKS_FOR",
+        "confidence": 0.9,
+        "explanation": "Claudia Gomez is a Managing Director at Global TMT Group."
+      },
+      {
+        "source": "Example Capital Partners V",
+        "target": "Project Titan",
+        "type": "INTERESTED_IN",
+        "confidence": 0.9,
+        "explanation": "Example Capital Partners V is interested in Project Titan as it fits well within their mandate."
+      },
+      {
+        "source": "Claudia",
+        "target": "Project Titan",
+        "type": "SENT_INFORMATION_ABOUT",
+        "confidence": 0.85,
+        "explanation": "Claudia sent information about Project Titan."
+      },
+      {
+        "source": "Audax",
+        "target": "Project Titan",
+        "type": "INTERESTED_IN",
+        "confidence": 0.9,
+        "explanation": "Audax is looking closely at Project Titan and may bid."
+      },
+      {
+        "source": "Example Capital Partners V",
+        "target": "Project Titan",
+        "type": "CONSIDERING_INVESTMENT_IN",
+        "confidence": 0.9,
+        "explanation": "Example Capital Partners V is considering an investment in Project Titan."
+      },
+      {
+        "source": "Example Capital Partners V",
+        "target": "8.0x - 9.0x EBITDA",
+        "type": "VALUATION_ESTIMATE",
+        "confidence": 0.9,
+        "explanation": "Example Capital Partners V's internal model suggests a valuation of 8.0x - 9.0x EBITDA for Project Titan."
+      },
+      {
+        "source": "Goldman Sachs",
+        "target": "GS",
+        "type": "LISTED_AS",
+        "confidence": 0.9,
+        "explanation": "Goldman Sachs is listed on the NYSE under the ticker GS."
+      },
+      {
+        "source": "Apple Inc.",
+        "target": "450",
+        "type": "TARGET_PRICE",
+        "confidence": 0.9,
+        "explanation": "The target price for Apple Inc. is $450."
+      },
+      {
+        "source": "U.S.",
+        "target": "912828XG0",
+        "type": "ISSUES",
+        "confidence": 0.9,
+        "explanation": "The U.S. issues Treasury Bonds with CUSIP 912828XG0."
+      },
+      {
+        "source": "Sarah Chen",
+        "target": "Morgan Stanley Investment Management",
+        "type": "WORKS_FOR",
+        "confidence": 0.9,
+        "explanation": "Sarah Chen is a Senior Portfolio Manager at Morgan Stanley Investment Management."
+      },
+      {
+        "source": "David Kim",
+        "target": "TechStart Inc.",
+        "type": "IS_CEO_OF",
+        "confidence": 0.9,
+        "explanation": "David Kim is the CEO of TechStart Inc."
+      },
+      {
+        "source": "TechStart Inc.",
+        "target": "$5,000,000 USD",
+        "type": "REQUESTED_LOAN_AMOUNT",
+        "confidence": 0.9,
+        "explanation": "TechStart Inc. requested a loan amount of $5,000,000 USD."
+      },
+      {
+        "source": "TechStart Inc.",
+        "target": "Austin",
+        "type": "HAS_COLLATERAL_IN",
+        "confidence": 0.9,
+        "explanation": "TechStart Inc. has primary collateral in Austin."
+      },
+      {
+        "source": "Jennifer Martinez",
+        "target": "Wells Fargo Bank",
+        "type": "WORKS_FOR",
+        "confidence": 0.9,
+        "explanation": "Jennifer Martinez is a Senior Commercial Loan Officer at Wells Fargo Bank."
+      },
+      {
+        "source": "Michael Thompson",
+        "target": "Susan Thompson",
+        "type": "JOINT_ACCOUNT_HOLDER",
+        "confidence": 0.9,
+        "explanation": "Susan Thompson is a joint account holder with Michael Thompson."
+      },
+      {
+        "source": "Michael Thompson",
+        "target": "Financial Advisory Team",
+        "type": "CLIENT_OF",
+        "confidence": 0.9,
+        "explanation": "Michael Thompson is a client of the Financial Advisory Team."
+      },
+      {
+        "source": "Q1 2024",
+        "target": "1,850,000",
+        "type": "ASSETS_UNDER_MANAGEMENT",
+        "confidence": 0.9,
+        "explanation": "The total assets under management in Q1 2024 is $1,850,000."
+      },
+      {
+        "source": "Q1 2024",
+        "target": "70%",
+        "type": "STOCK_ALLOCATION",
+        "confidence": 0.9,
+        "explanation": "70% of the portfolio is allocated to stocks in Q1 2024."
+      },
+      {
+        "source": "Q1 2024",
+        "target": "20%",
+        "type": "BOND_ALLOCATION",
+        "confidence": 0.9,
+        "explanation": "20% of the portfolio is allocated to bonds in Q1 2024."
+      },
+      {
+        "source": "Q1 2024",
+        "target": "10%",
+        "type": "CASH_ALLOCATION",
+        "confidence": 0.9,
+        "explanation": "10% of the portfolio is allocated to cash in Q1 2024."
+      },
+      {
+        "source": "Q1 2024",
+        "target": "35%",
+        "type": "TECHNOLOGY_SECTOR_CONCENTRATION",
+        "confidence": 0.9,
+        "explanation": "35% of the equity is concentrated in the technology sector in Q1 2024."
+      },
+      {
+        "source": "Acme Corporation",
+        "target": "Microsoft Corporation",
+        "type": "PURCHASED",
+        "confidence": 0.9,
+        "explanation": "Acme Corporation purchased shares of Microsoft Corporation."
+      },
+      {
+        "source": "JP Morgan Securities LLC",
+        "target": "Acme Corporation",
+        "type": "EXECUTED_TRADE_FOR",
+        "confidence": 0.9,
+        "explanation": "JP Morgan Securities LLC executed the trade for Acme Corporation."
+      },
+      {
+        "source": "JP Morgan Clearing Corp",
+        "target": "JP Morgan Securities LLC",
+        "type": "CLEARS_FOR",
+        "confidence": 0.9,
+        "explanation": "JP Morgan Clearing Corp clears trades for JP Morgan Securities LLC."
+      },
+      {
+        "source": "State Street Bank & Trust",
+        "target": "Acme Corporation",
+        "type": "CUSTODIAN_FOR",
+        "confidence": 0.9,
+        "explanation": "State Street Bank & Trust is the custodian for Acme Corporation."
+      },
+      {
+        "source": "JP Morgan Securities LLC",
+        "target": "FINRA",
+        "type": "REPORTED_TO",
+        "confidence": 0.9,
+        "explanation": "JP Morgan Securities LLC reported the trade to FINRA."
+      },
+      {
+        "source": "JP Morgan Securities LLC",
+        "target": "MiFID II",
+        "type": "COMPLIES_WITH",
+        "confidence": 0.9,
+        "explanation": "The transaction was executed under MiFID II regulations."
+      }
+    ]
+  }
+}
