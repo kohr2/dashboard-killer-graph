@@ -45,7 +45,7 @@ class Neo4jGraphBuilder {
     const edges = hybridReport.llmResults.relationships.map((r: any) => ({
       from: r.source.toLowerCase().replace(/[^a-z0-9]/g, '_'),
       to: r.target.toLowerCase().replace(/[^a-z0-9]/g, '_'),
-      label: r.relationship,
+      label: r.type,
       properties: {
         explanation: r.explanation,
         confidence: r.confidence,
@@ -174,6 +174,10 @@ class Neo4jGraphBuilder {
     let createdCount = 0;
     
     for (const edge of edges) {
+      if (!edge.label) {
+        console.warn(`   ⚠️  Skipping relationship with no label:`, edge);
+        continue;
+      }
       const relType = edge.label.replace(/\s+/g, '_').toUpperCase();
       const result = await session.run(
         `
