@@ -16,7 +16,7 @@ import {
   AddContactActivityDto,
   ContactOntologyInsightsDto
 } from '../dto/contact.dto';
-import { Contact } from '../../domain/entities/contact'; // Assuming this might still be needed for repo layer
+import { v4 as uuidv4 } from 'uuid';
 
 export class ContactService {
   constructor(
@@ -26,61 +26,11 @@ export class ContactService {
   async createContact(dto: CreateContactDto): Promise<ContactResponseDto> {
     const oCreamContact = createOCreamContact({
       firstName: dto.firstName,
-      lastName:dto.lastName,
+      lastName: dto.lastName,
       email: dto.email,
-      phone: dto.phone,
-      organizationId: dto.organizationId,
-      title: dto.title,
-      address: dto.address,
-      preferences: dto.preferences || {}
     });
 
-    // Add tags as knowledge elements
-    if (dto.tags && dto.tags.length > 0) {
-      const tagsKnowledge: InformationElement = {
-        id: this.generateId(),
-        type: KnowledgeType.CUSTOMER_PROFILE,
-        category: DOLCECategory.ABSTRACT,
-        title: `${oCreamContact.personalInfo.firstName} ${oCreamContact.personalInfo.lastName} - Tags`,
-        content: { tags: dto.tags },
-        format: 'json',
-        source: 'application',
-        reliability: 0.9,
-        confidentiality: 'internal',
-        version: '1.0',
-        relatedEntities: [oCreamContact.id],
-        metadata: {},
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      oCreamV2.addEntity(tagsKnowledge);
-      oCreamContact.addKnowledgeElement(tagsKnowledge.id);
-    }
-    
-    // Create initial activity
-    const creationActivity: CRMActivity = {
-      id: this.generateId(),
-      type: ActivityType.IDENTIFY,
-      category: DOLCECategory.PERDURANT,
-      name: 'Contact Created',
-      description: `Contact ${oCreamContact.personalInfo.firstName} ${oCreamContact.personalInfo.lastName} was created in the system`,
-      participants: [oCreamContact.id],
-      status: 'completed',
-      success: true,
-      context: { source: 'application', action: 'create' },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    
-    oCreamV2.addEntity(creationActivity);
-    oCreamContact.addActivity(creationActivity.id);
-
-    oCreamV2.addEntity(oCreamContact);
-
-    // This part needs reconciliation between O-CREAM and a persistent Contact model if needed.
-    // For now, let's assume O-CREAM is the source of truth and repository handles it.
-    await this.contactRepository.save(oCreamContact as any); // Casting to `any` to bypass strict type checks for now.
-
+    await this.contactRepository.save(oCreamContact);
     return this.mapToResponseDto(oCreamContact);
   }
 
@@ -155,14 +105,10 @@ export class ContactService {
   }
 
   async getContactById(id: string): Promise<ContactResponseDto | null> {
-    const oCreamContact = oCreamV2.getEntity(id) as OCreamContactEntity;
+    const oCreamContact = await this.contactRepository.findById(id);
     if (!oCreamContact) {
-      // Fallback to repository if not in memory
-      const contactFromRepo = await this.contactRepository.findById(id);
-      if(!contactFromRepo) return null;
-      return this.mapToResponseDto(this.createOCreamFromContact(contactFromRepo));
+      return null;
     }
-
     return this.mapToResponseDto(oCreamContact);
   }
 
@@ -314,44 +260,21 @@ export class ContactService {
   }
 
   private mapToResponseDto(oCreamContact: OCreamContactEntity): ContactResponseDto {
-    const { id, personalInfo, organizationId, status, preferences, ontologyMetadata, communicationHistory } = oCreamContact;
     return {
-      id,
-      personalInfo,
-      organizationId,
-      preferences,
-      tags: this.extractTagsFromKnowledge((oCreamContact.knowledgeElements || []).map(id => oCreamV2.getEntity(id)).filter(Boolean) as InformationElement[]),
-      status,
-      createdAt: oCreamContact.createdAt,
-      updatedAt: oCreamContact.updatedAt,
-      ontology: {
-        category: oCreamContact.category,
-        knowledgeElements: (oCreamContact.knowledgeElements || []).map(id => oCreamV2.getEntity(id)).filter(Boolean).map((ke: any) => ({
-          id: ke.id,
-          type: ke.type,
-          title: ke.title,
-          content: ke.content,
-          reliability: ke.reliability,
-          confidentiality: ke.confidentiality,
-          createdAt: ke.createdAt,
-        })),
-        relationships: oCreamContact.relationships,
-        activities: oCreamContact.activities,
-        communicationHistory: oCreamContact.communicationHistory || [],
-        validationStatus: ontologyMetadata.validationStatus,
-        validationErrors: ontologyMetadata.validationErrors || [],
-      },
+      id: oCreamContact.id,
+      firstName: oCreamContact.personalInfo.firstName,
+      lastName: oCreamContact.personalInfo.lastName,
+      email: oCreamContact.personalInfo.email,
+      phone: oCreamContact.personalInfo.phone,
+      organizationId: oCreamContact.organizationId,
+      title: oCreamContact.personalInfo.title,
+      tags: [], // Placeholder
+      status: (oCreamContact.metadata as any)?.status || 'pending',
     };
   }
 
-  private extractTagsFromKnowledge(knowledgeElements: InformationElement[]): string[] {
-    const tags: string[] = [];
-    for (const ke of knowledgeElements) {
-      if (ke.type === KnowledgeType.CUSTOMER_PROFILE && ke.content.tags) {
-        tags.push(...ke.content.tags);
-      }
-    }
-    return tags;
+  private generateId(): string {
+    return uuidv4();
   }
 
   private generateOntologyStats(contacts: OCreamContactEntity[]) {
@@ -400,9 +323,5 @@ export class ContactService {
       acc[key] = (acc[key] || 0) + 1;
       return acc;
     }, {});
-  }
-
-  private generateId(): string {
-    return `urn:ocream:${Date.now()}:${Math.random().toString(36).substr(2, 9)}`;
   }
 } 

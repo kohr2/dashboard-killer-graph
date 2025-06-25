@@ -37,40 +37,48 @@ async function demonstrateSpacyEmailIngestionPipeline() {
   }
 
   const testEmailsDir = join(process.cwd(), 'test-emails');
-  const fileToProcess = '01-helix-sourcing.eml';
-  console.log(`\n📂 Attempting to process a single file: ${fileToProcess}`);
+  const allFiles = await fs.readdir(testEmailsDir);
+  const emailFiles = allFiles.filter(f => f.endsWith('.eml')).sort();
   
-  const filePath = join(testEmailsDir, fileToProcess);
-  let emailBody;
+  console.log(`\n📂 Found ${emailFiles.length} email files to process in '${testEmailsDir}'`);
 
-  try {
-    console.log("   [1] Reading file...");
-    const fileContent = await fs.readFile(filePath);
-    console.log("   [2] Parsing email...");
-    const parsedEmail = await simpleParser(fileContent);
-    emailBody = typeof parsedEmail.text === 'string' ? parsedEmail.text : (parsedEmail.html || '').replace(/<[^>]*>/g, '');
-    console.log("   [3] Email parsed successfully.");
-  } catch(e: any) {
-      console.error("   ❌ Error reading or parsing email file:", e.message);
-      return;
-  }
+  for (const emailFile of emailFiles) {
+    console.log('\n' + '='.repeat(100));
+    console.log(`Processing: ${emailFile}`);
+    console.log('='.repeat(100));
 
-  try {
-      console.log("   [4] Sending request to /refine-entities...");
-      const response = await axios.post(`${nlpServiceUrl}/refine-entities`, { text: emailBody });
-      console.log("   [5] Received response from service.");
-      
-      const { raw_entities, refined_entities } = response.data;
+    const filePath = join(testEmailsDir, emailFile);
+    let emailBody;
 
-      console.log("\n\n--- FINAL RESULT ---");
-      console.log(`\n🧠 Raw Entities Extracted (${raw_entities.length}):`);
-      displayEntities(raw_entities);
-      
-      console.log(`\n✨ LLM Refined Entities (${refined_entities.length}):`);
-      displayEntities(refined_entities);
+    try {
+      console.log("   [1] Reading file...");
+      const fileContent = await fs.readFile(filePath);
+      console.log("   [2] Parsing email...");
+      const parsedEmail = await simpleParser(fileContent);
+      emailBody = typeof parsedEmail.text === 'string' ? parsedEmail.text : (parsedEmail.html || '').replace(/<[^>]*>/g, '');
+      console.log("   [3] Email parsed successfully.");
+    } catch(e: any) {
+        console.error("   ❌ Error reading or parsing email file:", e.message);
+        continue; // Skip to the next email
+    }
 
-  } catch (error: any) {
-    console.error(`   ❌ Error calling refinement service:`, error.response?.data?.detail || error.message);
+    try {
+        console.log("   [4] Sending request to /refine-entities...");
+        const response = await axios.post(`${nlpServiceUrl}/refine-entities`, { text: emailBody });
+        console.log("   [5] Received response from service.");
+        
+        const { raw_entities, refined_entities } = response.data;
+
+        console.log("\n\n--- FINAL RESULT ---");
+        console.log(`\n🧠 Raw Entities Extracted (${raw_entities.length}):`);
+        displayEntities(raw_entities);
+        
+        console.log(`\n✨ LLM Refined Entities (${refined_entities.length}):`);
+        displayEntities(refined_entities);
+
+    } catch (error: any) {
+      console.error(`   ❌ Error calling refinement service:`, error.response?.data?.detail || error.message);
+    }
   }
 
   console.log('\n\n🎉 Demo Complete!');

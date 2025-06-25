@@ -92,4 +92,10 @@ playwright-report/
 
 # Local configuration overrides
 config/environment.js
-config/*.local.js 
+config/*.local.js
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/venv/
+.venv/ 

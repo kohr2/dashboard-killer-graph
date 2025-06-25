@@ -83,6 +83,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "redis": "^4.6.11",
+    "uuid": "^11.1.0",
     "winston": "^3.11.0"
   },
   "devDependencies": {
@@ -100,6 +101,7 @@
     "@types/node": "^20.19.1",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
     "eslint": "^8.56.0",

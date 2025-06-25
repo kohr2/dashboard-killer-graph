@@ -1,77 +1,64 @@
 // O-CREAM-v2 Ontology Tests
-import {
-  DOLCECategory,
-  DOLCEEntity,
-  RelationshipType,
-  KnowledgeType,
-  ActivityType,
-  SoftwareType,
-  InformationElement,
-  CRMActivity,
-  SoftwareSystem,
-  OCreamRelationship,
-  OCreamV2Ontology,
-  oCreamV2
-} from '../../../../../src/crm-core/domain/ontology/o-cream-v2';
+import * as Ontology from '../../../../../src/crm-core/domain/ontology/o-cream-v2';
 
 describe('O-CREAM-v2 Ontology', () => {
   describe('DOLCE Categories', () => {
     test('should define all DOLCE foundational categories', () => {
-      expect(DOLCECategory.ENDURANT).toBe('Endurant');
-      expect(DOLCECategory.PERDURANT).toBe('Perdurant');
-      expect(DOLCECategory.QUALITY).toBe('Quality');
-      expect(DOLCECategory.ABSTRACT).toBe('Abstract');
-      expect(DOLCECategory.AGENTIVE_PHYSICAL_OBJECT).toBe('AgentivePhysicalObject');
-      expect(DOLCECategory.NON_AGENTIVE_PHYSICAL_OBJECT).toBe('NonAgentivePhysicalObject');
+      expect(Ontology.DOLCECategory.ENDURANT).toBe('Endurant');
+      expect(Ontology.DOLCECategory.PERDURANT).toBe('Perdurant');
+      expect(Ontology.DOLCECategory.QUALITY).toBe('Quality');
+      expect(Ontology.DOLCECategory.ABSTRACT).toBe('Abstract');
+      expect(Ontology.DOLCECategory.AGENTIVE_PHYSICAL_OBJECT).toBe('AgentivePhysicalObject');
+      expect(Ontology.DOLCECategory.NON_AGENTIVE_PHYSICAL_OBJECT).toBe('NonAgentivePhysicalObject');
     });
   });
 
   describe('Relationship Module', () => {
     test('should define comprehensive relationship types', () => {
       // Business relationships
-      expect(RelationshipType.CUSTOMER_RELATIONSHIP).toBe('CustomerRelationship');
-      expect(RelationshipType.SUPPLIER_RELATIONSHIP).toBe('SupplierRelationship');
-      expect(RelationshipType.PARTNER_RELATIONSHIP).toBe('PartnerRelationship');
-      expect(RelationshipType.PROSPECT_RELATIONSHIP).toBe('ProspectRelationship');
+      expect(Ontology.RelationshipType.CUSTOMER_RELATIONSHIP).toBe('CustomerRelationship');
+      expect(Ontology.RelationshipType.SUPPLIER_RELATIONSHIP).toBe('SupplierRelationship');
+      expect(Ontology.RelationshipType.PARTNER_RELATIONSHIP).toBe('PartnerRelationship');
+      expect(Ontology.RelationshipType.PROSPECT_RELATIONSHIP).toBe('ProspectRelationship');
       
       // Social relationships
-      expect(RelationshipType.EMPLOYMENT).toBe('Employment');
-      expect(RelationshipType.COLLABORATION).toBe('Collaboration');
-      expect(RelationshipType.MEMBERSHIP).toBe('Membership');
+      expect(Ontology.RelationshipType.EMPLOYMENT).toBe('Employment');
+      expect(Ontology.RelationshipType.COLLABORATION).toBe('Collaboration');
+      expect(Ontology.RelationshipType.MEMBERSHIP).toBe('Membership');
       
       // Temporal relationships
-      expect(RelationshipType.BEFORE).toBe('Before');
-      expect(RelationshipType.AFTER).toBe('After');
-      expect(RelationshipType.DURING).toBe('During');
-      expect(RelationshipType.OVERLAPS).toBe('Overlaps');
+      expect(Ontology.RelationshipType.BEFORE).toBe('Before');
+      expect(Ontology.RelationshipType.AFTER).toBe('After');
+      expect(Ontology.RelationshipType.DURING).toBe('During');
+      expect(Ontology.RelationshipType.OVERLAPS).toBe('Overlaps');
     });
   });
 
   describe('Knowledge Module', () => {
     test('should define comprehensive knowledge types', () => {
       // Customer knowledge
-      expect(KnowledgeType.CUSTOMER_PROFILE).toBe('CustomerProfile');
-      expect(KnowledgeType.CUSTOMER_PREFERENCES).toBe('CustomerPreferences');
-      expect(KnowledgeType.CUSTOMER_BEHAVIOR).toBe('CustomerBehavior');
-      expect(KnowledgeType.CUSTOMER_HISTORY).toBe('CustomerHistory');
+      expect(Ontology.KnowledgeType.CUSTOMER_PROFILE).toBe('CustomerProfile');
+      expect(Ontology.KnowledgeType.CUSTOMER_PREFERENCES).toBe('CustomerPreferences');
+      expect(Ontology.KnowledgeType.CUSTOMER_BEHAVIOR).toBe('CustomerBehavior');
+      expect(Ontology.KnowledgeType.CUSTOMER_HISTORY).toBe('CustomerHistory');
       
       // Business knowledge
-      expect(KnowledgeType.MARKET_INTELLIGENCE).toBe('MarketIntelligence');
-      expect(KnowledgeType.COMPETITIVE_ANALYSIS).toBe('CompetitiveAnalysis');
-      expect(KnowledgeType.PRODUCT_KNOWLEDGE).toBe('ProductKnowledge');
-      expect(KnowledgeType.PROCESS_KNOWLEDGE).toBe('ProcessKnowledge');
+      expect(Ontology.KnowledgeType.MARKET_INTELLIGENCE).toBe('MarketIntelligence');
+      expect(Ontology.KnowledgeType.COMPETITIVE_ANALYSIS).toBe('CompetitiveAnalysis');
+      expect(Ontology.KnowledgeType.PRODUCT_KNOWLEDGE).toBe('ProductKnowledge');
+      expect(Ontology.KnowledgeType.PROCESS_KNOWLEDGE).toBe('ProcessKnowledge');
       
       // Transactional knowledge
-      expect(KnowledgeType.TRANSACTION_DATA).toBe('TransactionData');
-      expect(KnowledgeType.INTERACTION_HISTORY).toBe('InteractionHistory');
-      expect(KnowledgeType.COMMUNICATION_LOG).toBe('CommunicationLog');
+      expect(Ontology.KnowledgeType.TRANSACTION_DATA).toBe('TransactionData');
+      expect(Ontology.KnowledgeType.INTERACTION_HISTORY).toBe('InteractionHistory');
+      expect(Ontology.KnowledgeType.COMMUNICATION_LOG).toBe('CommunicationLog');
     });
 
     test('should create information element with all properties', () => {
-      const info: InformationElement = {
+      const info: Ontology.InformationElement = {
         id: 'info-1',
-        category: DOLCECategory.ABSTRACT,
-        type: KnowledgeType.CUSTOMER_PROFILE,
+        category: Ontology.DOLCECategory.ABSTRACT,
+        type: Ontology.KnowledgeType.CUSTOMER_PROFILE,
         title: 'Customer Profile: Acme Corp',
         content: { 
           name: 'Acme Corp', 
@@ -94,8 +81,8 @@ describe('O-CREAM-v2 Ontology', () => {
         updatedAt: new Date('2024-01-15')
       };
 
-      expect(info.category).toBe(DOLCECategory.ABSTRACT);
-      expect(info.type).toBe(KnowledgeType.CUSTOMER_PROFILE);
+      expect(info.category).toBe(Ontology.DOLCECategory.ABSTRACT);
+      expect(info.type).toBe(Ontology.KnowledgeType.CUSTOMER_PROFILE);
       expect(info.title).toBe('Customer Profile: Acme Corp');
       expect(info.content.name).toBe('Acme Corp');
       expect(info.reliability).toBe(0.95);
@@ -108,43 +95,43 @@ describe('O-CREAM-v2 Ontology', () => {
   describe('Activity Module', () => {
     test('should define comprehensive activity types', () => {
       // Customer relationship activities
-      expect(ActivityType.IDENTIFY).toBe('Identify');
-      expect(ActivityType.ATTRACT).toBe('Attract');
-      expect(ActivityType.ACQUIRE).toBe('Acquire');
-      expect(ActivityType.DEVELOP).toBe('Develop');
-      expect(ActivityType.RETAIN).toBe('Retain');
+      expect(Ontology.ActivityType.IDENTIFY).toBe('Identify');
+      expect(Ontology.ActivityType.ATTRACT).toBe('Attract');
+      expect(Ontology.ActivityType.ACQUIRE).toBe('Acquire');
+      expect(Ontology.ActivityType.DEVELOP).toBe('Develop');
+      expect(Ontology.ActivityType.RETAIN).toBe('Retain');
       
       // Sales activities
-      expect(ActivityType.LEAD_QUALIFICATION).toBe('LeadQualification');
-      expect(ActivityType.OPPORTUNITY_MANAGEMENT).toBe('OpportunityManagement');
-      expect(ActivityType.PROPOSAL_PREPARATION).toBe('ProposalPreparation');
-      expect(ActivityType.NEGOTIATION).toBe('Negotiation');
-      expect(ActivityType.CLOSING).toBe('Closing');
+      expect(Ontology.ActivityType.LEAD_QUALIFICATION).toBe('LeadQualification');
+      expect(Ontology.ActivityType.OPPORTUNITY_MANAGEMENT).toBe('OpportunityManagement');
+      expect(Ontology.ActivityType.PROPOSAL_PREPARATION).toBe('ProposalPreparation');
+      expect(Ontology.ActivityType.NEGOTIATION).toBe('Negotiation');
+      expect(Ontology.ActivityType.CLOSING).toBe('Closing');
       
       // Marketing activities
-      expect(ActivityType.CAMPAIGN_EXECUTION).toBe('CampaignExecution');
-      expect(ActivityType.CONTENT_CREATION).toBe('ContentCreation');
-      expect(ActivityType.MARKET_RESEARCH).toBe('MarketResearch');
-      expect(ActivityType.BRAND_MANAGEMENT).toBe('BrandManagement');
+      expect(Ontology.ActivityType.CAMPAIGN_EXECUTION).toBe('CampaignExecution');
+      expect(Ontology.ActivityType.CONTENT_CREATION).toBe('ContentCreation');
+      expect(Ontology.ActivityType.MARKET_RESEARCH).toBe('MarketResearch');
+      expect(Ontology.ActivityType.BRAND_MANAGEMENT).toBe('BrandManagement');
       
       // Service activities
-      expect(ActivityType.CUSTOMER_SUPPORT).toBe('CustomerSupport');
-      expect(ActivityType.ISSUE_RESOLUTION).toBe('IssueResolution');
-      expect(ActivityType.MAINTENANCE).toBe('Maintenance');
-      expect(ActivityType.TRAINING).toBe('Training');
+      expect(Ontology.ActivityType.CUSTOMER_SUPPORT).toBe('CustomerSupport');
+      expect(Ontology.ActivityType.ISSUE_RESOLUTION).toBe('IssueResolution');
+      expect(Ontology.ActivityType.MAINTENANCE).toBe('Maintenance');
+      expect(Ontology.ActivityType.TRAINING).toBe('Training');
       
       // Information management activities
-      expect(ActivityType.DATA_COLLECTION).toBe('DataCollection');
-      expect(ActivityType.DATA_ANALYSIS).toBe('DataAnalysis');
-      expect(ActivityType.REPORTING).toBe('Reporting');
-      expect(ActivityType.DOCUMENT_MANAGEMENT).toBe('DocumentManagement');
+      expect(Ontology.ActivityType.DATA_COLLECTION).toBe('DataCollection');
+      expect(Ontology.ActivityType.DATA_ANALYSIS).toBe('DataAnalysis');
+      expect(Ontology.ActivityType.REPORTING).toBe('Reporting');
+      expect(Ontology.ActivityType.DOCUMENT_MANAGEMENT).toBe('DocumentManagement');
     });
 
     test('should create comprehensive CRM activity', () => {
-      const activity: CRMActivity = {
+      const activity: Ontology.CRMActivity = {
         id: 'activity-1',
-        category: DOLCECategory.PERDURANT,
-        type: ActivityType.OPPORTUNITY_MANAGEMENT,
+        category: Ontology.DOLCECategory.PERDURANT,
+        type: Ontology.ActivityType.OPPORTUNITY_MANAGEMENT,
         name: 'Manage Enterprise Opportunity - Acme Corp',
         description: 'Full opportunity management cycle for enterprise deal',
         participants: ['contact-1', 'sales-rep-1', 'sales-manager-1'],
@@ -177,34 +164,34 @@ describe('O-CREAM-v2 Ontology', () => {
         updatedAt: new Date('2024-01-01T18:00:00Z')
       };
 
-      expect(activity.category).toBe(DOLCECategory.PERDURANT);
-      expect(activity.type).toBe(ActivityType.OPPORTUNITY_MANAGEMENT);
+      expect(activity.category).toBe(Ontology.DOLCECategory.PERDURANT);
+      expect(activity.type).toBe(Ontology.ActivityType.OPPORTUNITY_MANAGEMENT);
       expect(activity.participants).toHaveLength(3);
       expect(activity.resources).toContain('crm-system');
       expect(activity.inputs).toContain('lead-info');
       expect(activity.outputs).toContain('proposal');
       expect(activity.duration).toBe(480);
       expect(activity.success).toBe(true);
-      expect(activity.performanceMetrics.conversionRate).toBe(0.85);
+      expect(activity.performanceMetrics?.conversionRate).toBe(0.85);
       expect(activity.context.dealSize).toBe(150000);
     });
   });
 
   describe('Software Module', () => {
     test('should define software types', () => {
-      expect(SoftwareType.CRM_PLATFORM).toBe('CRMPlatform');
-      expect(SoftwareType.SALES_AUTOMATION).toBe('SalesAutomation');
-      expect(SoftwareType.MARKETING_AUTOMATION).toBe('MarketingAutomation');
-      expect(SoftwareType.EMAIL_SYSTEM).toBe('EmailSystem');
-      expect(SoftwareType.KNOWLEDGE_GRAPH).toBe('KnowledgeGraph');
-      expect(SoftwareType.API).toBe('API');
+      expect(Ontology.SoftwareType.CRM_PLATFORM).toBe('CRMPlatform');
+      expect(Ontology.SoftwareType.SALES_AUTOMATION).toBe('SalesAutomation');
+      expect(Ontology.SoftwareType.MARKETING_AUTOMATION).toBe('MarketingAutomation');
+      expect(Ontology.SoftwareType.EMAIL_SYSTEM).toBe('EmailSystem');
+      expect(Ontology.SoftwareType.KNOWLEDGE_GRAPH).toBe('KnowledgeGraph');
+      expect(Ontology.SoftwareType.API).toBe('API');
     });
 
     test('should create software system entity', () => {
-      const software: SoftwareSystem = {
+      const software: Ontology.SoftwareSystem = {
         id: 'crm-platform-1',
-        category: DOLCECategory.NON_AGENTIVE_PHYSICAL_OBJECT,
-        type: SoftwareType.CRM_PLATFORM,
+        category: Ontology.DOLCECategory.NON_AGENTIVE_PHYSICAL_OBJECT,
+        type: Ontology.SoftwareType.CRM_PLATFORM,
         name: 'Enterprise CRM Platform',
         version: '2.1.0',
         vendor: 'CRM Solutions Inc',
@@ -221,8 +208,8 @@ describe('O-CREAM-v2 Ontology', () => {
         updatedAt: new Date('2024-01-15')
       };
 
-      expect(software.category).toBe(DOLCECategory.NON_AGENTIVE_PHYSICAL_OBJECT);
-      expect(software.type).toBe(SoftwareType.CRM_PLATFORM);
+      expect(software.category).toBe(Ontology.DOLCECategory.NON_AGENTIVE_PHYSICAL_OBJECT);
+      expect(software.type).toBe(Ontology.SoftwareType.CRM_PLATFORM);
       expect(software.capabilities).toContain('contact-management');
       expect(software.status).toBe('active');
       expect(software.deployment).toBe('cloud');
@@ -230,21 +217,22 @@ describe('O-CREAM-v2 Ontology', () => {
   });
 
   describe('OCreamV2Ontology Manager', () => {
-    let ontology: OCreamV2Ontology;
+    let ontology: Ontology.OCreamV2Ontology;
 
     beforeEach(() => {
-      ontology = new OCreamV2Ontology();
+      // Correctly reset the singleton instance before each test
+      ontology = new Ontology.OCreamV2Ontology();
     });
 
     test('should create empty ontology with indices', () => {
       expect(ontology).toBeDefined();
-      expect(ontology.getEntitiesByType(DOLCECategory.ABSTRACT)).toHaveLength(0);
+      expect(ontology.getEntitiesByType(Ontology.DOLCECategory.ABSTRACT)).toHaveLength(0);
     });
 
     test('should add and retrieve entities', () => {
-      const entity: DOLCEEntity = {
+      const entity: Ontology.DOLCEEntity = {
         id: 'test-1',
-        category: DOLCECategory.ABSTRACT,
+        category: Ontology.DOLCECategory.ABSTRACT,
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -252,22 +240,25 @@ describe('O-CREAM-v2 Ontology', () => {
       ontology.addEntity(entity);
       const retrieved = ontology.getEntity('test-1');
       
-      expect(retrieved).toBeDefined();
-      expect(retrieved?.id).toBe('test-1');
-      expect(retrieved?.category).toBe(DOLCECategory.ABSTRACT);
+      expect(retrieved).toEqual(entity);
+      expect(ontology.getEntitiesByType(Ontology.DOLCECategory.ABSTRACT)).toHaveLength(1);
+    });
+
+    test('should return undefined for non-existent entity', () => {
+      expect(ontology.getEntity('non-existent')).toBeUndefined();
     });
 
     test('should index entities by type', () => {
-      const abstractEntity: DOLCEEntity = {
+      const abstractEntity: Ontology.DOLCEEntity = {
         id: 'abstract-1',
-        category: DOLCECategory.ABSTRACT,
+        category: Ontology.DOLCECategory.ABSTRACT,
         createdAt: new Date(),
         updatedAt: new Date()
       };
 
-      const perdurantEntity: DOLCEEntity = {
+      const perdurantEntity: Ontology.DOLCEEntity = {
         id: 'perdurant-1',
-        category: DOLCECategory.PERDURANT,
+        category: Ontology.DOLCECategory.PERDURANT,
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -275,8 +266,8 @@ describe('O-CREAM-v2 Ontology', () => {
       ontology.addEntity(abstractEntity);
       ontology.addEntity(perdurantEntity);
 
-      const abstractEntities = ontology.getEntitiesByType(DOLCECategory.ABSTRACT);
-      const perdurantEntities = ontology.getEntitiesByType(DOLCECategory.PERDURANT);
+      const abstractEntities = ontology.getEntitiesByType(Ontology.DOLCECategory.ABSTRACT);
+      const perdurantEntities = ontology.getEntitiesByType(Ontology.DOLCECategory.PERDURANT);
 
       expect(abstractEntities).toHaveLength(1);
       expect(perdurantEntities).toHaveLength(1);
@@ -284,10 +275,15 @@ describe('O-CREAM-v2 Ontology', () => {
       expect(perdurantEntities[0].id).toBe('perdurant-1');
     });
 
+    test('should not find entities of wrong type', () => {
+      const qualityEntities = ontology.getEntitiesByType(Ontology.DOLCECategory.QUALITY);
+      expect(qualityEntities).toHaveLength(0);
+    });
+
     test('should manage relationships', () => {
-      const relationship: OCreamRelationship = {
+      const relationship: Ontology.OCreamRelationship = {
         id: 'rel-1',
-        relationshipType: RelationshipType.CUSTOMER_RELATIONSHIP,
+        relationshipType: Ontology.RelationshipType.CUSTOMER_RELATIONSHIP,
         sourceEntityId: 'contact-1',
         targetEntityId: 'org-1',
         sourceRole: 'customer',
@@ -311,22 +307,22 @@ describe('O-CREAM-v2 Ontology', () => {
 
       expect(relationships).toHaveLength(1);
       expect(relationships[0].id).toBe('rel-1');
-      expect(relationships[0].relationshipType).toBe(RelationshipType.CUSTOMER_RELATIONSHIP);
+      expect(relationships[0].relationshipType).toBe(Ontology.RelationshipType.CUSTOMER_RELATIONSHIP);
       expect(relationships[0].strength).toBe(0.9);
     });
 
     test('should find related entities', () => {
       // Add entities
-      const contact: DOLCEEntity = {
+      const contact: Ontology.DOLCEEntity = {
         id: 'contact-1',
-        category: DOLCECategory.AGENTIVE_PHYSICAL_OBJECT,
+        category: Ontology.DOLCECategory.AGENTIVE_PHYSICAL_OBJECT,
         createdAt: new Date(),
         updatedAt: new Date()
       };
 
-      const organization: DOLCEEntity = {
+      const organization: Ontology.DOLCEEntity = {
         id: 'org-1',
-        category: DOLCECategory.AGENTIVE_PHYSICAL_OBJECT,
+        category: Ontology.DOLCECategory.AGENTIVE_PHYSICAL_OBJECT,
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -335,9 +331,9 @@ describe('O-CREAM-v2 Ontology', () => {
       ontology.addEntity(organization);
 
       // Add relationship
-      const relationship: OCreamRelationship = {
+      const relationship: Ontology.OCreamRelationship = {
         id: 'rel-1',
-        relationshipType: RelationshipType.EMPLOYMENT,
+        relationshipType: Ontology.RelationshipType.EMPLOYMENT,
         sourceEntityId: 'contact-1',
         targetEntityId: 'org-1',
         temporal: {},
@@ -350,7 +346,7 @@ describe('O-CREAM-v2 Ontology', () => {
 
       // Find related entities
       const related = ontology.findRelatedEntities('contact-1');
-      const employmentRelated = ontology.findRelatedEntities('contact-1', RelationshipType.EMPLOYMENT);
+      const employmentRelated = ontology.findRelatedEntities('contact-1', Ontology.RelationshipType.EMPLOYMENT);
 
       expect(related).toHaveLength(1);
       expect(related[0].id).toBe('org-1');
@@ -359,17 +355,17 @@ describe('O-CREAM-v2 Ontology', () => {
     });
 
     test('should validate different entity categories', () => {
-      const validEndurant: DOLCEEntity = {
+      const validEndurant: Ontology.DOLCEEntity = {
         id: 'endurant-1',
-        category: DOLCECategory.ENDURANT,
+        category: Ontology.DOLCECategory.ENDURANT,
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-02')
       };
 
-      const validPerdurant: CRMActivity = {
+      const validPerdurant: Ontology.CRMActivity = {
         id: 'perdurant-1',
-        category: DOLCECategory.PERDURANT,
-        type: ActivityType.CUSTOMER_SUPPORT,
+        category: Ontology.DOLCECategory.PERDURANT,
+        type: Ontology.ActivityType.CUSTOMER_SUPPORT,
         name: 'Support Call',
         participants: [],
         status: 'completed',
@@ -381,10 +377,10 @@ describe('O-CREAM-v2 Ontology', () => {
         updatedAt: new Date('2024-01-01')
       };
 
-      const invalidPerdurant: CRMActivity = {
+      const invalidPerdurant: Ontology.CRMActivity = {
         id: 'invalid-perdurant-1',
-        category: DOLCECategory.PERDURANT,
-        type: ActivityType.CUSTOMER_SUPPORT,
+        category: Ontology.DOLCECategory.PERDURANT,
+        type: Ontology.ActivityType.CUSTOMER_SUPPORT,
         name: 'Invalid Support Call',
         participants: [],
         status: 'completed',
@@ -403,16 +399,16 @@ describe('O-CREAM-v2 Ontology', () => {
 
     test('should export ontology structure', () => {
       // Add some test data
-      const entity: DOLCEEntity = {
+      const entity: Ontology.DOLCEEntity = {
         id: 'test-entity',
-        category: DOLCECategory.ABSTRACT,
+        category: Ontology.DOLCECategory.ABSTRACT,
         createdAt: new Date(),
         updatedAt: new Date()
       };
 
-      const relationship: OCreamRelationship = {
+      const relationship: Ontology.OCreamRelationship = {
         id: 'test-rel',
-        relationshipType: RelationshipType.COLLABORATION,
+        relationshipType: Ontology.RelationshipType.COLLABORATION,
         sourceEntityId: 'entity-1',
         targetEntityId: 'entity-2',
         temporal: {},
@@ -437,14 +433,15 @@ describe('O-CREAM-v2 Ontology', () => {
       expect(exported.metadata.relationshipCount).toBe(1);
       expect(exported.entities).toHaveLength(1);
       expect(exported.relationships).toHaveLength(1);
-      expect(exported.typeDistribution[DOLCECategory.ABSTRACT]).toBe(1);
+      expect(exported.typeDistribution[Ontology.DOLCECategory.ABSTRACT]).toBe(1);
     });
   });
 
   describe('Global Ontology Instance', () => {
-    test('should provide global ontology instance', () => {
-      expect(oCreamV2).toBeDefined();
-      expect(oCreamV2).toBeInstanceOf(OCreamV2Ontology);
+    test('should provide a singleton instance', () => {
+      const instance1 = Ontology.getOCreamV2Instance();
+      const instance2 = Ontology.getOCreamV2Instance();
+      expect(instance1).toBe(instance2);
     });
   });
 });

@@ -4,9 +4,13 @@
     "downlevelIteration": true,
     "outDir": "./dist",
     "rootDir": "./",
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
+      "@crm-core/*": ["src/crm-core/*"],
+      "@financial/*": ["src/extensions/financial/*"],
+      "@platform/*": ["src/platform/*"],
+      "@shared/*": ["src/shared/*"],
+      "@test/*": ["test/*"]
     }
   },
   "include": [
