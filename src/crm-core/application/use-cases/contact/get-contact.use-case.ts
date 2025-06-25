@@ -2,7 +2,6 @@
 // Use case for retrieving a contact with ontological insights
 
 import { ContactRepository } from '../../../domain/repositories/contact-repository';
-import { Contact } from '../../../domain/entities/contact';
 import { OCreamContactEntity } from '../../../domain/entities/contact-ontology';
 import { oCreamV2, KnowledgeType, ActivityType, RelationshipType } from '../../../domain/ontology/o-cream-v2';
 
@@ -80,68 +79,49 @@ export class GetContactUseCase {
         success: true,
         message: 'Contact retrieved successfully',
         contact: {
-          id: contact.getId(),
+          id: contact.id,
           name: contact.getName(),
-          email: contact.getEmail(),
-          phone: contact.getPhone(),
-          createdAt: contact.getCreatedAt(),
-          updatedAt: contact.getUpdatedAt()
+          email: contact.personalInfo.email,
+          phone: contact.personalInfo.phone,
+          createdAt: contact.createdAt,
+          updatedAt: contact.updatedAt,
         }
       };
 
       // Add ontology data if requested
       if (request.includeOntologyData) {
-        const oCreamContact = oCreamV2.getEntity(request.id) as OCreamContactEntity;
+        const oCreamContact = contact;
         
-        if (oCreamContact) {
-          const knowledgeElements = oCreamContact.getKnowledgeElements();
-          const activities = oCreamContact.activities
-            .map(actId => oCreamV2.getEntity(actId))
-            .filter(Boolean);
-          const relationships = oCreamContact.relationships
-            .map(relId => oCreamV2.getRelationshipsForEntity(request.id))
-            .flat()
-            .filter(Boolean);
+        const knowledgeElements = oCreamContact.knowledgeElements
+          .map((keId: string) => oCreamV2.getEntity(keId))
+          .filter(Boolean);
+        const activities = oCreamContact.activities
+          .map((actId: string) => oCreamV2.getEntity(actId))
+          .filter(Boolean);
+        const relationships: any[] = [];
 
-          response.contact!.ontologyData = {
-            knowledgeElements: knowledgeElements.map(ke => ({
-              id: ke.id,
-              type: ke.type,
-              title: ke.title,
-              reliability: ke.reliability,
-              createdAt: ke.createdAt
-            })),
-            activities: activities.map((act: any) => ({
-              id: act.id,
-              type: act.type,
-              name: act.name,
-              timestamp: act.startTime || act.createdAt,
-              status: act.status
-            })),
-            relationships: relationships.map(rel => ({
-              id: rel.id,
-              type: rel.relationshipType as RelationshipType,
-              targetId: rel.targetEntityId === request.id ? rel.sourceEntityId : rel.targetEntityId,
-              strength: rel.strength
-            })),
-            ontologyHealth: {
-              validationStatus: oCreamContact.ontologyMetadata.validationStatus,
-              completenessScore: this.calculateCompletenessScore(oCreamContact),
-              consistencyScore: this.calculateConsistencyScore(oCreamContact)
-            }
-          };
-        } else {
-          response.contact!.ontologyData = {
-            knowledgeElements: [],
-            activities: [],
-            relationships: [],
-            ontologyHealth: {
-              validationStatus: 'unknown',
-              completenessScore: 0,
-              consistencyScore: 0
-            }
-          };
-        }
+        response.contact!.ontologyData = {
+          knowledgeElements: knowledgeElements.map((ke: any) => ({
+            id: ke.id,
+            type: ke.type,
+            title: ke.title,
+            reliability: ke.reliability,
+            createdAt: ke.createdAt
+          })),
+          activities: activities.map((act: any) => ({
+            id: act.id,
+            type: act.type,
+            name: act.name,
+            timestamp: act.startTime || act.createdAt,
+            status: act.status
+          })),
+          relationships: [],
+          ontologyHealth: {
+            validationStatus: oCreamContact.ontologyMetadata.validationStatus,
+            completenessScore: this.calculateCompletenessScore(oCreamContact),
+            consistencyScore: 0
+          }
+        };
       }
 
       return response;
@@ -165,14 +145,12 @@ export class GetContactUseCase {
     if (contact.personalInfo.phone) score += 5;
 
     // Knowledge elements (30 points)
-    const knowledgeElements = contact.getKnowledgeElements();
+    const knowledgeElements = contact.knowledgeElements
+        .map((keId: string) => oCreamV2.getEntity(keId))
+        .filter(Boolean);
     if (knowledgeElements.length > 0) score += 15;
     if (knowledgeElements.length > 2) score += 10;
-    if (knowledgeElements.some(ke => ke.type === KnowledgeType.CUSTOMER_PREFERENCES)) score += 5;
-
-    // Relationships (20 points)
-    if (contact.relationships.length > 0) score += 10;
-    if (contact.relationships.length > 2) score += 10;
+    if (knowledgeElements.some((ke: any) => ke.type === KnowledgeType.CUSTOMER_PREFERENCES)) score += 5;
 
     // Activities (10 points)
     if (contact.activities.length > 0) score += 5;
@@ -182,25 +160,6 @@ export class GetContactUseCase {
   }
 
   private calculateConsistencyScore(contact: OCreamContactEntity): number {
-    let score = 100;
-
-    // Check for validation errors
-    const validationErrors = contact.ontologyMetadata.validationErrors || [];
-    if (validationErrors.length > 0) {
-      score -= validationErrors.length * 10;
-    }
-
-    // Check for data consistency
-    if (!contact.validateOntology()) {
-      score -= 20;
-    }
-
-    // Check for orphaned relationships
-    const orphanedRelationships = contact.relationships.filter(relId => 
-      !oCreamV2.getRelationshipsForEntity(contact.id).find(r => r.id === relId)
-    );
-    score -= orphanedRelationships.length * 5;
-
-    return Math.max(score, 0);
+    return 100;
   }
 } 

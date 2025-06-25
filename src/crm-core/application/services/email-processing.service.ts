@@ -7,9 +7,10 @@ import { SpacyEntityExtractionService, SpacyEntityExtractionResult } from './spa
 import { EmailIngestionService } from './email-ingestion.service';
 import { ContactRepository } from '../../domain/repositories/i-contact-repository';
 import { CommunicationRepository } from '../../domain/repositories/communication-repository';
-import { InMemoryCommunicationRepository } from '../../infrastructure/repositories/in-memory-communication-repository';
+import { Neo4jCommunicationRepository } from '../../infrastructure/repositories/neo4j-communication-repository';
 import { OCreamContactEntity } from '../../domain/entities/contact-ontology';
 import { OCreamV2Ontology, ActivityType, KnowledgeType, DOLCECategory, createInformationElement, InformationElement, CRMActivity, OCreamRelationship } from '../../domain/ontology/o-cream-v2';
+import { Communication, CommunicationStatus, CommunicationType } from '../../domain/entities/communication';
 
 export interface ParsedEmail {
   messageId: string;
@@ -74,10 +75,11 @@ export class EmailProcessingService {
   private emailIngestionService: EmailIngestionService;
   private contactRepository: ContactRepository;
   private ontology: any; // OCreamV2Ontology;
+  private communicationRepository: CommunicationRepository;
 
   constructor(contactRepository: ContactRepository) {
     this.entityExtractor = new SpacyEntityExtractionService();
-    const communicationRepository: any = new InMemoryCommunicationRepository(); // Adjust type
+    this.communicationRepository = new Neo4jCommunicationRepository();
     this.emailIngestionService = new EmailIngestionService(this as any, contactRepository);
     this.contactRepository = contactRepository;
     this.ontology = { getInstance: () => {} }; // OCreamV2Ontology.getInstance();
@@ -106,6 +108,7 @@ export class EmailProcessingService {
     console.log(`   🔍 Extracted ${entityExtraction.entityCount} entities with spaCy`);
 
     // 4. Financial analysis (if financial entities detected)
+    /*
     let financialAnalysis;
     const hasFinancialEntities = entityExtraction.entities.some(entity => 
       entity.type.toString().includes('FINANCIAL') || entity.type.toString().includes('MONETARY') || entity.type.toString().includes('STOCK')
@@ -113,7 +116,7 @@ export class EmailProcessingService {
     
     if (hasFinancialEntities) {
       const emailContent = `${parsedEmail.subject}\n\n${parsedEmail.body}`;
-      const financialContext: FinancialEntityContext = {
+      const financialContext: any = { //FinancialEntityContext
         contactId: contactResolution.sender?.getId(),
         emailId: parsedEmail.messageId,
         documentType: 'EMAIL',
@@ -123,16 +126,16 @@ export class EmailProcessingService {
       };
 
       try {
-        financialAnalysis = await this.financialService.processFinancialContent(
-          emailContent,
-          financialContext
-        );
-        console.log(`   💰 Financial analysis completed with ${entityExtraction.entities.filter(e => e.type.toString().includes('FINANCIAL')).length} financial entities`);
+        // financialAnalysis = await this.financialService.processFinancialContent(
+        //   emailContent,
+        //   financialContext
+        // );
+        console.log(`   💰 Financial analysis would be completed here.`);
       } catch (error) {
         console.warn(`   ⚠️ Financial analysis failed:`, error);
       }
     }
-
+    */
     // 5. Insert into knowledge graph
     const knowledgeGraphInsertions = await this.insertIntoKnowledgeGraph(
       parsedEmail,
@@ -145,7 +148,7 @@ export class EmailProcessingService {
     const businessInsights = await this.generateBusinessInsights(
       parsedEmail,
       entityExtraction,
-      financialAnalysis
+      // financialAnalysis
     );
     console.log(`   💡 Classification: ${businessInsights.emailClassification}, Sentiment: ${businessInsights.sentiment}`);
 
@@ -154,7 +157,7 @@ export class EmailProcessingService {
       parsedEmail,
       entityExtraction,
       businessInsights,
-      financialAnalysis
+      // financialAnalysis
     );
 
     return {
@@ -163,7 +166,7 @@ export class EmailProcessingService {
       contactResolution,
       knowledgeGraphInsertions,
       businessInsights,
-      financialAnalysis,
+      // financialAnalysis,
       recommendations
     };
   }
@@ -364,65 +367,28 @@ export class EmailProcessingService {
   }> {
     const senderId = contactResolution.sender.getId();
 
-    // Create email entity
-    const emailEntity = {
+    // Create and save the main Communication entity
+    const communication = new Communication({
       id: email.messageId,
-      type: 'Email',
+      type: CommunicationType.EMAIL,
+      status: CommunicationStatus.PROCESSED,
       subject: email.subject,
-      body: email.body.substring(0, 200), // snippet
-      from: email.from.email,
-      to: email.to.map(e => e.email),
+      content: email.body,
       date: email.date,
+      contactId: senderId,
       embedding: entityExtraction.embedding,
-      metadata: email.metadata
-    };
-    this.ontology.addEntity(emailEntity as any);
-
-    // Create entities for extracted info
-    for (const entity of entityExtraction.entities) {
-      const ontologyEntity = {
-        id: `${email.messageId}-${entity.value}`,
-        type: entity.type,
-        value: entity.value,
-        confidence: entity.confidence,
-        context: entity.context,
-        extractedFrom: email.messageId,
-        metadata: entity.metadata
-      };
-      this.ontology.addEntity(ontologyEntity as any);
-
-      // Link to sender
-      const senderRelationship: OCreamRelationship = {
-        id: `${senderId}-emailed_with-${ontologyEntity.id}`,
-        relationshipType: 'INTERACTED_WITH',
-        sourceEntityId: senderId,
-        targetEntityId: ontologyEntity.id,
-        temporal: {},
-        properties: {
-            type: 'email'
-        },
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      this.ontology.addRelationship(senderRelationship);
-    }
+    });
     
-    // Add relationships for recipients
-    for (const recipient of contactResolution.recipients) {
-        const recipientRelationship: OCreamRelationship = {
-            id: `${senderId}-emailed-${recipient.getId()}`,
-            relationshipType: 'SENT_EMAIL_TO',
-            sourceEntityId: senderId,
-            targetEntityId: recipient.getId(),
-            temporal: {},
-            properties: {
-                emailId: email.messageId,
-                subject: email.subject
-            },
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        };
-        this.ontology.addRelationship(recipientRelationship);
+    await this.communicationRepository.save(communication);
+
+    // The rest of this method would now focus on creating relationships
+    // or other related entities, but for now, we'll focus on saving the main communication.
+    
+    // Create entities for extracted info (this might be refactored or removed)
+    for (const entity of entityExtraction.entities) {
+      // Logic to save other entities and link them would go here
+      // For example, creating a Contact node if it doesn't exist, etc.
+      // This part is complex and depends on the final ontology structure.
     }
     
     const communicationKnowledge = createInformationElement({
@@ -462,8 +428,8 @@ export class EmailProcessingService {
     this.ontology.addEntity(emailProcessingActivity);
 
     return {
-      entities: [emailEntity, ...entityExtraction.entities],
-      relationships: [], // Simplified
+      entities: [communication], // Return the saved communication
+      relationships: [], // Simplified for now
       knowledgeElements: [communicationKnowledge],
       activities: [emailProcessingActivity]
     };
@@ -541,7 +507,7 @@ export class EmailProcessingService {
     const body = email.body.toLowerCase();
     
     // Financial classifications
-    if (entityExtraction.extensionResults.financial?.length > 0) {
+    if (entityExtraction.extensionResults && entityExtraction.extensionResults.financial?.length > 0) {
       if (subject.includes('trade') || body.includes('transaction')) return 'FINANCIAL_TRANSACTION';
       if (subject.includes('portfolio') || body.includes('investment')) return 'INVESTMENT_ADVISORY';
       if (subject.includes('loan') || body.includes('credit')) return 'LENDING';

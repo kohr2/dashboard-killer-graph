@@ -1,50 +1,2335 @@
 {
   "nodes": [
     {
-      "id": "ca1c3c73-871b-40f6-b407-4ba3d97a6692",
+      "id": "74e4f5ed-bd25-4056-ac8e-8336a438f6e2",
       "labels": [
-        "COMPANY_NAME"
+        "WORK_OF_ART"
       ],
       "properties": {
-        "name": "MICROSOFT CORP.",
-        "source": "22-public-companies-deal.eml",
+        "name": "Project Helix",
+        "source": "01-helix-sourcing.eml",
         "confidence": 0.85
       }
     },
     {
-      "id": "9903d8a5-40e0-4105-bfc7-99df8a80fabd",
+      "id": "5624657e-20e2-4f35-a610-d3ab32e6e3fa",
       "labels": [
         "COMPANY_NAME"
       ],
       "properties": {
-        "name": "SEC",
-        "source": "22-public-companies-deal.eml",
+        "name": "HelixFlow Solutions",
+        "source": "01-helix-sourcing.eml",
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "61ad1b2a-8ef3-43e4-884b-af5b2179d7ba",
+      "labels": [
+        "SECTOR"
+      ],
+      "properties": {
+        "name": "Application Software",
+        "source": "01-helix-sourcing.eml",
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "ebd2572d-a035-4229-b174-6932c7818788",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$40M",
+        "source": "01-helix-sourcing.eml",
         "confidence": 0.85
       }
     },
     {
-      "id": "556c9779-79ad-43b4-82d8-1e9a7ba12154",
+      "id": "b5d56694-a123-451c-919b-fcfa0d4a4d98",
+      "labels": [
+        "PERCENT"
+      ],
+      "properties": {
+        "name": "80%",
+        "source": "01-helix-sourcing.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "03e2e000-b087-49e2-9f67-15ec023d41d0",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Vista Equity Partners",
+        "source": "01-helix-sourcing.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "34106ba9-d3f9-415c-9fc1-e00fc7216645",
       "labels": [
         "PERSON_NAME"
       ],
       "properties": {
-        "name": "Jane Doe",
-        "source": "22-public-companies-deal.eml",
+        "name": "David Chen",
+        "source": "01-helix-sourcing.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "762ac6aa-ce9e-409a-b670-3a24d388e691",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Morgan Stanley Technology Group",
+        "source": "01-helix-sourcing.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "64e6b173-2db4-49cc-a6a7-cb264148024d",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Project Helix",
+        "source": "02-helix-follow-up.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "9d20d8d2-90ee-4b7f-b270-09271974a5da",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Bob",
+        "source": "02-helix-follow-up.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "e72cdf27-1aae-4e2c-918a-70017ae4032d",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "David",
+        "source": "02-helix-follow-up.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "1246d305-6bb9-4191-b44c-b65b85f2a056",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Jane Miller",
+        "source": "02-helix-follow-up.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "111536ba-075d-41c8-a7ea-113f19c0f249",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "15 Jan 2025 09:00:00",
+        "source": "03-blueowl-history-deal1.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "5229ba48-dd7a-4dee-a6f2-41a8862c8b61",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Blue Owl Capital",
+        "source": "03-blueowl-history-deal1.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "37e71bc5-b12b-4e33-842e-602f5a9928f7",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Nightingale Health Services",
+        "source": "03-blueowl-history-deal1.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "b1141015-3273-4a75-a30e-852fec88ddee",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$450M Enterprise Value",
+        "source": "03-blueowl-history-deal1.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "998d9833-0d53-49a7-8fd6-f7a6a6d82b79",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Project Gotham",
+        "source": "04-gotham-nda-status.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "92baee6f-5af7-46c6-8790-d04b616cb795",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Gotham Security's",
+        "source": "04-gotham-nda-status.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "c13a79a4-b14d-4119-a577-5ad3cff975d0",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Lisa",
+        "source": "04-gotham-nda-status.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "63a42325-ce15-42c3-890d-e5a2399b8cf5",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Thoma Bravo",
+        "source": "04-gotham-nda-status.eml",
+        "confidence": 0.9
+      }
+    },
+    {
+      "id": "d94b9b5a-963b-4af3-9b68-fc2159d050b1",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Project Apex",
+        "source": "05-blackstone-follow-up-task.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "98b6fd2e-8039-45ec-85cc-2e1578348313",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Blackstone",
+        "source": "05-blackstone-follow-up-task.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "c6e8ec9b-5223-4826-9010-47cd7c3b35e0",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Sarah",
+        "source": "05-blackstone-follow-up-task.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "597c38c4-7258-4025-9b6e-e123a8b807fc",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Tom",
+        "source": "05-blackstone-follow-up-task.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "d49a1a70-c68e-4445-be1b-33504e4c1a75",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Audax Private Equity",
+        "source": "06-audax-history-deal1.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "f7ea82e2-4734-4a20-9215-4968469fdd2f",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Forge Industrial",
+        "source": "06-audax-history-deal1.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "b0d115c9-4528-4902-b92d-a0ffa21ff843",
+      "labels": [
+        "SECTOR"
+      ],
+      "properties": {
+        "name": "Industrial Machinery",
+        "source": "06-audax-history-deal1.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "1708f3d1-db3f-4463-9419-aa43557964fa",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "Jul 2025",
+        "source": "07-new-deal-for-audax-likelihood.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "e7088934-e637-4ff9-9066-825485cb1341",
+      "labels": [
+        "WORK_OF_ART"
+      ],
+      "properties": {
+        "name": "Project Anvil",
+        "source": "07-new-deal-for-audax-likelihood.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "5359f631-f1b7-4aff-b0d7-588e4b797a50",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Anvil Fasteners Inc.",
+        "source": "07-new-deal-for-audax-likelihood.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "584f30dd-2534-4086-b905-77f3298a474d",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$60M",
+        "source": "07-new-deal-for-audax-likelihood.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "9ad0566f-0605-47bb-a475-c2d2ce944bc1",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Audax",
+        "source": "07-new-deal-for-audax-likelihood.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "78fde885-17eb-4bd4-8788-6dd30aa2bcce",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Jane",
+        "source": "08-helix-competitive-intel.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "b1a272f0-7137-4e59-8dc3-6286d577eb48",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Blue Owl",
+        "source": "09-blueowl-history-deal2.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "8bfa4e6d-e7f0-47ae-884e-591eec43c8e9",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Compass Payments",
+        "source": "09-blueowl-history-deal2.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "99fc87ea-6d0f-46ed-a8a2-1921a67c7bc4",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$120M",
+        "source": "09-blueowl-history-deal2.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "7d2a5e57-d237-4a13-9c11-9cb228e88702",
+      "labels": [
+        "TIME"
+      ],
+      "properties": {
+        "name": "16:45:00",
+        "source": "10-gotham-nda-executed.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "77fcfbba-4167-42e9-ae28-d1d277871896",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Gotham Security",
+        "source": "10-gotham-nda-executed.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "b7c79e83-d2ee-4d71-8dbe-2ee77711051d",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "Fri, 12 Jul 2025",
+        "source": "11-helix-loi-submitted.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "f8c98145-4869-458c-b61c-8d309e97c4d0",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "500M",
+        "source": "11-helix-loi-submitted.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "c3763bdd-7a99-4f49-ba93-5eddf3360bdf",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "30-day",
+        "source": "11-helix-loi-submitted.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "15b7b9d5-2162-4837-a2a2-c5fcb6703400",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Morgan Stanley",
+        "source": "11-helix-loi-submitted.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "2b0b5924-5343-450b-a9a8-ce653fb8d089",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "early next week",
+        "source": "11-helix-loi-submitted.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "a9fb392a-23a6-4b41-977b-590fe5502fd0",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "Tue, 05 Nov 2024",
+        "source": "12-blueowl-history-deal3-passed.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "543ce3b8-8b6c-40ff-bbcf-900d5b86c4ea",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Project Jetstream",
+        "source": "12-blueowl-history-deal3-passed.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "7d63bab3-1b3e-4d9b-a131-458ce74ce7bb",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Mike",
+        "source": "12-blueowl-history-deal3-passed.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "e8c5135b-a61a-44ed-822a-8deb96d9770c",
+      "labels": [
+        "LOCATION"
+      ],
+      "properties": {
+        "name": "BOSTON",
+        "source": "13-audax-wins-anvil-deal.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "5f88242f-3660-45db-a72f-67a25cb175b6",
+      "labels": [
+        "LOCATION"
+      ],
+      "properties": {
+        "name": "MA",
+        "source": "13-audax-wins-anvil-deal.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "163ca9d5-02e3-4188-9ab0-e927125ed4da",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Project Anvil",
+        "source": "13-audax-wins-anvil-deal.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "ce675328-441f-4895-a9f4-0e40f66caea7",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Tactical Opportunities",
+        "source": "15-blackstone-logistics-deal.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "a0e5891d-7f51-4944-bc1c-478fa16c3226",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "BXTO",
+        "source": "15-blackstone-logistics-deal.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "79fa25c1-eda0-435d-8e40-c7cae139bae1",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$250 million",
+        "source": "15-blackstone-logistics-deal.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "769ac5d8-73e1-4bb7-af94-45b92079ef7e",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "LogiChain Solutions",
+        "source": "15-blackstone-logistics-deal.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "012243df-3681-49ca-b67c-854741a4e061",
+      "labels": [
+        "WORK_OF_ART"
+      ],
+      "properties": {
+        "name": "Project Lifeline",
+        "source": "16-blueowl-similar-deal.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "00ef73e5-1d10-40d3-9e50-7329d36b4d0f",
+      "labels": [
+        "WORK_OF_ART"
+      ],
+      "properties": {
+        "name": "Project Nightingale",
+        "source": "16-blueowl-similar-deal.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "8d7951f6-5fa3-4739-98f4-a172999b36a3",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Lifeline Home Health Group",
+        "source": "16-blueowl-similar-deal.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "5bc02fed-1910-4219-892e-0fd8948e28ea",
+      "labels": [
+        "CARDINAL"
+      ],
+      "properties": {
+        "name": "351020",
+        "source": "16-blueowl-similar-deal.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "476b8fef-978e-42e9-87e0-7ab810f708dc",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "Thu, 04 Jul 2025 12:00:00",
+        "source": "17-gotham-diligence-kickoff.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "566370de-296a-40c6-8004-793267e2d47e",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Rick",
+        "source": "17-gotham-diligence-kickoff.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "cea1a66a-e884-468d-b0e1-d189da33d72c",
+      "labels": [
+        "WORK_OF_ART"
+      ],
+      "properties": {
+        "name": "Project Evergreen",
+        "source": "18-audax-history-deal2-passed.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "72c3c2ff-122e-4329-bdf0-38dacb6be233",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Pete",
+        "source": "18-audax-history-deal2-passed.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "30106be4-db7e-473f-ae26-b28f1f94ac52",
+      "labels": [
+        "LOCATION"
+      ],
+      "properties": {
+        "name": "SAN FRANCISCO",
+        "source": "19-gotham-deal-won.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "e356e033-10c4-44e1-b9c5-1e4e7e4b6fd5",
+      "labels": [
+        "FAC"
+      ],
+      "properties": {
+        "name": "Project Apex",
+        "source": "20-blackstone-follow-up-complete.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "4f18b04a-c18f-40fc-8f57-3813727b9363",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Offshore Holdings Ltd.",
+        "source": "compliance-alert.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "21026634-997e-4252-8f7f-1922cc1e7183",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$2,750,000 USD",
+        "source": "compliance-alert.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "45ce1461-f351-4184-b23c-fba9da0072f3",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Cayman National Bank",
+        "source": "compliance-alert.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "477e1f02-2a41-4c18-b0fb-b465dacff2f0",
+      "labels": [
+        "LOCATION"
+      ],
+      "properties": {
+        "name": "Cayman Islands",
+        "source": "compliance-alert.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "c470fd96-b738-477c-a80a-1f42ea023f66",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "OFAC",
+        "source": "compliance-alert.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "a228c1a3-e9c9-4853-941f-743a30ded535",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "EU",
+        "source": "compliance-alert.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "7ed46f6d-04ed-410d-9deb-f549ff5c4deb",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "UN",
+        "source": "compliance-alert.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "7351e8b5-15cb-4e83-8d66-24057f71fce2",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "FATCA",
+        "source": "compliance-alert.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "0b3c989e-cc48-4274-8b86-aae85a2c9766",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "AML",
+        "source": "compliance-alert.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "9c5d727d-b728-409a-851f-07cd7d9ea1aa",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "John Smith",
+        "source": "compliance-alert.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "15e6e66e-1989-46d4-9143-aa8b8a523f4c",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Global Bank Risk Management Department",
+        "source": "compliance-alert.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "cf4024a3-907f-4ced-95d1-18411078440b",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "OCC",
+        "source": "compliance-alert.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "64ec0755-9965-4cde-9727-6cbdbe36af75",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "FDIC",
+        "source": "compliance-alert.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "3f9066c0-f016-4311-8b25-3bff3651b2ed",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Project Titan",
+        "source": "deal-sourcing-tech-buyout.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "e757ff16-90f0-4cb3-b5f8-c9f182d3c840",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Titan Industrial Analytics",
+        "source": "deal-sourcing-tech-buyout.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "540e64e2-c7c8-42b5-a3b4-5b752ce97177",
+      "labels": [
+        "SECTOR"
+      ],
+      "properties": {
+        "name": "Technology",
+        "source": "deal-sourcing-tech-buyout.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "16b45f33-cec3-47f3-baf6-8ada49e7c139",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$85M",
+        "source": "deal-sourcing-tech-buyout.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "fb8b4c97-4815-48eb-9acb-b26aff9b2598",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$22M",
+        "source": "deal-sourcing-tech-buyout.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "8f508982-7c2e-4301-82b6-51f78b874c4d",
+      "labels": [
+        "PERCENT"
+      ],
+      "properties": {
+        "name": "25.9%",
+        "source": "deal-sourcing-tech-buyout.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "ea3c8ed7-bdab-42e6-9f86-493d74ba410b",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Claudia Gomez",
+        "source": "deal-sourcing-tech-buyout.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "fbfafbd5-c379-495b-8e45-0f904dfb56ce",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Global TMT Group",
+        "source": "deal-sourcing-tech-buyout.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "1d1a8a38-95c1-4a57-ae92-e280a0961bd2",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Claudia",
+        "source": "fwd-nda-and-cim-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "cfde08a9-95ec-436a-baf6-7cf3e4dface8",
+      "labels": [
+        "WORK_OF_ART"
+      ],
+      "properties": {
+        "name": "Example Capital Partners V",
+        "source": "fwd-nda-and-cim-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "2a5d5897-6fb7-4f47-956e-5e722d4bf901",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "26 Jun 2025",
+        "source": "internal-strategy-audax-bid.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "0f7bec35-c937-4ef9-a87b-e0a9135b88b4",
+      "labels": [
+        "CARDINAL"
+      ],
+      "properties": {
+        "name": "8.0x - 9.0x EBITDA",
+        "source": "internal-strategy-audax-bid.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "723e74b9-cc83-4c77-b95b-a872fce09502",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "2025-07-10",
+        "source": "internal-strategy-audax-bid.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "c6705b0f-7ec6-4bc0-8844-d6bfdf772df0",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Example Capital Partners V",
+        "source": "internal-strategy-audax-bid.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "321f1750-4cb5-419f-91bc-fd498335486b",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Johnson",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "285b610f-4d47-4378-aa07-c77600bfa914",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "Q1 2024",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "d7515e2d-bb28-406c-8d2e-6b5556afea01",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "2,750,000",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "95fe43db-fbee-49f1-a930-1db83e7ab7a8",
+      "labels": [
+        "PERCENT"
+      ],
+      "properties": {
+        "name": "65%",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "460f7fe6-8ebd-44ed-8f34-ba1a4abcf332",
+      "labels": [
+        "PERCENT"
+      ],
+      "properties": {
+        "name": "25%",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "bba9359a-8f6e-48c8-afb3-91d852b9bee0",
+      "labels": [
+        "PERCENT"
+      ],
+      "properties": {
+        "name": "10%",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "c647b984-3e57-4f9c-8cdb-54203eeaafc1",
+      "labels": [
+        "PERCENT"
+      ],
+      "properties": {
+        "name": "+7.1%",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "a1c85fb1-24b3-4670-a97d-eda1c2e51c2f",
+      "labels": [
+        "FINANCIAL_ORG"
+      ],
+      "properties": {
+        "name": "Goldman Sachs",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "d79968ca-1f97-4f33-9916-bd38541f9ad1",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "GS",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "fe173aba-9205-43cc-b245-aff0d5a75174",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "350.25",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "c18a925f-8d49-40a6-b44b-659d12fe1a54",
+      "labels": [
+        "PERCENT"
+      ],
+      "properties": {
+        "name": "3.5%",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "19f690a8-5894-446e-abb1-f47e0d843305",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "96,250",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "9a55dbe1-af74-49f1-9b6d-d63db444fad9",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Apple Inc.",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "a99c93c3-8b33-4eb9-a47b-671bd50b1fcc",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "415.50",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "3f658efe-bc82-40a6-806f-1f8cda9a11d2",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "450",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "389a7b8e-f240-4aaf-8d49-e13f70ad5291",
+      "labels": [
+        "LOCATION"
+      ],
+      "properties": {
+        "name": "U.S.",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "2be7f593-61fb-4216-85fc-3c869a12dc99",
+      "labels": [
+        "CARDINAL"
+      ],
+      "properties": {
+        "name": "912828XG0",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "01f0f374-c84b-4f2c-a80a-32651c70eb17",
+      "labels": [
+        "PERCENT"
+      ],
+      "properties": {
+        "name": "4.2%",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "f06c196c-b537-4b07-b796-39c39434c93f",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "275,000",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "99916f96-394a-471f-b95f-00e4a8085253",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "500,000",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "e9d3a940-4e20-45a8-8953-c0d6cae5b332",
+      "labels": [
+        "CARDINAL"
+      ],
+      "properties": {
+        "name": "1.0845",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "6bd5f35b-ef3b-4e33-a408-d90374f088eb",
+      "labels": [
+        "LAW"
+      ],
+      "properties": {
+        "name": "MiFID II",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "e13a7dce-e5b5-4b8f-846d-0146ce9ca4d7",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Sarah Chen",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "665cf8e7-f515-4e62-96b1-2024b4778a41",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Morgan Stanley Investment Management",
+        "source": "investment-advisory.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "9440d08c-2d62-41bc-a579-7f98c262ea36",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "David Kim",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "c59c9d7b-a53b-4fb0-97e9-91c7d20a782c",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "TechStart Inc.",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "ac44f286-8d91-4fd7-8f82-e363251988af",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$5,000,000 USD",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "6f25e6e2-3f58-46db-bc9c-d70c4e4f6885",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "March 10, 2024",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "d2b59469-1c3b-4b66-918e-ee3537eb6c8a",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$12,500,000",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "98e4128c-84ba-4911-aa61-c6ab3d50e792",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$8,750,000",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "2fd8040d-daeb-4f90-8a64-a935924a3870",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$2,800,000",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "cf8104e1-097e-4f0a-85f6-aa416607c88a",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$1,950,000",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "b87805ff-46cb-4018-97c4-7c25faa5092f",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$2,450,000",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "c9d447eb-44ef-4998-a97f-b7cb99c1d3f9",
+      "labels": [
+        "LOCATION"
+      ],
+      "properties": {
+        "name": "Austin, TX",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "88a980f3-679e-4591-8be5-829476ca62a3",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$3,200,000",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "72ef97c5-5d3b-47a8-875f-587fb4ceedf0",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$1,800,000",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "d6b530a5-f19d-448a-9c40-5ba9e9915d57",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "$950,000",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "6207ba3a-4081-42ab-be25-1744ac458a91",
+      "labels": [
+        "CARDINAL"
+      ],
+      "properties": {
+        "name": "785",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "b7ab3950-fa26-4854-b689-18e744b79b8e",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Jennifer Martinez",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "b17b1188-fbae-4d51-8cc5-4770c49b8c45",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Wells Fargo Bank",
+        "source": "loan-application.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "7db82418-a675-4650-91f6-9adf92d5325b",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Financial Advisory Team",
+        "source": "meeting-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "b8ea3cfe-84de-4cff-ad44-d2f5ab4f27c7",
+      "labels": [
+        "CARDINAL"
+      ],
+      "properties": {
+        "name": "Q2",
+        "source": "meeting-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "0ba10855-3aec-4cfa-bdbe-0d37554f017c",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "1,850,000",
+        "source": "meeting-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "0412a2ee-080d-49d7-8a72-a79242444f99",
+      "labels": [
+        "PERCENT"
+      ],
+      "properties": {
+        "name": "70%",
+        "source": "meeting-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "11ffe3b6-93c8-44e4-a7a8-474ab16fa2e4",
+      "labels": [
+        "PERCENT"
+      ],
+      "properties": {
+        "name": "20%",
+        "source": "meeting-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "24c844f0-645e-4c07-a10d-5f841385217a",
+      "labels": [
+        "PERCENT"
+      ],
+      "properties": {
+        "name": "35%",
+        "source": "meeting-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "6f233189-074a-4ffe-b617-666f39bed857",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "Tuesday",
+        "source": "meeting-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "dcedf3a1-ee1b-447a-babe-20672bbdc49a",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "Wednesday",
+        "source": "meeting-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "17147701-f307-4e0f-9371-12ab81f22db7",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "April 1st",
+        "source": "meeting-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "586ba388-6ca1-4591-a514-bccd1597b16c",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "Friday",
+        "source": "meeting-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "ab2d737c-44a3-4567-8b6f-94806df40da3",
+      "labels": [
+        "TIME"
+      ],
+      "properties": {
+        "name": "90 minutes",
+        "source": "meeting-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "2aff1de0-1c82-4971-8610-bf825a9278b6",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Michael Thompson",
+        "source": "meeting-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "aa2a44f2-1618-4629-9712-0f205a0ea7e5",
+      "labels": [
+        "PERSON_NAME"
+      ],
+      "properties": {
+        "name": "Susan Thompson",
+        "source": "meeting-request.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "a65d65d3-87ca-4860-8aec-69a4a476bf6d",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Acme Corporation",
+        "source": "trade-confirmation.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "cd98b065-701f-4ba4-9454-45d727a2bfd5",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "Microsoft Corporation",
+        "source": "trade-confirmation.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "f5b74168-6eae-44ba-8e24-21760ecb71f2",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "NASDAQ",
+        "source": "trade-confirmation.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "14742e9b-e3a9-4de8-8d64-542a6e3e3a89",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "1,038,750.00",
+        "source": "trade-confirmation.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "fd21cc19-d91f-423a-8696-50669415eb33",
+      "labels": [
+        "MONETARY_AMOUNT"
+      ],
+      "properties": {
+        "name": "125.00",
+        "source": "trade-confirmation.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "94362019-c99c-4296-9cd1-4f972dee2553",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "March 18, 2024",
+        "source": "trade-confirmation.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "c38311f0-c838-44cd-b168-ddc0a954226b",
+      "labels": [
+        "DATE"
+      ],
+      "properties": {
+        "name": "March 16, 2024",
+        "source": "trade-confirmation.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "20c7c380-1521-4316-95f8-3c6c254bb4b0",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "JP Morgan Securities LLC",
+        "source": "trade-confirmation.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "13b30c7e-7357-4f88-b303-8912e314e453",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "JP Morgan Clearing Corp",
+        "source": "trade-confirmation.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "abd3ed2b-a7b2-4062-99b1-11e908417e84",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "FINRA",
+        "source": "trade-confirmation.eml",
+        "confidence": 0.85
+      }
+    },
+    {
+      "id": "93b5a7ee-6ec7-438b-9764-cd14818b5a2b",
+      "labels": [
+        "COMPANY_NAME"
+      ],
+      "properties": {
+        "name": "State Street Bank & Trust",
+        "source": "trade-confirmation.eml",
         "confidence": 0.85
       }
     }
   ],
   "relationships": [
     {
-      "sourceId": "ca1c3c73-871b-40f6-b407-4ba3d97a6692",
-      "targetId": "9903d8a5-40e0-4105-bfc7-99df8a80fabd",
-      "type": "FILED_WITH",
+      "sourceId": "74e4f5ed-bd25-4056-ac8e-8336a438f6e2",
+      "targetId": "5624657e-20e2-4f35-a610-d3ab32e6e3fa",
+      "type": "REPRESENTS",
       "properties": {}
     },
     {
-      "sourceId": "556c9779-79ad-43b4-82d8-1e9a7ba12154",
-      "targetId": "ca1c3c73-871b-40f6-b407-4ba3d97a6692",
-      "type": "ANALYZES",
+      "sourceId": "5624657e-20e2-4f35-a610-d3ab32e6e3fa",
+      "targetId": "61ad1b2a-8ef3-43e4-884b-af5b2179d7ba",
+      "type": "OPERATES_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "5624657e-20e2-4f35-a610-d3ab32e6e3fa",
+      "targetId": "ebd2572d-a035-4229-b174-6932c7818788",
+      "type": "HAS_ARR",
+      "properties": {}
+    },
+    {
+      "sourceId": "5624657e-20e2-4f35-a610-d3ab32e6e3fa",
+      "targetId": "b5d56694-a123-451c-919b-fcfa0d4a4d98",
+      "type": "GROWTH_RATE",
+      "properties": {}
+    },
+    {
+      "sourceId": "34106ba9-d3f9-415c-9fc1-e00fc7216645",
+      "targetId": "762ac6aa-ce9e-409a-b670-3a24d388e691",
+      "type": "WORKS_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "03e2e000-b087-49e2-9f67-15ec023d41d0",
+      "targetId": "5624657e-20e2-4f35-a610-d3ab32e6e3fa",
+      "type": "POTENTIAL_INVESTOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "03e2e000-b087-49e2-9f67-15ec023d41d0",
+      "targetId": "5624657e-20e2-4f35-a610-d3ab32e6e3fa",
+      "type": "INTERESTED_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "1246d305-6bb9-4191-b44c-b65b85f2a056",
+      "targetId": "03e2e000-b087-49e2-9f67-15ec023d41d0",
+      "type": "WORKS_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "9d20d8d2-90ee-4b7f-b270-09271974a5da",
+      "targetId": "e72cdf27-1aae-4e2c-918a-70017ae4032d",
+      "type": "COORDINATE_WITH",
+      "properties": {}
+    },
+    {
+      "sourceId": "03e2e000-b087-49e2-9f67-15ec023d41d0",
+      "targetId": "74e4f5ed-bd25-4056-ac8e-8336a438f6e2",
+      "type": "SCHEDULE_PRESENTATION_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "5229ba48-dd7a-4dee-a6f2-41a8862c8b61",
+      "targetId": "37e71bc5-b12b-4e33-842e-602f5a9928f7",
+      "type": "ACQUIRED",
+      "properties": {}
+    },
+    {
+      "sourceId": "5229ba48-dd7a-4dee-a6f2-41a8862c8b61",
+      "targetId": "b1141015-3273-4a75-a30e-852fec88ddee",
+      "type": "TRANSACTION_VALUE",
+      "properties": {}
+    },
+    {
+      "sourceId": "c13a79a4-b14d-4119-a577-5ad3cff975d0",
+      "targetId": "63a42325-ce15-42c3-890d-e5a2399b8cf5",
+      "type": "WORKS_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "92baee6f-5af7-46c6-8790-d04b616cb795",
+      "targetId": "998d9833-0d53-49a7-8fd6-f7a6a6d82b79",
+      "type": "ASSOCIATED_WITH",
+      "properties": {}
+    },
+    {
+      "sourceId": "98b6fd2e-8039-45ec-85cc-2e1578348313",
+      "targetId": "d94b9b5a-963b-4af3-9b68-fc2159d050b1",
+      "type": "SUBMITTED_IOI_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "c6e8ec9b-5223-4826-9010-47cd7c3b35e0",
+      "targetId": "98b6fd2e-8039-45ec-85cc-2e1578348313",
+      "type": "FOLLOW_UP_WITH",
+      "properties": {}
+    },
+    {
+      "sourceId": "c6e8ec9b-5223-4826-9010-47cd7c3b35e0",
+      "targetId": "597c38c4-7258-4025-9b6e-e123a8b807fc",
+      "type": "CONNECT_WITH",
+      "properties": {}
+    },
+    {
+      "sourceId": "d49a1a70-c68e-4445-be1b-33504e4c1a75",
+      "targetId": "f7ea82e2-4734-4a20-9215-4968469fdd2f",
+      "type": "OWNS",
+      "properties": {}
+    },
+    {
+      "sourceId": "f7ea82e2-4734-4a20-9215-4968469fdd2f",
+      "targetId": "b0d115c9-4528-4902-b92d-a0ffa21ff843",
+      "type": "OPERATES_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "d49a1a70-c68e-4445-be1b-33504e4c1a75",
+      "targetId": "b0d115c9-4528-4902-b92d-a0ffa21ff843",
+      "type": "INVESTS_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "5359f631-f1b7-4aff-b0d7-588e4b797a50",
+      "targetId": "b0d115c9-4528-4902-b92d-a0ffa21ff843",
+      "type": "OPERATES_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "5359f631-f1b7-4aff-b0d7-588e4b797a50",
+      "targetId": "584f30dd-2534-4086-b905-77f3298a474d",
+      "type": "HAS_REVENUE",
+      "properties": {}
+    },
+    {
+      "sourceId": "e7088934-e637-4ff9-9066-825485cb1341",
+      "targetId": "5359f631-f1b7-4aff-b0d7-588e4b797a50",
+      "type": "IS_TARGET",
+      "properties": {}
+    },
+    {
+      "sourceId": "9ad0566f-0605-47bb-a475-c2d2ce944bc1",
+      "targetId": "5359f631-f1b7-4aff-b0d7-588e4b797a50",
+      "type": "POTENTIAL_BIDDER",
+      "properties": {}
+    },
+    {
+      "sourceId": "9d20d8d2-90ee-4b7f-b270-09271974a5da",
+      "targetId": "03e2e000-b087-49e2-9f67-15ec023d41d0",
+      "type": "WORKS_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "03e2e000-b087-49e2-9f67-15ec023d41d0",
+      "targetId": "74e4f5ed-bd25-4056-ac8e-8336a438f6e2",
+      "type": "EVALUATING",
+      "properties": {}
+    },
+    {
+      "sourceId": "98b6fd2e-8039-45ec-85cc-2e1578348313",
+      "targetId": "74e4f5ed-bd25-4056-ac8e-8336a438f6e2",
+      "type": "EVALUATING",
+      "properties": {}
+    },
+    {
+      "sourceId": "b1a272f0-7137-4e59-8dc3-6286d577eb48",
+      "targetId": "8bfa4e6d-e7f0-47ae-884e-591eec43c8e9",
+      "type": "INVESTED_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "b1a272f0-7137-4e59-8dc3-6286d577eb48",
+      "targetId": "99fc87ea-6d0f-46ed-a8a2-1921a67c7bc4",
+      "type": "INVESTMENT_AMOUNT",
+      "properties": {}
+    },
+    {
+      "sourceId": "77fcfbba-4167-42e9-ae28-d1d277871896",
+      "targetId": "1708f3d1-db3f-4463-9419-aa43557964fa",
+      "type": "NDA_APPROVED",
+      "properties": {}
+    },
+    {
+      "sourceId": "77fcfbba-4167-42e9-ae28-d1d277871896",
+      "targetId": "7d2a5e57-d237-4a13-9c11-9cb228e88702",
+      "type": "NDA_EXECUTED",
+      "properties": {}
+    },
+    {
+      "sourceId": "1246d305-6bb9-4191-b44c-b65b85f2a056",
+      "targetId": "03e2e000-b087-49e2-9f67-15ec023d41d0",
+      "type": "WORKS_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "03e2e000-b087-49e2-9f67-15ec023d41d0",
+      "targetId": "74e4f5ed-bd25-4056-ac8e-8336a438f6e2",
+      "type": "SUBMITTED_LOI_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "03e2e000-b087-49e2-9f67-15ec023d41d0",
+      "targetId": "15b7b9d5-2162-4837-a2a2-c5fcb6703400",
+      "type": "AWAITING_RESPONSE_FROM",
+      "properties": {}
+    },
+    {
+      "sourceId": "03e2e000-b087-49e2-9f67-15ec023d41d0",
+      "targetId": "f8c98145-4869-458c-b61c-8d309e97c4d0",
+      "type": "VALUED_AT",
+      "properties": {}
+    },
+    {
+      "sourceId": "03e2e000-b087-49e2-9f67-15ec023d41d0",
+      "targetId": "c3763bdd-7a99-4f49-ba93-5eddf3360bdf",
+      "type": "REQUESTED_EXCLUSIVITY_PERIOD",
+      "properties": {}
+    },
+    {
+      "sourceId": "7d63bab3-1b3e-4d9b-a131-458ce74ce7bb",
+      "targetId": "b1a272f0-7137-4e59-8dc3-6286d577eb48",
+      "type": "WORKS_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "b1a272f0-7137-4e59-8dc3-6286d577eb48",
+      "targetId": "543ce3b8-8b6c-40ff-bbcf-900d5b86c4ea",
+      "type": "PASSED_ON",
+      "properties": {}
+    },
+    {
+      "sourceId": "d49a1a70-c68e-4445-be1b-33504e4c1a75",
+      "targetId": "5359f631-f1b7-4aff-b0d7-588e4b797a50",
+      "type": "ACQUIRED",
+      "properties": {}
+    },
+    {
+      "sourceId": "e7088934-e637-4ff9-9066-825485cb1341",
+      "targetId": "5359f631-f1b7-4aff-b0d7-588e4b797a50",
+      "type": "TARGET",
+      "properties": {}
+    },
+    {
+      "sourceId": "15b7b9d5-2162-4837-a2a2-c5fcb6703400",
+      "targetId": "74e4f5ed-bd25-4056-ac8e-8336a438f6e2",
+      "type": "INFORMED_ABOUT",
+      "properties": {}
+    },
+    {
+      "sourceId": "98b6fd2e-8039-45ec-85cc-2e1578348313",
+      "targetId": "74e4f5ed-bd25-4056-ac8e-8336a438f6e2",
+      "type": "ACQUIRED",
+      "properties": {}
+    },
+    {
+      "sourceId": "1246d305-6bb9-4191-b44c-b65b85f2a056",
+      "targetId": "03e2e000-b087-49e2-9f67-15ec023d41d0",
+      "type": "WORKS_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "ce675328-441f-4895-a9f4-0e40f66caea7",
+      "targetId": "769ac5d8-73e1-4bb7-af94-45b92079ef7e",
+      "type": "INVESTED_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "a0e5891d-7f51-4944-bc1c-478fa16c3226",
+      "targetId": "769ac5d8-73e1-4bb7-af94-45b92079ef7e",
+      "type": "INVESTED_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "98b6fd2e-8039-45ec-85cc-2e1578348313",
+      "targetId": "ce675328-441f-4895-a9f4-0e40f66caea7",
+      "type": "OWNS",
+      "properties": {}
+    },
+    {
+      "sourceId": "98b6fd2e-8039-45ec-85cc-2e1578348313",
+      "targetId": "a0e5891d-7f51-4944-bc1c-478fa16c3226",
+      "type": "OWNS",
+      "properties": {}
+    },
+    {
+      "sourceId": "012243df-3681-49ca-b67c-854741a4e061",
+      "targetId": "8d7951f6-5fa3-4739-98f4-a172999b36a3",
+      "type": "TARGETS",
+      "properties": {}
+    },
+    {
+      "sourceId": "012243df-3681-49ca-b67c-854741a4e061",
+      "targetId": "00ef73e5-1d10-40d3-9e50-7329d36b4d0f",
+      "type": "SIMILAR_TO",
+      "properties": {}
+    },
+    {
+      "sourceId": "8d7951f6-5fa3-4739-98f4-a172999b36a3",
+      "targetId": "5bc02fed-1910-4219-892e-0fd8948e28ea",
+      "type": "CLASSIFIED_UNDER",
+      "properties": {}
+    },
+    {
+      "sourceId": "566370de-296a-40c6-8004-793267e2d47e",
+      "targetId": "63a42325-ce15-42c3-890d-e5a2399b8cf5",
+      "type": "WORKS_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "c13a79a4-b14d-4119-a577-5ad3cff975d0",
+      "targetId": "998d9833-0d53-49a7-8fd6-f7a6a6d82b79",
+      "type": "RESPONSIBLE_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "566370de-296a-40c6-8004-793267e2d47e",
+      "targetId": "998d9833-0d53-49a7-8fd6-f7a6a6d82b79",
+      "type": "HANDLES",
+      "properties": {}
+    },
+    {
+      "sourceId": "9ad0566f-0605-47bb-a475-c2d2ce944bc1",
+      "targetId": "cea1a66a-e884-468d-b0e1-d189da33d72c",
+      "type": "CONSIDERED_INVESTMENT_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "72c3c2ff-122e-4329-bdf0-38dacb6be233",
+      "targetId": "9ad0566f-0605-47bb-a475-c2d2ce944bc1",
+      "type": "WORKS_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "63a42325-ce15-42c3-890d-e5a2399b8cf5",
+      "targetId": "77fcfbba-4167-42e9-ae28-d1d277871896",
+      "type": "ACQUIRED",
+      "properties": {}
+    },
+    {
+      "sourceId": "c6e8ec9b-5223-4826-9010-47cd7c3b35e0",
+      "targetId": "98b6fd2e-8039-45ec-85cc-2e1578348313",
+      "type": "FOLLOWED_UP_WITH",
+      "properties": {}
+    },
+    {
+      "sourceId": "597c38c4-7258-4025-9b6e-e123a8b807fc",
+      "targetId": "98b6fd2e-8039-45ec-85cc-2e1578348313",
+      "type": "ASSOCIATE_OF",
+      "properties": {}
+    },
+    {
+      "sourceId": "4f18b04a-c18f-40fc-8f57-3813727b9363",
+      "targetId": "21026634-997e-4252-8f7f-1922cc1e7183",
+      "type": "INVOLVED_IN_TRANSACTION",
+      "properties": {}
+    },
+    {
+      "sourceId": "45ce1461-f351-4184-b23c-fba9da0072f3",
+      "targetId": "477e1f02-2a41-4c18-b0fb-b465dacff2f0",
+      "type": "LOCATED_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "4f18b04a-c18f-40fc-8f57-3813727b9363",
+      "targetId": "45ce1461-f351-4184-b23c-fba9da0072f3",
+      "type": "TRANSACTION_ORIGINATED_FROM",
+      "properties": {}
+    },
+    {
+      "sourceId": "15e6e66e-1989-46d4-9143-aa8b8a523f4c",
+      "targetId": "9c5d727d-b728-409a-851f-07cd7d9ea1aa",
+      "type": "MANAGED_BY",
+      "properties": {}
+    },
+    {
+      "sourceId": "15e6e66e-1989-46d4-9143-aa8b8a523f4c",
+      "targetId": "cf4024a3-907f-4ced-95d1-18411078440b",
+      "type": "LICENSED_BY",
+      "properties": {}
+    },
+    {
+      "sourceId": "15e6e66e-1989-46d4-9143-aa8b8a523f4c",
+      "targetId": "64ec0755-9965-4cde-9727-6cbdbe36af75",
+      "type": "MEMBER_OF",
+      "properties": {}
+    },
+    {
+      "sourceId": "3f9066c0-f016-4311-8b25-3bff3651b2ed",
+      "targetId": "e757ff16-90f0-4cb3-b5f8-c9f182d3c840",
+      "type": "IS_A",
+      "properties": {}
+    },
+    {
+      "sourceId": "e757ff16-90f0-4cb3-b5f8-c9f182d3c840",
+      "targetId": "540e64e2-c7c8-42b5-a3b4-5b752ce97177",
+      "type": "OPERATES_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "e757ff16-90f0-4cb3-b5f8-c9f182d3c840",
+      "targetId": "16b45f33-cec3-47f3-baf6-8ada49e7c139",
+      "type": "HAS_REVENUE",
+      "properties": {}
+    },
+    {
+      "sourceId": "e757ff16-90f0-4cb3-b5f8-c9f182d3c840",
+      "targetId": "fb8b4c97-4815-48eb-9acb-b26aff9b2598",
+      "type": "HAS_EBITDA",
+      "properties": {}
+    },
+    {
+      "sourceId": "e757ff16-90f0-4cb3-b5f8-c9f182d3c840",
+      "targetId": "8f508982-7c2e-4301-82b6-51f78b874c4d",
+      "type": "HAS_EBITDA_MARGIN",
+      "properties": {}
+    },
+    {
+      "sourceId": "ea3c8ed7-bdab-42e6-9f86-493d74ba410b",
+      "targetId": "fbfafbd5-c379-495b-8e45-0f904dfb56ce",
+      "type": "WORKS_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "cfde08a9-95ec-436a-baf6-7cf3e4dface8",
+      "targetId": "3f9066c0-f016-4311-8b25-3bff3651b2ed",
+      "type": "INTERESTED_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "9ad0566f-0605-47bb-a475-c2d2ce944bc1",
+      "targetId": "3f9066c0-f016-4311-8b25-3bff3651b2ed",
+      "type": "INTERESTED_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "cfde08a9-95ec-436a-baf6-7cf3e4dface8",
+      "targetId": "3f9066c0-f016-4311-8b25-3bff3651b2ed",
+      "type": "CONSIDERING_INVESTMENT_IN",
+      "properties": {}
+    },
+    {
+      "sourceId": "cfde08a9-95ec-436a-baf6-7cf3e4dface8",
+      "targetId": "0f7bec35-c937-4ef9-a87b-e0a9135b88b4",
+      "type": "VALUATION_ESTIMATE",
+      "properties": {}
+    },
+    {
+      "sourceId": "a1c85fb1-24b3-4670-a97d-eda1c2e51c2f",
+      "targetId": "d79968ca-1f97-4f33-9916-bd38541f9ad1",
+      "type": "IS_TICKER_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "9a55dbe1-af74-49f1-9b6d-d63db444fad9",
+      "targetId": "3f658efe-bc82-40a6-806f-1f8cda9a11d2",
+      "type": "HAS_TARGET_PRICE",
+      "properties": {}
+    },
+    {
+      "sourceId": "e13a7dce-e5b5-4b8f-846d-0146ce9ca4d7",
+      "targetId": "665cf8e7-f515-4e62-96b1-2024b4778a41",
+      "type": "WORKS_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "389a7b8e-f240-4aaf-8d49-e13f70ad5291",
+      "targetId": "2be7f593-61fb-4216-85fc-3c869a12dc99",
+      "type": "HAS_CUSIP",
+      "properties": {}
+    },
+    {
+      "sourceId": "665cf8e7-f515-4e62-96b1-2024b4778a41",
+      "targetId": "6bd5f35b-ef3b-4e33-a408-d90374f088eb",
+      "type": "COMPLIES_WITH",
+      "properties": {}
+    },
+    {
+      "sourceId": "9440d08c-2d62-41bc-a579-7f98c262ea36",
+      "targetId": "c59c9d7b-a53b-4fb0-97e9-91c7d20a782c",
+      "type": "IS_CEO_OF",
+      "properties": {}
+    },
+    {
+      "sourceId": "c59c9d7b-a53b-4fb0-97e9-91c7d20a782c",
+      "targetId": "ac44f286-8d91-4fd7-8f82-e363251988af",
+      "type": "REQUESTED_LOAN_AMOUNT",
+      "properties": {}
+    },
+    {
+      "sourceId": "c59c9d7b-a53b-4fb0-97e9-91c7d20a782c",
+      "targetId": "6f25e6e2-3f58-46db-bc9c-d70c4e4f6885",
+      "type": "APPLICATION_DATE",
+      "properties": {}
+    },
+    {
+      "sourceId": "c59c9d7b-a53b-4fb0-97e9-91c7d20a782c",
+      "targetId": "d2b59469-1c3b-4b66-918e-ee3537eb6c8a",
+      "type": "ANNUAL_REVENUE_2023",
+      "properties": {}
+    },
+    {
+      "sourceId": "c59c9d7b-a53b-4fb0-97e9-91c7d20a782c",
+      "targetId": "98e4128c-84ba-4911-aa61-c6ab3d50e792",
+      "type": "ANNUAL_REVENUE_2022",
+      "properties": {}
+    },
+    {
+      "sourceId": "c59c9d7b-a53b-4fb0-97e9-91c7d20a782c",
+      "targetId": "2fd8040d-daeb-4f90-8a64-a935924a3870",
+      "type": "EBITDA_2023",
+      "properties": {}
+    },
+    {
+      "sourceId": "c59c9d7b-a53b-4fb0-97e9-91c7d20a782c",
+      "targetId": "cf8104e1-097e-4f0a-85f6-aa416607c88a",
+      "type": "NET_INCOME_2023",
+      "properties": {}
+    },
+    {
+      "sourceId": "c59c9d7b-a53b-4fb0-97e9-91c7d20a782c",
+      "targetId": "b87805ff-46cb-4018-97c4-7c25faa5092f",
+      "type": "OPERATING_CASH_FLOW_2023",
+      "properties": {}
+    },
+    {
+      "sourceId": "c59c9d7b-a53b-4fb0-97e9-91c7d20a782c",
+      "targetId": "c9d447eb-44ef-4998-a97f-b7cb99c1d3f9",
+      "type": "PRIMARY_COLLATERAL_LOCATION",
+      "properties": {}
+    },
+    {
+      "sourceId": "c59c9d7b-a53b-4fb0-97e9-91c7d20a782c",
+      "targetId": "88a980f3-679e-4591-8be5-829476ca62a3",
+      "type": "PRIMARY_COLLATERAL_VALUE",
+      "properties": {}
+    },
+    {
+      "sourceId": "c59c9d7b-a53b-4fb0-97e9-91c7d20a782c",
+      "targetId": "72ef97c5-5d3b-47a8-875f-587fb4ceedf0",
+      "type": "ACCOUNTS_RECEIVABLE",
+      "properties": {}
+    },
+    {
+      "sourceId": "c59c9d7b-a53b-4fb0-97e9-91c7d20a782c",
+      "targetId": "d6b530a5-f19d-448a-9c40-5ba9e9915d57",
+      "type": "INVENTORY_VALUE",
+      "properties": {}
+    },
+    {
+      "sourceId": "9440d08c-2d62-41bc-a579-7f98c262ea36",
+      "targetId": "6207ba3a-4081-42ab-be25-1744ac458a91",
+      "type": "BUSINESS_CREDIT_SCORE",
+      "properties": {}
+    },
+    {
+      "sourceId": "b7ab3950-fa26-4854-b689-18e744b79b8e",
+      "targetId": "b17b1188-fbae-4d51-8cc5-4770c49b8c45",
+      "type": "WORKS_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "2aff1de0-1c82-4971-8610-bf825a9278b6",
+      "targetId": "7db82418-a675-4650-91f6-9adf92d5325b",
+      "type": "CONTACTED",
+      "properties": {}
+    },
+    {
+      "sourceId": "2aff1de0-1c82-4971-8610-bf825a9278b6",
+      "targetId": "aa2a44f2-1618-4629-9712-0f205a0ea7e5",
+      "type": "JOINT_ACCOUNT_HOLDER",
+      "properties": {}
+    },
+    {
+      "sourceId": "285b610f-4d47-4378-aa07-c77600bfa914",
+      "targetId": "0ba10855-3aec-4cfa-bdbe-0d37554f017c",
+      "type": "ASSETS_UNDER_MANAGEMENT",
+      "properties": {}
+    },
+    {
+      "sourceId": "285b610f-4d47-4378-aa07-c77600bfa914",
+      "targetId": "0412a2ee-080d-49d7-8a72-a79242444f99",
+      "type": "STOCK_ALLOCATION",
+      "properties": {}
+    },
+    {
+      "sourceId": "285b610f-4d47-4378-aa07-c77600bfa914",
+      "targetId": "11ffe3b6-93c8-44e4-a7a8-474ab16fa2e4",
+      "type": "BOND_ALLOCATION",
+      "properties": {}
+    },
+    {
+      "sourceId": "285b610f-4d47-4378-aa07-c77600bfa914",
+      "targetId": "bba9359a-8f6e-48c8-afb3-91d852b9bee0",
+      "type": "CASH_ALLOCATION",
+      "properties": {}
+    },
+    {
+      "sourceId": "285b610f-4d47-4378-aa07-c77600bfa914",
+      "targetId": "24c844f0-645e-4c07-a10d-5f841385217a",
+      "type": "TECHNOLOGY_SECTOR_CONCENTRATION",
+      "properties": {}
+    },
+    {
+      "sourceId": "a65d65d3-87ca-4860-8aec-69a4a476bf6d",
+      "targetId": "cd98b065-701f-4ba4-9454-45d727a2bfd5",
+      "type": "PURCHASED",
+      "properties": {}
+    },
+    {
+      "sourceId": "20c7c380-1521-4316-95f8-3c6c254bb4b0",
+      "targetId": "a65d65d3-87ca-4860-8aec-69a4a476bf6d",
+      "type": "EXECUTED_TRADE_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "13b30c7e-7357-4f88-b303-8912e314e453",
+      "targetId": "20c7c380-1521-4316-95f8-3c6c254bb4b0",
+      "type": "CLEARS_FOR",
+      "properties": {}
+    },
+    {
+      "sourceId": "20c7c380-1521-4316-95f8-3c6c254bb4b0",
+      "targetId": "abd3ed2b-a7b2-4062-99b1-11e908417e84",
+      "type": "REPORTED_TO",
+      "properties": {}
+    },
+    {
+      "sourceId": "a65d65d3-87ca-4860-8aec-69a4a476bf6d",
+      "targetId": "93b5a7ee-6ec7-438b-9764-cd14818b5a2b",
+      "type": "USES_AS_CUSTODIAN",
+      "properties": {}
+    },
+    {
+      "sourceId": "20c7c380-1521-4316-95f8-3c6c254bb4b0",
+      "targetId": "6bd5f35b-ef3b-4e33-a408-d90374f088eb",
+      "type": "COMPLIES_WITH",
       "properties": {}
     }
   ]

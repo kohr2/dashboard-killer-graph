@@ -2,7 +2,6 @@
 // Use case for creating a new contact with O-CREAM-v2 integration
 
 import { ContactRepository } from '../../../domain/repositories/contact-repository';
-import { Contact } from '../../../domain/entities/contact';
 import { OCreamContactEntity, createOCreamContact } from '../../../domain/entities/contact-ontology';
 import { oCreamV2, ActivityType, DOLCECategory } from '../../../domain/ontology/o-cream-v2';
 
@@ -70,37 +69,28 @@ export class CreateContactUseCase {
         };
       }
 
-      // Create the basic contact entity
       const fullName = `${request.firstName.trim()} ${request.lastName.trim()}`;
-      const contact = new Contact({
-        name: fullName,
+      
+      // Create O-CREAM-v2 ontological representation first
+      const oCreamContact = createOCreamContact({
+        firstName: request.firstName.trim(),
+        lastName: request.lastName.trim(),
         email: request.email.trim(),
-        phone: request.phone
+        phone: request.phone,
+        organizationId: request.organizationId,
+        title: request.title,
+        address: request.address,
+        preferences: request.preferences || {}
       });
 
       // Save to repository
-      const savedContact = await this.contactRepository.save(contact);
+      const savedContact = await this.contactRepository.save(oCreamContact);
 
-      // Create O-CREAM-v2 ontological representation
+      // Register with global ontology and create activity
       let ontologyStatus: 'registered' | 'error' = 'registered';
-      
       try {
-        const oCreamContact = createOCreamContact({
-          firstName: request.firstName.trim(),
-          lastName: request.lastName.trim(),
-          email: request.email.trim(),
-          phone: request.phone,
-          organizationId: request.organizationId,
-          title: request.title,
-          address: request.address,
-          preferences: request.preferences || {}
-        });
-
-        // Override the ID to match the saved contact
-        (oCreamContact as any).id = savedContact.getId();
-
-        // Register with global ontology
-        oCreamV2.addEntity(oCreamContact);
+        // The entity now has an ID from the repository
+        oCreamV2.addEntity(savedContact);
 
         // Create initial activity
         const creationActivity: any = {
@@ -109,7 +99,7 @@ export class CreateContactUseCase {
           type: ActivityType.IDENTIFY,
           name: 'Contact Created',
           description: `Contact ${fullName} was created in the system`,
-          participants: [savedContact.getId()],
+          participants: [savedContact.id], // Use savedContact.id
           startTime: new Date(),
           endTime: new Date(),
           status: 'completed' as const,
@@ -124,7 +114,7 @@ export class CreateContactUseCase {
         };
 
         oCreamV2.addEntity(creationActivity);
-        oCreamContact.addActivity(creationActivity.id);
+        savedContact.addActivity(creationActivity.id);
 
       } catch (ontologyError) {
         console.warn('Failed to register contact with O-CREAM-v2 ontology:', ontologyError);
@@ -132,15 +122,15 @@ export class CreateContactUseCase {
       }
 
       return {
-        id: savedContact.getId(),
+        id: savedContact.id,
         success: true,
         message: 'Contact created successfully',
         contact: {
-          id: savedContact.getId(),
-          name: savedContact.getName(),
-          email: savedContact.getEmail(),
-          phone: savedContact.getPhone(),
-          createdAt: savedContact.getCreatedAt(),
+          id: savedContact.id,
+          name: `${savedContact.personalInfo.firstName} ${savedContact.personalInfo.lastName}`,
+          email: savedContact.personalInfo.email,
+          phone: savedContact.personalInfo.phone,
+          createdAt: savedContact.createdAt,
           ontologyStatus
         }
       };
@@ -161,4 +151,4 @@ export class CreateContactUseCase {
       return v.toString(16);
     });
   }
-} 
+}
