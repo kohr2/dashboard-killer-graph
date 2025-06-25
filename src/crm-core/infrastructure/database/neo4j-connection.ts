@@ -1,53 +1,58 @@
 // Neo4j Knowledge Graph Connection Manager
 // Manages connections to the Neo4j graph database
 
-import neo4j, { Driver, Session, auth } from 'neo4j-driver';
+import neo4j, { Driver, Session } from 'neo4j-driver';
+import { config } from 'dotenv';
+
+config(); // Make sure environment variables are loaded
 
 export class Neo4jConnection {
+  private static instance: Neo4jConnection;
   private driver: Driver | null = null;
-  private static instance: Neo4jConnection | null = null;
+  private readonly uri: string;
+  private readonly user: string;
+  private readonly pass: string;
 
-  private constructor() {}
+  private constructor() {
+    this.uri = process.env.NEO4J_URI || 'bolt://localhost:7687';
+    this.user = process.env.NEO4J_USERNAME || 'neo4j';
+    this.pass = process.env.NEO4J_PASSWORD || 'password';
+  }
 
-  static getInstance(): Neo4jConnection {
+  public static getInstance(): Neo4jConnection {
     if (!Neo4jConnection.instance) {
       Neo4jConnection.instance = new Neo4jConnection();
     }
     return Neo4jConnection.instance;
   }
 
-  async connect(uri: string = 'bolt://localhost:7687', username: string = 'neo4j', password: string = 'password'): Promise<void> {
+  public async connect(): Promise<void> {
     try {
-      this.driver = neo4j.driver(uri, auth.basic(username, password));
-      
-      // Verify connectivity
+      this.driver = neo4j.driver(this.uri, neo4j.auth.basic(this.user, this.pass));
       await this.driver.verifyConnectivity();
-      console.log('✅ Connected to Neo4j Knowledge Graph Database');
+      console.log('✅ Successfully connected to Neo4j.');
     } catch (error) {
       console.error('❌ Failed to connect to Neo4j:', error);
       throw new Error(`Neo4j connection failed: ${error}`);
     }
   }
 
-  getDriver(): Driver {
+  public getDriver(): Driver {
     if (!this.driver) {
       throw new Error('Neo4j driver not initialized. Call connect() first.');
     }
     return this.driver;
   }
 
-  getSession(): Session {
-    if (!this.driver) {
-      throw new Error('Neo4j driver not initialized. Call connect() first.');
-    }
-    return this.driver.session();
+  public getSession(): Session {
+    return this.getDriver().session();
   }
 
-  async close(): Promise<void> {
+  public async close(): Promise<void> {
     if (this.driver) {
       await this.driver.close();
       this.driver = null;
-      console.log('📪 Neo4j connection closed');
+      console.log('Neo4j connection closed.');
     }
   }
 

@@ -7,6 +7,7 @@ import { join } from 'path';
 import { simpleParser } from 'mailparser';
 import axios from 'axios';
 import { writeFileSync } from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 
 // Simplified interface to match the service output
 interface SpacyEmailProcessingResult {
@@ -22,12 +23,15 @@ interface SpacyEmailProcessingResult {
   processingTime: number;
 }
 
+// Add a unique ID to the entity interface
+interface SpacyExtractedEntityWithId extends SpacyExtractedEntity {
+  id: string;
+}
+
 // New structure for the final report
 interface HybridReport {
-  mergedEntities: SpacyExtractedEntity[];
-  llmResults: {
-    relationships: any[];
-  };
+  nodes: SpacyExtractedEntityWithId[];
+  relationships: any[];
 }
 
 async function demonstrateSpacyEmailIngestionPipeline() {
@@ -110,29 +114,47 @@ async function demonstrateSpacyEmailIngestionPipeline() {
     }
   }
 
-  // Deduplicate entities based on value and type
-  const entityMap = new Map<string, SpacyExtractedEntity>();
+  // 1. Create a map to find entities by their text value
+  const entityValueMap = new Map<string, SpacyExtractedEntityWithId>();
+  
+  // 2. Deduplicate entities and assign unique IDs
   allExtractedEntities.forEach(entity => {
       const key = `${entity.value}|${entity.type}`;
-      if (!entityMap.has(key)) {
-          entityMap.set(key, entity);
+      if (!entityValueMap.has(key)) {
+        entityValueMap.set(key, { ...entity, id: uuidv4() });
       }
   });
-  const mergedEntities = Array.from(entityMap.values());
+  const finalNodes = Array.from(entityValueMap.values());
+
+  // 3. Remap relationships to use IDs instead of names
+  const finalRelationships = allRelationships.map(rel => {
+    const sourceNode = finalNodes.find(n => n.value === rel.source);
+    const targetNode = finalNodes.find(n => n.value === rel.target);
+
+    // If we can't find the corresponding node, we can't create the relationship
+    if (!sourceNode || !targetNode) {
+        return null;
+    }
+
+    return {
+      sourceId: sourceNode.id,
+      targetId: targetNode.id,
+      type: rel.type,
+      properties: rel.properties || {}
+    };
+  }).filter(r => r !== null); // Filter out null relationships
 
   const finalReport: HybridReport = {
-    mergedEntities: mergedEntities,
-    llmResults: {
-      relationships: allRelationships,
-    },
+    nodes: finalNodes,
+    relationships: finalRelationships,
   };
 
   console.log('\n' + '='.repeat(100));
   console.log('✅ All emails processed. Generating final report...');
   writeFileSync(reportPath, JSON.stringify(finalReport, null, 2));
   console.log(`   📄 Report saved to: ${reportPath}`);
-  console.log(`   📊 Total unique entities found: ${mergedEntities.length}`);
-  console.log(`   🔗 Total relationships found: ${allRelationships.length}`);
+  console.log(`   📊 Total unique entities found: ${finalNodes.length}`);
+  console.log(`   🔗 Total relationships found: ${finalRelationships.length}`);
   console.log('='.repeat(100));
 
   console.log('\n\n🎉 Demo Complete!');

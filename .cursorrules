@@ -1,0 +1,32 @@
+# .cursorrules
+
+# Instructions pour le développement piloté par les tests (TDD)
+# Ces règles guident l'IA pour qu'elle suive une approche TDD stricte.
+test-driven-development:
+  - rule: "Pour toute nouvelle fonctionnalité ou modification, toujours commencer par écrire un test qui échoue (phase RED)."
+  - rule: "Lorsqu'on te demande de créer une nouvelle fonctionnalité, propose d'abord le fichier de test (`*.test.ts`)."
+  - rule: "Après avoir écrit le test, génère le code de production le plus simple possible pour que le test passe (phase GREEN)."
+  - rule: "N'écris jamais de logique métier dans un fichier source sans avoir un test correspondant qui la couvre."
+  - rule: "Si je te demande de corriger un bug, demande-moi d'abord d'écrire un test qui reproduit le bug."
+
+# Conventions de test
+# Comment les tests doivent être structurés dans ce projet.
+testing-conventions:
+  - rule: "Utiliser la syntaxe `describe`, `it` ou `test` de Jest."
+  - rule: "Les fichiers de test doivent être nommés `[nom-du-fichier].test.ts`."
+  - rule: "Placer les tests unitaires dans `test/unit/` en respectant l'arborescence du répertoire `src/`."
+  - rule: "Simuler systématiquement les dépendances externes (comme les appels API avec `axios` ou les pilotes de base de données) en utilisant `jest.fn()` ou `jest.spyOn()`."
+  - rule: "Chaque bloc `describe` doit se concentrer sur une seule méthode ou un seul composant."
+  - rule: "Chaque test (`it`) doit vérifier un seul comportement."
+
+# Style de code et qualité
+# Garantir que le code généré est cohérent avec le reste du projet.
+code-style:
+  - rule: "Formater tout le code TypeScript généré en utilisant la configuration Prettier du projet."
+  - rule: "Respecter les règles ESLint définies dans le projet. Ne pas introduire de code qui génère des avertissements de lint."
+
+# Messages de commit
+# S'assurer que les commits générés par l'IA sont clairs et standardisés.
+commit-messages:
+  - rule: "Suivre la convention 'Conventional Commits'. Par exemple : `feat(auth): add password reset endpoint` ou `fix(tests): repair user service tests`."
+  - rule: "Le corps du message de commit doit expliquer le 'pourquoi' du changement, pas le 'comment'." 

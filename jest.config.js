@@ -1,44 +1,25 @@
-// Jest configuration - references main config in config directory
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['<rootDir>/src', '<rootDir>/test'],
-  testMatch: ['**/*.test.ts'],
-  transform: {
-    '^.+\\.tsx?$': ['ts-jest', {
-      isolatedModules: true,
-      skipLibCheck: true,
-      esModuleInterop: true,
-      allowSyntheticDefaultImports: true
-    }],
-  },
-  globals: {
-    'ts-jest': {
-      isolatedModules: true,
-      skipLibCheck: true
-    }
-  },
+  rootDir: '.',
+  moduleDirectories: ['node_modules', 'src'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@platform/(.*)$': '<rootDir>/src/platform/$1',
-    '^@crm-core/(.*)$': '<rootDir>/src/crm-core/$1',
-    '^@financial/(.*)$': '<rootDir>/src/extensions/financial/$1',
-    '^@shared/(.*)$': '<rootDir>/src/shared/$1',
-    '^@test/(.*)$': '<rootDir>/test/$1'
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+  transform: {
+    '^.+\\.ts$': 'ts-jest',
+  },
+  testMatch: ['<rootDir>/test/unit/**/*.test.ts'],
   setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
+  moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
+    'src/**/*.ts',
     '!src/**/*.d.ts',
     '!src/**/index.ts',
-    '!src/**/*.interface.ts'
+    '!test/**/*.ts',
+    '!src/crm-core/domain/ontology/o-cream-v2.ts',
   ],
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov', 'html'],
-  verbose: false,
   clearMocks: true,
-  restoreMocks: true,
-  testTimeout: 10000
-}; 
+};

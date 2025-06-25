@@ -1,256 +1,165 @@
-// Neo4j Graph Builder
-// Populates a Neo4j database from an entity-relationship graph JSON file
-
-import neo4j, { Driver, Session, AuthToken } from 'neo4j-driver';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import { join } from 'path';
+import { config } from 'dotenv';
+import { Neo4jConnection } from '../src/crm-core/infrastructure/database/neo4j-connection';
+import { EdgarEnrichmentService } from '../src/crm-core/application/services/edgar-enrichment.service';
 
-// Neo4j connection details (use environment variables in production)
-const NEO4J_URI = process.env.NEO4J_URI || 'bolt://127.0.0.1:7687';
-const NEO4J_USER = process.env.NEO4J_USER || 'neo4j';
-const NEO4J_PASSWORD = process.env.NEO4J_PASSWORD || 'fiboocream';
-const NEO4J_DATABASE = process.env.NEO4J_DATABASE || 'neo4j';
+config(); // Load environment variables from .env file
 
-const GRAPH_FILE_PATH = join(__dirname, '../hybrid-extraction-report.json');
+const BATCH_SIZE = 100;
 
-// Define O-CREAM and FIBO entity types
-const OCREAM_TYPES = ['PERSON_NAME', 'COMPANY_NAME'];
-const FIBO_TYPES = ['FINANCIAL_INSTITUTION', 'FINANCIAL_INSTRUMENT', 'TRANSACTION'];
-
-// Mapping from primitive types to O-CREAM entity labels
-const PRIMITIVE_TO_OCREAM_MAP: Record<string, string> = {
-  'PERSON_NAME': 'Contact',
-  'COMPANY_NAME': 'Organization',
-};
-
-class Neo4jGraphBuilder {
-  private driver: Driver;
-
-  constructor(uri: string, auth: AuthToken) {
-    this.driver = neo4j.driver(uri, auth);
-  }
-
-  public async buildGraphFromJSON(filePath: string): Promise<any> {
-    console.log(`🧠 Reading graph data from: ${filePath}`);
-    const hybridReport = JSON.parse(readFileSync(filePath, 'utf8'));
-    
-    const nodes = hybridReport.mergedEntities.map((e: any) => ({
-      properties: {
-        id: e.value.toLowerCase().replace(/[^a-z0-9]/g, '_'),
-        name: e.value,
-        source: e.source,
-        details: e.details,
-      },
-      label: e.type,
-    }));
-    
-    const edges = hybridReport.llmResults.relationships.map((r: any) => ({
-      from: r.source.toLowerCase().replace(/[^a-z0-9]/g, '_'),
-      to: r.target.toLowerCase().replace(/[^a-z0-9]/g, '_'),
-      label: r.type,
-      properties: {
-        explanation: r.explanation,
-        confidence: r.confidence,
-      }
-    }));
-
-    console.log(`   ✅ Found ${nodes.length} nodes and ${edges.length} relationships`);
-
-    const session = this.getSession();
-    
-    try {
-      console.log('🔗 Connecting to Neo4j...');
-      await this.verifyConnection();
-      console.log('   ✅ Connection successful');
-
-      // 1. Clean the database
-      console.log('\n🗑️  Cleaning the database...');
-      await this.cleanDatabase(session);
-      console.log('   ✅ Database cleaned');
-
-      // 2. Create constraints for performance
-      console.log('\n🔧 Creating constraints and indexes...');
-      await this.createConstraints(session);
-      console.log('   ✅ Constraints created');
-      
-      // 3. Ingest nodes
-      console.log('\n📥 Ingesting nodes...');
-      await this.ingestNodes(session, nodes);
-      console.log(`   ✅ Ingested ${nodes.length} nodes`);
-
-      // 4. Ingest relationships
-      console.log('\n📥 Ingesting relationships...');
-      const edgeCount = await this.ingestRelationships(session, edges);
-      console.log(`   ✅ Ingested ${edgeCount} relationships`);
-
-      // 5. Remove generic Entity label
-      console.log('\n🏷️  Removing generic :Entity labels...');
-      await this.removeEntityLabel(session);
-      console.log('   ✅ Generic labels removed.');
-
-      // 6. Log graph statistics
-      const graphStats = await this.getGraphStatistics(session);
-      console.log('\n📊 Neo4j Graph Statistics:');
-      console.log(`   • Total Nodes: ${graphStats.nodeCount}`);
-      console.log(`   • Total Relationships: ${graphStats.relationshipCount}`);
-      console.log(`   • Node Labels: ${graphStats.labels.join(', ')}`);
-      console.log(`   • Relationship Types: ${graphStats.relationshipTypes.join(', ')}`);
-
-      return {
-        success: true,
-        message: 'Graph built successfully',
-        stats: graphStats
-      };
-      
-    } catch (error) {
-      console.error('❌ Error building graph:', error);
-      return { success: false, message: 'Graph building failed', error };
-    } finally {
-      await session.close();
-    }
-  }
-  
-  private getSession(): Session {
-    return this.driver.session({ database: NEO4J_DATABASE });
-  }
-
-  private async verifyConnection(): Promise<void> {
-    await this.driver.verifyConnectivity();
-  }
-
-  private async cleanDatabase(session: Session): Promise<void> {
-    await session.run('MATCH (n) DETACH DELETE n');
-  }
-
-  private async createConstraints(session: Session): Promise<void> {
-    // Unique constraint on entity ID (value + type) for performance
-    await session.run('CREATE CONSTRAINT IF NOT EXISTS FOR (n:Entity) REQUIRE n.id IS UNIQUE');
-    
-    // Create indexes for faster lookups
-    await session.run('CREATE INDEX IF NOT EXISTS FOR (n:Entity) ON (n.name)');
-    
-    await session.run('CREATE CONSTRAINT IF NOT EXISTS FOR (n:Contact) REQUIRE n.id IS UNIQUE');
-    await session.run('CREATE CONSTRAINT IF NOT EXISTS FOR (n:Organization) REQUIRE n.id IS UNIQUE');
-    await session.run('CREATE CONSTRAINT IF NOT EXISTS FOR (n:FinancialInstrument) REQUIRE n.id IS UNIQUE');
-  }
-
-  private async ingestNodes(session: Session, nodes: any[]): Promise<void> {
-    for (const node of nodes) {
-      const specificLabel = node.label.replace(/\s+/g, '_');
-      const properties = node.properties;
-
-      await session.run(
-        `
-        MERGE (n:Entity {id: $id})
-        ON CREATE SET 
-          n.name = $name,
-          n.source = $source,
-          n.created = timestamp()
-        ON MATCH SET
-          n.name = $name,
-          n.source = $source,
-          n.updated = timestamp()
-        SET n += $details
-        SET n:${specificLabel}
-        `,
-        {
-          id: properties.id,
-          name: properties.name,
-          source: properties.source,
-          details: properties.details || {},
-        }
-      );
-    }
-  }
-  
-  private async ingestRelationships(session: Session, edges: any[]): Promise<number> {
-    let createdCount = 0;
-    
-    for (const edge of edges) {
-      if (!edge.label) {
-        console.warn(`   ⚠️  Skipping relationship with no label:`, edge);
-        continue;
-      }
-      const relType = edge.label.replace(/\s+/g, '_').toUpperCase();
-      const result = await session.run(
-        `
-        MATCH (s:Entity {id: $from})
-        MATCH (t:Entity {id: $to})
-        MERGE (s)-[r:${relType}]->(t)
-        SET r += $properties
-        RETURN r
-        `,
-        { from: edge.from, to: edge.to, properties: edge.properties }
-      );
-      if (result.records.length > 0) {
-        createdCount++;
-      }
-    }
-    return createdCount;
-  }
-
-  private async removeEntityLabel(session: Session): Promise<void> {
-    await session.run('MATCH (n:Entity) REMOVE n:Entity');
-  }
-
-  private async getGraphStatistics(session: Session): Promise<any> {
-    // Add a small delay to allow schema changes to propagate
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const nodeCountResult = await session.run('MATCH (n) RETURN count(n) as count');
-    const relationshipCountResult = await session.run('MATCH ()-[r]->() RETURN count(r) as count');
-    const labelsResult = await session.run('MATCH (n) UNWIND labels(n) as label RETURN collect(distinct label) as labels');
-    const relationshipTypesResult = await session.run('CALL db.relationshipTypes()');
-    
-    return {
-      nodeCount: nodeCountResult.records[0].get('count').toNumber(),
-      relationshipCount: relationshipCountResult.records[0].get('count').toNumber(),
-      labels: labelsResult.records[0].get('labels'),
-      relationshipTypes: relationshipTypesResult.records.map(r => r.get('relationshipType'))
-    };
-  }
-
-  public async close(): Promise<void> {
-    await this.driver.close();
-  }
+interface ReportNode {
+  id: string;
+  labels: string[];
+  properties: { [key: string]: any };
 }
 
-async function buildNeo4jGraph() {
-  console.log('🚀 Neo4j Graph Builder Initialized');
-  console.log(`   URI: ${NEO4J_URI}`);
-  console.log(`   User: ${NEO4J_USER}`);
-  console.log(`   Database: ${NEO4J_DATABASE}`);
-  
-  const builder = new Neo4jGraphBuilder(
-    NEO4J_URI,
-    neo4j.auth.basic(NEO4J_USER, NEO4J_PASSWORD)
-  );
-  
+interface ReportRelationship {
+  sourceId: string;
+  targetId: string;
+  type: string;
+  properties: { [key: string]: any };
+}
+
+interface ExtractionReport {
+  nodes: ReportNode[];
+  relationships: ReportRelationship[];
+}
+
+// Renames 'value' to 'name' and removes 'type' property
+function transformNode(node: ReportNode): ReportNode {
+  if (node.properties && node.properties.value) {
+    node.properties.name = node.properties.value;
+    delete node.properties.value;
+  }
+  if (node.properties && node.properties.type) {
+    delete node.properties.type;
+  }
+  return node;
+}
+
+async function main() {
+  const connection = Neo4jConnection.getInstance();
+  await connection.connect(); // Establish connection to Neo4j
+
+  const userAgent = process.env.SEC_API_USER_AGENT;
+  let enrichmentService: EdgarEnrichmentService | null = null;
+
+  if (userAgent) {
+    console.log(`SEC EDGAR API User-Agent found. Data enrichment is enabled.`);
+    enrichmentService = new EdgarEnrichmentService(userAgent);
+  } else {
+    console.log('SEC EDGAR API User-Agent not found. Skipping data enrichment.');
+  }
+
+  const session = connection.getDriver().session();
   try {
-    const result = await builder.buildGraphFromJSON(GRAPH_FILE_PATH);
-    
-    if (result.success) {
-      console.log('\n🎉 Graph built successfully in Neo4j!');
-      console.log('   You can now explore the graph in the Neo4j Browser.');
-      console.log('\n🔍 Sample Cypher Queries:');
-      console.log('   // Show all entities and relationships');
-      console.log('   MATCH (n)-[r]->(m) RETURN n, r, m LIMIT 25');
-      console.log('\n   // Find all people and their relationships');
-      console.log('   MATCH (p:Contact)-[r]-(e) RETURN p, r, e');
-      console.log('\n   // Show the Goldman Sachs network');
-      console.log('   MATCH (gs:Organization {name: "Goldman Sachs"})-[r*1..2]-(related) RETURN gs, r, related');
+    console.log('Clearing existing graph data...');
+    await session.run('MATCH (n) DETACH DELETE n');
+    console.log('Graph data cleared.');
+
+    const reportPath = join(__dirname, '..', 'hybrid-extraction-report.json');
+    const report: ExtractionReport = JSON.parse(readFileSync(reportPath, 'utf-8'));
+
+    const transformedNodes = report.nodes.map(transformNode);
+
+    // Batch process nodes
+    console.log(`Processing ${transformedNodes.length} nodes in batches of ${BATCH_SIZE}...`);
+    for (let i = 0; i < transformedNodes.length; i += BATCH_SIZE) {
+        const batch = transformedNodes.slice(i, i + BATCH_SIZE);
+        console.log(` -> Processing batch ${Math.floor(i / BATCH_SIZE) + 1}...`);
+      
+        const transaction = session.beginTransaction();
+        try {
+            for (const node of batch) {
+                const properties = node.properties || {};
+                const labels = (node.labels && node.labels.length > 0) ? node.labels : ['Unknown'];
+
+                if (labels.includes('Organization') && enrichmentService) {
+                    try {
+                        console.log(`   - Enriching organization: ${properties.name}`);
+                        const enrichedData = await enrichmentService.enrichOrganization(properties.name as string);
+                        if (enrichedData) {
+                            console.log(`     -> Enriched data found for ${enrichedData.name}`);
+                            // Merge enriched data into node properties
+                            properties.cik = enrichedData.cik;
+                            properties.sic = enrichedData.sic;
+                            properties.sicDescription = enrichedData.sicDescription;
+                            // Replace address if found
+                            if (enrichedData.address) {
+                                properties.address = `${enrichedData.address.street1}, ${enrichedData.address.city}, ${enrichedData.address.stateOrCountry} ${enrichedData.address.zipCode}`;
+                            }
+                        } else {
+                            console.log(`     -> No enrichment data found for ${properties.name}`);
+                        }
+                    } catch (enrichmentError) {
+                        console.error(`     -> Error enriching organization ${properties.name}:`, enrichmentError);
+                    }
+                }
+
+                if (!properties.name) {
+                    properties.name = `Unnamed Node`;
+                }
+                
+                if (!node.id) {
+                    console.warn(`    ⚠️  WARNING: Node is missing an ID. Skipping...`, node);
+                    continue;
+                }
+                properties.id = node.id;
+
+                const query = `
+                  MERGE (n:\`${labels.join(':`')}\` { id: $id })
+                  ON CREATE SET n = $props, n.created = timestamp()
+                  ON MATCH SET n += $props, n.updated = timestamp()
+                `;
+        
+                await transaction.run(query, {
+                  id: properties.id,
+                  props: properties,
+                });
+            }
+            await transaction.commit();
+        } catch(error) {
+            console.error('Error in transaction, rolling back', error)
+            await transaction.rollback();
+        }
     }
-    
+    console.log('All nodes have been processed.');
+
+    // Batch process relationships
+    console.log(`Processing ${report.relationships.length} relationships...`);
+    for (const rel of report.relationships) {
+       const tx = session.beginTransaction();
+       try {
+        const query = `
+            MATCH (source {id: $sourceId}), (target {id: $targetId})
+            MERGE (source)-[r:\`${rel.type}\`]->(target)
+            SET r = $props
+        `;
+        
+        await tx.run(query, {
+            sourceId: rel.sourceId,
+            targetId: rel.targetId,
+            props: rel.properties || {},
+        });
+
+        await tx.commit();
+       } catch (error) {
+           console.error(`Error processing relationship ${rel.sourceId} -> ${rel.targetId}`, error);
+           await tx.rollback();
+       }
+    }
+    console.log('All relationships have been processed.');
+    console.log(`✅ Graph build complete. ${transformedNodes.length} nodes and ${report.relationships.length} relationships created.`);
+
   } catch (error) {
-    console.error('❌ Failed to build Neo4j graph:', error);
+    console.error('Error building Neo4j graph:', error);
   } finally {
-    await builder.close();
-    console.log('\n🔗 Connection to Neo4j closed.');
+    await session.close();
+    await connection.close();
   }
 }
 
 if (require.main === module) {
-  buildNeo4jGraph().catch(console.error);
+  main();
 }
-
-export { Neo4jGraphBuilder }; 
