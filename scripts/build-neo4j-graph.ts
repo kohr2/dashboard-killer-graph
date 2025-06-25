@@ -35,11 +35,13 @@ class Neo4jGraphBuilder {
     const hybridReport = JSON.parse(readFileSync(filePath, 'utf8'));
     
     const nodes = hybridReport.mergedEntities.map((e: any) => ({
-      id: e.value.toLowerCase().replace(/[^a-z0-9]/g, '_'),
-      value: e.value,
-      type: e.type,
-      source: e.source,
-      details: e.details,
+      properties: {
+        id: e.value.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+        name: e.value,
+        source: e.source,
+        details: e.details,
+      },
+      label: e.type,
     }));
     
     const edges = hybridReport.llmResults.relationships.map((r: any) => ({
@@ -125,46 +127,37 @@ class Neo4jGraphBuilder {
     await session.run('CREATE CONSTRAINT IF NOT EXISTS FOR (n:Entity) REQUIRE n.id IS UNIQUE');
     
     // Create indexes for faster lookups
-    await session.run('CREATE INDEX IF NOT EXISTS FOR (n:Entity) ON (n.type)');
-    await session.run('CREATE INDEX IF NOT EXISTS FOR (n:Entity) ON (n.value)');
-    await session.run('CREATE INDEX IF NOT EXISTS FOR (n:PERSON_NAME) ON (n.value)');
-    await session.run('CREATE INDEX IF NOT EXISTS FOR (n:COMPANY_NAME) ON (n.value)');
-
+    await session.run('CREATE INDEX IF NOT EXISTS FOR (n:Entity) ON (n.name)');
+    
     await session.run('CREATE CONSTRAINT IF NOT EXISTS FOR (n:Contact) REQUIRE n.id IS UNIQUE');
     await session.run('CREATE CONSTRAINT IF NOT EXISTS FOR (n:Organization) REQUIRE n.id IS UNIQUE');
     await session.run('CREATE CONSTRAINT IF NOT EXISTS FOR (n:FinancialInstrument) REQUIRE n.id IS UNIQUE');
-    
-    // Create indexes for faster lookups
-    await session.run('CREATE INDEX IF NOT EXISTS FOR (n:Contact) ON (n.name)');
-    await session.run('CREATE INDEX IF NOT EXISTS FOR (n:Organization) ON (n.name)');
   }
 
   private async ingestNodes(session: Session, nodes: any[]): Promise<void> {
     for (const node of nodes) {
-      // Use a generic :Entity label and add a more specific one
-      const specificLabel = node.type.replace(/\s+/g, '_');
+      const specificLabel = node.label.replace(/\s+/g, '_');
+      const properties = node.properties;
+
       await session.run(
         `
         MERGE (n:Entity {id: $id})
         ON CREATE SET 
-          n.value = $value,
-          n.type = $type,
+          n.name = $name,
           n.source = $source,
           n.created = timestamp()
         ON MATCH SET
-          n.value = $value,
-          n.type = $type,
+          n.name = $name,
           n.source = $source,
           n.updated = timestamp()
         SET n += $details
         SET n:${specificLabel}
         `,
         {
-          id: node.id,
-          value: node.value,
-          type: node.type,
-          source: node.source,
-          details: node.details || {},
+          id: properties.id,
+          name: properties.name,
+          source: properties.source,
+          details: properties.details || {},
         }
       );
     }
