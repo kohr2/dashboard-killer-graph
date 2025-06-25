@@ -64,7 +64,7 @@ async function demonstrateSpacyEmailIngestionPipeline() {
 
     try {
         console.log("   [4] Sending request to /refine-entities...");
-        const response = await axios.post(`${nlpServiceUrl}/refine-entities`, { text: emailBody });
+        const response = await axios.post(`${nlpServiceUrl}/refine-entities`, { text: emailBody }, { timeout: 30000 });
         console.log("   [5] Received response from service.");
         
         const { raw_entities, refined_entities } = response.data;
@@ -77,7 +77,11 @@ async function demonstrateSpacyEmailIngestionPipeline() {
         displayEntities(refined_entities);
 
     } catch (error: any) {
-      console.error(`   ❌ Error calling refinement service:`, error.response?.data?.detail || error.message);
+      if (axios.isCancel(error)) {
+        console.error(`   ❌ Request timed out after 30 seconds.`);
+      } else {
+        console.error(`   ❌ Error calling refinement service:`, error.response?.data?.detail || error.message);
+      }
     }
   }
 
