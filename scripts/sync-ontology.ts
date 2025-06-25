@@ -1,38 +1,105 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as glob from 'glob';
 import * as handlebars from 'handlebars';
 import { ontologyService } from '../src/platform/ontology/ontology.service';
+import { StructuredOntology } from '../src/platform/ontology/ontology.service';
 
-console.log('Starting ontology synchronization task...');
+console.log('Starting structured ontology synchronization task...');
 
-const ontologies = ontologyService.getOntology();
+function toKebabCase(str: string): string {
+    return str.replace(/([A-Z]+)([A-Z][a-z])/g, '$1-$2')
+              .replace(/([a-z\d])([A-Z])/g, '$1-$2')
+              .toLowerCase();
+}
+
+const ontologySources = ontologyService.getStructuredOntologySources();
 const projectRoot = process.cwd();
 const templatesDir = path.join(projectRoot, 'scripts/templates');
 
-// TODO: Define a strategy to identify which terms are main entities to be generated.
-// For example, we could look for keys ending in 'Type' like 'FIBOInstitutionType'.
-const entitiesToGenerate: string[] = []; 
+console.log(`Found ${ontologySources.length} structured ontology files.`);
 
-console.log(`Found ${Object.keys(ontologies).length} ontology categories.`);
+const entityTemplate = handlebars.compile(fs.readFileSync(path.join(templatesDir, 'entity.hbs'), 'utf-8'));
+const repoInterfaceTemplate = handlebars.compile(fs.readFileSync(path.join(templatesDir, 'repository.interface.hbs'), 'utf-8'));
 
-// 1. Load templates
-const entityTemplateSource = fs.readFileSync(path.join(templatesDir, 'entity.hbs'), 'utf-8');
-const repoInterfaceTemplateSource = fs.readFileSync(path.join(templatesDir, 'repository.interface.hbs'), 'utf-8');
+for (const source of ontologySources) {
+    const { sourcePath, ontology } = source;
+    const outputBasePath = path.dirname(sourcePath);
+    
+    const entitiesPath = path.join(outputBasePath, 'domain', 'entities');
+    const reposPath = path.join(outputBasePath, 'domain', 'repositories');
 
-const entityTemplate = handlebars.compile(entityTemplateSource);
-const repoInterfaceTemplate = handlebars.compile(repoInterfaceTemplateSource);
+    // --- Cleanup Phase ---
+    console.log(`Cleaning up target directories for ${path.basename(outputBasePath)}...`);
+    [entitiesPath, reposPath].forEach(dirPath => {
+        if (fs.existsSync(dirPath)) {
+            fs.readdirSync(dirPath).forEach(file => {
+                if (file.endsWith('.ts')) {
+                    fs.unlinkSync(path.join(dirPath, file));
+                }
+            });
+            console.log(`   ✓ Cleaned ${dirPath}`);
+        }
+    });
+    // --- End Cleanup Phase ---
+    
+    fs.mkdirSync(entitiesPath, { recursive: true });
+    fs.mkdirSync(reposPath, { recursive: true });
 
-console.log('Templates loaded successfully.');
+    const allEntityNames = Object.keys(ontology.entities);
 
-// 2. Iterate through entities to generate
-for (const entity of entitiesToGenerate) {
-    // TODO:
-    // a. Determine output path (e.g., in src/crm-core/domain/ or src/extensions/financial/domain/)
-    // b. Prepare data for the template (e.g., entity name, properties)
-    // c. Generate code from template
-    // d. Write file to disk, checking if it exists to avoid overwriting custom code.
-    console.log(`Generating files for ${entity}...`);
+    for (const entityName of allEntityNames) {
+        console.log(`-> Processing entity: ${entityName}`);
+        
+        // Handle enum-like entities
+        if (ontology.entities[entityName].values) {
+            console.log(`   - Skipping enum-like entity ${entityName} for now.`);
+            continue;
+        }
+
+        const properties = [];
+        const imports = new Set<string>();
+
+        // Find relationships where this entity is the domain
+        for (const relName in ontology.relationships) {
+            const relationship = ontology.relationships[relName];
+            if (relationship.domain === entityName) {
+                const propName = relName.toLowerCase();
+                let propType = '';
+                
+                if (Array.isArray(relationship.range)) {
+                    propType = `(${relationship.range.join(' | ')})[]`;
+                    relationship.range.forEach(r => allEntityNames.includes(r) && imports.add(r));
+                } else {
+                    propType = allEntityNames.includes(relationship.range) ? `${relationship.range}[]` : `${relationship.range}[]`;
+                    if (allEntityNames.includes(relationship.range)) imports.add(relationship.range);
+                }
+
+                properties.push({ name: propName, type: propType });
+            }
+        }
+        
+        const fileName = toKebabCase(entityName);
+        const entityFilePath = path.join(entitiesPath, `${fileName}.ts`);
+        const repoFilePath = path.join(reposPath, `i-${fileName}-repository.ts`);
+
+        const templateData = { name: entityName, fileName, properties, imports: Array.from(imports) };
+        
+        const entityCode = entityTemplate(templateData);
+        if (!fs.existsSync(entityFilePath)) {
+            fs.writeFileSync(entityFilePath, entityCode);
+            console.log(`   ✓ Created entity: ${entityFilePath}`);
+        } else {
+            console.log(`   - Skipped existing entity: ${entityFilePath}`);
+        }
+
+        const repoCode = repoInterfaceTemplate({ name: entityName, fileName });
+        if (!fs.existsSync(repoFilePath)) {
+            fs.writeFileSync(repoFilePath, repoCode);
+            console.log(`   ✓ Created repository interface: ${repoFilePath}`);
+        } else {
+            console.log(`   - Skipped existing repository: ${repoFilePath}`);
+        }
+    }
 }
 
 console.log('Ontology synchronization task finished.'); 
