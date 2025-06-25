@@ -7,6 +7,7 @@ from typing import List, Dict, Any, Optional
 from openai import OpenAI
 from dotenv import load_dotenv
 import json
+from sentence_transformers import SentenceTransformer
 
 # --- Environment and API Key Setup ---
 load_dotenv()
@@ -42,6 +43,7 @@ class GraphResponse(BaseModel):
     entities: List[Entity]
     relationships: List[Relationship]
     refinement_info: str
+    embedding: Optional[List[float]] = None
 
 class RefinedExtractionResponse(BaseModel):
     raw_entities: List[Entity]
@@ -202,14 +204,19 @@ def refine_entities_with_llm(text: str, spacy_entities: List[Dict]) -> List[Dict
 app = FastAPI(
     title="NLP Entity Extraction Service",
     description="A microservice to extract and refine financial entities from text.",
-    version="1.1.0"
+    version="1.2.0"
 )
 
-# Load the model once at startup and reuse it across requests
+# Load the models once at startup and reuse them across requests
 extractor = SpacyEntityExtractor()
+embedding_model = None
 
 @app.on_event("startup")
 async def startup_event():
+    global embedding_model
+    print("✅ NLP Service loading...")
+    # This will download the model on the first run if it's not cached
+    embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
     print("✅ NLP Service loaded and ready.")
     if client:
         print("✅ OpenAI client configured.")
@@ -249,15 +256,28 @@ async def extract_graph_endpoint(request: ExtractionRequest):
     """
     # Step 1: Raw extraction with spaCy
     raw_entities = extractor.extract_entities(request.text)
-    
-    # Step 2: Extract graph (entities + relationships) with LLM
-    graph_data = extract_graph_with_llm(request.text, raw_entities)
-    
-    return {
-        "entities": graph_data.get("cleaned_entities", []),
-        "relationships": graph_data.get("relationships", []),
-        "refinement_info": f"Extracted {len(graph_data.get('cleaned_entities', []))} entities and {len(graph_data.get('relationships', []))} relationships."
-    }
+
+    # Step 2: Generate embedding for the full text
+    embedding = None
+    if embedding_model:
+        embedding = embedding_model.encode(request.text).tolist()
+
+    # Step 3: Use LLM to refine entities and extract relationships
+    try:
+        graph_data = extract_graph_with_llm(request.text, raw_entities)
+        
+        return {
+            "entities": graph_data.get("cleaned_entities", []),
+            "relationships": graph_data.get("relationships", []),
+            "refinement_info": f"Refined {len(raw_entities)} entities and found {len(graph_data.get('relationships', []))} relationships.",
+            "embedding": embedding
+        }
+    except HTTPException as e:
+        # Re-raise HTTPException to let FastAPI handle the response
+        raise e
+    except Exception as e:
+        # Catch any other unexpected errors during graph extraction
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred during graph extraction: {str(e)}")
 
 @app.get("/health")
 def health_check():

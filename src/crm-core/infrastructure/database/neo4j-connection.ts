@@ -102,6 +102,16 @@ export class Neo4jConnection {
         FOR (t:Task) ON (t.priority)
       `);
 
+      // Create vector index for email embeddings
+      await session.run(`
+        CREATE VECTOR INDEX \`communication-embeddings\` IF NOT EXISTS
+        FOR (c:Communication) ON (c.embedding)
+        OPTIONS { indexConfig: {
+          \`vector.dimensions\`: 384,
+          \`vector.similarity_function\`: 'cosine'
+        }}
+      `);
+
       console.log('🏗️ Neo4j schema initialized with constraints and indexes');
     } catch (error) {
       console.error('❌ Schema initialization failed:', error);

@@ -81,6 +81,7 @@ export interface SpacyEntityExtractionResult {
   confidence: number;
   processingTime: number;
   extensionResults?: Record<string, any>;
+  embedding?: number[];
   metadata: {
     textLength: number;
     extractionMethod: 'spacy' | 'regex';
@@ -99,6 +100,21 @@ interface SpacyRawEntity {
   context: string;
   start: number;
   end: number;
+}
+
+interface SpacyRelationship {
+  source: string;
+  target: string;
+  type: string;
+  confidence: number;
+  explanation?: string;
+}
+
+interface NlpGraphResponse {
+  entities: SpacyRawEntity[];
+  relationships: SpacyRelationship[];
+  refinement_info: string;
+  embedding: number[];
 }
 
 export class SpacyEntityExtractionService {
@@ -120,15 +136,15 @@ export class SpacyEntityExtractionService {
     const startTime = Date.now();
     
     try {
-      // Call spaCy Python script
-      const spacyResult = await this.callSpacyExtractor(text);
+      // Call spaCy Python service for graph extraction
+      const graphResult = await this.callSpacyGraphExtractor(text);
       
-      if (!spacyResult) {
-        throw new Error('spaCy extraction failed');
+      if (!graphResult) {
+        throw new Error('spaCy graph extraction failed');
       }
 
       // Convert spaCy results to our format
-      const entities = this.convertSpacyEntities(spacyResult, text);
+      const entities = this.convertSpacyEntities(graphResult.entities, text);
       
       // Apply filters
       const filteredEntities = this.applyFilters(entities, options);
@@ -147,6 +163,7 @@ export class SpacyEntityExtractionService {
         entityTypes,
         confidence: overallConfidence,
         processingTime,
+        embedding: graphResult.embedding,
         metadata: {
           textLength: text.length,
           extractionMethod: 'spacy',
@@ -223,7 +240,7 @@ export class SpacyEntityExtractionService {
   }> {
     try {
       // Test spaCy availability
-      const testResult = await this.callSpacyExtractor('Test message');
+      const testResult = await this.callSpacyGraphExtractor('Test message');
       
       return {
         availableModels: ['none'],
@@ -249,13 +266,13 @@ export class SpacyEntityExtractionService {
   }
 
   /**
-   * Call the Python spaCy extractor script
+   * Call the Python spaCy service for graph extraction
    */
-  private async callSpacyExtractor(text: string): Promise<SpacyRawEntity[]> {
+  private async callSpacyGraphExtractor(text: string): Promise<NlpGraphResponse> {
     try {
-        const response = await axios.post(`${this.nlpServiceUrl}/extract-entities`, { text });
+        const response = await axios.post<NlpGraphResponse>(`${this.nlpServiceUrl}/extract-graph`, { text });
         if (response.status === 200) {
-            return response.data;
+     return response.data;
         } else {
             throw new Error(`NLP service returned status ${response.status}`);
         }
@@ -267,6 +284,15 @@ export class SpacyEntityExtractionService {
         console.error('An error occurred while calling the NLP service:', error);
         throw error;
     }
+  }
+
+  /**
+   * @deprecated Use callSpacyGraphExtractor for richer output including relationships and embeddings.
+   */
+  private async callSpacyExtractor(text: string): Promise<SpacyRawEntity[]> {
+    // This method now only fetches basic entities and does not provide the full graph.
+    const response = await axios.post<SpacyRawEntity[]>(`${this.nlpServiceUrl}/extract-entities`, { text });
+    return response.data;
   }
 
   /**

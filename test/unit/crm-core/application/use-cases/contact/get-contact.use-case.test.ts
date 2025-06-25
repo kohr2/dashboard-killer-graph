@@ -1,4 +1,3 @@
-
 import { GetContactUseCase, GetContactRequest } from '../../../../../../src/crm-core/application/use-cases/contact/get-contact.use-case';
 import { ContactRepository } from '../../../../../../src/crm-core/domain/repositories/contact-repository';
 import { oCreamV2 } from '../../../../../../src/crm-core/domain/ontology/o-cream-v2';

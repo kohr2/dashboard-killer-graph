@@ -1,11 +1,10 @@
-
 import { CreateContactUseCase, CreateContactRequest } from '../../../../../../src/crm-core/application/use-cases/contact/create-contact.use-case';
 import { ContactRepository } from '../../../../../../src/crm-core/domain/repositories/contact-repository';
 import { Contact } from '../../../../../../src/crm-core/domain/entities/contact';
 import { oCreamV2, createOCreamContact } from '../../../../../../src/crm-core/domain/ontology/o-cream-v2';
 
 jest.mock('../../../../../../src/crm-core/domain/repositories/contact-repository');
-jest.mock('../../../../../../src/crm-core/domain/entities/contact');
+// jest.mock('../../../../../../src/crm-core/domain/entities/contact'); // Ce fichier n'existe plus
 jest.mock('../../../../../../src/crm-core/domain/ontology/o-cream-v2', () => ({
   oCreamV2: {
     addEntity: jest.fn(),

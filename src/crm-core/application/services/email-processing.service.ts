@@ -373,6 +373,7 @@ export class EmailProcessingService {
       from: email.from.email,
       to: email.to.map(e => e.email),
       date: email.date,
+      embedding: entityExtraction.embedding,
       metadata: email.metadata
     };
     this.ontology.addEntity(emailEntity as any);
