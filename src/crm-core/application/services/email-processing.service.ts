@@ -698,4 +698,8 @@ export class EmailProcessingService {
     
     return recommendations;
   }
-} 
+}
+
+export function createEmailProcessingService(contactRepository: ContactRepository): EmailProcessingService {
+  return new EmailProcessingService(contactRepository);
+}

@@ -58,7 +58,7 @@ async function demonstrateSpacyEmailIngestionPipeline() {
     console.log(`   ❌ NLP service is not responding at ${nlpServiceUrl}`);
     return;
   }
-
+  
   const testEmailsDir = join(process.cwd(), 'test-emails');
   const allFiles = await fs.readdir(testEmailsDir);
   const emailFiles = allFiles.filter(f => f.endsWith('.eml')).sort();
@@ -196,8 +196,8 @@ function displayEntities(entities: SpacyExtractedEntity[]) {
       console.log(`  • ${type}:`);
       entityGroups[type].forEach(e => {
         console.log(`    - "${e.value}" (Confidence: ${(e.confidence * 100).toFixed(1)}%)`);
-      });
-    }
+    });
+  }
 }
 
 demonstrateSpacyEmailIngestionPipeline().catch(e => {

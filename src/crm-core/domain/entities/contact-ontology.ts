@@ -17,6 +17,8 @@ export interface OCreamContactEntity extends DOLCEEntity {
     ontologyMetadata: {
         validationStatus: 'valid' | 'invalid' | 'unchecked';
     };
+    getId(): string;
+    getName(): string;
     addActivity(activityId: string): void;
     addKnowledgeElement(elementId: string): void;
     updatePersonalInfo(info: Partial<PersonalInfo>): void;
