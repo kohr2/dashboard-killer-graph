@@ -1,8 +1,7 @@
-// spaCy Entity Extraction Service - Primary NLP Engine
+// spaCy Entity Extraction Service - Now using a dedicated microservice
 // Advanced entity extraction using spaCy NLP models for O-CREAM-v2 system
 
-import { spawn } from 'child_process';
-import { join } from 'path';
+import axios from 'axios';
 
 export interface SpacyExtractedEntity {
   type: EntityType;
@@ -97,22 +96,16 @@ interface SpacyRawEntity {
   confidence: number;
   spacy_label: string;
   context: string;
-}
-
-interface SpacyRawResult {
-  success: boolean;
-  entities: SpacyRawEntity[];
-  total_count: number;
-  error?: string;
+  start: number;
+  end: number;
 }
 
 export class SpacyEntityExtractionService {
-  private readonly pythonScriptPath: string;
-  private readonly defaultModel: string = 'en_core_web_lg';
-  private readonly fallbackModel: string = 'en_core_web_sm';
+  private readonly nlpServiceUrl: string;
 
-  constructor(pythonScriptPath?: string) {
-    this.pythonScriptPath = pythonScriptPath || join(__dirname, '../../../../scripts/spacy_entity_extractor.py');
+  constructor(nlpServiceUrl?: string) {
+    this.nlpServiceUrl = nlpServiceUrl || 'http://127.0.0.1:8000';
+    console.log(`SpacyEntityExtractionService configured to use NLP service at: ${this.nlpServiceUrl}`);
   }
 
   /**
@@ -128,14 +121,14 @@ export class SpacyEntityExtractionService {
     
     try {
       // Call spaCy Python script
-      const spacyResult = await this.callSpacyExtractor(text, options?.model);
+      const spacyResult = await this.callSpacyExtractor(text);
       
-      if (!spacyResult.success) {
-        throw new Error(`spaCy extraction failed: ${spacyResult.error}`);
+      if (!spacyResult) {
+        throw new Error('spaCy extraction failed');
       }
 
       // Convert spaCy results to our format
-      const entities = this.convertSpacyEntities(spacyResult.entities, text);
+      const entities = this.convertSpacyEntities(spacyResult, text);
       
       // Apply filters
       const filteredEntities = this.applyFilters(entities, options);
@@ -157,7 +150,7 @@ export class SpacyEntityExtractionService {
         metadata: {
           textLength: text.length,
           extractionMethod: 'spacy',
-          nlpModel: options?.model || this.defaultModel,
+          nlpModel: 'none',
           languageDetected: 'en',
           spacyVersion: '3.8.2'
         }
@@ -233,7 +226,7 @@ export class SpacyEntityExtractionService {
       const testResult = await this.callSpacyExtractor('Test message');
       
       return {
-        availableModels: [this.defaultModel, this.fallbackModel],
+        availableModels: ['none'],
         supportedEntityTypes: Object.values(EntityType),
         features: [
           'Named Entity Recognition (NER)',
@@ -243,7 +236,7 @@ export class SpacyEntityExtractionService {
           'Multi-language Support',
           'Custom Entity Types'
         ],
-        status: testResult.success ? 'available' : 'degraded'
+        status: testResult ? 'available' : 'unavailable'
       };
     } catch (error) {
       return {
@@ -258,79 +251,38 @@ export class SpacyEntityExtractionService {
   /**
    * Call the Python spaCy extractor script
    */
-  private async callSpacyExtractor(text: string, model?: string): Promise<SpacyRawResult> {
-    return new Promise((resolve) => {
-      const args = [this.pythonScriptPath, text];
-      if (model) {
-        args.push('--model', model);
-      }
-      
-      const pythonProcess = spawn('python3', args);
-      
-      let stdout = '';
-        let stderr = '';
-      
-      pythonProcess.stdout.on('data', (data) => {
-        stdout += data.toString();
-      });
-      
-        pythonProcess.stderr.on('data', (data) => {
-          stderr += data.toString();
-        });
-
-        pythonProcess.on('close', (code) => {
-        if (code === 0) {
-          try {
-            const result = JSON.parse(stdout);
-            resolve(result);
-          } catch (error) {
-            resolve({
-              success: false,
-              entities: [],
-              total_count: 0,
-              error: `JSON parse error: ${error}`
-            });
-          }
+  private async callSpacyExtractor(text: string): Promise<SpacyRawEntity[]> {
+    try {
+        const response = await axios.post(`${this.nlpServiceUrl}/extract-entities`, { text });
+        if (response.status === 200) {
+            return response.data;
         } else {
-          resolve({
-            success: false,
-            entities: [],
-            total_count: 0,
-            error: `Python script failed with code ${code}: ${stderr}`
-          });
+            throw new Error(`NLP service returned status ${response.status}`);
         }
-      });
-    });
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.code === 'ECONNREFUSED') {
+            console.error(`Connection to NLP service at ${this.nlpServiceUrl} failed. Is the service running?`);
+            throw new Error(`NLP service is unavailable.`);
+        }
+        console.error('An error occurred while calling the NLP service:', error);
+        throw error;
+    }
   }
 
   /**
    * Convert spaCy raw entities to our typed format
    */
   private convertSpacyEntities(spacyEntities: SpacyRawEntity[], originalText: string): SpacyExtractedEntity[] {
-    const entities: SpacyExtractedEntity[] = [];
-    
-    for (const spacyEntity of spacyEntities) {
-      // Find the entity position in the original text
-      const position = originalText.indexOf(spacyEntity.value);
-      
-      if (position !== -1) {
-        entities.push({
-          type: this.mapSpacyTypeToEntityType(spacyEntity.type),
-          value: spacyEntity.value,
-          confidence: spacyEntity.confidence,
-          startIndex: position,
-          endIndex: position + spacyEntity.value.length,
-          context: spacyEntity.context,
-          spacyLabel: spacyEntity.spacy_label,
-      metadata: {
-            originalSpacyType: spacyEntity.type,
-            extractionMethod: 'spacy_ner'
-          }
-        });
-      }
-    }
-    
-    return entities;
+    if (!spacyEntities) return [];
+    return spacyEntities.map(spacyEntity => ({
+      type: this.mapSpacyTypeToEntityType(spacyEntity.type),
+      value: spacyEntity.value,
+      confidence: spacyEntity.confidence,
+      startIndex: spacyEntity.start,
+      endIndex: spacyEntity.end,
+      context: spacyEntity.context,
+      spacyLabel: spacyEntity.spacy_label,
+    }));
   }
 
   /**

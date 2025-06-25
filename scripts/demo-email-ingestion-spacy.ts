@@ -1,28 +1,14 @@
 // Email Ingestion Pipeline Demo - spaCy Powered Version
-// Advanced entity extraction using spaCy NLP models
+// Advanced entity extraction using a dedicated microservice
 
 import { InMemoryContactRepository } from '../src/crm-core/infrastructure/repositories/in-memory-contact-repository';
 import { OCreamV2Ontology, DOLCECategory, createInformationElement, KnowledgeType } from '../src/crm-core/domain/ontology/o-cream-v2';
 import { Contact } from '../src/crm-core/domain/entities/contact';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
-import { spawn } from 'child_process';
+import { SpacyEntityExtractionService, SpacyExtractedEntity, SpacyExtractionResult } from '../src/crm-core/application/services/spacy-entity-extraction.service';
 
-interface SpacyEntity {
-  type: string;
-  value: string;
-  confidence: number;
-  spacy_label: string;
-  context: string;
-}
-
-interface SpacyExtractionResult {
-  success: boolean;
-  entities: SpacyEntity[];
-  total_count: number;
-  error?: string;
-}
-
+// Simplified interface to match the service output
 interface SpacyEmailProcessingResult {
   email: {
     subject: string;
@@ -32,33 +18,35 @@ interface SpacyEmailProcessingResult {
     date: Date;
   };
   entitiesExtracted: number;
-  entities: SpacyEntity[];
+  entities: SpacyExtractedEntity[];
   contactsProcessed: number;
   knowledgeElementsCreated: number;
   processingTime: number;
 }
 
 async function demonstrateSpacyEmailIngestionPipeline() {
-  console.log('📧 Email Ingestion Pipeline Demo - spaCy Powered Version');
+  console.log('📧 Email Ingestion Pipeline Demo - spaCy Microservice Version');
   console.log('=' .repeat(100));
-  console.log('Advanced NLP: spaCy entity extraction → Contact creation → Knowledge graph');
+  console.log('Advanced NLP: Microservice entity extraction → Contact creation → Knowledge graph');
   
   // Initialize services
   const contactRepository = new InMemoryContactRepository();
   const ontology = OCreamV2Ontology.getInstance();
+  const nlpService = new SpacyEntityExtractionService(); // Uses default http://127.0.0.1:8000
   
   console.log('\n🔧 Initialized services:');
   console.log('   ✅ Contact Repository (In-Memory)');
   console.log('   ✅ O-CREAM-v2 Ontology');
-  console.log('   ✅ spaCy NLP Engine (en_core_web_lg)');
+  console.log('   ✅ spaCy NLP Microservice');
   
   // Test spaCy connection
-  console.log('\n🧠 Testing spaCy NLP engine...');
-  const testResult = await extractEntitiesWithSpacy("Test message with Apple Inc. and $1000");
-  if (testResult.success) {
-    console.log(`   ✅ spaCy working correctly - extracted ${testResult.total_count} entities`);
-  } else {
-    console.log(`   ❌ spaCy error: ${testResult.error}`);
+  console.log('\n🧠 Testing spaCy NLP microservice...');
+  try {
+    const testResult = await nlpService.extractEntities("Test message with Apple Inc. and $1000");
+    console.log(`   ✅ spaCy service working correctly - extracted ${testResult.entityCount} entities`);
+  } catch (e: any) {
+    console.log(`   ❌ spaCy service error:`, e.message);
+    console.log('   👉 Please ensure the Python service is running. See python-services/README.md');
     return;
   }
   
@@ -174,23 +162,18 @@ Phone: (212) 555-0301`,
     console.log(`\n📧 Processing Email ${index + 1}: ${email.subject}`);
     const startTime = Date.now();
     
-    // Extract entities using spaCy
-    const spacyResult = await extractEntitiesWithSpacy(email.content);
+    // Extract entities using spaCy microservice
+    const extractionResult = await nlpService.extractEntities(email.content);
     
-    if (!spacyResult.success) {
-      console.log(`   ❌ spaCy extraction failed: ${spacyResult.error}`);
-      continue;
-    }
-    
-    console.log(`   🧠 spaCy extracted ${spacyResult.total_count} entities`);
-    console.log(`   🔍 Entity types: ${[...new Set(spacyResult.entities.map(e => e.type))].join(', ')}`);
+    console.log(`   🧠 spaCy service extracted ${extractionResult.entityCount} entities`);
+    console.log(`   🔍 Entity types: ${[...new Set(extractionResult.entities.map(e => e.type))].join(', ')}`);
     
     // Create/find contacts
     const contacts = await processContacts(email, contactRepository);
     console.log(`   👥 Processed ${contacts.length} contacts`);
     
     // Create knowledge elements
-    const knowledgeElements = await createKnowledgeElements(email, spacyResult.entities, ontology);
+    const knowledgeElements = await createKnowledgeElements(email, extractionResult.entities, ontology);
     console.log(`   📚 Created ${knowledgeElements.length} knowledge elements`);
     
     const processingTime = Date.now() - startTime;
@@ -203,15 +186,15 @@ Phone: (212) 555-0301`,
         content: email.content,
         date: email.date
       },
-      entitiesExtracted: spacyResult.total_count,
-      entities: spacyResult.entities,
+      entitiesExtracted: extractionResult.entityCount,
+      entities: extractionResult.entities,
       contactsProcessed: contacts.length,
       knowledgeElementsCreated: knowledgeElements.length,
       processingTime
     };
     
     results.push(result);
-    totalEntities += spacyResult.total_count;
+    totalEntities += extractionResult.entityCount;
     totalContacts += contacts.length;
     totalKnowledgeElements += knowledgeElements.length;
     totalProcessingTime += processingTime;
@@ -243,71 +226,19 @@ Phone: (212) 555-0301`,
   }
   
   // Compare with regex results
-  await compareWithRegexExtraction(sampleEmails);
+  await compareWithRegexExtraction(sampleEmails, nlpService);
   
   // Generate comprehensive report
   await generateSpacyReport(results, stats);
   
-  console.log('\n🎉 spaCy Email Ingestion Pipeline Demo Complete!');
+  console.log('\n🎉 Email Ingestion Pipeline Demo Complete!');
   console.log('=' .repeat(100));
   console.log('✅ Successfully demonstrated:');
-  console.log('   • Advanced NLP entity extraction with spaCy');
-  console.log('   • Named Entity Recognition (NER) with context');
-  console.log('   • Financial domain-specific entity patterns');
-  console.log('   • High-accuracy person, organization, and location detection');
-  console.log('   • Semantic understanding of business relationships');
-  console.log('   • Contact management with intelligent name extraction');
-  console.log('   • Knowledge graph population with NLP insights');
-  
-  console.log('\n🚀 spaCy Advantages Demonstrated:');
-  console.log('   • 📈 Higher accuracy person name detection');
-  console.log('   • 🏢 Better organization recognition');
-  console.log('   • 📍 Geographic entity extraction');
-  console.log('   • 📅 Date and time understanding');
-  console.log('   • 💰 Improved monetary amount detection');
-  console.log('   • 🔗 Contextual entity relationships');
-  console.log('   • 🎯 Domain-specific pattern matching');
-}
-
-async function extractEntitiesWithSpacy(text: string): Promise<SpacyExtractionResult> {
-  return new Promise((resolve) => {
-    const pythonScript = join(__dirname, 'spacy_entity_extractor.py');
-    const pythonProcess = spawn('python3', [pythonScript, text]);
-    
-    let stdout = '';
-    let stderr = '';
-    
-    pythonProcess.stdout.on('data', (data) => {
-      stdout += data.toString();
-    });
-    
-    pythonProcess.stderr.on('data', (data) => {
-      stderr += data.toString();
-    });
-    
-    pythonProcess.on('close', (code) => {
-      if (code === 0) {
-        try {
-          const result = JSON.parse(stdout);
-          resolve(result);
-        } catch (error) {
-          resolve({
-            success: false,
-            entities: [],
-            total_count: 0,
-            error: `JSON parse error: ${error}`
-          });
-        }
-      } else {
-        resolve({
-          success: false,
-          entities: [],
-          total_count: 0,
-          error: `Python script failed with code ${code}: ${stderr}`
-        });
-      }
-    });
-  });
+  console.log('   • Microservice-based NLP processing');
+  console.log('   • Advanced entity extraction and categorization');
+  console.log('   • Contact management');
+  console.log('   • Knowledge graph population');
+  console.log('   • Ontological data organization');
 }
 
 async function processContacts(email: any, contactRepository: InMemoryContactRepository): Promise<Contact[]> {
@@ -354,257 +285,214 @@ async function processContacts(email: any, contactRepository: InMemoryContactRep
 }
 
 function extractNameFromEmail(email: string): string {
+  // Simple logic to extract a name from an email address
   const namePart = email.split('@')[0];
-  return namePart.split(/[._-]/).map(part => 
-    part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
-  ).join(' ');
+  return namePart.replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-async function createKnowledgeElements(email: any, entities: SpacyEntity[], ontology: OCreamV2Ontology): Promise<any[]> {
+async function createKnowledgeElements(email: any, entities: SpacyExtractedEntity[], ontology: OCreamV2Ontology): Promise<any[]> {
   const knowledgeElements: any[] = [];
-  
-  // Create communication knowledge element
-  const commKnowledge = createInformationElement({
-    title: `Email Communication: ${email.subject}`,
-    type: KnowledgeType.COMMUNICATION_LOG,
-    content: {
-      subject: email.subject,
-      from: email.from,
-      to: email.to,
-      entityCount: entities.length,
-      date: email.date,
-      nlpModel: 'spacy_en_core_web_lg'
-    },
-    source: 'spacy_email_processing',
-    reliability: 0.95,
-    confidentiality: 'internal'
+  const { subject, content, date } = email;
+
+  // Create a central Information Element for the email content
+  const emailContentElement = createInformationElement({
+    type: KnowledgeType.DOCUMENT,
+    content: content,
+    source: 'Email Ingestion',
+    timestamp: date.toISOString(),
   });
-  
-  ontology.addEntity(commKnowledge);
-  knowledgeElements.push(commKnowledge);
-  
-  // Create entity knowledge elements with spaCy insights
+  ontology.addInformationElement(emailContentElement);
+  knowledgeElements.push(emailContentElement);
+
+  // Link entities to the email content
   for (const entity of entities) {
-    const entityKnowledge = createInformationElement({
-      title: `spaCy Entity: ${entity.type}`,
-      type: KnowledgeType.CUSTOMER_PROFILE,
-      content: {
-        entityType: entity.type,
-        value: entity.value,
-        confidence: entity.confidence,
-        spacyLabel: entity.spacy_label,
-        context: entity.context,
-        extractedFrom: email.subject,
-        nlpMethod: 'spacy_ner'
+    const entityElement = createInformationElement({
+      type: KnowledgeType.ENTITY,
+      content: entity.value,
+      attributes: {
+        entity_type: entity.type,
+        confidence: entity.confidence
       },
-      source: 'spacy_entity_extraction',
-      reliability: entity.confidence,
-      confidentiality: 'internal'
+      source: 'spaCy NLP Service',
+      timestamp: new Date().toISOString()
     });
-    
-    ontology.addEntity(entityKnowledge);
-    knowledgeElements.push(entityKnowledge);
+    ontology.addInformationElement(entityElement);
+    ontology.addRelationship(emailContentElement, entityElement, DOLCECategory.MENTIONS);
+    knowledgeElements.push(entityElement);
   }
-  
+
+  // Create an Activity element for the email communication
+  const activityElement = ontology.createActivity({
+    type: 'Email Communication',
+    description: `Email: ${subject}`,
+    startTime: date.toISOString(),
+    endTime: date.toISOString(),
+  });
+  ontology.addActivity(activityElement);
+  ontology.addRelationship(activityElement, emailContentElement, DOLCECategory.HAS_PARTICIPANT);
+
   return knowledgeElements;
 }
 
 function displaySpacyEmailAnalysis(result: SpacyEmailProcessingResult, emailNumber: number) {
-  console.log(`\n📧 EMAIL ${emailNumber}: ${result.email.subject}`);
-  console.log('-' .repeat(80));
-  console.log(`📨 From: ${result.email.from}`);
-  console.log(`📬 To: ${result.email.to.join(', ')}`);
-  console.log(`📅 Date: ${result.email.date.toLocaleString()}`);
-  console.log(`🧠 spaCy entities extracted: ${result.entitiesExtracted}`);
-  console.log(`👥 Contacts processed: ${result.contactsProcessed}`);
-  console.log(`📚 Knowledge elements: ${result.knowledgeElementsCreated}`);
-  console.log(`⏱️  Processing time: ${result.processingTime}ms`);
+  console.log(`\n--- ANALYSIS FOR EMAIL ${emailNumber} ---`);
+  console.log(`Subject: ${result.email.subject}`);
+  console.log(`From: ${result.email.from}`);
+  console.log(`Date: ${result.email.date.toUTCString()}`);
+  console.log(`Processing time: ${result.processingTime}ms`);
+  console.log(`\n🧠 Entities Extracted (${result.entitiesExtracted}):`);
   
-  // Show email classification
-  const classification = classifyEmailContent(result.email.content);
-  console.log(`🏷️ Classification: ${classification}`);
-  
-  // Show extracted insights
-  const insights = extractBusinessInsights(result.email.content);
-  console.log(`💡 Business insights: ${insights.join(', ')}`);
-  
-  // Show all extracted entities with spaCy details
   if (result.entities.length > 0) {
-    console.log(`\n🧠 SPACY EXTRACTED ENTITIES (${result.entities.length}):`);
-    
-    // Group entities by type for better organization
-    const entitiesByType: Record<string, SpacyEntity[]> = {};
-    result.entities.forEach(entity => {
-      if (!entitiesByType[entity.type]) {
-        entitiesByType[entity.type] = [];
+    const entityGroups: { [key: string]: SpacyExtractedEntity[] } = {};
+    result.entities.forEach(e => {
+      if (!entityGroups[e.type]) {
+        entityGroups[e.type] = [];
       }
-      entitiesByType[entity.type].push(entity);
+      entityGroups[e.type].push(e);
     });
-    
-    // Display entities grouped by type with spaCy-specific information
-    Object.entries(entitiesByType).forEach(([type, entities]) => {
-      console.log(`\n   📌 ${type} (${entities.length}):`);
-      entities.forEach((entity, idx) => {
-        const confidenceIcon = entity.confidence > 0.8 ? '🟢' : entity.confidence > 0.7 ? '🟡' : '🔴';
-        const confidencePercent = (entity.confidence * 100).toFixed(1);
-        console.log(`      ${idx + 1}. ${confidenceIcon} "${entity.value}" (${confidencePercent}%)`);
-        console.log(`          spaCy label: ${entity.spacy_label}`);
-        if (entity.context && entity.context !== entity.value) {
-          console.log(`          Context: "${entity.context.substring(0, 50)}..."`);
-        }
+
+    for (const type in entityGroups) {
+      console.log(`  • ${type}:`);
+      entityGroups[type].forEach(e => {
+        console.log(`    - "${e.value}" (Confidence: ${(e.confidence * 100).toFixed(1)}%)`);
       });
-    });
+    }
+  } else {
+    console.log('  No entities found.');
+  }
+
+  console.log('\n💡 Business Insights:');
+  const insights = extractBusinessInsights(result.email.content);
+  if (insights.length > 0) {
+    insights.forEach(insight => console.log(`  - ${insight}`));
+  } else {
+    console.log('  No specific business insights derived.');
   }
 }
 
 function classifyEmailContent(content: string): string {
-  const lowerContent = content.toLowerCase();
-  
-  if (lowerContent.includes('compliance') || lowerContent.includes('review required')) {
-    return 'COMPLIANCE_ALERT';
-  } else if (lowerContent.includes('portfolio') || lowerContent.includes('investment')) {
-    return 'INVESTMENT_ADVISORY';
-  } else if (lowerContent.includes('transaction') || lowerContent.includes('wire transfer')) {
-    return 'FINANCIAL_TRANSACTION';
-  } else if (lowerContent.includes('meeting') || lowerContent.includes('schedule')) {
-    return 'MEETING_REQUEST';
-  } else if (lowerContent.includes('research') || lowerContent.includes('market')) {
-    return 'MARKET_RESEARCH';
-  } else {
-    return 'GENERAL_BUSINESS';
-  }
+  if (content.toLowerCase().includes('compliance') || content.toLowerCase().includes('urgent')) return 'Compliance';
+  if (content.toLowerCase().includes('portfolio') || content.toLowerCase().includes('holdings')) return 'Portfolio Management';
+  if (content.toLowerCase().includes('investment') || content.toLowerCase().includes('opportunities')) return 'Investment Advisory';
+  return 'General';
 }
 
 function extractBusinessInsights(content: string): string[] {
   const insights: string[] = [];
-  
-  // Check for urgency indicators
-  if (content.toLowerCase().includes('urgent') || content.includes('URGENT')) {
-    insights.push('High Priority');
+  const classification = classifyEmailContent(content);
+
+  switch (classification) {
+    case 'Compliance':
+      insights.push('High-priority compliance review detected.');
+      const moneyMatch = content.match(/\$[\d,.]+/);
+      if (moneyMatch) insights.push(`Transaction amount: ${moneyMatch[0]}`);
+      break;
+    case 'Portfolio Management':
+      insights.push('Portfolio review communication.');
+      const holdings = content.match(/-\s(.*?)\s\(/g);
+      if (holdings) insights.push(`Discusses ${holdings.length} holdings.`);
+      break;
+    case 'Investment Advisory':
+      insights.push('Distribution of research material.');
+      const topPicks = content.match(/TOP PICKS:|Key Opportunities:/);
+      if (topPicks) insights.push('Contains specific investment recommendations.');
+      break;
   }
-  
-  // Check for financial indicators
-  if (content.includes('$')) {
-    insights.push('Contains Financial Data');
-  }
-  
-  // Check for compliance indicators
-  if (content.toLowerCase().includes('compliance') || content.toLowerCase().includes('review')) {
-    insights.push('Compliance Related');
-  }
-  
-  // Check for investment indicators
-  if (content.toLowerCase().includes('portfolio') || content.toLowerCase().includes('investment')) {
-    insights.push('Investment Advisory');
-  }
-  
   return insights;
 }
 
-async function compareWithRegexExtraction(sampleEmails: any[]) {
-  console.log('\n\n📊 SPACY vs REGEX COMPARISON');
+async function compareWithRegexExtraction(sampleEmails: any[], nlpService: SpacyEntityExtractionService) {
+  console.log('\n\n🔄 COMPARISON: spaCy vs. Regex');
   console.log('=' .repeat(80));
-  
+
   for (const [index, email] of sampleEmails.entries()) {
-    console.log(`\n📧 Email ${index + 1}: ${email.subject}`);
-    
+    console.log(`\n--- Comparison for Email ${index + 1} ---`);
+
     // Get spaCy results
-    const spacyResult = await extractEntitiesWithSpacy(email.content);
+    const spacyResult = await nlpService.extractEntities(email.content);
     
     // Get regex results (simplified version)
     const regexEntities = extractEntitiesWithRegex(email.content);
     
-    console.log(`   🧠 spaCy: ${spacyResult.total_count} entities`);
+    console.log(`   🧠 spaCy: ${spacyResult.entityCount} entities`);
     console.log(`   📝 Regex: ${regexEntities.length} entities`);
-    
-    // Show unique entities found by each method
-    const spacyTypes = new Set(spacyResult.entities.map(e => e.type));
-    const regexTypes = new Set(regexEntities.map(e => e.type));
-    
-    const spacyUnique = [...spacyTypes].filter(t => !regexTypes.has(t));
-    const regexUnique = [...regexTypes].filter(t => !spacyTypes.has(t));
-    
-    if (spacyUnique.length > 0) {
-      console.log(`   ✨ spaCy unique types: ${spacyUnique.join(', ')}`);
-    }
-    if (regexUnique.length > 0) {
-      console.log(`   📐 Regex unique types: ${regexUnique.join(', ')}`);
-    }
+
+    const spacyTypes = new Set(spacyResult.entities.map((e: any) => e.type));
+    const regexTypes = new Set(regexEntities.map((e: any) => e.type));
+
+    console.log(`   • spaCy types: ${[...spacyTypes].join(', ')}`);
+    console.log(`   • Regex types: ${[...regexTypes].join(', ')}`);
   }
 }
 
 function extractEntitiesWithRegex(content: string): Array<{type: string, value: string, confidence: number}> {
   const entities: Array<{type: string, value: string, confidence: number}> = [];
   
-  // Email addresses
-  const emailPattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
-  const emails = content.match(emailPattern) || [];
-  emails.forEach(email => {
-    entities.push({ type: 'EMAIL_ADDRESS', value: email, confidence: 0.95 });
-  });
-  
-  // Stock symbols
-  const stockPattern = /\((?:NYSE|NASDAQ):\s*([A-Z]{1,5})\)/g;
-  let stockMatch;
-  while ((stockMatch = stockPattern.exec(content)) !== null) {
-    entities.push({ type: 'STOCK_SYMBOL', value: stockMatch[1], confidence: 0.9 });
+  // Simplified regex for comparison
+  const patterns: { [key: string]: RegExp } = {
+    'ORG': /\b[A-Z][a-z]+ (?:Inc\.|Corp\.|Group|LLC|Ltd\.)/g,
+    'MONEY': /\$[\d,]+(?:\.\d{2})?/g,
+    'PRODUCT': /\((?:NASDAQ|NYSE): ([A-Z]+)\)/g,
+    'PERSON': /\b[A-Z][a-z]+ [A-Z][a-z]+\b/g
+  };
+
+  for (const type in patterns) {
+    const matches = content.match(patterns[type]) || [];
+    matches.forEach(value => {
+      entities.push({ type, value: value.trim(), confidence: 0.7 });
+    });
   }
-  
-  // Monetary amounts
-  const moneyPattern = /\$[\d,]+(?:\.\d{2})?/g;
-  const amounts = content.match(moneyPattern) || [];
-  amounts.forEach(amount => {
-    entities.push({ type: 'MONETARY_AMOUNT', value: amount, confidence: 0.85 });
-  });
-  
   return entities;
 }
 
 async function generateSpacyReport(results: SpacyEmailProcessingResult[], stats: any) {
-  console.log('\n📄 Generating spaCy processing report...');
+  let report = '<h1>spaCy Email Ingestion Report</h1>\n';
+  report += `<p>Generated on: ${new Date().toUTCString()}</p>\n`;
   
-  const report = {
-    timestamp: new Date().toISOString(),
-    processingMethod: 'spacy_nlp',
-    model: 'en_core_web_lg',
-    summary: {
-      totalEmails: results.length,
-      totalEntities: results.reduce((sum, r) => sum + r.entitiesExtracted, 0),
-      totalContacts: results.reduce((sum, r) => sum + r.contactsProcessed, 0),
-      totalKnowledgeElements: results.reduce((sum, r) => sum + r.knowledgeElementsCreated, 0),
-      averageProcessingTime: results.reduce((sum, r) => sum + r.processingTime, 0) / results.length,
-      averageEntitiesPerEmail: results.reduce((sum, r) => sum + r.entitiesExtracted, 0) / results.length
-    },
-    emailAnalysis: results.map(result => ({
-      subject: result.email.subject,
-      from: result.email.from,
-      date: result.email.date,
-      entitiesExtracted: result.entitiesExtracted,
-      entities: result.entities,
-      contactsProcessed: result.contactsProcessed,
-      knowledgeElementsCreated: result.knowledgeElementsCreated,
-      processingTime: result.processingTime,
-      classification: classifyEmailContent(result.email.content),
-      insights: extractBusinessInsights(result.email.content)
-    })),
-    ontologyStatistics: stats,
-    spacyCapabilities: {
-      namedEntityRecognition: true,
-      contextualUnderstanding: true,
-      financialDomainPatterns: true,
-      multilingualSupport: false,
-      customEntityTypes: ['STOCK_SYMBOL', 'FINANCIAL_ORG', 'FINANCIAL_INSTRUMENT', 'JOB_TITLE']
+  report += '<h2>Overall Statistics</h2>\n';
+  report += '<ul>';
+  report += `<li>Total Emails Processed: ${results.length}</li>`;
+  report += `<li>Total Entities Extracted: ${results.reduce((acc, r) => acc + r.entitiesExtracted, 0)}</li>`;
+  report += `<li>Total Knowledge Elements: ${stats.knowledgeElementCount}</li>`;
+  report += `<li>Average Processing Time: ${(results.reduce((acc, r) => acc + r.processingTime, 0) / results.length).toFixed(0)}ms</li>`;
+  report += '</ul>\n';
+
+  report += '<h2>Ontology Summary</h2>\n';
+  report += '<ul>';
+  report += `<li>Entities: ${stats.entityCount}</li>`;
+  report += `<li>Relationships: ${stats.relationshipCount}</li>`;
+  report += `<li>Activities: ${stats.activityCount}</li>`;
+  report += '</ul>\n';
+  
+  report += '<h2>Detailed Analysis per Email</h2>\n';
+  for (const [index, result] of results.entries()) {
+    report += `<h3>Email ${index + 1}: ${result.email.subject}</h3>\n`;
+    report += '<ul>';
+    report += `<li>From: ${result.email.from}</li>`;
+    report += `<li>Date: ${result.email.date.toUTCString()}</li>`;
+    report += `<li>Entities: ${result.entitiesExtracted}</li>`;
+    report += '</ul>';
+    
+    report += '<h4>Extracted Entities:</h4>\n';
+    if (result.entities.length > 0) {
+      const entityGroups: { [key: string]: any[] } = {};
+      result.entities.forEach(e => {
+        if (!entityGroups[e.type]) entityGroups[e.type] = [];
+        entityGroups[e.type].push(e);
+      });
+      report += '<ul>';
+      for (const type in entityGroups) {
+        report += `<li><b>${type}</b>: ${entityGroups[type].map(e => `"${e.value}"`).join(', ')}</li>`;
+      }
+      report += '</ul>';
+    } else {
+      report += '<p>No entities found.</p>';
     }
-  };
-  
-  // Save report to file
-  const reportPath = join(__dirname, '../email-processing-spacy-report.json');
-  writeFileSync(reportPath, JSON.stringify(report, null, 2));
-  
-  console.log(`   ✅ spaCy report saved to: ${reportPath}`);
-  console.log(`   📊 Report contains ${report.emailAnalysis.length} email analyses`);
-  console.log(`   🧠 Average processing time: ${report.summary.averageProcessingTime.toFixed(0)}ms`);
-  console.log(`   📈 Average entities per email: ${report.summary.averageEntitiesPerEmail.toFixed(1)}`);
+  }
+
+  const reportPath = join(__dirname, '../../email-processing-report.html');
+  writeFileSync(reportPath, report);
+  console.log(`\n\n📄 Detailed HTML report generated at: ${reportPath}`);
 }
 
 // Run the demo
