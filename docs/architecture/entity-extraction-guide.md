@@ -66,4 +66,20 @@ const commLogKE = createInformationElement({
 });
 ```
 
+## 🧪 Testing and Validation
+
+To ensure the reliability of the entity extraction process, the `SpacyEntityExtractionService` is thoroughly tested with a dedicated suite of unit tests.
+
+### Unit Testing Approach
+The tests for the service are located in `test/unit/crm-core/application/services/spacy-entity-extraction.service.test.ts`.
+
+Our testing strategy for this service focuses on:
+- **Mocking the NLP Service**: We use `axios` mocks to simulate responses from the Python `nlp-service`. This allows us to test the TypeScript service in isolation, without needing the Python service to be running.
+- **Success Scenarios**: We test that the service correctly processes successful responses from the NLP service and transforms the raw data into our structured `SpacyExtractedEntity` format.
+- **Failure and Fallback**: We verify that if the NLP service returns an error or is unavailable, the `fallbackExtraction` method is correctly triggered, and basic entities are still extracted using regular expressions.
+- **Data Filtering**: We ensure that the filtering logic for entity types and confidence scores works as expected.
+- **Service Capabilities**: We test the `getCapabilities` method to ensure it correctly reports the status of the NLP service.
+
+This testing approach guarantees that our integration with the NLP service is robust and that we can handle failures gracefully, ensuring the stability of the email ingestion pipeline.
+
 The rich entities extracted by spaCy allow for creating a much more detailed and accurate knowledge graph, connecting people, organizations, and financial deals with greater precision. 
