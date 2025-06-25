@@ -98,4 +98,7 @@ config/*.local.js
 **/__pycache__/
 **/*.pyc
 **/venv/
-.venv/ 
+.venv/
+
+# Local cache
+cache/ 

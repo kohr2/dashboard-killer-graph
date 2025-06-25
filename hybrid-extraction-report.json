@@ -1,129 +1,50 @@
 {
   "nodes": [
     {
-      "id": "dbf53d86-759c-471c-bab1-14fcfd48c115",
-      "labels": [
-        "WORK_OF_ART"
-      ],
-      "properties": {
-        "name": "Project Helix",
-        "source": "01-helix-sourcing.eml",
-        "confidence": 0.85
-      }
-    },
-    {
-      "id": "5ab7919e-cff7-42d7-b09b-5911cc3f13c4",
+      "id": "ca1c3c73-871b-40f6-b407-4ba3d97a6692",
       "labels": [
         "COMPANY_NAME"
       ],
       "properties": {
-        "name": "HelixFlow Solutions",
-        "source": "01-helix-sourcing.eml",
-        "confidence": 0.9
-      }
-    },
-    {
-      "id": "24186009-4424-43fc-b115-4e46d32ed43d",
-      "labels": [
-        "SECTOR"
-      ],
-      "properties": {
-        "name": "Application Software",
-        "source": "01-helix-sourcing.eml",
-        "confidence": 0.9
-      }
-    },
-    {
-      "id": "d80f683e-1ac3-4081-8680-931be2be7bf0",
-      "labels": [
-        "MONETARY_AMOUNT"
-      ],
-      "properties": {
-        "name": "$40M",
-        "source": "01-helix-sourcing.eml",
+        "name": "MICROSOFT CORP.",
+        "source": "22-public-companies-deal.eml",
         "confidence": 0.85
       }
     },
     {
-      "id": "9ece4577-f385-4ab0-aba1-77a900accd92",
-      "labels": [
-        "PERCENT"
-      ],
-      "properties": {
-        "name": "80%",
-        "source": "01-helix-sourcing.eml",
-        "confidence": 0.85
-      }
-    },
-    {
-      "id": "0613c986-2923-4f0c-9202-7ff22bde2b08",
+      "id": "9903d8a5-40e0-4105-bfc7-99df8a80fabd",
       "labels": [
         "COMPANY_NAME"
       ],
       "properties": {
-        "name": "Vista Equity Partners",
-        "source": "01-helix-sourcing.eml",
+        "name": "SEC",
+        "source": "22-public-companies-deal.eml",
         "confidence": 0.85
       }
     },
     {
-      "id": "84c3a2e8-ac1f-4028-9b08-bbf5a5995ed9",
+      "id": "556c9779-79ad-43b4-82d8-1e9a7ba12154",
       "labels": [
         "PERSON_NAME"
       ],
       "properties": {
-        "name": "David Chen",
-        "source": "01-helix-sourcing.eml",
-        "confidence": 0.85
-      }
-    },
-    {
-      "id": "8f48bc84-dc87-4a9f-a67d-b6bb0f1ecf55",
-      "labels": [
-        "COMPANY_NAME"
-      ],
-      "properties": {
-        "name": "Morgan Stanley Technology Group",
-        "source": "01-helix-sourcing.eml",
+        "name": "Jane Doe",
+        "source": "22-public-companies-deal.eml",
         "confidence": 0.85
       }
     }
   ],
   "relationships": [
     {
-      "sourceId": "dbf53d86-759c-471c-bab1-14fcfd48c115",
-      "targetId": "5ab7919e-cff7-42d7-b09b-5911cc3f13c4",
-      "type": "REPRESENTS",
+      "sourceId": "ca1c3c73-871b-40f6-b407-4ba3d97a6692",
+      "targetId": "9903d8a5-40e0-4105-bfc7-99df8a80fabd",
+      "type": "FILED_WITH",
       "properties": {}
     },
     {
-      "sourceId": "5ab7919e-cff7-42d7-b09b-5911cc3f13c4",
-      "targetId": "24186009-4424-43fc-b115-4e46d32ed43d",
-      "type": "OPERATES_IN",
-      "properties": {}
-    },
-    {
-      "sourceId": "5ab7919e-cff7-42d7-b09b-5911cc3f13c4",
-      "targetId": "d80f683e-1ac3-4081-8680-931be2be7bf0",
-      "type": "HAS_ARR",
-      "properties": {}
-    },
-    {
-      "sourceId": "5ab7919e-cff7-42d7-b09b-5911cc3f13c4",
-      "targetId": "9ece4577-f385-4ab0-aba1-77a900accd92",
-      "type": "GROWTH_RATE",
-      "properties": {}
-    },
-    {
-      "sourceId": "84c3a2e8-ac1f-4028-9b08-bbf5a5995ed9",
-      "targetId": "8f48bc84-dc87-4a9f-a67d-b6bb0f1ecf55",
-      "type": "WORKS_FOR",
-      "properties": {}
-    },
-    {
-      "sourceId": "8f48bc84-dc87-4a9f-a67d-b6bb0f1ecf55",
-      "targetId": "0613c986-2923-4f0c-9202-7ff22bde2b08",
-      "type": "PROPOSED_INVESTMENT_TO",
+      "sourceId": "556c9779-79ad-43b4-82d8-1e9a7ba12154",
+      "targetId": "ca1c3c73-871b-40f6-b407-4ba3d97a6692",
+      "type": "ANALYZES",
       "properties": {}
     }
   ]

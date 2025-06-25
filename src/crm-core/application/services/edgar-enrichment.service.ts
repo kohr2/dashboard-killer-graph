@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { promises as fs } from 'fs';
+import { join } from 'path';
 
 // URL for the SEC's CIK lookup data
 const CIK_LOOKUP_URL = 'https://www.sec.gov/files/company_tickers.json';
@@ -29,32 +31,52 @@ interface CikData {
 export class EdgarEnrichmentService {
   private userAgent: string;
   private cikMap: Map<string, number> | null = null;
+  private cachePath: string;
 
   constructor(userAgent: string) {
     if (!userAgent) {
       throw new Error('A User-Agent string is required for the SEC EDGAR API.');
     }
     this.userAgent = userAgent;
+    // Define a path for the local cache file
+    this.cachePath = join(__dirname, '..', '..', '..', '..', 'cache', 'company_tickers.json');
   }
   
   private async initializeCikMap(): Promise<void> {
     if (this.cikMap) return;
 
     try {
-      const response = await axios.get<{ [key: string]: CikData }>(CIK_LOOKUP_URL, {
-        headers: { 'User-Agent': this.userAgent },
-      });
+      let companyData: { [key: string]: CikData };
+
+      // Ensure cache directory exists
+      await fs.mkdir(join(this.cachePath, '..'), { recursive: true });
+
+      try {
+        // Try to read from local cache first
+        const cachedData = await fs.readFile(this.cachePath, 'utf-8');
+        companyData = JSON.parse(cachedData);
+        console.log('Successfully loaded SEC CIK data from local cache.');
+      } catch (error) {
+        // If cache doesn't exist or is invalid, fetch from SEC
+        console.log('Local CIK cache not found or invalid. Fetching from SEC...');
+        const response = await axios.get<{ [key: string]: CikData }>(CIK_LOOKUP_URL, {
+          headers: { 'User-Agent': this.userAgent },
+        });
+        companyData = response.data;
+        
+        // Save to local cache for future use
+        await fs.writeFile(this.cachePath, JSON.stringify(companyData, null, 2), 'utf-8');
+        console.log('Successfully fetched and cached SEC CIK data.');
+      }
       
       const newMap = new Map<string, number>();
-      // The SEC data is a JSON object with numeric keys, not an array.
-      Object.values(response.data).forEach(company => {
+      Object.values(companyData).forEach(company => {
         newMap.set(company.title.toUpperCase(), company.cik_str);
       });
       this.cikMap = newMap;
     } catch (error) {
       console.error('Failed to initialize SEC CIK map:', error);
-      // Re-throw the error to be caught by the calling function
-      throw new Error('Failed to fetch data from SEC EDGAR API');
+      throw new Error('Failed to fetch or process data from SEC EDGAR API');
     }
   }
 
@@ -70,7 +92,10 @@ export class EdgarEnrichmentService {
         throw new Error('CIK map is not initialized.');
     }
 
-    const cik = this.cikMap.get(name.toUpperCase());
+    // Clean the name and convert to uppercase for matching
+    const cleanedName = name.replace(/[.,]$/, '').toUpperCase();
+    const cik = this.cikMap.get(cleanedName);
+    
     if (!cik) {
       return null;
     }

@@ -62,7 +62,7 @@ async function demonstrateSpacyEmailIngestionPipeline() {
   const testEmailsDir = join(process.cwd(), 'test-emails');
   const allFiles = await fs.readdir(testEmailsDir);
   const emailFiles = allFiles.filter(f => f.endsWith('.eml')).sort();
-  const filesToProcess = ['22-public-companies-deal.eml']; // Target specific email for enrichment test
+  const filesToProcess = emailFiles; // Re-enable processing for all emails
   
   console.log(`\n📂 Found ${emailFiles.length} email files, processing ${filesToProcess.length} for this run in '${testEmailsDir}'`);
 

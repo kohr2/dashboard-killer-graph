@@ -75,7 +75,7 @@ async function main() {
                 const properties = node.properties || {};
                 const labels = (node.labels && node.labels.length > 0) ? node.labels : ['Unknown'];
 
-                if (labels.includes('COMPANY_NAME') && enrichmentService) {
+                if ((labels.includes('COMPANY_NAME') || labels.includes('FINANCIAL_ORG')) && enrichmentService) {
                     try {
                         console.log(`   - Enriching organization: ${properties.name}`);
                         const enrichedData = await enrichmentService.enrichOrganization(properties.name as string);
