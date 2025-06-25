@@ -6,4 +6,3 @@ openai
 python-dotenv
 pydantic
 sentence-transformers
-faiss-cpu
