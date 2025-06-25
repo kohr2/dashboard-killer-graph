@@ -1,11 +1,17 @@
+const { pathsToModuleNameMapper } = require('ts-jest');
+const { compilerOptions } = require('./tsconfig.json');
+
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   rootDir: '.',
   moduleDirectories: ['node_modules', 'src'],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@crm-core/(.*)$': '<rootDir>/src/crm-core/$1',
+    '^@financial/(.*)$': '<rootDir>/src/extensions/financial/$1',
     '^@platform/(.*)$': '<rootDir>/src/platform/$1',
+    '^@shared/(.*)$': '<rootDir>/src/shared/$1',
+    '^@test/(.*)$': '<rootDir>/test/$1',
   },
   transform: {
     '^.+\\.ts$': 'ts-jest',

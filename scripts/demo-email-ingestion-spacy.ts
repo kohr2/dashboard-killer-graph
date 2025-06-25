@@ -28,9 +28,16 @@ interface SpacyExtractedEntityWithId extends SpacyExtractedEntity {
   id: string;
 }
 
+// The structure for nodes in the final report
+interface ReportNode {
+  id: string;
+  labels: string[];
+  properties: { [key: string]: any };
+}
+
 // New structure for the final report
 interface HybridReport {
-  nodes: SpacyExtractedEntityWithId[];
+  nodes: ReportNode[];
   relationships: any[];
 }
 
@@ -55,10 +62,11 @@ async function demonstrateSpacyEmailIngestionPipeline() {
   const testEmailsDir = join(process.cwd(), 'test-emails');
   const allFiles = await fs.readdir(testEmailsDir);
   const emailFiles = allFiles.filter(f => f.endsWith('.eml')).sort();
+  const filesToProcess = ['22-public-companies-deal.eml']; // Target specific email for enrichment test
   
-  console.log(`\n📂 Found ${emailFiles.length} email files to process in '${testEmailsDir}'`);
+  console.log(`\n📂 Found ${emailFiles.length} email files, processing ${filesToProcess.length} for this run in '${testEmailsDir}'`);
 
-  for (const emailFile of emailFiles) {
+  for (const emailFile of filesToProcess) {
     console.log('\n' + '='.repeat(100));
     console.log(`Processing: ${emailFile}`);
     console.log('='.repeat(100));
@@ -144,8 +152,19 @@ async function demonstrateSpacyEmailIngestionPipeline() {
     };
   }).filter(r => r !== null); // Filter out null relationships
 
+  // 4. Transform nodes to the format expected by the build-neo4j-graph.ts script
+  const finalNodesForReport: ReportNode[] = finalNodes.map(node => ({
+    id: node.id,
+    labels: [node.type],
+    properties: {
+      name: node.value,
+      source: node.source,
+      confidence: node.confidence,
+    },
+  }));
+
   const finalReport: HybridReport = {
-    nodes: finalNodes,
+    nodes: finalNodesForReport,
     relationships: finalRelationships,
   };
 

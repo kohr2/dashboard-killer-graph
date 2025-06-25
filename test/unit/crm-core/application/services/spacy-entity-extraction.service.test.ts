@@ -7,10 +7,21 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('SpacyEntityExtractionService', () => {
   let service: SpacyEntityExtractionService;
+  let consoleErrorSpy: jest.SpyInstance;
+  let consoleWarnSpy: jest.SpyInstance;
 
   beforeEach(() => {
     service = new SpacyEntityExtractionService('http://localhost:8000');
     jest.clearAllMocks();
+    // Suppress console output for expected errors
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    // Restore console output
+    consoleErrorSpy.mockRestore();
+    consoleWarnSpy.mockRestore();
   });
 
   describe('extractEntities', () => {

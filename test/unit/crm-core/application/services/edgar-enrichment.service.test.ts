@@ -6,12 +6,17 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('EdgarEnrichmentService', () => {
   let service: EdgarEnrichmentService;
+  let consoleErrorSpy: jest.SpyInstance;
   const userAgent = 'Test App test@example.com';
 
   beforeEach(() => {
     mockedAxios.get.mockClear();
-    // The service requires a user agent string for the SEC API
     service = new EdgarEnrichmentService(userAgent);
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   it('should enrich an organization with data from the SEC EDGAR API', async () => {

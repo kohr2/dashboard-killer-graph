@@ -1,9 +1,9 @@
 // Email Ingestion Service - Application Layer
 // Service for ingesting emails into the O-CREAM-v2 ontological system
 
-import { IContactRepository } from '@/crm-core/domain/repositories/i-contact-repository';
-import { EmailProcessingService } from '@/crm-core/application/services/email-processing.service';
-import * as ContactOntology from '@/crm-core/domain/entities/contact-ontology';
+import { ContactRepository } from '../../domain/repositories/i-contact-repository';
+import { EmailProcessingService } from './email-processing.service';
+import * as ContactOntology from '../../domain/entities/contact-ontology';
 
 export interface IncomingEmail {
   messageId: string;
@@ -40,14 +40,25 @@ export interface EmailIngestionResult {
 export class EmailIngestionService {
   constructor(
     private emailProcessingService: EmailProcessingService,
-    private contactRepository: IContactRepository,
+    private contactRepository: ContactRepository,
   ) {}
 
-  async ingestEmail(email: IncomingEmail): Promise<EmailIngestionResult> {
-    // This method will be implemented test by test
+  async ingestEmail(email: IncomingEmail, emlFilePath?: string): Promise<EmailIngestionResult> {
+    if (emlFilePath) {
+      await this.emailProcessingService.processEmlFile(emlFilePath);
+      return {
+        success: true,
+        message: 'Email processed successfully.',
+        contactsProcessed: 0,
+        knowledgeElementsCreated: 0,
+        activitiesCreated: 0,
+      };
+    }
+    // Logique pour traiter un objet email directement
+    // Pour l'instant, on retourne un échec
     return {
       success: false,
-      message: 'Not implemented',
+      message: 'Direct email object ingestion not implemented',
       contactsProcessed: 0,
       knowledgeElementsCreated: 0,
       activitiesCreated: 0,

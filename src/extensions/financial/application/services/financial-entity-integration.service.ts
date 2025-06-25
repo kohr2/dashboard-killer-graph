@@ -3,16 +3,16 @@
 
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { ExtensibleEntityExtractionService, ExtensionEntityExtractionResult } from '../../../../src/crm-core/application/services/extensible-entity-extraction.service';
-import { ContactRepository } from '../../../../src/crm-core/domain/repositories/contact-repository';
-import { OCreamV2Ontology, ActivityType, KnowledgeType, createInformationElement, InformationElement, CRMActivity } from '../../../../src/crm-core/domain/ontology/o-cream-v2';
-import { 
-    FIBOFinancialInstrument, 
-    FIBOTransaction, 
-    FIBOMarketData,
-    FIBOFinancialInstitution
-} from '../../domain/entities/fibo-financial-entities';
-import { Contact } from '../../../../src/crm-core/domain/entities/contact';
+// import { ExtensibleEntityExtractionService, ExtensionEntityExtractionResult } from '../../../crm-core/application/services/extensible-entity-extraction.service';
+// import { ContactRepository } from '../../../crm-core/domain/repositories/i-contact-repository';
+// import { OCreamV2Ontology, ActivityType, KnowledgeType, createInformationElement, InformationElement, CRMActivity } from '../../../crm-core/domain/ontology/o-cream-v2';
+// import { 
+//     FIBOFinancialInstrument, 
+//     FIBOTransaction, 
+//     FIBOMarketData,
+//     FIBOFinancialInstitution
+// } from '../../domain/entities/fibo-financial-entities';
+// import { Contact } from '../../../crm-core/domain/entities/contact';
 import { EntityResolutionService } from './entity-resolution.service';
 import { RelationshipExtractionService } from './relationship-extraction.service';
 import { HybridDealExtractionService } from './hybrid-deal-extraction.service';
