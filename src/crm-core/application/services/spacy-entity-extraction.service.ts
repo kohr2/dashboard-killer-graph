@@ -105,7 +105,6 @@ export class SpacyEntityExtractionService {
 
   constructor(nlpServiceUrl?: string) {
     this.nlpServiceUrl = nlpServiceUrl || 'http://127.0.0.1:8000';
-    console.log(`SpacyEntityExtractionService configured to use NLP service at: ${this.nlpServiceUrl}`);
   }
 
   /**
@@ -427,6 +426,21 @@ export class SpacyEntityExtractionService {
         endIndex: match.index + match[0].length,
         context: this.extractContext(text, match.index, match[0].length),
         spacyLabel: 'EMAIL_FALLBACK',
+        metadata: { extractionMethod: 'regex_fallback' }
+      });
+    }
+    
+    // Basic URL pattern
+    const urlPattern = /https?:\/\/[^\s/$.?#].[^\s]*/gi;
+    while ((match = urlPattern.exec(text)) !== null) {
+      entities.push({
+        type: EntityType.URL,
+        value: match[0],
+        confidence: 0.9,
+        startIndex: match.index,
+        endIndex: match.index + match[0].length,
+        context: this.extractContext(text, match.index, match[0].length),
+        spacyLabel: 'URL_FALLBACK',
         metadata: { extractionMethod: 'regex_fallback' }
       });
     }

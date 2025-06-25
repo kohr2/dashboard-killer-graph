@@ -5,6 +5,7 @@ import { SpacyEntityExtractionService, SpacyExtractedEntity } from '../src/crm-c
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { simpleParser } from 'mailparser';
+import axios from 'axios';
 
 // Simplified interface to match the service output
 interface SpacyEmailProcessingResult {
@@ -15,123 +16,73 @@ interface SpacyEmailProcessingResult {
     content: string;
     date: Date;
   };
-  entitiesExtracted: number;
-  entities: SpacyExtractedEntity[];
+  raw_entities: SpacyExtractedEntity[];
+  refined_entities: SpacyExtractedEntity[];
   processingTime: number;
 }
 
 async function demonstrateSpacyEmailIngestionPipeline() {
-  console.log('📧 Email Ingestion Pipeline Demo - spaCy Microservice Version');
+  console.log('📧 Email Ingestion Pipeline Demo - LLM Refined Version');
   console.log('=' .repeat(100));
-  console.log('Processing .eml files from test-emails/ folder');
 
-  // Initialize services
-  const nlpService = new SpacyEntityExtractionService();
-
-  console.log('\n🧠 Testing spaCy NLP microservice...');
+  const nlpServiceUrl = 'http://localhost:8000';
+  
+  console.log('\n🧠 Testing NLP microservice connection...');
   try {
-    const testResult = await nlpService.extractEntities("Test message");
-    console.log(`   ✅ spaCy service working correctly.`);
+    await axios.get(`${nlpServiceUrl}/health`);
+    console.log(`   ✅ NLP service is running.`);
   } catch (e: any) {
-    console.log(`   ❌ spaCy service error:`, e.message);
-    console.log('   👉 Please ensure the Python service is running.');
+    console.log(`   ❌ NLP service is not responding at ${nlpServiceUrl}`);
     return;
   }
 
-  // Read email files from the test-emails directory
-  const testEmailsDir = join(process.cwd(), 'test-emails'); // Use process.cwd() for a reliable path
-  const allEmailFiles = (await fs.readdir(testEmailsDir)).filter(f => f.endsWith('.eml'));
+  const testEmailsDir = join(process.cwd(), 'test-emails');
+  const fileToProcess = '01-helix-sourcing.eml';
+  console.log(`\n📂 Attempting to process a single file: ${fileToProcess}`);
   
-  // We'll process a specific, interesting subset for this demo
-  const filesToProcess = [
-      '01-helix-sourcing.eml',
-      '03-blueowl-history-deal1.eml',
-      '07-new-deal-for-audax-likelihood.eml',
-      'deal-sourcing-tech-buyout.eml',
-      'compliance-alert.eml'
-  ].filter(f => allEmailFiles.includes(f));
+  const filePath = join(testEmailsDir, fileToProcess);
+  let emailBody;
 
-  console.log(`\n📂 Found ${filesToProcess.length} email files to process...`);
-
-  const results: SpacyEmailProcessingResult[] = [];
-  let totalEntities = 0;
-  let totalProcessingTime = 0;
-
-  for (const file of filesToProcess) {
-    console.log(`\n📧 Processing file: ${file}`);
-    const startTime = Date.now();
-    
-    const filePath = join(testEmailsDir, file);
+  try {
+    console.log("   [1] Reading file...");
     const fileContent = await fs.readFile(filePath);
+    console.log("   [2] Parsing email...");
     const parsedEmail = await simpleParser(fileContent);
-
-    const emailBody = typeof parsedEmail.text === 'string' ? parsedEmail.text : (parsedEmail.html || '').replace(/<[^>]*>/g, '');
-    if (!emailBody) {
-        console.log('   ⚠️ Could not extract text body from email. Skipping.');
-        continue;
-    }
-
-    // Extract entities using spaCy microservice
-    const extractionResult = await nlpService.extractEntities(emailBody);
-
-    console.log(`   🧠 spaCy service extracted ${extractionResult.entityCount} entities`);
-    if (extractionResult.entityCount > 0) {
-        console.log(`   🔍 Entity types: ${[...new Set(extractionResult.entities.map(e => e.type))].join(', ')}`);
-    }
-
-    const processingTime = Date.now() - startTime;
-
-    const result: SpacyEmailProcessingResult = {
-      email: {
-        subject: parsedEmail.subject || 'No Subject',
-        from: parsedEmail.from?.text || 'Unknown Sender',
-        to: Array.isArray(parsedEmail.to) ? parsedEmail.to.map(t => t.text || '') : [parsedEmail.to?.text || ''],
-        content: emailBody,
-        date: parsedEmail.date || new Date()
-      },
-      entitiesExtracted: extractionResult.entityCount,
-      entities: extractionResult.entities,
-      processingTime
-    };
-
-    results.push(result);
-    totalEntities += extractionResult.entityCount;
-    totalProcessingTime += processingTime;
+    emailBody = typeof parsedEmail.text === 'string' ? parsedEmail.text : (parsedEmail.html || '').replace(/<[^>]*>/g, '');
+    console.log("   [3] Email parsed successfully.");
+  } catch(e: any) {
+      console.error("   ❌ Error reading or parsing email file:", e.message);
+      return;
   }
-  
-  // Display overall results
-  console.log('\n📊 SPACY PROCESSING SUMMARY');
-  console.log('=' .repeat(80));
-  console.log(`📧 Total emails processed: ${results.length}`);
-  console.log(`🧠 Total entities extracted: ${totalEntities}`);
-  console.log(`⏱️  Average processing time: ${(totalProcessingTime / (results.length || 1)).toFixed(0)}ms per email`);
 
-  // Detailed email analysis
-  console.log('\n\n📧 DETAILED SPACY EMAIL ANALYSIS');
-  console.log('=' .repeat(80));
+  try {
+      console.log("   [4] Sending request to /refine-entities...");
+      const response = await axios.post(`${nlpServiceUrl}/refine-entities`, { text: emailBody });
+      console.log("   [5] Received response from service.");
+      
+      const { raw_entities, refined_entities } = response.data;
 
-  for (const [index, result] of results.entries()) {
-    displaySpacyEmailAnalysis(result, index + 1);
+      console.log("\n\n--- FINAL RESULT ---");
+      console.log(`\n🧠 Raw Entities Extracted (${raw_entities.length}):`);
+      displayEntities(raw_entities);
+      
+      console.log(`\n✨ LLM Refined Entities (${refined_entities.length}):`);
+      displayEntities(refined_entities);
+
+  } catch (error: any) {
+    console.error(`   ❌ Error calling refinement service:`, error.response?.data?.detail || error.message);
   }
-  
-  console.log('\n🎉 Email Ingestion Pipeline Demo Complete!');
-  console.log('=' .repeat(100));
-  console.log('✅ Successfully demonstrated:');
-  console.log('   • Microservice-based NLP processing from .eml files');
-  console.log('   • Advanced entity extraction and categorization');
+
+  console.log('\n\n🎉 Demo Complete!');
 }
 
-function displaySpacyEmailAnalysis(result: SpacyEmailProcessingResult, emailNumber: number) {
-  console.log(`\n--- ANALYSIS FOR EMAIL ${emailNumber} ---`);
-  console.log(`Subject: ${result.email.subject}`);
-  console.log(`From: ${result.email.from}`);
-  console.log(`Date: ${result.email.date.toUTCString()}`);
-  console.log(`Processing time: ${result.processingTime}ms`);
-  console.log(`\n🧠 Entities Extracted (${result.entitiesExtracted}):`);
-  
-  if (result.entities.length > 0) {
+function displayEntities(entities: SpacyExtractedEntity[]) {
+    if (entities.length === 0) {
+        console.log('  No entities found.');
+        return;
+    }
     const entityGroups: { [key: string]: SpacyExtractedEntity[] } = {};
-    result.entities.forEach(e => {
+    entities.forEach(e => {
       if (!entityGroups[e.type]) {
         entityGroups[e.type] = [];
       }
@@ -144,9 +95,6 @@ function displaySpacyEmailAnalysis(result: SpacyEmailProcessingResult, emailNumb
         console.log(`    - "${e.value}" (Confidence: ${(e.confidence * 100).toFixed(1)}%)`);
       });
     }
-  } else {
-    console.log('  No entities found.');
-  }
 }
 
 demonstrateSpacyEmailIngestionPipeline().catch(e => {
