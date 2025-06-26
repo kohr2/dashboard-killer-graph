@@ -10,12 +10,10 @@
       "@financial/*": ["src/extensions/financial/*"],
       "@platform/*": ["src/platform/*"],
       "@shared/*": ["src/shared/*"]
-    }
+    },
+    "emitDecoratorMetadata": true
   },
   "include": ["**/*.ts"],
   "exclude": ["**/*.test.ts"],
-  "references": [
-    { "path": "../crm" },
-    { "path": "../../platform" }
-  ]
+  "references": [{ "path": "../../../src/platform" }, { "path": "../crm" }]
 } 

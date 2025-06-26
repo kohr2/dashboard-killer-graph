@@ -1,29 +1,24 @@
 // Neo4j Knowledge Graph Connection Manager
 // Manages connections to the Neo4j graph database
 
+import 'reflect-metadata';
+import { singleton } from 'tsyringe';
 import neo4j, { Driver, Session } from 'neo4j-driver';
 import { config } from 'dotenv';
 
 config(); // Make sure environment variables are loaded
 
+@singleton()
 export class Neo4jConnection {
-  private static instance: Neo4jConnection;
   private driver: Driver | null = null;
   private readonly uri: string;
   private readonly user: string;
   private readonly pass: string;
 
-  private constructor() {
+  constructor() {
     this.uri = process.env.NEO4J_URI || 'bolt://localhost:7687';
     this.user = process.env.NEO4J_USERNAME || 'neo4j';
     this.pass = process.env.NEO4J_PASSWORD || 'password';
-  }
-
-  public static getInstance(): Neo4jConnection {
-    if (!Neo4jConnection.instance) {
-      Neo4jConnection.instance = new Neo4jConnection();
-    }
-    return Neo4jConnection.instance;
   }
 
   public async connect(): Promise<void> {

@@ -19,6 +19,8 @@ import { HybridDealExtractionService } from './hybrid-deal-extraction.service';
 import { EmailProcessingService } from '../../../crm/application/services/email-processing.service';
 import { EdgarEnrichmentService } from '../../../crm/application/services/edgar-enrichment.service';
 import axios from 'axios';
+import { singleton, inject } from 'tsyringe';
+import { SpacyEntityExtractionService } from '@crm/application/services/spacy-entity-extraction.service';
 
 const ENTITY_ALIAS_MAP: Record<string, string> = {
   'GS': 'Goldman Sachs',
@@ -91,10 +93,14 @@ export interface LlmGraphResponse {
   refinement_info: string;
 }
 
+@singleton()
 export class FinancialEntityIntegrationService {
   private nlpServiceUrl: string;
 
-  constructor() {
+  constructor(
+    @inject(SpacyEntityExtractionService)
+    private spacyService: SpacyEntityExtractionService,
+  ) {
     // We no longer need all the sub-services here, as the LLM handles it.
     this.nlpServiceUrl = 'http://127.0.0.1:8000';
   }

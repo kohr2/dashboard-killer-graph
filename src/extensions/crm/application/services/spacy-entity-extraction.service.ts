@@ -1,6 +1,7 @@
 // spaCy Entity Extraction Service - Now using a dedicated microservice
 // Advanced entity extraction using spaCy NLP models for O-CREAM-v2 system
 
+import { singleton } from 'tsyringe';
 import axios from 'axios';
 
 export interface SpacyExtractedEntity {
@@ -118,11 +119,12 @@ interface NlpGraphResponse {
   embedding: number[];
 }
 
+@singleton()
 export class SpacyEntityExtractionService {
-  private readonly nlpServiceUrl: string;
+  private nlpServiceUrl: string;
 
-  constructor(nlpServiceUrl?: string) {
-    this.nlpServiceUrl = nlpServiceUrl || 'http://127.0.0.1:8000';
+  constructor() {
+    this.nlpServiceUrl = process.env.NLP_SERVICE_URL || 'http://127.0.0.1:8000';
   }
 
   /**

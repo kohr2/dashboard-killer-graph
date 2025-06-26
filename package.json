@@ -74,6 +74,8 @@
     "react-dom": "^18.2.0",
     "redis": "^4.6.11",
     "reflect-metadata": "^0.2.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsyringe": "^4.10.0",
     "uuid": "^11.1.0",
     "winston": "^3.11.0",
     "zod": "^3.25.67"

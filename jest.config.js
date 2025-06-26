@@ -12,7 +12,8 @@ module.exports = {
 
   setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
   testMatch: [
-      "**/test/unit/**/*.test.ts"
+      "**/test/unit/**/*.test.ts",
+      "**/test/integration/**/*.test.ts"
   ],
   globals: {
     'ts-jest': {

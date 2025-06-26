@@ -1,74 +1,85 @@
+import 'reflect-metadata';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as glob from 'glob';
+import { singleton } from 'tsyringe';
 
-export interface LegacyOntologySource {
+export interface Ontology {
+  name: string;
+  entities: Record<string, { description?: string; values?: string[] }>;
+  relationships?: Record<
+    string,
+    { domain: string; range: string | string[]; description?: string }
+  >;
+}
+
+export interface OntologySource {
   sourcePath: string;
-  ontology: Record<string, string[]>;
+  ontology: Ontology;
 }
 
-export interface StructuredOntology {
-    name: string;
-    entities: Record<string, { description?: string; values?: string[] }>;
-    relationships?: Record<string, { domain: string; range: string | string[]; description?: string }>;
-}
+export type EntityFactory<T> = (data: any) => T;
 
-export interface StructuredOntologySource {
-    sourcePath: string;
-    ontology: StructuredOntology;
-}
+@singleton()
+export class OntologyService {
+  private ontologies: Ontology[] = [];
+  private entityFactories = new Map<string, EntityFactory<any>>();
 
-
-class OntologyService {
-  private legacyOntology: Record<string, string[]> = {};
-  private legacyOntologySources: LegacyOntologySource[] = [];
-  private structuredOntologySources: StructuredOntologySource[] = [];
-
-  constructor() {
+  public constructor() {
     this.loadOntologies();
+    console.log('OntologyService initialized');
   }
 
   private loadOntologies() {
-    this.legacyOntology = {};
-    this.legacyOntologySources = [];
-    this.structuredOntologySources = [];
+    this.ontologies = [];
     const projectRoot = process.cwd();
+    const ontologyFiles = glob
+      .sync(path.join(projectRoot, 'src/**/ontology.json'))
+      .concat(glob.sync(path.join(projectRoot, 'config/ontology/*.json')));
 
-    // Load ontologies
-    const ontologyFiles = glob.sync(path.join(projectRoot, 'src/**/ontology.json'))
-        .concat(glob.sync(path.join(projectRoot, 'config/ontology/*.json')));
-
-    ontologyFiles.forEach((filePath: string) => {
-        try {
-            const content = fs.readFileSync(filePath, 'utf-8');
-            const jsonContent = JSON.parse(content);
-            
-            // Heuristic to detect new structured format vs old legacy format
-            if (jsonContent.entities && jsonContent.relationships) {
-                this.structuredOntologySources.push({ sourcePath: filePath, ontology: jsonContent });
-            } else {
-                this.legacyOntology = { ...this.legacyOntology, ...jsonContent };
-                this.legacyOntologySources.push({ sourcePath: filePath, ontology: jsonContent });
-            }
-        } catch (error) {
-            console.error(`Failed to load ontology at ${filePath}:`, error);
+    for (const filePath of ontologyFiles) {
+      try {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const ontology = JSON.parse(content) as Ontology;
+        if (ontology.entities) {
+          this.ontologies.push(ontology);
+        } else {
+            console.warn(`Skipping non-structured ontology file: ${filePath}`);
         }
-    });
+      } catch (error) {
+        console.error(`Failed to load ontology at ${filePath}:`, error);
+      }
+    }
   }
 
-  // --- Legacy methods for backward compatibility ---
-  public getOntology() {
-    return this.legacyOntology;
+  public getOntologies(): Ontology[] {
+    return this.ontologies;
   }
 
-  public getOntologySources(): LegacyOntologySource[] {
-    return this.legacyOntologySources;
+  public registerEntityType<T>(typeName: string, factory: EntityFactory<T>) {
+    if (this.entityFactories.has(typeName)) {
+      console.warn(
+        `Entity type "${typeName}" is already registered. Overwriting.`,
+      );
+    }
+    this.entityFactories.set(typeName, factory);
+    console.log(`Entity type "${typeName}" registered.`);
   }
-  // ------------------------------------------------
 
-  public getStructuredOntologySources(): StructuredOntologySource[] {
-    return this.structuredOntologySources;
+  public createEntity<T>(typeName: string, data: any): T {
+    const factory = this.entityFactories.get(typeName);
+    if (!factory) {
+      throw new Error(`Entity type "${typeName}" is not registered.`);
+    }
+    return factory(data) as T;
   }
-}
 
-export const ontologyService = new OntologyService(); 
+  public getEntityDefinition(entityName: string) {
+    for (const ontology of this.ontologies) {
+      if (ontology.entities[entityName]) {
+        return ontology.entities[entityName];
+      }
+    }
+    return undefined;
+  }
+} 

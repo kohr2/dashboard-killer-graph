@@ -9,6 +9,9 @@ import { Neo4jConnection } from '../src/platform/database/neo4j-connection';
 import { Session } from 'neo4j-driver';
 import { FinancialEntityIntegrationService } from '../src/extensions/financial/application/services/financial-entity-integration.service';
 import axios from 'axios';
+import 'reflect-metadata';
+import { container } from 'tsyringe';
+import { initializeExtensions } from '../src/register-extensions';
 
 const LABELS_TO_INDEX = ['Person', 'Organization', 'Location', 'Product', 'WorkOfArt', 'Event', 'Project', 'Deal'];
 
@@ -53,11 +56,15 @@ function getLabelInfo(entity: any): { primary: string; candidates: string[] } {
 }
 
 async function demonstrateSpacyEmailIngestionPipeline() {
+  // --- INITIALIZATION ---
+  initializeExtensions();
+  // --- END INITIALIZATION ---
+
   console.log('📧 Email Ingestion Pipeline Demo - Direct to Neo4j');
   console.log('='.repeat(100));
 
-  const connection = Neo4jConnection.getInstance();
-  const financialService = new FinancialEntityIntegrationService();
+  const connection = container.resolve(Neo4jConnection);
+  const financialService = container.resolve(FinancialEntityIntegrationService);
   let session: Session | null = null;
 
   try {
