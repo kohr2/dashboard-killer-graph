@@ -4,12 +4,12 @@ dotenv.config(); // Load environment variables from .env file
 
 import { container } from 'tsyringe';
 import readline from 'readline';
-import { ChatService } from '../src/platform/chat/application/services/chat.service';
-import { User } from '../src/platform/security/domain/user';
-import { ANALYST_ROLE, ADMIN_ROLE } from '../src/platform/security/domain/role';
+import { ChatService } from '@platform/chat/application/services/chat.service';
+import { User } from '@platform/security/domain/user';
+import { ADMIN_ROLE, ANALYST_ROLE } from '@platform/security/domain/role';
 import { registerAllOntologies } from '../src/register-ontologies';
-import { Neo4jConnection } from '../src/platform/database/neo4j-connection';
-import { ConversationTurn } from '../src/platform/chat/application/services/query-translator.service';
+import { Neo4jConnection } from '@platform/database/neo4j-connection';
+import { ConversationTurn } from '@platform/chat/application/services/query-translator.service';
 
 // --- User Simulation ---
 const adminUser: User = { id: 'admin-cli', username: 'CLI Admin', roles: [ADMIN_ROLE] };

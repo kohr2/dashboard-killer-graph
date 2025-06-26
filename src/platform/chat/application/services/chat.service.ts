@@ -106,19 +106,26 @@ export class ChatService {
 
     switch (structuredQuery.command) {
       case 'show':
-        response = await this.getAndFormatResources(user, structuredQuery.resourceType as PermissionResource);
-        responseText = this.formatResults(structuredQuery.resourceType, response);
+        response = await this.getAndFormatResources(user, structuredQuery.resourceTypes as PermissionResource[]);
+        responseText = this.formatResults(structuredQuery.resourceTypes, response);
         break;
       
       case 'show_related':
-        if (!structuredQuery.relatedTo || this.queryHistory.length === 0) {
+        if (!structuredQuery.relatedTo || structuredQuery.relatedTo.length === 0 || this.queryHistory.length === 0) {
           responseText = "I'm sorry, I don't have a previous context to relate this query to.";
           response = responseText;
           break;
         }
         const sourceEntityName = structuredQuery.sourceEntityName;
-        response = await this.findRelatedResources(user, structuredQuery.resourceType, structuredQuery.relatedTo, sourceEntityName);
-        responseText = this.formatResults(structuredQuery.resourceType, response);
+        const relationshipType = structuredQuery.relationshipType;
+        response = await this.findRelatedResources(
+            user, 
+            structuredQuery.resourceTypes, 
+            structuredQuery.relatedTo, 
+            sourceEntityName, 
+            relationshipType
+        );
+        responseText = this.formatResults(structuredQuery.resourceTypes, response);
         break;
 
       default:
@@ -140,32 +147,40 @@ export class ChatService {
     return responseText;
   }
 
-  private async getAndFormatResources(user: User, resourceType: PermissionResource) {
-    if (!this.ontologyService.getAllEntityTypes().includes(resourceType)) {
-      throw new Error(`Unknown resource type '${resourceType}'`);
-    }
+  private async getAndFormatResources(user: User, resourceTypes: PermissionResource[]) {
+    const allResults: any[] = [];
+    for (const resourceType of resourceTypes) {
+        if (!this.ontologyService.getAllEntityTypes().includes(resourceType)) {
+            console.warn(`Skipping unknown resource type '${resourceType}'`);
+            continue;
+        }
+    
+        if (!this.accessControlService.can(user, 'query', resourceType)) {
+            console.warn(`Access denied to query resource '${resourceType}'`);
+            continue;
+        }
 
-    if (!this.accessControlService.can(user, 'query', resourceType)) {
-      throw new Error(`Access denied to query resource '${resourceType}'`);
+        const session = this.neo4j.getDriver().session();
+        try {
+          const result = await session.run(`MATCH (n:\`${resourceType}\`) RETURN n LIMIT 20`);
+          const newRecords = result.records.map(r => ({ ...r.get('n').properties, __type: resourceType }));
+          allResults.push(...newRecords);
+        } finally {
+          await session.close();
+        }
     }
-
-    const session = this.neo4j.getDriver().session();
-    try {
-      const result = await session.run(`MATCH (n:${resourceType}) RETURN n LIMIT 20`);
-      return result.records.map(r => r.get('n').properties);
-    } finally {
-      await session.close();
-    }
+    return allResults;
   }
 
   private async findRelatedResources(
     user: User,
-    targetResourceType: string,
-    sourceResourceType: string,
-    sourceEntityName?: string
+    targetResourceTypes: string[],
+    sourceResourceTypes: string[],
+    sourceEntityName?: string,
+    relationshipType?: string
   ): Promise<any[]> {
-    if (!this.accessControlService.can(user, 'query', targetResourceType as PermissionResource)) {
-        throw new Error(`Access denied to query resource '${targetResourceType}'`);
+    if (targetResourceTypes.some(rt => !this.accessControlService.can(user, 'query', rt as PermissionResource))) {
+        throw new Error(`Access denied to query one of the target resource types.`);
     }
 
     const lastTurn = this.queryHistory[this.queryHistory.length - 1];
@@ -188,67 +203,94 @@ export class ChatService {
 
     const session = this.neo4j.getDriver().session();
     try {
-        // We look for direct relationships first (1-hop) for precision.
-        // A more advanced version could use the ontology to find multi-hop paths.
+        const relationshipCypher = relationshipType ? `[:\`${relationshipType}\`]` : `[*1..2]`;
+        
+        // Build the multi-label matchers for source and target nodes.
+        const sourceLabelsCypher = sourceResourceTypes.map(l => `\`${l}\``).join('|');
+        const targetLabelsCypher = targetResourceTypes.map(l => `\`${l}\``).join('|');
+
         const cypherQuery = `
-            MATCH (source:${sourceResourceType})--(target:${targetResourceType})
+            MATCH (source:${sourceLabelsCypher})-${relationshipCypher}-(target:${targetLabelsCypher})
             WHERE source.id IN $sourceIds
             RETURN DISTINCT target
         `;
         
+        console.log(`Executing Cypher: ${cypherQuery.replace(/\s+/g, ' ').trim()}`);
+
         const result = await session.run(cypherQuery, { sourceIds });
-        return result.records.map(record => record.get('target').properties);
+        const records = result.records.map(record => record.get('target'));
+        
+        // We need to add the type information back for the formatter
+        return records.map(node => ({ ...node.properties, __type: node.labels[0] }));
 
     } finally {
         await session.close();
     }
   }
 
-  private formatResults(resourceType: string, records: any[]): string {
+  private formatResults(resourceTypes: string[], records: any[]): string {
     if (!records || records.length === 0) {
-        return `No results found for '${resourceType}'.`;
+        return `No results found for '${resourceTypes.join(', ')}'.`;
     }
 
     if (typeof records === 'string') {
       return records;
     }
 
-    const keyProperties = this.ontologyService.getKeyProperties(resourceType);
+    let resultsText = '';
 
-    const resultsText = records.map((properties, index) => {
-        let recordText = '';
-
-        if (properties.name) {
-            recordText += `Item ${index + 1}: ${properties.name}\n`;
-        } else {
-            recordText += `Item ${index + 1} (ID: ${properties.id})\n`;
+    // Group results by their type for clearer output
+    const groupedResults: { [key: string]: any[] } = {};
+    for (const record of records) {
+        const type = record.__type || resourceTypes[0];
+        if (!groupedResults[type]) {
+            groupedResults[type] = [];
         }
+        groupedResults[type].push(record);
+    }
 
-        if (keyProperties && keyProperties.length > 0) {
-            // Show only key properties
-            for (const key of keyProperties) {
-                const value = properties[key];
-                if (value !== null && value !== undefined && value !== '') {
-                    recordText += `  - ${key}: ${value}\n`;
-                }
-            }
-        } else {
-            // Fallback to showing all properties except noisy ones
-            for (const [key, value] of Object.entries(properties)) {
-                if (key === 'embedding' || key === 'name' || key === 'id') {
-                    continue;
-                }
-                if (value === null || value === undefined || value === '') {
-                    continue;
-                }
+    for (const type in groupedResults) {
+        resultsText += `Query Results for ${type}:\n\n`;
+        const groupRecords = groupedResults[type];
+        const keyProperties = this.ontologyService.getKeyProperties(type);
+
+        resultsText += groupRecords.map((properties, index) => {
+            let recordText = '';
     
-                const displayValue = typeof value === 'string' && value.length > 100 ? `${value.substring(0, 97)}...` : value;
-                recordText += `  - ${key}: ${displayValue}\n`;
+            if (properties.name) {
+                recordText += `Item ${index + 1}: ${properties.name}\n`;
+            } else {
+                recordText += `Item ${index + 1} (ID: ${properties.id})\n`;
             }
-        }
-        return recordText;
-    }).join('\n');
+    
+            if (keyProperties && keyProperties.length > 0) {
+                // Show only key properties
+                for (const key of keyProperties) {
+                    const value = properties[key];
+                    if (value !== null && value !== undefined && value !== '') {
+                        recordText += `  - ${key}: ${value}\n`;
+                    }
+                }
+            } else {
+                // Fallback to showing all properties except noisy ones
+                for (const [key, value] of Object.entries(properties)) {
+                    if (key === 'embedding' || key === 'name' || key === 'id' || key === '__type') {
+                        continue;
+                    }
+                    if (value === null || value === undefined || value === '') {
+                        continue;
+                    }
+        
+                    const displayValue = typeof value === 'string' && value.length > 100 ? `${value.substring(0, 97)}...` : value;
+                    recordText += `  - ${key}: ${displayValue}\n`;
+                }
+            }
+            return recordText;
+        }).join('\n');
+        resultsText += '\n\n';
+    }
 
-    return `Query Results for ${resourceType}:\n\n${resultsText}`;
+
+    return resultsText.trim();
   }
 } 

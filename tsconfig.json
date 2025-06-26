@@ -5,6 +5,8 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": ".",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "@platform/*": ["src/platform/*"],
       "@crm/*": ["src/ontologies/crm/*"],
