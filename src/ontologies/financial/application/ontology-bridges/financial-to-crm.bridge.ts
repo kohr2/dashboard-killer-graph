@@ -1,47 +1,32 @@
-import { singleton } from 'tsyringe';
-import { ContactOntology, OCreamContactEntity } from '@crm/domain/entities/contact-ontology';
-import { Investor } from '@financial/domain/entities/investor';
+import { injectable } from 'tsyringe';
+import { Investor } from '../../domain/entities/investor';
+import { Deal } from '../../domain/entities/deal';
 
 /**
- * Provides mapping between Financial and CRM domain concepts.
+ * Provides mapping between Financial and CRM domain concepts by adding labels.
  */
-@singleton()
+@injectable()
 export class FinancialToCrmBridge {
-  private typeMappings: Record<string, string[]> = {
-    Investor: ['Organization'],
-    Sponsor: ['Organization'],
+  private readonly typeMappings: Record<string, string[]> = {
+    Investor: ['Organization', 'FinancialActor'],
+    Sponsor: ['Organization', 'FinancialActor'],
     TargetCompany: ['Organization'],
-    Fund: ['Organization'],
+    Fund: ['Organization', 'FinancialProduct'],
+    Deal: ['FinancialEvent'],
   };
 
   /**
-   * Maps a financial entity type to its corresponding CRM-level labels.
-   * For example, an "Investor" is also an "Organization".
-   * @param entityType The financial entity type (e.g., "Investor").
-   * @returns An array of additional CRM labels, or an empty array if no mapping exists.
+   * Gets additional CRM-related labels for a given financial entity type.
+   * For example, an "Investor" can also be labeled as an "Organization".
+   *
+   * @param entityType The financial entity type (e.g., "Investor", "Deal").
+   * @returns An array of additional CRM labels. Returns an empty array if no mapping exists.
    */
-  public mapEntityTypeToCrmLabels(entityType: string): string[] {
+  public getCrmLabelsForFinancialType(entityType: string): string[] {
     return this.typeMappings[entityType] || [];
   }
 
-  /**
-   * Maps a Financial Investor to a CRM Contact.
-   * @param investor The financial investor entity.
-   * @returns A CRM contact entity.
-   */
-  public static investorToContact(investor: Investor): OCreamContactEntity {
-    // This is a simplified mapping. In a real scenario, we might need
-    // to fetch related entities (like a Sponsor) to get a proper name.
-    const name = `Investor ${investor.id}`;
-    const [firstName, ...lastName] = name.split(' ');
-
-    return ContactOntology.createOCreamContact({
-      id: investor.id, // Re-use the ID for consistency
-      firstName: firstName || 'Unknown',
-      lastName: lastName.join(' ') || 'Investor',
-      email: `${name.replace(' ', '.')}@example.com`, // Dummy email
-    });
-  }
-
-  // Other mappings can be added here, e.g., for Organizations, Deals, etc.
+  // The previous, more complex logic was removed because financial entities
+  // do not contain the necessary properties (like name or email) to create
+  // full-fledged CRM entities. This simpler, label-based approach is more robust.
 } 
