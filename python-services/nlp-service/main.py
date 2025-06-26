@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import spacy
 import re
+import time # Import the time module
 from typing import List, Dict, Any, Optional
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -174,6 +175,9 @@ def extract_graph_with_llm(text: str) -> Dict[str, Any]:
     """
     
     try:
+        print("      [LLM Trace] Starting LLM graph extraction...")
+        llm_start_time = time.time()
+
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[{"role": "user", "content": prompt}],
@@ -181,9 +185,16 @@ def extract_graph_with_llm(text: str) -> Dict[str, Any]:
             response_format={"type": "json_object"}
         )
         
+        llm_end_time = time.time()
+        print(f"      [LLM Trace] OpenAI API call took: {llm_end_time - llm_start_time:.2f} seconds")
+
         response_str = response.choices[0].message.content
         if response_str:
+            parsing_start_time = time.time()
             graph_data = json.loads(response_str)
+            parsing_end_time = time.time()
+            print(f"      [LLM Trace] JSON parsing took: {parsing_end_time - parsing_start_time:.4f} seconds")
+
             # Validate and fix the structure if needed
             if isinstance(graph_data, dict):
                 entities = graph_data.get("entities", [])
@@ -203,6 +214,7 @@ def extract_graph_with_llm(text: str) -> Dict[str, Any]:
         return {"entities": [], "relationships": []}
 
     except Exception as e:
+        print(f"      [LLM Trace] Error during extraction: {e}")
         raise HTTPException(status_code=500, detail=f"LLM graph extraction error: {str(e)}")
 
 # --- LLM Refinement Logic ---

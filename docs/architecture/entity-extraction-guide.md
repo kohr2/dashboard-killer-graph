@@ -54,7 +54,7 @@ When an entity in an `ontology.json` file is marked with `"isProperty": true`, t
 
 **Example: Defining `Email` as a Property**
 
-In the CRM extension (`src/extensions/crm/ontology.json`), the `Email` entity is defined as follows:
+In the CRM extension (`src/ontologies/crm/ontology.json`), the `Email` entity is defined as follows:
 
 ```json
 {

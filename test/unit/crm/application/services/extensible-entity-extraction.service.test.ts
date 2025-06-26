@@ -1,11 +1,11 @@
-import { ExtensibleEntityExtractionService, ExtensionEntityRegistry } from '../../../../../src/extensions/crm/application/services/extensible-entity-extraction.service';
-import { SpacyEntityExtractionService } from '../../../../../src/extensions/crm/application/services/spacy-entity-extraction.service';
-import { OCreamV2Ontology } from '../../../../../src/extensions/crm/domain/ontology/o-cream-v2';
+import { ExtensibleEntityExtractionService, ExtensionEntityRegistry } from '../../../../../src/ontologies/crm/application/services/extensible-entity-extraction.service';
+import { SpacyEntityExtractionService } from '../../../../../src/ontologies/crm/application/services/spacy-entity-extraction.service';
+import { OCreamV2Ontology } from '../../../../../src/ontologies/crm/domain/ontology/o-cream-v2';
 
-jest.mock('../../../../../src/extensions/crm/application/services/spacy-entity-extraction.service');
-jest.mock('../../../../../src/extensions/crm/domain/ontology/o-cream-v2');
+jest.mock('../../../../../src/ontologies/crm/application/services/spacy-entity-extraction.service');
+jest.mock('../../../../../src/ontologies/crm/domain/ontology/o-cream-v2');
 
-const { ExtensibleEntityExtractionService: ActualService } = jest.requireActual('../../../../../src/extensions/crm/application/services/extensible-entity-extraction.service');
+const { ExtensibleEntityExtractionService: ActualService } = jest.requireActual('../../../../../src/ontologies/crm/application/services/extensible-entity-extraction.service');
 
 describe('ExtensibleEntityExtractionService', () => {
   let service: ExtensibleEntityExtractionService;

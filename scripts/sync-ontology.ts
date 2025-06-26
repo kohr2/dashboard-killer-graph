@@ -109,8 +109,8 @@ console.log('Ontology synchronization task finished.');
 
 // --- Configuration ---
 const ONTOLOGY_SOURCE_PATH = path.join(projectRoot, 'config/ontology/core.ontology.json');
-const ONTOLOGY_OUTPUT_PATH = path.join(projectRoot, 'src/extensions/crm/domain/ontology/o-cream-v2.ts');
-const EXTENSION_ONTOLOGY_PATH = path.join(projectRoot, 'src/extensions/financial/ontology.json');
+const ONTOLOGY_OUTPUT_PATH = path.join(projectRoot, 'src/ontologies/crm/domain/ontology/o-cream-v2.ts');
+const EXTENSION_ONTOLOGY_PATH = path.join(projectRoot, 'src/ontologies/financial/ontology.json');
 const ENTITY_TEMPLATE_PATH = path.join(projectRoot, 'scripts/templates/entity.hbs');
 const REPO_INTERFACE_TEMPLATE_PATH = path.join(projectRoot, 'scripts/templates/repository.interface.hbs');
 // --- End Configuration ---

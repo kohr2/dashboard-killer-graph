@@ -16,14 +16,12 @@
     "composite": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"],
-      "@crm/*": ["src/extensions/crm/*"],
-      "@financial/*": ["src/extensions/financial/*"],
       "@platform/*": ["src/platform/*"],
-      "@shared/*": ["src/shared/*"],
-      "@test/*": ["test/*"]
+      "@crm/*": ["src/ontologies/crm/*"],
+      "@financial/*": ["src/ontologies/financial/*"],
+      "@shared/*": ["src/shared/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

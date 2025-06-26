@@ -2,7 +2,7 @@ import axios from 'axios';
 import {
   SpacyEntityExtractionService,
   EntityType,
-} from '../../../../src/extensions/crm/application/services/spacy-entity-extraction.service';
+} from '../../../../src/ontologies/crm/application/services/spacy-entity-extraction.service';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;

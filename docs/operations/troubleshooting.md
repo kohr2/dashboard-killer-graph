@@ -198,7 +198,7 @@ export USE_MOCK_FINANCIAL_DATA=true
 describe('Extension Loading Debug', () => {
   it('should discover and load financial extension', () => {
     const registry = new ExtensionRegistry();
-    const discoveredExtensions = registry.discoverExtensions('./src/extensions');
+    const discoveredExtensions = registry.discoverExtensions('./src/ontologies');
     
     console.log('Discovered extensions:', discoveredExtensions);
     expect(discoveredExtensions).toContain('financial');
@@ -206,7 +206,7 @@ describe('Extension Loading Debug', () => {
 });
 
 // Check extension structure
-const financialExtension = require('./src/extensions/financial');
+const financialExtension = require('./src/ontologies/financial');
 console.log('Extension exports:', Object.keys(financialExtension));
 ```
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { promises as fs } from 'fs';
-import { EdgarEnrichmentService } from '../../../../src/extensions/crm/application/services/edgar-enrichment.service';
+import { EdgarEnrichmentService } from '../../../../src/ontologies/crm/application/services/edgar-enrichment.service';
 
 jest.mock('axios');
 jest.mock('fs', () => ({

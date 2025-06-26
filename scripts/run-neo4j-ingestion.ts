@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import { readdirSync, promises as fs } from 'fs';
 import { join } from 'path';
 import { Neo4jConnection } from '../src/platform/database/neo4j-connection';
-import { EmailProcessingService } from '../src/extensions/crm/application/services/email-processing.service';
+import { EmailProcessingService } from '../src/ontologies/crm/application/services/email-processing.service';
 import { container } from 'tsyringe';
 import { simpleParser } from 'mailparser';
 import { v4 as uuidv4 } from 'uuid';

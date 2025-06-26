@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { Neo4jConnection } from '../../src/platform/database/neo4j-connection';
 import { initializeExtensions } from '../../src/register-extensions';
-import { FinancialToCrmBridge } from '../../src/extensions/financial/application/ontology-bridges/financial-to-crm.bridge';
+import { FinancialToCrmBridge } from '../../src/ontologies/financial/application/ontology-bridges/financial-to-crm.bridge';
 import { v4 as uuidv4 } from 'uuid';
 
 describe('Multi-Label Entity Ingestion via Ontology Bridge', () => {

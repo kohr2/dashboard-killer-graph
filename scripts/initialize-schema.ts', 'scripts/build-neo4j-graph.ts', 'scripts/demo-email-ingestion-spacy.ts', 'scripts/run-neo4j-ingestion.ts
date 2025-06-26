@@ -1,3 +1,3 @@
-import { Neo4jConnection } from '../src/extensions/crm/infrastructure/database/neo4j-connection';
+import { Neo4jConnection } from '../src/ontologies/crm/infrastructure/database/neo4j-connection';
 
 // ... rest of file 

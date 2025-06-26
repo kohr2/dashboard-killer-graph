@@ -12,13 +12,17 @@
     "RegulatoryInformation": {
         "parent": "Thing",
         "description": "Information related to regulations, compliance, and legal matters."
+    },
+    "LegalDocument": {
+        "parent": "RegulatoryInformation",
+        "description": "A document with legal significance, such as a contract or agreement."
     }
   },
   "relationships": {
     "HAS_LEGAL_DOCUMENT": {
         "description": "Indicates that an entity has an associated legal document.",
         "domains": ["Thing"],
-        "ranges": ["RegulatoryInformation"]
+        "ranges": ["LegalDocument", "RegulatoryInformation"]
     }
   }
 } 

@@ -9,9 +9,9 @@ module.exports = {
   
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^@crm/(.*)$': '<rootDir>/src/extensions/crm/$1',
-    '^@financial/(.*)$': '<rootDir>/src/extensions/financial/$1',
     '^@platform/(.*)$': '<rootDir>/src/platform/$1',
+    '^@crm/(.*)$': '<rootDir>/src/ontologies/crm/$1',
+    '^@financial/(.*)$': '<rootDir>/src/ontologies/financial/$1',
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',
     '^@test/(.*)$': '<rootDir>/test/$1',
   },

@@ -7,13 +7,13 @@ jest.mock('axios');
 jest.mock('fs/promises');
 jest.mock('mailparser');
 jest.mock('../../../src/platform/database/neo4j-connection');
-jest.mock('../../../src/extensions/financial/application/services/financial-entity-integration.service');
+jest.mock('../../../src/ontologies/financial/application/services/financial-entity-integration.service');
 
 import axios from 'axios';
 import { promises as fs } from 'fs';
 import { simpleParser } from 'mailparser';
 import { Neo4jConnection } from '../../../src/platform/database/neo4j-connection';
-import { FinancialEntityIntegrationService } from '../../../src/extensions/financial/application/services/financial-entity-integration.service';
+import { FinancialEntityIntegrationService } from '../../../src/ontologies/financial/application/services/financial-entity-integration.service';
 import { demonstrateSpacyEmailIngestionPipeline } from '../../../scripts/demo-email-ingestion-spacy';
 import { Session } from 'neo4j-driver';
 

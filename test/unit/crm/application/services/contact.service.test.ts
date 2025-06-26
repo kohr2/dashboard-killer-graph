@@ -1,13 +1,13 @@
-import { ContactService } from '../../../../../src/extensions/crm/application/services/contact.service';
-import { ContactRepository } from '../../../../../src/extensions/crm/domain/repositories/contact-repository';
+import { ContactService } from '../../../../../src/ontologies/crm/application/services/contact.service';
+import { ContactRepository } from '../../../../../src/ontologies/crm/domain/repositories/contact-repository';
 import {
   Person,
-} from '../../../../../src/extensions/crm/domain/ontology/o-cream-v2';
-import { CreateContactDto, UpdateContactDto } from '../../../../../src/extensions/crm/application/dto/contact.dto';
-import { OCreamV2Ontology } from '../../../../../src/extensions/crm/domain/ontology/o-cream-v2';
-import { ContactOntology } from '../../../../../src/extensions/crm/domain/entities/contact-ontology';
+} from '../../../../../src/ontologies/crm/domain/ontology/o-cream-v2';
+import { CreateContactDto, UpdateContactDto } from '../../../../../src/ontologies/crm/application/dto/contact.dto';
+import { OCreamV2Ontology } from '../../../../../src/ontologies/crm/domain/ontology/o-cream-v2';
+import { ContactOntology } from '../../../../../src/ontologies/crm/domain/entities/contact-ontology';
 
-jest.mock('../../../../../src/extensions/crm/domain/repositories/contact-repository');
+jest.mock('../../../../../src/ontologies/crm/domain/repositories/contact-repository');
 
 const mockPerson = {
   id: 'contact-123',
@@ -32,8 +32,8 @@ const mockPerson = {
   getName: () => 'John Doe',
 };
 
-jest.mock('../../../../../src/extensions/crm/domain/ontology/o-cream-v2', () => ({
-  ...jest.requireActual('../../../../../src/extensions/crm/domain/ontology/o-cream-v2'),
+jest.mock('../../../../../src/ontologies/crm/domain/ontology/o-cream-v2', () => ({
+  ...jest.requireActual('../../../../../src/ontologies/crm/domain/ontology/o-cream-v2'),
   OCreamV2Ontology: {
     getInstance: jest.fn().mockReturnValue({
       addEntity: jest.fn(),
@@ -43,7 +43,7 @@ jest.mock('../../../../../src/extensions/crm/domain/ontology/o-cream-v2', () => 
   },
 }));
 
-jest.mock('../../../../../src/extensions/crm/domain/entities/contact-ontology', () => ({
+jest.mock('../../../../../src/ontologies/crm/domain/entities/contact-ontology', () => ({
   ContactOntology: {
     createOCreamContact: jest.fn((dto) => ({
       ...mockPerson,

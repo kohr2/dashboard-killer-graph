@@ -5,8 +5,8 @@
     "outDir": "../dist/test"
   },
   "references": [
-    { "path": "../src/extensions/crm" },
-    { "path": "../src/extensions/financial" },
+    { "path": "../src/ontologies/crm" },
+    { "path": "../src/ontologies/financial" },
     { "path": "../src/platform" }
   ],
   "include": []

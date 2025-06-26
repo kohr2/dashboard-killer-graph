@@ -94,7 +94,7 @@ npm run test:integration -- --grep "database"
 ```
 dashboard-killer-graph/
 ├── 🏛️ src/crm/        # Generic CRM foundation
-├── 💰 src/extensions/       # Domain-specific extensions
+├── 💰 src/ontologies/       # Domain-specific extensions
 ├── 🔧 src/platform/         # Extension framework
 ├── 🤝 src/shared/           # Cross-cutting utilities
 ├── 🧪 test/                 # Comprehensive test suite

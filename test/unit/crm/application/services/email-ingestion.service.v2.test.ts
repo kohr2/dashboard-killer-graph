@@ -1,7 +1,7 @@
-import { EmailIngestionService } from '../../../../../src/extensions/crm/application/services/email-ingestion.service';
-import { EmailProcessingService } from '../../../../../src/extensions/crm/application/services/email-processing.service';
+import { EmailIngestionService } from '../../../../../src/ontologies/crm/application/services/email-ingestion.service';
+import { EmailProcessingService } from '../../../../../src/ontologies/crm/application/services/email-processing.service';
 
-jest.mock('../../../../../src/extensions/crm/application/services/email-processing.service');
+jest.mock('../../../../../src/ontologies/crm/application/services/email-processing.service');
 
 describe('EmailIngestionService', () => {
   let ingestionService: EmailIngestionService;

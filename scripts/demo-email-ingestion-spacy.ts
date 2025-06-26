@@ -7,13 +7,13 @@ import { simpleParser } from 'mailparser';
 import { v4 as uuidv4 } from 'uuid';
 import { Neo4jConnection } from '../src/platform/database/neo4j-connection';
 import { Session } from 'neo4j-driver';
-import { FinancialEntityIntegrationService } from '../src/extensions/financial/application/services/financial-entity-integration.service';
+import { FinancialEntityIntegrationService } from '../src/ontologies/financial/application/services/financial-entity-integration.service';
 import axios from 'axios';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { initializeExtensions } from '../src/register-extensions';
+import { initializeOntologies } from '../src/register-ontologies';
 import { OntologyService } from '../src/platform/ontology/ontology.service';
-import { FinancialToCrmBridge } from '../src/extensions/financial/application/ontology-bridges/financial-to-crm.bridge';
+import { FinancialToCrmBridge } from '../src/ontologies/financial/application/ontology-bridges/financial-to-crm.bridge';
 
 const LABELS_TO_INDEX = ['Person', 'Organization', 'Location', 'Product', 'Event', 'Project', 'Deal'];
 
@@ -54,7 +54,7 @@ function getLabelInfo(entity: any, validOntologyTypes: string[]): { primary: str
 
 export async function demonstrateSpacyEmailIngestionPipeline() {
   // --- INITIALIZATION ---
-  initializeExtensions();
+  initializeOntologies();
   const ontologyService = container.resolve(OntologyService);
   const bridge = container.resolve(FinancialToCrmBridge);
   const validEntityTypes = ontologyService.getAllEntityTypes();

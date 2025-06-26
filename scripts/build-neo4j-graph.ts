@@ -3,8 +3,8 @@ import { join } from 'path';
 import { config } from 'dotenv';
 import { promises as fs } from 'fs';
 import { Neo4jConnection } from '../src/platform/database/neo4j-connection';
-import { EdgarEnrichmentService } from '../src/extensions/crm/application/services/edgar-enrichment.service';
-import { OCreamV2Ontology } from '../src/extensions/crm/domain/ontology/o-cream-v2';
+import { EdgarEnrichmentService } from '../src/ontologies/crm/application/services/edgar-enrichment.service';
+import { OCreamV2Ontology } from '../src/ontologies/crm/domain/ontology/o-cream-v2';
 import { v4 as uuidv4 } from 'uuid';
 
 config(); // Load environment variables from .env file

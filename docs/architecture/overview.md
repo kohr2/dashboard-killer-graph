@@ -104,7 +104,7 @@ crm/
     └── ui/           # CRM UI components
 ```
 
-### 💰 Financial Extension (`src/extensions/financial/`)
+### 💰 Financial Extension (`src/ontologies/financial/`)
 **Purpose**: Deal tracking and investment management domain logic
 
 ```

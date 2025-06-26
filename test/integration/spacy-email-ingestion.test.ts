@@ -5,14 +5,14 @@ import { resetDatabase } from '../../scripts/reset-neo4j';
 import axios from 'axios';
 import * as fs from 'fs';
 import { join, resolve } from 'path';
-import { FinancialEntityIntegrationService } from '../../src/extensions/financial/application/services/financial-entity-integration.service';
+import { FinancialEntityIntegrationService } from '../../src/ontologies/financial/application/services/financial-entity-integration.service';
 
 // Mock the axios module for ontology sync
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 // Mock the financial service
-jest.mock('../../src/extensions/financial/application/services/financial-entity-integration.service');
+jest.mock('../../src/ontologies/financial/application/services/financial-entity-integration.service');
 
 // Increase timeout for integration tests
 jest.setTimeout(60000); // 60 seconds

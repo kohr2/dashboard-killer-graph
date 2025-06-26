@@ -1,16 +1,25 @@
 {
   "extends": "./config/tsconfig.base.json",
   "compilerOptions": {
-    "downlevelIteration": true,
+    "target": "es2020",
+    "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./",
-    "baseUrl": "./"
+    "baseUrl": ".",
+    "paths": {
+      "@platform/*": ["src/platform/*"],
+      "@crm/*": ["src/ontologies/crm/*"],
+      "@financial/*": ["src/ontologies/financial/*"],
+      "@shared/*": ["src/shared/*"]
+    },
+    "typeRoots": ["node_modules/@types", "src/types"]
   },
   "files": [],
   "references": [
-    { "path": "src/extensions/crm" },
-    { "path": "src/extensions/financial" },
+    { "path": "src/ontologies/crm" },
+    { "path": "src/ontologies/financial" },
     { "path": "src/platform" },
     { "path": "test" }
-  ]
+  ],
+  "include": ["src/**/*.ts", "scripts/**/*.ts"],
+  "exclude": ["node_modules", "dist", "test", "src/ontologies"]
 }

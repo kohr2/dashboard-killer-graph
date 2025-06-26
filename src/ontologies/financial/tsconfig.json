@@ -6,8 +6,8 @@
     "rootDir": ".",
     "baseUrl": "../../..",
     "paths": {
-      "@crm/*": ["src/extensions/crm/*"],
-      "@financial/*": ["src/extensions/financial/*"],
+      "@crm/*": ["src/ontologies/crm/*"],
+      "@financial/*": ["src/ontologies/financial/*"],
       "@platform/*": ["src/platform/*"],
       "@shared/*": ["src/shared/*"]
     },

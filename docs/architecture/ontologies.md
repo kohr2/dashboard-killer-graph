@@ -1,4 +1,71 @@
-# 🔌 Extension System Architecture
+# Domain-Specific Ontologies
+
+This document outlines the architecture for creating and managing domain-specific ontologies within the application. These ontologies encapsulate all the logic, data structures, and behaviors related to a specific business domain (e.g., CRM, Finance, Healthcare).
+
+## Guiding Principles
+
+- **Encapsulation**: Each ontology is a self-contained module. All domain-specific logic resides within its directory.
+- **Explicit Dependencies**: Ontologies should not directly depend on each other. Any cross-domain interaction must be handled by dedicated "Ontology Bridges".
+- **Standardized Structure**: All ontologies follow a consistent directory structure to ensure predictability and ease of maintenance.
+
+## Ontology Structure
+
+Each ontology, located under `src/ontologies/`, must follow this structure:
+
+```
+src/ontologies/
+└── my-domain/
+    ├── application/
+    │   ├── dto/                # Data Transfer Objects
+    │   ├── services/           # Application services (business logic)
+    │   └── use-cases/          # High-level use cases
+    ├── domain/
+    │   ├── entities/           # Core domain entities
+    │   ├── repositories/       # Interfaces for data persistence
+    │   └── value-objects/      # Domain value objects
+    ├── infrastructure/
+    │   ├── database/           # Neo4j queries, repository implementations
+    │   └── external-apis/      # Clients for external services
+    ├── interface/
+    │   ├── api/                # REST/GraphQL controllers
+    │   └── ui/                 # UI components (if any)
+    ├── ontology.json           # Core ontology definition
+    ├── register.ts             # Entry point for service container registration
+    └── tsconfig.json           # TypeScript configuration for this ontology
+```
+
+### Key Components
+
+- **`ontology.json`**: Defines the entities and relationships for this specific domain. It's the source of truth for the ontology's structure.
+- **`register.ts`**: Handles the registration of the ontology's services into the dependency injection container (`tsyringe`). This is crucial for making the services available to the rest of the application.
+- **Application Services**: Contain the core business logic. They orchestrate domain entities and repositories to fulfill specific tasks.
+- **Domain Entities**: Represent the core concepts of the domain, rich with business rules and logic.
+
+## Creating a New Ontology
+
+To create a new ontology (e.g., for "Real Estate"):
+
+1.  Create a new directory: `src/ontologies/real-estate`.
+2.  Follow the standardized structure outlined above.
+3.  Define your entities in `ontology.json`.
+4.  Implement the necessary services, entities, and repositories.
+5.  Register your services in `register.ts`.
+6.  Add the new ontology to the main `initializeOntologies` function in `src/register-ontologies.ts`.
+
+## Cross-Ontology Communication: Ontology Bridges
+
+Direct communication between ontologies is discouraged. To handle cases where domains need to interact (e.g., linking a `Financial::Deal` to a `CRM::Contact`), we use **Ontology Bridges**.
+
+An Ontology Bridge is a dedicated service that explicitly defines and manages the mapping and interaction between two domains.
+
+**Example**: `FinancialToCrmBridge`
+
+- **Responsibility**: Translates financial concepts into CRM-compatible entities or relationships.
+- **Location**: Can be located in one of the domains it connects, or in a shared platform directory.
+
+By using bridges, we keep the core domains decoupled and make cross-domain logic explicit and manageable.
+
+## 🔌 Extension System Architecture
 
 ## 🎯 Overview
 
@@ -91,7 +158,7 @@ export class FinancialExtension implements Extension {
 
 ### Standard Extension Layout
 ```
-src/extensions/my-domain/
+src/ontologies/my-domain/
 ├── 📄 my-domain.extension.ts    # Extension definition
 ├── 📄 index.ts                  # Extension exports
 ├── 📁 domain/                   # Domain layer
@@ -154,7 +221,7 @@ class ExtensionValidator {
     // Check directory structure
     const requiredDirectories = ['domain', 'application', 'infrastructure', 'interface'];
     for (const dir of requiredDirectories) {
-      if (!this.directoryExists(`src/extensions/${extension.name}/${dir}`)) {
+      if (!this.directoryExists(`src/ontologies/${extension.name}/${dir}`)) {
         errors.push(`Missing required directory: ${dir}`);
       }
     }
@@ -265,7 +332,7 @@ class FinancialExtension {
 npm run extension:create my-domain
 
 # 2. Generated structure:
-src/extensions/my-domain/
+src/ontologies/my-domain/
 ├── my-domain.extension.ts      # ✅ Extension definition
 ├── index.ts                    # ✅ Exports
 ├── domain/                     # ✅ Domain layer
