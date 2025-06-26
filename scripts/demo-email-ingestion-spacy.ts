@@ -5,17 +5,17 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 import { simpleParser } from 'mailparser';
 import { v4 as uuidv4 } from 'uuid';
-import { Neo4jConnection } from '../src/platform/database/neo4j-connection';
+import { Neo4jConnection } from 'src/platform/database/neo4j-connection';
 import { Session } from 'neo4j-driver';
-import { FinancialEntityIntegrationService } from '../src/ontologies/financial/application/services/financial-entity-integration.service';
 import axios from 'axios';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { initializeOntologies } from '../src/register-ontologies';
-import { OntologyService } from '../src/platform/ontology/ontology.service';
-import { FinancialToCrmBridge } from '../src/ontologies/financial/application/ontology-bridges/financial-to-crm.bridge';
+import { initializeOntologies } from 'src/register-ontologies';
+import { OntologyService } from 'src/platform/ontology/ontology.service';
+import { FinancialToCrmBridge } from 'src/ontologies/financial/application/ontology-bridges/financial-to-crm.bridge';
+import { ContentProcessingService } from 'src/platform/processing/content-processing.service';
 
-const LABELS_TO_INDEX = ['Person', 'Organization', 'Location', 'Product', 'Event', 'Project', 'Deal'];
+const LABELS_TO_INDEX = ['Person', 'Organization', 'Location', 'Product', 'Event', 'Project', 'Deal', 'RegulatoryInformation', 'LegalDocument'];
 
 // --- Type Definitions for Clarity ---
 interface IngestionEntity {
@@ -84,7 +84,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
   console.log('='.repeat(100));
 
   const connection = container.resolve(Neo4jConnection);
-  const financialService = container.resolve(FinancialEntityIntegrationService);
+  const contentProcessingService = container.resolve(ContentProcessingService);
   let session: Session | null = null;
 
   try {
@@ -112,64 +112,63 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
     const allFiles = await fs.readdir(testEmailsDir);
     const emailFiles = allFiles.filter(f => f.endsWith('.eml')).sort();
     const filesToProcess = emailFiles; // Process all emails
+    const emailBodies: string[] = [];
+    const parsedEmails: any[] = [];
 
     console.log(
-      `\n📂 Found ${emailFiles.length} email files, processing ${filesToProcess.length} for this run in '${testEmailsDir}'`,
+      `\n📂 Found ${emailFiles.length} email files, parsing all of them before batch processing in '${testEmailsDir}'`,
     );
 
     for (const emailFile of filesToProcess) {
+        const filePath = join(testEmailsDir, emailFile);
+        try {
+            const fileContent = await fs.readFile(filePath);
+            const parsedEmail = await simpleParser(fileContent);
+            const emailBody = typeof parsedEmail.text === 'string'
+                ? parsedEmail.text
+                : (parsedEmail.html || '').replace(/<[^>]*>/g, '');
+            emailBodies.push(emailBody);
+            parsedEmails.push({ ...parsedEmail, sourceFile: emailFile });
+        } catch (e: any) {
+            console.error(`   ❌ Error reading or parsing email file ${emailFile}:`, e.message);
+        }
+    }
+
+    console.log(`\n[1] All ${emailBodies.length} emails parsed. Starting batch ingestion...`);
+    const batchResults = await contentProcessingService.processContentBatch(emailBodies);
+    console.log(`[2] Batch processing complete. Ingesting ${batchResults.length} results into Neo4j...`);
+
+    let emailIndex = 0;
+    for (const result of batchResults) {
+      const parsedEmail = parsedEmails[emailIndex];
+      const emailFile = parsedEmail.sourceFile;
+      emailIndex++;
+
       console.log('\n' + '='.repeat(100));
-      console.log(`Processing: ${emailFile}`);
+      console.log(`Ingesting results for: ${emailFile}`);
       console.log('='.repeat(100));
-
-      const filePath = join(testEmailsDir, emailFile);
-      let emailBody;
-      let parsedEmail;
-
+      
       try {
-        console.log('   [1] Reading and parsing email...');
-        const fileContent = await fs.readFile(filePath);
-        parsedEmail = await simpleParser(fileContent);
-        emailBody =
-          typeof parsedEmail.text === 'string'
-            ? parsedEmail.text
-            : (parsedEmail.html || '').replace(/<[^>]*>/g, '');
-        console.log('   [2] Email parsed successfully.');
-      } catch (e: any) {
-        console.error('   ❌ Error reading or parsing email file:', e.message);
-        continue;
-      }
-
-      try {
-        console.log('   [3] Processing with FinancialEntityIntegrationService (LLM Graph)...');
-        const result = await financialService.processFinancialContent(emailBody);
-
-        const { fiboEntities, crmIntegration } = result;
-        const { relationships }: { relationships: Relationship[] } = crmIntegration;
+        const { entities, relationships } = result;
 
         // --- Neo4j Ingestion Start ---
-        console.log('   [4] Starting Neo4j ingestion with vector search...');
-        const entityMap = new Map<string, any>(); // Map original entity name to Neo4j node data
+        console.log('   [3] Starting Neo4j ingestion with vector search...');
+        const entityMap = new Map<string, any>();
 
         // 1. Find or Create Entity Nodes using Vector Search
-        for (const entity of fiboEntities) {
+        for (const entity of entities) {
           const { primary: primaryLabel, candidates: candidateLabels } = getLabelInfo(entity, validEntityTypes);
-          let nodeId = entity.id || uuidv4(); // Default new ID
+          let nodeId = entity.id || uuidv4();
           let foundExistingNode = false;
 
-          // Do not attempt to find/create nodes for unrecognized entities. Just log them.
           if (primaryLabel === 'UnrecognizedEntity') {
             console.log(`      -> Skipping unrecognized entity '${entity.name}'.`);
             continue;
           }
-
-          // Skip creating nodes for entities that have no embedding and are not supposed to be indexed.
           if (!entity.embedding && !LABELS_TO_INDEX.includes(primaryLabel)) {
             console.log(`      -> Skipping entity '${entity.name}' (type: ${primaryLabel}) because it has no embedding and is not an indexed type.`);
             continue;
           }
-
-          // Only perform vector search for entities with embeddings and candidate labels.
           if (entity.embedding && candidateLabels.length > 0 && primaryLabel !== 'Thing') {
             for (const label of candidateLabels) {
               const indexName = `${label.toLowerCase()}_embeddings`;
@@ -184,18 +183,16 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
                 console.log(`      -> Found existing '${label}' entity '${entity.name}' with score ${searchResult.records[0].get('score').toFixed(2)}. Reusing ID: ${nodeId}`);
                 entityMap.set(entity.name, { ...existingNode.properties, labels: existingNode.labels });
                 foundExistingNode = true;
-                break; // Found a match, stop searching other labels
+                break;
               }
             }
           }
 
           if (!foundExistingNode) {
-            // Get additional labels from the ontology bridge.
             const additionalLabels = bridge.mapEntityTypeToCrmLabels(primaryLabel);
             const allLabels = [primaryLabel, ...additionalLabels];
             const labelsCypher = allLabels.map(l => `\`${l}\``).join(':');
 
-            // If no close match, merge the node with all its labels.
             const mergeQuery = entity.embedding
               ? `
                 MERGE (e {id: $id})
@@ -229,9 +226,9 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
             const action = mergeResult.summary.counters.updates().nodesCreated > 0 ? 'Created' : 'Matched';
             console.log(`      -> ${action} '${primaryLabel}' node for '${entity.name}' with ID: ${newNode.properties.id}`);
             entityMap.set(entity.name, { ...newNode.properties, labels: newNode.labels });
-            nodeId = newNode.properties.id; // Ensure we use the ID from the database
+            nodeId = newNode.properties.id;
           }
-          entity.resolvedId = nodeId; // Attach resolved ID for relationship creation
+          entity.resolvedId = nodeId;
         }
         
         // 2. Create Communication Node and link entities
@@ -251,10 +248,10 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
         );
         console.log(`      -> Merged Communication node.`);
         
-        for (const entity of fiboEntities) {
+        for (const entity of entities) {
           if (entity.resolvedId) {
             const entityInfo = entityMap.get(entity.name);
-            const labels = entityInfo.labels; // These are the actual labels from the DB node
+            const labels = entityInfo.labels;
             const labelsCypher = labels.map((l: string) => `\`${l}\``).join(':');
 
             await session.run(
@@ -271,11 +268,11 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
           }
         }
         console.log(
-          `      -> Linked ${fiboEntities.filter(e => e.resolvedId).length} entities to communication.`,
+          `      -> Linked ${entities.filter(e => e.resolvedId).length} entities to communication.`,
         );
 
         // 3. Create relationships between entities
-        const entityIdMap = new Map<string, IngestionEntity>(fiboEntities.map((e: any) => [e.id, e]));
+        const entityIdMap = new Map<string, IngestionEntity>(entities.map((e: any) => [e.id, e]));
         for (const rel of relationships) {
             const sourceEntity = entityIdMap.get(rel.source);
             const targetEntity = entityIdMap.get(rel.target);
@@ -303,17 +300,10 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
         console.log(
           `      -> Merged ${relationships.length} relationships between entities.`,
         );
-        console.log('   [5] Neo4j ingestion complete for this email.');
+        console.log('   [4] Neo4j ingestion complete for this email.');
         // --- Neo4j Ingestion End ---
       } catch (error: any) {
-        if (axios.isCancel(error)) {
-          console.error(`   ❌ Request timed out after 60 seconds.`);
-        } else {
-          console.error(
-            `   ❌ Error during financial service or Neo4j processing:`,
-            error.response?.data?.detail || error.message,
-          );
-        }
+        console.error(`   ❌ Error during Neo4j processing for ${emailFile}:`, error.message);
       }
     }
   } catch (error) {

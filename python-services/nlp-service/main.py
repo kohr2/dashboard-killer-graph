@@ -5,10 +5,11 @@ import spacy
 import re
 import time # Import the time module
 from typing import List, Dict, Any, Optional
-from openai import OpenAI
+from openai import OpenAI, AsyncOpenAI
 from dotenv import load_dotenv
 import json
 from sentence_transformers import SentenceTransformer
+import asyncio # Import asyncio
 
 # --- Environment and API Key Setup ---
 load_dotenv()
@@ -16,8 +17,10 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 if not openai_api_key:
     print("⚠️ WARNING: OPENAI_API_KEY not found in .env file. LLM refinement will be disabled.")
     client = None
+    async_client = None
 else:
     client = OpenAI(api_key=openai_api_key)
+    async_client = AsyncOpenAI(api_key=openai_api_key)
 
 # --- Pydantic Models for API data validation ---
 class ExtractionRequest(BaseModel):
@@ -109,6 +112,106 @@ class SpacyEntityExtractor:
     def _map_entity_label(self, spacy_label: str) -> str:
         mapping = { "PERSON": "PERSON_NAME", "ORG": "COMPANY_NAME", "GPE": "LOCATION", "MONEY": "MONETARY_AMOUNT" }
         return mapping.get(spacy_label, spacy_label)
+
+# --- ASYNC LLM Graph Extraction Logic ---
+async def extract_graph_with_llm_async(text: str) -> Dict[str, Any]:
+    if not async_client:
+        raise HTTPException(status_code=503, detail="OpenAI async client not configured.")
+    
+    if not VALID_ONTOLOGY_TYPES:
+        raise HTTPException(status_code=400, detail="Ontology not initialized. Please call the /ontologies endpoint first.")
+
+    # Core entity types are all types that are NOT property-like types.
+    core_entity_types = [t for t in VALID_ONTOLOGY_TYPES if t not in PROPERTY_ENTITY_TYPES]
+
+    prompt = f"""
+    You are an expert financial analyst creating a knowledge graph from a text. Your goal is to extract entities and relationships to build a graph. Your final output must be a single JSON object with "entities" and "relationships" keys.
+
+    **Instructions & Rules:**
+
+    1.  **Entity Types:**
+        -   **Core Entities:** You can create nodes for these types: `({', '.join(core_entity_types)})`.
+        -   **Property-like Types:** These types MUST NOT become nodes: `({', '.join(PROPERTY_ENTITY_TYPES)})`.
+
+    2.  **CRITICAL RULE: Handling Properties**
+        -   When you find a value corresponding to a **Property-like Type** (e.g., an email address, a date, a monetary amount), you MUST find the most relevant **Core Entity** it describes and attach it as a key-value pair in its `properties` object.
+        -   Use descriptive camelCase keys (e.g., `email`, `dealSize`, `closingDate`).
+        -   **Never** create a standalone entity for a property-like type.
+
+    3.  **Relationships:**
+        -   Relationships can ONLY exist between **Core Entities**.
+        -   Allowed Relationship Types: `({', '.join(VALID_RELATIONSHIP_TYPES)})`.
+
+    **Example Scenario:**
+    -   **Text:** "David Chen (david.chen@ms.com) from Morgan Stanley mentioned the $350M Project Helix deal."
+    -   **Your Logic:**
+        1.  "David Chen" is a `Person` (Core Entity).
+        2.  "david.chen@ms.com" is an `Email` (Property-like). I must attach it to "David Chen".
+        3.  "Morgan Stanley" is an `Organization` (Core Entity).
+        4.  "$350M" is a `MonetaryAmount` (Property-like). I must attach it to "Project Helix".
+        5.  "Project Helix" is a `Deal` (Core Entity).
+    -   **Correct JSON Output:**
+        ```json
+        {{
+          "entities": [
+            {{
+              "type": "Person", "value": "David Chen",
+              "properties": {{"email": "david.chen@ms.com"}}
+            }},
+            {{"type": "Organization", "value": "Morgan Stanley"}},
+            {{
+              "type": "Deal", "value": "Project Helix",
+              "properties": {{"dealSize": "$350M"}}
+            }}
+          ],
+          "relationships": [
+            {{"source": "David Chen", "target": "Morgan Stanley", "type": "WORKS_FOR"}},
+            {{"source": "David Chen", "target": "Project Helix", "type": "PARTICIPATES_IN"}}
+          ]
+        }}
+        ```
+
+    **Text to Analyze:**
+    ---
+    {text}
+    ---
+    """
+    
+    try:
+        llm_start_time = time.time()
+
+        response = await async_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0,
+            response_format={"type": "json_object"}
+        )
+        
+        llm_end_time = time.time()
+        print(f"      [LLM Trace] Async OpenAI API call took: {llm_end_time - llm_start_time:.2f} seconds")
+
+        response_str = response.choices[0].message.content
+        if response_str:
+            graph_data = json.loads(response_str)
+
+            if isinstance(graph_data, dict):
+                entities = graph_data.get("entities", [])
+                relationships = graph_data.get("relationships", [])
+
+                for entity in entities:
+                    if isinstance(entity, dict) and "confidence" not in entity:
+                        entity["confidence"] = 0.9
+                for rel in relationships:
+                    if isinstance(rel, dict) and "confidence" not in rel:
+                        rel["confidence"] = 0.9
+                
+                return {"entities": entities, "relationships": relationships, "refinement_info": "LLM extraction successful"}
+        
+        return {"entities": [], "relationships": [], "refinement_info": "LLM parsing failed"}
+
+    except Exception as e:
+        print(f"      [LLM Trace] Error during async extraction for a document: {e}")
+        return {"entities": [], "relationships": [], "refinement_info": f"LLM graph extraction error: {str(e)}"}
 
 # --- LLM Graph Extraction Logic ---
 def extract_graph_with_llm(text: str) -> Dict[str, Any]:
@@ -362,39 +465,18 @@ async def update_ontologies(request: OntologyUpdateRequest):
 @app.post("/batch-extract-graph", response_model=List[GraphResponse], summary="Batch Extract Graphs from Multiple Texts")
 async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
     """
-    Extracts entities, relationships, and embeddings for a batch of texts.
-    - **texts**: A list of strings to process.
+    Processes a batch of texts concurrently to extract knowledge graphs.
+    This is much more efficient than calling /extract-graph in a loop.
     """
-    results = []
-    for text in request.texts:
-        # Re-using the existing single-text extraction logic
-        raw_entities = extractor.extract_entities(text)
-        
-        embedding = None
-        if embedding_model:
-            embedding = embedding_model.encode(text).tolist()
-            
-        try:
-            graph_data = extract_graph_with_llm(text)
-            
-            results.append({
-                "entities": graph_data.get("entities", []),
-                "relationships": graph_data.get("relationships", []),
-                "refinement_info": f"Refined {len(raw_entities)} entities and found {len(graph_data.get('relationships', []))} relationships.",
-                "embedding": embedding
-            })
-        except Exception as e:
-            # If one text fails, we can decide to either skip it or raise an error.
-            # Here, we'll log a warning and continue with the batch.
-            print(f"Warning: Failed to process a text in batch. Error: {e}")
-            # Optionally add a placeholder or error response for the failed item
-            results.append({
-                "entities": [],
-                "relationships": [],
-                "refinement_info": f"Failed to process text. Error: {e}",
-                "embedding": None
-            })
-            
+    print(f"--- Received batch request for {len(request.texts)} documents ---")
+    batch_start_time = time.time()
+
+    tasks = [extract_graph_with_llm_async(text) for text in request.texts]
+    results = await asyncio.gather(*tasks)
+    
+    batch_end_time = time.time()
+    print(f"--- Completed batch processing in {batch_end_time - batch_start_time:.2f} seconds ---")
+    
     return results
 
 @app.get("/health")

@@ -40,6 +40,22 @@ A crucial step after extraction is to link the new entities to existing ones in 
 
 This process ensures the knowledge graph remains clean, consistent, and densely connected over time.
 
+### 🚀 High-Performance Batch Processing
+
+To handle large volumes of emails efficiently, the system has been refactored to support high-performance batch processing. The previous sequential approach, where each email was processed one by one, created a significant bottleneck due to network latency and the serial nature of the API calls.
+
+The new architecture addresses this with two key components:
+
+1.  **Asynchronous Batch Endpoint (`/batch-extract-graph`)**: The Python NLP service now features a `/batch-extract-graph` endpoint. This endpoint accepts a list of documents and processes them concurrently using `asyncio` and an `AsyncOpenAI` client. This parallel execution means that the total time to process a batch of emails is roughly equal to the time it takes to process the single longest email, rather than the sum of all of them. For the demo dataset of 28 emails, this reduced the end-to-end LLM processing time from over 2 minutes to approximately 11 seconds.
+
+2.  **Centralized `ContentProcessingService`**: In the TypeScript application, a new generic `ContentProcessingService` has been introduced in the platform layer (`src/platform/processing/`). This service is responsible for orchestrating the batch workflow:
+    - It gathers the content from all emails.
+    - It makes a single API call to the `/batch-extract-graph` endpoint.
+    - It then performs a subsequent batch call to retrieve vector embeddings for all extracted entities at once.
+    - Finally, it intelligently maps the results back to their original source documents.
+
+This batch-oriented, asynchronous architecture provides a massive improvement in throughput for the email ingestion pipeline.
+
 ## 🏛️ Ontology-Driven Entity Processing
 
 A key architectural principle in our system is that the handling of entities is driven by a decentralized ontology defined within each extension. This allows for a modular and extensible system where each business domain (CRM, Financial, etc.) can define its own concepts without altering the core platform.
