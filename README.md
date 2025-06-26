@@ -36,14 +36,14 @@ npm run build
 
 ## 🏛️ Architecture Overview
 
-This platform implements a **modular architecture** with clear separation of concerns:
+This platform implements a **modular architecture** where all business domains are implemented as pluggable extensions.
 
 ```
-🏛️ CRM Core          # Generic CRM foundation
-└── 💰 Financial     # Deal tracking extension
-└── 🏠 Real Estate   # Future: Property management  
-└── 🏥 Healthcare    # Future: Patient tracking
-└── ⚖️ Legal         # Future: Case management
+🔧 Platform Core        # Extension framework and shared services
+└── 🧩 CRM Extension    # Foundational CRM features (Contacts, Communications)
+└── 💰 Financial Ext.  # Deal tracking and investment management
+└── 🏠 Real Estate Ext. # Future: Property management
+└── ⚖️ Legal Ext.       # Future: Case management
 ```
 
 **Key Benefits:**
@@ -51,6 +51,12 @@ This platform implements a **modular architecture** with clear separation of con
 - 🎯 **Modular**: Independent development and deployment
 - 🧪 **Testable**: Comprehensive TDD approach with 85%+ coverage
 - 🚀 **Scalable**: Enterprise-grade patterns and performance
+- [x] **Platform Framework**: Extension loading and orchestration
+- [x] **TDD Foundation**: Comprehensive test structure
+- [x] **Configuration Management**: Centralized config system
+- [x] **CRM Extension**: Foundational Contact and Communication entities.
+- [x] **Financial Extension**: Foundational Deal and Investment entities.
+- [x] **Batch Ingestion Pipeline**: High-performance, parallel data processing.
 
 ## 📚 Documentation
 
@@ -85,21 +91,22 @@ This platform implements a **modular architecture** with clear separation of con
 
 ### ✅ Completed
 - [x] **Extensible Architecture**: Modular CRM + extension system
-- [x] **Platform Framework**: Extension loading and orchestration  
+- [x] **Platform Framework**: Extension loading and orchestration
 - [x] **TDD Foundation**: Comprehensive test structure
 - [x] **Configuration Management**: Centralized config system
+- [x] **CRM Extension**: Foundational Contact and Communication entities.
+- [x] **Financial Extension**: Foundational Deal and Investment entities.
+- [x] **Batch Ingestion Pipeline**: High-performance, parallel data processing.
 
 ### 🔄 In Progress (Current Sprint)
-- [ ] **CRM Core Implementation**: Contact, Communication, Task entities
-- [ ] **Financial Extension**: Deal tracking domain logic
-- [ ] **API Development**: REST endpoints for CRM + Financial
-- [ ] **UI Components**: React components for CRM and deals
+- [ ] **API Development**: REST endpoints for CRM + Financial extensions.
+- [ ] **UI Components**: React components for CRM and deals.
+- [ ] **Agentic Workflows**: AI agents for cross-domain insights.
 
 ### 📋 Roadmap
-- **Phase 1** (Weeks 1-4): CRM Core + Financial Extension
-- **Phase 2** (Weeks 5-8): External Integrations (Graph API, Neo4j)
-- **Phase 3** (Weeks 9-12): AI Agents + NLP Intelligence
-- **Phase 4** (Weeks 13-16): Production Deployment + Monitoring
+- **Phase 1** (Completed): Platform Core, CRM/Financial Extension foundations, Batch Ingestion.
+- **Phase 2** (Current): API Endpoints, UI Components, AI Agent framework.
+- **Phase 3**: Production Deployment + Monitoring.
 
 **📋 Detailed roadmap**: [Development Roadmap](docs/development/roadmap.md)
 **📜 Project history**: [Project Evolution](docs/project-history.md)
@@ -108,18 +115,16 @@ This platform implements a **modular architecture** with clear separation of con
 
 ### Run Tests by Module
 ```bash
-npm run test:crm      # Test CRM foundation
-npm run test:financial     # Test deal tracking extension
-npm run test:platform      # Test extension framework
-npm run test:integration   # Test cross-module integration
-npm run test:e2e          # Test complete user workflows
+npm run test:platform       # Test the core platform and extension framework
+npm run test:extensions     # Run tests for all active extensions
+npm run test:integration    # Test cross-module integration
+npm run test:e2e            # Test complete user workflows
 ```
 
 ### Coverage Reports
 - **Overall**: 85%+ target
-- **CRM Core**: 90%+ (foundation stability)
-- **Extensions**: 80%+ (domain-specific logic)
 - **Platform**: 95%+ (framework reliability)
+- **Extensions**: 80%+ (domain-specific logic)
 
 ## 🛠️ Tech Stack
 
