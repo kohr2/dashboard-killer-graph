@@ -41,13 +41,15 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
         EntityType.EMAIL_ADDRESS,
         EntityType.PHONE_NUMBER,
         EntityType.URL,
+        // Adding legacy spacy labels for broader coverage during transition
+        'DATE', 'MONEY', 'CARDINAL', 'ORDINAL', 'QUANTITY', 'PERCENT'
       ];
 
       for (const entity of entities) {
         // Do not create nodes for literal-like entities.
         // These are handled as properties of other nodes at a higher-level service.
-        if (literalTypes.includes(entity.type)) {
-          console.warn(`[Neo4jCommunicationRepository] Skipping node creation for literal type: "${entity.type}" (${entity.value}). This should be a property.`);
+        if (literalTypes.includes(entity.type) || literalTypes.includes(entity.spacyLabel)) {
+          console.warn(`[Neo4jCommunicationRepository] Skipping node creation for literal type: "${entity.type || entity.spacyLabel}" (${entity.value}). This should be a property.`);
           continue;
         }
 
