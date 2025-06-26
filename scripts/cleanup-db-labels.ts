@@ -34,6 +34,57 @@ async function cleanupDatabaseLabels() {
 
     console.warn(`🔥 Found ${labelsToRemove.length} unused labels to remove:`, labelsToRemove);
 
+    // NEW: Step 3.2 - Find and drop constraints associated with unused labels
+    console.log('⚡ Checking for constraints on unused labels...');
+    const showConstraintsResult = await session.run("SHOW CONSTRAINTS");
+    const constraintsToDrop = showConstraintsResult.records
+        .map(record => record.get('name') as string)
+        .filter(name => name); // Filter out null names if any
+
+    const constraintsOnUnusedLabels = showConstraintsResult.records
+        .filter(record => {
+            const labels = record.get('labelsOrTypes') as string[];
+            return labels && labels.some(label => labelsToRemove.includes(label));
+        })
+        .map(record => record.get('name') as string);
+    
+    if (constraintsOnUnusedLabels.length > 0) {
+        console.warn(`🔥 Found ${constraintsOnUnusedLabels.length} constraints to drop:`, constraintsOnUnusedLabels);
+        for (const name of constraintsOnUnusedLabels) {
+            const dropQuery = `DROP CONSTRAINT \`${name}\` IF EXISTS`;
+            console.log(`   -> Executing: ${dropQuery}`);
+            await session.run(dropQuery);
+            console.log(`      -> Dropped constraint "${name}".`);
+        }
+    } else {
+        console.log('✨ No conflicting constraints found on unused labels.');
+    }
+
+    // NEW: Step 3.5 - Find and drop any indexes associated with the unused labels
+    console.log('⚡ Checking for indexes on unused labels...');
+    const showIndexesResult = await session.run("SHOW INDEXES");
+    const indexesToDrop = showIndexesResult.records
+        .map(record => ({
+            name: record.get('name') as string,
+            labels: record.get('labelsOrTypes') as string[]
+        }))
+        .filter(index => 
+            index.labels && index.labels.some((label: string) => labelsToRemove.includes(label))
+        );
+
+    if (indexesToDrop.length > 0) {
+        console.warn(`🔥 Found ${indexesToDrop.length} indexes built on unused labels that will be dropped:`, indexesToDrop.map(i => i.name));
+        for (const index of indexesToDrop) {
+            // Use backticks for safety, although index names usually don't need it.
+            const dropQuery = `DROP INDEX \`${index.name}\` IF EXISTS`;
+            console.log(`   -> Executing: ${dropQuery}`);
+            await session.run(dropQuery);
+            console.log(`      -> Dropped index "${index.name}".`);
+        }
+    } else {
+        console.log('✨ No conflicting indexes found on unused labels.');
+    }
+
     // 4. Remove the unused labels
     for (const label of labelsToRemove) {
       // It's crucial to use backticks to escape label names that might contain special characters
