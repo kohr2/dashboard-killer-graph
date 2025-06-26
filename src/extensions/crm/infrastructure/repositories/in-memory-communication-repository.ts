@@ -98,4 +98,16 @@ export class InMemoryCommunicationRepository
       await this.save(communication);
     }
   }
+
+  async updateProperties(id: string, properties: Record<string, any>): Promise<void> {
+    const communication = await this.findById(id);
+    if (communication) {
+      if (!communication.metadata) {
+        communication.metadata = {};
+      }
+      Object.assign(communication.metadata, properties);
+      await this.save(communication);
+    }
+    return Promise.resolve();
+  }
 } 

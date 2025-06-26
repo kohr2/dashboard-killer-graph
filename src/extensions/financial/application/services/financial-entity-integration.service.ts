@@ -130,7 +130,8 @@ export class FinancialEntityIntegrationService {
         id: entity.value.toLowerCase().replace(/ /g, '_').replace(/[^a-z0-9_]/g, ''),
         name: entity.value,
         type: entity.type, // Preserve the original type from the NLP service
-        label: entity.type // `label` is often used in graph visualizations
+        label: entity.type, // `label` is often used in graph visualizations
+        properties: entity.properties || {}
       }));
 
       // --- NEW: Generate and attach embeddings for each entity ---

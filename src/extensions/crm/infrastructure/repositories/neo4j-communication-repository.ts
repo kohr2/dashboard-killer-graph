@@ -2,7 +2,7 @@ import { injectable, inject } from 'inversify';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { Communication, CommunicationType, CommunicationStatus } from '../../domain/entities/communication';
 import { CommunicationRepository, PaginationOptions } from '../../domain/repositories/communication-repository';
-import { SpacyExtractedEntity } from '../../application/services/spacy-entity-extraction.service';
+import { SpacyExtractedEntity, EntityType } from '../../application/services/spacy-entity-extraction.service';
 import { OntologyService } from '@platform/ontology/ontology.service';
 
 @injectable()
@@ -34,7 +34,23 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
   ): Promise<void> {
     const session = this.connection.getDriver().session();
     try {
+      // Define literal types that should not become separate nodes
+      const literalTypes = [
+        EntityType.DATE,
+        EntityType.MONETARY_AMOUNT,
+        EntityType.EMAIL_ADDRESS,
+        EntityType.PHONE_NUMBER,
+        EntityType.URL,
+      ];
+
       for (const entity of entities) {
+        // Do not create nodes for literal-like entities.
+        // These are handled as properties of other nodes at a higher-level service.
+        if (literalTypes.includes(entity.type)) {
+          console.warn(`[Neo4jCommunicationRepository] Skipping node creation for literal type: "${entity.type}" (${entity.value}). This should be a property.`);
+          continue;
+        }
+
         // Map the spaCy label to our internal ontology entity type
         const entityType = this.spacyToOntologyMap[entity.spacyLabel] || entity.spacyLabel;
         const entityLabels = this.ontologyService.getLabelsForEntityType(entityType);
@@ -194,5 +210,18 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
   async exists(id: string): Promise<boolean> {
     // TODO: Implement
     return false;
+  }
+
+  async updateProperties(id: string, properties: Record<string, any>): Promise<void> {
+    const session = this.connection.getSession();
+    try {
+        const query = `
+            MATCH (c:${this.communicationLabels} {id: $id})
+            SET c += $props
+        `;
+        await session.run(query, { id, props: properties });
+    } finally {
+        await session.close();
+    }
   }
 } 

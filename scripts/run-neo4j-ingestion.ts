@@ -5,11 +5,10 @@ import { readdirSync, promises as fs } from 'fs';
 import { join } from 'path';
 import { Neo4jConnection } from '../src/platform/database/neo4j-connection';
 import { EmailProcessingService } from '../src/extensions/crm/application/services/email-processing.service';
-import { InMemoryContactRepository } from '../src/extensions/crm/infrastructure/repositories/in-memory-contact-repository';
-import { Neo4jCommunicationRepository } from '../src/extensions/crm/infrastructure/repositories/neo4j-communication-repository';
-import { SpacyEntityExtractionService } from '../src/extensions/crm/application/services/spacy-entity-extraction.service';
+import { container } from 'tsyringe';
 import { simpleParser } from 'mailparser';
 import { v4 as uuidv4 } from 'uuid';
+import '../src/register-extensions';
 
 async function runNeo4jIngestion() {
   console.log('🚀 Starting Neo4j Ingestion Pipeline 🚀');
@@ -22,17 +21,8 @@ async function runNeo4jIngestion() {
     await connection.connect();
     console.log('✅ Neo4j connection established.');
 
-    // Instantiate all dependencies
-    const contactRepository = new InMemoryContactRepository();
-    const communicationRepository = new Neo4jCommunicationRepository();
-    const entityExtractionService = new SpacyEntityExtractionService();
-
-    // Inject dependencies into the service
-    const emailProcessingService = new EmailProcessingService(
-      contactRepository,
-      communicationRepository,
-      entityExtractionService
-    );
+    // Resolve the main service from the container
+    const emailProcessingService = container.resolve(EmailProcessingService);
 
     console.log('✅ Services and repositories initialized.');
 

@@ -8,6 +8,7 @@ export interface PaginationOptions {
 
 export interface CommunicationRepository {
     save(communication: Communication): Promise<Communication>;
+    updateProperties(id: string, properties: Record<string, any>): Promise<void>;
     findById(id: string): Promise<Communication | null>;
     findAll(options?: PaginationOptions): Promise<Communication[]>;
     delete(id: string): Promise<boolean>;

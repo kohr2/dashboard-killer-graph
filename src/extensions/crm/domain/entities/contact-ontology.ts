@@ -6,6 +6,7 @@ export const PersonalInfoSchema = z.object({
     firstName: z.string().min(1),
     lastName: z.string().min(1),
     email: z.string().email(),
+    additionalEmails: z.array(z.string().email()).optional(),
     phone: z.string().optional(),
     title: z.string().optional(),
     address: z.any().optional(),

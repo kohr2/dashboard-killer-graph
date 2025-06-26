@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { promises as fs } from 'fs';
 import { join } from 'path';
+import { singleton, inject } from 'tsyringe';
 
 // URL for the SEC's CIK lookup data
 const CIK_LOOKUP_URL = 'https://www.sec.gov/files/company_tickers.json';
@@ -28,16 +29,15 @@ interface CikData {
   title: string;
 }
 
+@singleton()
 export class EdgarEnrichmentService {
-  private userAgent: string;
   private cikMap: Map<string, number> | null = null;
   private cachePath: string;
 
-  constructor(userAgent: string) {
+  constructor(@inject('SEC_API_USER_AGENT') private userAgent: string) {
     if (!userAgent) {
       throw new Error('A User-Agent string is required for the SEC EDGAR API.');
     }
-    this.userAgent = userAgent;
     // Define a path for the local cache file
     this.cachePath = join(__dirname, '..', '..', '..', '..', 'cache', 'company_tickers.json');
   }

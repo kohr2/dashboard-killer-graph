@@ -17,6 +17,25 @@ import { FinancialToCrmBridge } from '../src/extensions/financial/application/on
 
 const LABELS_TO_INDEX = ['Person', 'Organization', 'Location', 'Product', 'Event', 'Project', 'Deal'];
 
+// --- Type Definitions for Clarity ---
+interface IngestionEntity {
+  id: string;
+  name: string;
+  type: string;
+  label: string;
+  embedding?: number[];
+  resolvedId?: string;
+  category?: string;
+  createdAt?: Date;
+  properties?: { [key: string]: any };
+}
+
+interface Relationship {
+  source: string;
+  target: string;
+  type: string;
+}
+
 function getLabelInfo(entity: any, validOntologyTypes: string[]): { primary: string; candidates: string[] } {
     const primaryLabel = entity.getOntologicalType ? entity.getOntologicalType() : entity.type;
 
@@ -123,9 +142,7 @@ async function demonstrateSpacyEmailIngestionPipeline() {
         const result = await financialService.processFinancialContent(emailBody);
 
         const { fiboEntities, crmIntegration } = result;
-
-        const relationships = crmIntegration.relationships;
-        const filteredEntities = fiboEntities; // The LLM already filters entities
+        const { relationships }: { relationships: Relationship[] } = crmIntegration;
 
         // --- Neo4j Ingestion Start ---
         console.log('   [4] Starting Neo4j ingestion with vector search...');
@@ -178,14 +195,16 @@ async function demonstrateSpacyEmailIngestionPipeline() {
             // If no close match, merge the node with all its labels.
             const mergeQuery = entity.embedding
               ? `
-                MERGE (e:${labelsCypher} {name: $name})
-                ON CREATE SET e.id = $id, e.category = $category, e.createdAt = datetime($createdAt), e.embedding = $embedding
-                ON MATCH SET e.embedding = $embedding
+                MERGE (e {id: $id})
+                ON CREATE SET e += $props
+                ON MATCH SET e += $props
+                SET e:${labelsCypher}
                 RETURN e
               `
               : `
-                MERGE (e:${labelsCypher} {name: $name})
-                ON CREATE SET e.id = $id, e.category = $category, e.createdAt = datetime($createdAt)
+                MERGE (e {id: $id})
+                ON CREATE SET e += $props
+                SET e:${labelsCypher}
                 RETURN e
               `;
             
@@ -193,10 +212,14 @@ async function demonstrateSpacyEmailIngestionPipeline() {
               mergeQuery,
               {
                 id: nodeId,
-                name: entity.name,
-                category: entity.category || 'Generic',
-                createdAt: (entity.createdAt || new Date()).toISOString(),
-                embedding: entity.embedding, // This is safe; Neo4j driver handles undefined
+                props: {
+                  id: nodeId,
+                  name: entity.name,
+                  category: entity.category || 'Generic',
+                  createdAt: (entity.createdAt || new Date()).toISOString(),
+                  embedding: entity.embedding,
+                  ...(entity.properties || {}),
+                }
               }
             );
             const newNode = mergeResult.records[0].get('e');
@@ -249,11 +272,11 @@ async function demonstrateSpacyEmailIngestionPipeline() {
         );
 
         // 3. Create relationships between entities
+        const entityIdMap = new Map<string, IngestionEntity>(fiboEntities.map((e: any) => [e.id, e]));
         for (const rel of relationships) {
-            // Corrected: Find entities by their ID-like name, which the LLM now returns.
-            const sourceEntity = fiboEntities.find(e => e.name.toLowerCase().replace(/[\s\W]/g, '_') === rel.source || e.name === rel.source);
-            const targetEntity = fiboEntities.find(e => e.name.toLowerCase().replace(/[\s\W]/g, '_') === rel.target || e.name === rel.target);
-
+            const sourceEntity = entityIdMap.get(rel.source);
+            const targetEntity = entityIdMap.get(rel.target);
+            
             if (sourceEntity && sourceEntity.resolvedId && targetEntity && targetEntity.resolvedId) {
                 const sourceInfo = entityMap.get(sourceEntity.name);
                 const targetInfo = entityMap.get(targetEntity.name);

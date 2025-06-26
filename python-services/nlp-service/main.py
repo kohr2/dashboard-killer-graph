@@ -29,6 +29,7 @@ class Entity(BaseModel):
     type: str
     value: str
     confidence: Optional[float] = None
+    properties: Optional[Dict[str, Any]] = None
     # Optional fields for the refined model
     start: Optional[int] = None
     end: Optional[int] = None
@@ -114,20 +115,30 @@ def extract_graph_with_llm(text: str) -> Dict[str, Any]:
     if not VALID_ONTOLOGY_TYPES:
         raise HTTPException(status_code=400, detail="Ontology not initialized. Please call the /ontologies endpoint first.")
 
+    # Remove property-like types from the list given to the LLM for entity creation
+    property_like_types = {'MonetaryAmount', 'Percent', 'Date'}
+    core_entity_types = [t for t in VALID_ONTOLOGY_TYPES if t not in property_like_types]
+
     prompt = f"""
     You are an expert financial analyst creating a knowledge graph from a text.
-    Your task is to extract all relevant entities and the relationships between them.
+    Your task is to extract all relevant entities, their properties, and the relationships between them.
+    Your final output must be a single JSON object with two keys: "entities" and "relationships".
 
     **Instructions:**
-    1.  **Entity Classification**: You MUST classify each extracted entity into one of the following predefined types. Do NOT use any other types.
-        - Allowed Entity Types: `({', '.join(VALID_ONTOLOGY_TYPES)})`
-        - If an entity cannot be classified into one of the allowed types, you MUST label it as `UnrecognizedEntity`.
-    2.  **Relationship Extraction**: Identify meaningful relationships between the extracted entities. The relationship type MUST be one of the following. Do NOT use any other types.
+    1.  **Entity Classification**: You MUST classify each extracted entity into one of the following predefined types.
+        - Allowed Core Entity Types: `({', '.join(core_entity_types)})`
+        - If an entity cannot be classified into any of the allowed types, you MUST label it as `UnrecognizedEntity`.
+
+    2.  **Property Extraction**:
+        - You MUST identify values like monetary amounts, percentages, and dates.
+        - **DO NOT** create separate entities for `MonetaryAmount`, `Percent`, or `Date`.
+        - Instead, find the primary entity they are related to (e.g., a `Deal` or `Project`) and add them as a key-value pair inside a `properties` object for that entity.
+        - Use camelCase for the property keys (e.g., `monetaryAmount`, `percent`, `date`).
+        - For example: `{{"type": "Deal", "value": "Project Anvil", "properties": {{"monetaryAmount": "$50M"}}}}`
+
+    3.  **Relationship Identification**: You MUST identify relationships only between the Core Entities identified in step 1.
         - Allowed Relationship Types: `({', '.join(VALID_RELATIONSHIP_TYPES)})`
-        - Pay close attention to relationships like a person working for a company or participating in a project.
-    3.  **Output Format**: Return a single valid JSON object with two keys:
-        - `"entities"`: A list of JSON objects. Each entity object MUST have `type` and `value`.
-        - `"relationships"`: A list of JSON objects. Each relationship object MUST have `source`, `target`, and `type`. The `source` and `target` values must exactly match the `value` of an entity in the entities list.
+        - The `source` and `target` of a relationship must be the `value` of an extracted entity.
 
     **Text to Analyze:**
     ---

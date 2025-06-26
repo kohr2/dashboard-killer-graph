@@ -11,6 +11,8 @@ import { Neo4jCommunicationRepository } from '../../infrastructure/repositories/
 import { OCreamContactEntity, ContactOntology } from '../../domain/entities/contact-ontology';
 import { OCreamV2Ontology, ActivityType, KnowledgeType, DOLCECategory, createInformationElement, InformationElement, CRMActivity, OCreamRelationship } from '../../domain/ontology/o-cream-v2';
 import { Communication, CommunicationStatus, CommunicationType } from '../../domain/entities/communication';
+import { singleton } from 'tsyringe';
+import { EntityType } from './spacy-entity-extraction.service';
 
 export interface ParsedEmail {
   messageId: string;
@@ -30,6 +32,7 @@ export interface ParsedEmail {
     contentType: string;
     priority?: 'high' | 'normal' | 'low';
   };
+  recommendations: string[];
 }
 
 export interface EmailAddress {
@@ -70,20 +73,15 @@ export interface EmailProcessingResult {
   recommendations: string[];
 }
 
+@singleton()
 export class EmailProcessingService {
-  private entityExtractor: SpacyEntityExtractionService;
-  private contactRepository: ContactRepository;
   private ontology: any; // OCreamV2Ontology;
-  private communicationRepository: CommunicationRepository;
 
   constructor(
-    contactRepository: ContactRepository,
-    communicationRepository: CommunicationRepository,
-    entityExtractor: SpacyEntityExtractionService,
+    private contactRepository: ContactRepository,
+    private communicationRepository: CommunicationRepository,
+    private entityExtractor: SpacyEntityExtractionService,
   ) {
-    this.entityExtractor = entityExtractor;
-    this.communicationRepository = communicationRepository;
-    this.contactRepository = contactRepository;
     this.ontology = OCreamV2Ontology.getInstance();
   }
 
@@ -339,21 +337,22 @@ export class EmailProcessingService {
       cc: ccAddresses,
       subject: parsed.subject || '(No Subject)',
       body: parsed.text || '',
-      htmlBody: typeof parsed.html === 'string' ? parsed.html : undefined,
+      htmlBody: parsed.html || undefined,
       date: parsed.date || new Date(),
       headers: headersRecord,
       attachments: parsed.attachments.map(att => ({
-        filename: att.filename || 'untitled',
+        filename: att.filename || 'attachment',
         contentType: att.contentType,
         size: att.size,
-        content: Buffer.isBuffer(att.content) ? att.content : undefined,
+        content: att.content,
       })),
       metadata: {
         size: emlContent.length,
-        encoding: 'utf-8',
+        encoding: parsed.headers.get('content-transfer-encoding')?.toString() || '7bit',
         contentType: parsed.headers.get('content-type')?.toString() || 'text/plain',
         priority: this.extractPriority(headersRecord),
-      }
+      },
+      recommendations: []
     };
   }
 
@@ -414,23 +413,10 @@ export class EmailProcessingService {
     knowledgeElements: any[];
     activities: any[];
   }> {
-    console.log(`   🧠 Inserting into Knowledge Graph...`);
-    const { sender, recipients } = contactResolution;
+    console.log(`     🧠 Inserting into Knowledge Graph...`);
 
-    if (!sender) {
-      console.error(
-        '      ❌ Cannot insert into knowledge graph without a resolved sender contact.',
-      );
-      return {
-        entities: [],
-        relationships: [],
-        knowledgeElements: [],
-        activities: [],
-      };
-    }
-
-    // 1. Create and save the core Communication node
-    const communication = new Communication({
+    // 1. Save the communication activity
+    const communication = await this.communicationRepository.save({
       id: email.messageId,
       type: CommunicationType.EMAIL,
       subject: email.subject,
@@ -439,98 +425,88 @@ export class EmailProcessingService {
       recipients: email.to.map(r => r.email),
       timestamp: email.date,
       status: CommunicationStatus.PROCESSED,
-      metadata: {
-        headers: email.headers,
-        attachments: email.attachments.map(a => a.filename),
-      },
+      metadata: { parsed: email.metadata },
     });
 
-    const savedCommunication = await this.communicationRepository.save(
-      communication,
-    );
-    if (!savedCommunication || !savedCommunication.id) {
-      console.error('     - Failed to save communication.');
-      return {
-        entities: [],
-        relationships: [],
-        knowledgeElements: [],
-        activities: [],
-      };
-    }
-    console.log(`     - Saved Communication node with ID: ${savedCommunication.id}`);
+    const { entities } = entityExtraction;
 
-    // 2. Link Extracted Entities to Communication
-    if (entityExtraction.entities.length > 0) {
-      try {
-        console.log(
-          `     - Linking ${entityExtraction.entities.length} entities to communication ${savedCommunication.id}...`,
-        );
-        await this.communicationRepository.linkEntitiesToCommunication(
-          savedCommunication.id,
-          entityExtraction.entities,
-        );
-        console.log(`     - Finished linking entities.`);
-      } catch (error) {
-        console.error(`     - Error linking entities:`, error);
+    // Separate email entities from others
+    const emailEntities = entities.filter(
+      (e) => e.type === EntityType.EMAIL_ADDRESS,
+    );
+    const otherEntities = entities.filter(
+      (e) => e.type !== EntityType.EMAIL_ADDRESS,
+    );
+
+    // 2. Add email addresses as properties to contacts
+    if (contactResolution.sender && emailEntities.length > 0) {
+      // Assuming the first email entity belongs to the sender if not already present
+      const senderEmail = contactResolution.sender.personalInfo.email;
+      const newEmail = emailEntities.find((e) => e.value !== senderEmail);
+      if (newEmail) {
+        // This method needs to be created in the repository
+        await this.contactRepository.addEmailToContact(contactResolution.sender.getId(), newEmail.value);
       }
     }
 
-    // This part of the code seems to be related to O-CREAM ontology which might be the next step
-    // For now, focusing on getting the communication and entities linked.
-    const createdEntities: any[] = [];
+    // Handle recipient emails similarly if needed...
 
-    const knowledgeElements: InformationElement[] = [];
-    const activities: CRMActivity[] = [];
-    const relationships: OCreamRelationship[] = [];
-
-    // Create entities for extracted info (this might be refactored or removed)
-    for (const entity of entityExtraction.entities) {
-      // Logic to save other entities and link them would go here
-      // For example, creating a Contact node if it doesn't exist, etc.
-      // This part is complex and depends on the final ontology structure.
+    // 3. Link other entities to the communication
+    if (otherEntities.length > 0) {
+      await (
+        this.communicationRepository as Neo4jCommunicationRepository
+      ).linkEntitiesToCommunication(communication.id, otherEntities);
     }
-    
-    const communicationLog: InformationElement = createInformationElement({
-      title: `Communication Log for: ${email.subject}`,
-      content: {
-        subject: email.subject,
-        from: email.from,
-        to: email.to,
-        date: email.date,
-        body: email.body.substring(0, 500),
-      },
-      format: 'json',
-      type: KnowledgeType.COMMUNICATIONLOG,
-      source: 'Email Ingestion Pipeline',
-    });
-    this.ontology.addEntity(communicationLog);
-    knowledgeElements.push(communicationLog);
 
-    const emailActivity: CRMActivity = {
-      id: `activity-${email.messageId}`,
-      category: DOLCECategory.PERDURANT,
-      type: ActivityType.DATAANALYSIS,
-      name: `Email Processed: ${email.subject}`,
+    // Update properties on the communication node with literal values
+    const literalEntities = entities.filter((e) =>
+      this.ontology.isLiteral(e.type),
+    );
+    if (literalEntities.length > 0) {
+      const properties = literalEntities.reduce((acc, entity) => {
+        acc[entity.type] = entity.value;
+        return acc;
+      }, {} as Record<string, any>);
+      await this.communicationRepository.updateProperties(
+        communication.id,
+        properties,
+      );
+    }
+
+    // 4. Create relationships between the communication and contacts
+    if (contactResolution.sender) {
+      // This needs a dedicated method in the repository, e.g., linkContactToCommunication
+      // await (
+      //   this.communicationRepository as Neo4jCommunicationRepository
+      // ).linkContactToCommunication(communication.id, contactResolution.sender.id, 'SENDER');
+    }
+    contactResolution.recipients.forEach(recipient => {
+      // await (
+      //   this.communicationRepository as Neo4jCommunicationRepository
+      // ).linkContactToCommunication(communication.id, recipient.id, 'RECIPIENT');
+    });
+
+    // Example: This part would be expanded based on business logic
+    const activity = {
+      id: `activity-${communication.id}`,
+      type: ActivityType.DATACOLLECTION,
+      name: `Ingested email: ${email.subject}`,
       description: 'Automated processing of an incoming email.',
-      participants: [sender.getId()],
+      participants: [contactResolution.sender, ...contactResolution.recipients].filter(Boolean).map(c => c!.id),
       status: 'completed',
       success: true,
-      context: { 
-        emailId: email.messageId, 
-        entitiesExtracted: entityExtraction.entityCount, 
-        confidence: entityExtraction.confidence, 
-        processingMethod: 'spacy' 
+      startTime: email.date,
+      endTime: new Date(),
+      metadata: {
+        communicationId: communication.id,
       },
-      createdAt: new Date(),
-      updatedAt: new Date(),
     };
-    this.ontology.addEntity(emailActivity);
 
     return {
-      entities: [communication], // Return the saved communication
-      relationships: [], // Simplified for now
-      knowledgeElements: [communicationLog],
-      activities: [emailActivity]
+      entities: otherEntities,
+      relationships: [], // Relationships are now created directly
+      knowledgeElements: [], // Placeholder for now
+      activities: [activity],
     };
   }
 
@@ -764,16 +740,4 @@ export class EmailProcessingService {
     
     return recommendations;
   }
-}
-
-export function createEmailProcessingService(
-  contactRepository: ContactRepository,
-  communicationRepository: CommunicationRepository,
-  entityExtractor: SpacyEntityExtractionService,
-): EmailProcessingService {
-  return new EmailProcessingService(
-    contactRepository,
-    communicationRepository,
-    entityExtractor,
-  );
 }

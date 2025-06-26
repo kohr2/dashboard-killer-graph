@@ -61,4 +61,23 @@ export class InMemoryContactRepository implements ContactRepository {
   async exists(id: string): Promise<boolean> {
     return this.contacts.has(id);
   }
+
+  public async addEmailToContact(contactId: string, email: string): Promise<void> {
+    const contact = this.contacts.get(contactId);
+    if (contact) {
+      // In a real scenario, a contact might have multiple emails.
+      // Here, we'll just add a new property or overwrite for simplicity.
+      // Let's assume we want to store multiple emails in an array.
+      if (!contact.personalInfo.email.includes(email)) {
+        // This assumes email is a string, but if we want multiple, it should be an array.
+        // Let's adjust the logic slightly. For now, let's just update the main email
+        // and add an `additionalEmails` property.
+        if (!contact.personalInfo.additionalEmails) {
+          contact.personalInfo.additionalEmails = [];
+        }
+        contact.personalInfo.additionalEmails.push(email);
+        contact.markAsModified();
+      }
+    }
+  }
 } 

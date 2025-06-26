@@ -84,10 +84,19 @@
     },
     "Person": {
       "name": "Person",
-      "description": "An individual human being."
+      "description": "An individual human being.",
+      "properties": {
+        "name": { "type": "string", "description": "The full name of the person." },
+        "email": { "type": "string", "description": "The email address of the person." }
+      }
     },
     "Organization": {
-      "description": "Represents a group of people with a particular purpose, such as a company, institution, or association."
+      "name": "Organization",
+      "description": "A group of people with a particular purpose, such as a company, institution, or association.",
+      "properties": {
+        "name": { "type": "string", "description": "The name of the organization." },
+        "email": { "type": "string", "description": "The primary email address of the organization." }
+      }
     },
     "Project": {
       "description": "Represents a temporary endeavor undertaken to create a unique product, service, or result."

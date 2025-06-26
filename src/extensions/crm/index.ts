@@ -3,19 +3,21 @@
 
 // Domain Layer
 export * from './domain';
+export * from './domain/entities/communication';
+export * from './domain/entities/contact-ontology';
 
 // Application Layer  
 export * from './application';
 
 // Infrastructure Layer
-export * from './infrastructure';
+// export * from './infrastructure';
 
 // Interface Layer
 export * from './interface';
 
 // CRM Core API
-export { ContactService } from './application/services/contact.service';
-export { EmailIngestionService } from './application/services/email-ingestion.service';
+export * from './application/services/contact.service';
+export * from './application/services/email-ingestion.service';
 export { EmailProcessingService } from './application/services/email-processing.service';
 export { EntityExtractionService } from './application/services/entity-extraction.service';
 export { SpacyEntityExtractionService } from './application/services/spacy-entity-extraction.service';
