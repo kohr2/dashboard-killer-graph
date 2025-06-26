@@ -1,10 +1,29 @@
+import { singleton } from 'tsyringe';
 import { ContactOntology, OCreamContactEntity } from '@crm/domain/entities/contact-ontology';
 import { Investor } from '@financial/domain/entities/investor';
 
 /**
- * Provides mapping between Financial and CRM domain entities.
+ * Provides mapping between Financial and CRM domain concepts.
  */
+@singleton()
 export class FinancialToCrmBridge {
+  private typeMappings: Record<string, string[]> = {
+    Investor: ['Organization'],
+    Sponsor: ['Organization'],
+    TargetCompany: ['Organization'],
+    Fund: ['Organization'],
+  };
+
+  /**
+   * Maps a financial entity type to its corresponding CRM-level labels.
+   * For example, an "Investor" is also an "Organization".
+   * @param entityType The financial entity type (e.g., "Investor").
+   * @returns An array of additional CRM labels, or an empty array if no mapping exists.
+   */
+  public mapEntityTypeToCrmLabels(entityType: string): string[] {
+    return this.typeMappings[entityType] || [];
+  }
+
   /**
    * Maps a Financial Investor to a CRM Contact.
    * @param investor The financial investor entity.

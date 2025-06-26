@@ -13,6 +13,7 @@ import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { initializeExtensions } from '../src/register-extensions';
 import { OntologyService } from '../src/platform/ontology/ontology.service';
+import { FinancialToCrmBridge } from '../src/extensions/financial/application/ontology-bridges/financial-to-crm.bridge';
 
 const LABELS_TO_INDEX = ['Person', 'Organization', 'Location', 'Product', 'Event', 'Project', 'Deal'];
 
@@ -36,6 +37,7 @@ async function demonstrateSpacyEmailIngestionPipeline() {
   // --- INITIALIZATION ---
   initializeExtensions();
   const ontologyService = container.resolve(OntologyService);
+  const bridge = container.resolve(FinancialToCrmBridge);
   const validEntityTypes = ontologyService.getAllEntityTypes();
   const validRelationshipTypes = ontologyService.getAllRelationshipTypes();
   console.log('🏛️ Registered Ontology Types:', validEntityTypes);
@@ -168,16 +170,21 @@ async function demonstrateSpacyEmailIngestionPipeline() {
           }
 
           if (!foundExistingNode) {
-            // If no close match, merge the node. This is safer than CREATE.
+            // Get additional labels from the ontology bridge.
+            const additionalLabels = bridge.mapEntityTypeToCrmLabels(primaryLabel);
+            const allLabels = [primaryLabel, ...additionalLabels];
+            const labelsCypher = allLabels.map(l => `\`${l}\``).join(':');
+
+            // If no close match, merge the node with all its labels.
             const mergeQuery = entity.embedding
               ? `
-                MERGE (e:\`${primaryLabel}\` {name: $name})
+                MERGE (e:${labelsCypher} {name: $name})
                 ON CREATE SET e.id = $id, e.category = $category, e.createdAt = datetime($createdAt), e.embedding = $embedding
                 ON MATCH SET e.embedding = $embedding
                 RETURN e
               `
               : `
-                MERGE (e:\`${primaryLabel}\` {name: $name})
+                MERGE (e:${labelsCypher} {name: $name})
                 ON CREATE SET e.id = $id, e.category = $category, e.createdAt = datetime($createdAt)
                 RETURN e
               `;
@@ -221,11 +228,13 @@ async function demonstrateSpacyEmailIngestionPipeline() {
         for (const entity of fiboEntities) {
           if (entity.resolvedId) {
             const entityInfo = entityMap.get(entity.name);
-            const label = entityInfo.labels[0]; // Assuming one primary label
+            const labels = entityInfo.labels; // These are the actual labels from the DB node
+            const labelsCypher = labels.map((l: string) => `\`${l}\``).join(':');
+
             await session.run(
               `
               MATCH (c:Communication {id: $communicationId})
-              MATCH (e:\`${label}\` {id: $entityId})
+              MATCH (e:${labelsCypher} {id: $entityId})
               MERGE (c)-[:CONTAINS_ENTITY]->(e)
             `,
               {
@@ -248,14 +257,14 @@ async function demonstrateSpacyEmailIngestionPipeline() {
             if (sourceEntity && sourceEntity.resolvedId && targetEntity && targetEntity.resolvedId) {
                 const sourceInfo = entityMap.get(sourceEntity.name);
                 const targetInfo = entityMap.get(targetEntity.name);
-                const sourceLabel = sourceInfo.labels[0];
-                const targetLabel = targetInfo.labels[0];
+                const sourceLabelsCypher = sourceInfo.labels.map((l: string) => `\`${l}\``).join(':');
+                const targetLabelsCypher = targetInfo.labels.map((l: string) => `\`${l}\``).join(':');
                 const relType = rel.type.replace(/ /g, '_').toUpperCase();
 
                 await session.run(
                   `
-                  MATCH (a:\`${sourceLabel}\` {id: $sourceId})
-                  MATCH (b:\`${targetLabel}\` {id: $targetId})
+                  MATCH (a:${sourceLabelsCypher} {id: $sourceId})
+                  MATCH (b:${targetLabelsCypher} {id: $targetId})
                   MERGE (a)-[:\`${relType}\`]->(b)
                 `,
                   {
