@@ -1,7 +1,7 @@
 {
-  "name": "extensible-crm-platform",
+  "name": "dashboard-killer-graph",
   "version": "1.0.0",
-  "description": "Extensible CRM platform with pluggable domain extensions",
+  "description": "A graph-based dashboard to replace traditional CRM views",
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev src/index.ts",

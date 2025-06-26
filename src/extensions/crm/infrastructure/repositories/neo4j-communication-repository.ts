@@ -42,15 +42,18 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
         EntityType.PHONE_NUMBER,
         EntityType.URL,
         // Adding legacy spacy labels for broader coverage during transition
-        'DATE', 'MONEY', 'CARDINAL', 'ORDINAL', 'QUANTITY', 'PERCENT'
+        'DATE', 'MONEY', 'CARDINAL', 'ORDINAL', 'QUANTITY', 'PERCENT', 'EMAIL_ADDRESS', 'PHONE_NUMBER', 'URL'
       ];
 
       for (const entity of entities) {
+        // Determine the primary type identifier, preferring our internal enum but falling back to the spacy label.
+        const primaryType = entity.type || entity.spacyLabel;
+
         // Do not create nodes for literal-like entities.
         // These are handled as properties of other nodes at a higher-level service.
-        if (literalTypes.includes(entity.type) || literalTypes.includes(entity.spacyLabel)) {
-          console.warn(`[Neo4jCommunicationRepository] Skipping node creation for literal type: "${entity.type || entity.spacyLabel}" (${entity.value}). This should be a property.`);
-          continue;
+        if (literalTypes.includes(primaryType)) {
+          console.warn(`[Neo4jCommunicationRepository] Skipping node creation for literal type: "${primaryType}" (${entity.value}). This should be a property.`);
+          continue; // Skip to the next entity
         }
 
         // Map the spaCy label to our internal ontology entity type

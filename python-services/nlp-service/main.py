@@ -121,26 +121,51 @@ def extract_graph_with_llm(text: str) -> Dict[str, Any]:
     core_entity_types = [t for t in VALID_ONTOLOGY_TYPES if t not in PROPERTY_ENTITY_TYPES]
 
     prompt = f"""
-    You are an expert financial analyst creating a knowledge graph from a text.
-    Your task is to extract all relevant entities, their properties, and the relationships between them.
-    Your final output must be a single JSON object with two keys: "entities" and "relationships".
+    You are an expert financial analyst creating a knowledge graph from a text. Your goal is to extract entities and relationships to build a graph. Your final output must be a single JSON object with "entities" and "relationships" keys.
 
-    **Instructions:**
-    1.  **Identify Core Entities**: First, read through the text and identify all primary entities like people, organizations, deals, projects, etc. Use ONLY these types: `({', '.join(core_entity_types)})`.
-    2.  **Identify Properties**: Next, find all numerical, date-based, or contact-related values that would correspond to these types: `({', '.join(PROPERTY_ENTITY_TYPES)})`.
-    3.  **Associate Properties**: For each property found in step 2, associate it with the most relevant core entity from step 1. For example:
-        - A monetary amount like "$50M" is likely the `dealSize` of a `Deal`.
-        - An email address like "david.chen@morganstanley.com" is the `email` for the `Person` "David Chen".
-    4.  **Construct JSON**: Assemble your findings into a single JSON object. Entities that have associated properties should have a `properties` object.
-        - **CRITICAL RULE**: Do not create any entities with the types `({', '.join(PROPERTY_ENTITY_TYPES)})`. They must only exist inside the `properties` of a core entity.
-        - Use descriptive camelCase keys (e.g., `dealSize`, `interestRate`, `email`, `deadlineDate`).
-        - **Correct Example 1 (Deal)**: `{{"type": "Deal", "value": "Project Anvil", "properties": {{"dealSize": "$50M"}}}}`
-        - **Correct Example 2 (Person)**: `{{"type": "Person", "value": "David Chen", "properties": {{"email": "david.chen@morganstanley.com"}}}}`
-        - **Incorrect Example**: `[{{ "type": "Person", "value": "David Chen" }}, {{ "type": "Email", "value": "david.chen@morganstanley.com"}}]`
+    **Instructions & Rules:**
 
-    5.  **Relationship Identification**: You MUST identify relationships only between the Core Entities identified in step 1.
-        - Allowed Relationship Types: `({', '.join(VALID_RELATIONSHIP_TYPES)})`
-        - The `source` and `target` of a relationship must be the `value` of an extracted entity.
+    1.  **Entity Types:**
+        -   **Core Entities:** You can create nodes for these types: `({', '.join(core_entity_types)})`.
+        -   **Property-like Types:** These types MUST NOT become nodes: `({', '.join(PROPERTY_ENTITY_TYPES)})`.
+
+    2.  **CRITICAL RULE: Handling Properties**
+        -   When you find a value corresponding to a **Property-like Type** (e.g., an email address, a date, a monetary amount), you MUST find the most relevant **Core Entity** it describes and attach it as a key-value pair in its `properties` object.
+        -   Use descriptive camelCase keys (e.g., `email`, `dealSize`, `closingDate`).
+        -   **Never** create a standalone entity for a property-like type.
+
+    3.  **Relationships:**
+        -   Relationships can ONLY exist between **Core Entities**.
+        -   Allowed Relationship Types: `({', '.join(VALID_RELATIONSHIP_TYPES)})`.
+
+    **Example Scenario:**
+    -   **Text:** "David Chen (david.chen@ms.com) from Morgan Stanley mentioned the $350M Project Helix deal."
+    -   **Your Logic:**
+        1.  "David Chen" is a `Person` (Core Entity).
+        2.  "david.chen@ms.com" is an `Email` (Property-like). I must attach it to "David Chen".
+        3.  "Morgan Stanley" is an `Organization` (Core Entity).
+        4.  "$350M" is a `MonetaryAmount` (Property-like). I must attach it to "Project Helix".
+        5.  "Project Helix" is a `Deal` (Core Entity).
+    -   **Correct JSON Output:**
+        ```json
+        {{
+          "entities": [
+            {{
+              "type": "Person", "value": "David Chen",
+              "properties": {{"email": "david.chen@ms.com"}}
+            }},
+            {{"type": "Organization", "value": "Morgan Stanley"}},
+            {{
+              "type": "Deal", "value": "Project Helix",
+              "properties": {{"dealSize": "$350M"}}
+            }}
+          ],
+          "relationships": [
+            {{"source": "David Chen", "target": "Morgan Stanley", "type": "WORKS_FOR"}},
+            {{"source": "David Chen", "target": "Project Helix", "type": "PARTICIPATES_IN"}}
+          ]
+        }}
+        ```
 
     **Text to Analyze:**
     ---

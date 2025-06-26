@@ -118,7 +118,7 @@ export class FinancialEntityIntegrationService {
       const response = await axios.post<LlmGraphResponse>(
         `${this.nlpServiceUrl}/extract-graph`,
         { text: content },
-        { timeout: 90000 } // 90-second timeout for the LLM
+        { timeout: 180000 } // 180-second timeout for the LLM
       );
 
       const graph = response.data;
