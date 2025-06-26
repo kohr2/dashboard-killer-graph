@@ -21,4 +21,13 @@ async function resetDatabase() {
   }
 }
 
-resetDatabase().catch(console.error); 
+// Export the function to be used in tests
+export { resetDatabase };
+
+if (require.main === module) {
+  resetDatabase()
+    .then(() => {
+      console.log('✅ Database reset completed successfully.');
+    })
+    .catch(console.error);
+} 

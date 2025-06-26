@@ -72,6 +72,7 @@ describe('ContactService', () => {
       search: jest.fn(),
       findAll: jest.fn(),
       findByEmail: jest.fn(),
+      addEmailToContact: jest.fn(),
     };
     contactService = new ContactService(mockContactRepository);
     // Get the mocked instance here
@@ -131,6 +132,20 @@ describe('ContactService', () => {
       expect(result).not.toBeNull();
       expect(result?.firstName).toBe('Johnathan');
     });
+
+    it('should throw an error if the contact to update is not found', async () => {
+      const contactId = 'non-existent-id';
+      const updates: UpdateContactDto = { firstName: 'Ghost' };
+
+      mockOntology.getEntity.mockReturnValue(undefined);
+
+      await expect(
+        contactService.updateContact(contactId, updates),
+      ).rejects.toThrow(`Contact with ID ${contactId} not found.`);
+
+      expect(mockOntology.getEntity).toHaveBeenCalledWith(contactId);
+      expect(mockContactRepository.save).not.toHaveBeenCalled();
+    });
   });
 
   describe('deleteContact', () => {
@@ -142,6 +157,72 @@ describe('ContactService', () => {
       expect(mockOntology.getEntity).toHaveBeenCalledWith(contactId);
       expect(mockContactRepository.delete).toHaveBeenCalledWith(contactId);
       expect(mockOntology.removeEntity).toHaveBeenCalledWith(contactId);
+    });
+  });
+
+  describe('searchContacts', () => {
+    it('should return an array of contact DTOs matching the search criteria', async () => {
+      const searchDto = { name: 'John' };
+      const mockContacts = [mockPerson, { ...mockPerson, id: 'contact-456', name: 'Johnny' }];
+      
+      mockContactRepository.search.mockResolvedValue(mockContacts as any[]);
+
+      const results = await contactService.searchContacts(searchDto);
+
+      expect(mockContactRepository.search).toHaveBeenCalledWith(searchDto);
+      expect(results).toHaveLength(2);
+      expect(results[0].id).toBe('contact-123');
+      expect(results[1].id).toBe('contact-456');
+    });
+
+    it('should return an empty array when no contacts match', async () => {
+      const searchDto = { name: 'NonExistent' };
+      mockContactRepository.search.mockResolvedValue([]);
+
+      const results = await contactService.searchContacts(searchDto);
+
+      expect(mockContactRepository.search).toHaveBeenCalledWith(searchDto);
+      expect(results).toHaveLength(0);
+    });
+  });
+
+  describe('addNoteToContact', () => {
+    it('should add a note to a contact and return the updated contact DTO', async () => {
+      const contactId = 'contact-123';
+      const noteDto = {
+        content: 'This is a test note.',
+        authorId: 'user-1',
+      };
+      const updatedContact = { ...mockPerson };
+
+      mockOntology.getEntity.mockReturnValue(mockPerson);
+      mockContactRepository.save.mockResolvedValue(updatedContact as any);
+
+      const result = await contactService.addNoteToContact(contactId, noteDto);
+
+      expect(mockOntology.getEntity).toHaveBeenCalledWith(contactId);
+      expect(mockOntology.addEntity).toHaveBeenCalled();
+      expect(mockPerson.addKnowledgeElement).toHaveBeenCalled();
+      expect(mockContactRepository.save).toHaveBeenCalled();
+      expect(result).not.toBeNull();
+      expect(result?.id).toBe(contactId);
+    });
+
+    it('should throw an error if the contact to add a note to is not found', async () => {
+      const contactId = 'non-existent-id';
+      const noteDto = {
+        content: 'This note will fail.',
+        authorId: 'user-1',
+      };
+
+      mockOntology.getEntity.mockReturnValue(undefined);
+
+      await expect(
+        contactService.addNoteToContact(contactId, noteDto),
+      ).rejects.toThrow(`Contact with id ${contactId} not found`);
+
+      expect(mockOntology.getEntity).toHaveBeenCalledWith(contactId);
+      expect(mockContactRepository.save).not.toHaveBeenCalled();
     });
   });
 }); 

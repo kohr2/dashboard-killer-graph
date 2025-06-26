@@ -8,7 +8,17 @@
     "UnrecognizedEntity": {
       "parent": "Thing",
       "description": "A placeholder for an entity that was detected but could not be classified into a more specific type."
+    },
+    "RegulatoryInformation": {
+        "parent": "Thing",
+        "description": "Information related to regulations, compliance, and legal matters."
     }
   },
-  "relationships": {}
+  "relationships": {
+    "HAS_LEGAL_DOCUMENT": {
+        "description": "Indicates that an entity has an associated legal document.",
+        "domains": ["Thing"],
+        "ranges": ["RegulatoryInformation"]
+    }
+  }
 } 

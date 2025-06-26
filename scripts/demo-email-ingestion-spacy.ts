@@ -52,7 +52,7 @@ function getLabelInfo(entity: any, validOntologyTypes: string[]): { primary: str
     return { primary: primaryLabel, candidates: [...new Set(candidateLabels)] };
 }
 
-async function demonstrateSpacyEmailIngestionPipeline() {
+export async function demonstrateSpacyEmailIngestionPipeline() {
   // --- INITIALIZATION ---
   initializeExtensions();
   const ontologyService = container.resolve(OntologyService);
@@ -330,6 +330,9 @@ async function demonstrateSpacyEmailIngestionPipeline() {
   console.log('\n\n Demo Complete!');
 }
 
-demonstrateSpacyEmailIngestionPipeline().catch(e => {
-  console.error('An unexpected error occurred:', e);
-}); 
+if (require.main === module) {
+    demonstrateSpacyEmailIngestionPipeline().catch(e => {
+      console.error('An unexpected error occurred:', e);
+      process.exit(1);
+    });
+} 

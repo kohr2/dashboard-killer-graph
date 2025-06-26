@@ -114,6 +114,16 @@ describe('EmailProcessingService', () => {
       expect(mockCommunicationRepository.save).toHaveBeenCalled();
       expect(result.email.subject).toBe('Test');
     });
+
+    it('should throw an error if the EML file cannot be read', async () => {
+      mockFs.readFileSync.mockImplementation(() => {
+        throw new Error('File not found');
+      });
+
+      await expect(
+        processingService.processEmlFile('non-existent/path/to/email.eml'),
+      ).rejects.toThrow('File not found');
+    });
   });
 
   describe('processBatchEmlFiles', () => {
@@ -156,6 +166,33 @@ describe('EmailProcessingService', () => {
       expect(summary.summary.totalEmails).toBe(2);
       expect(summary.summary.totalEntities).toBe(4);
       expect(summary.summary.totalContacts).toBe(2);
+    });
+
+    it('should handle errors for individual files and continue processing others', async () => {
+      const emlFiles = ['good1.eml', 'bad.eml', 'good2.eml'];
+      mockFs.readdirSync.mockReturnValue(emlFiles as any);
+      mockPath.join.mockImplementation((...args) => args.join('/'));
+
+      const processEmlFileSpy = jest
+        .spyOn(processingService, 'processEmlFile')
+        .mockImplementation(async (filePath) => {
+          if (filePath.includes('bad.eml')) {
+            throw new Error('Test processing error');
+          }
+          return {
+            email: { subject: 'Batch Test' } as any,
+            entityExtraction: { entityCount: 1 } as any,
+            contactResolution: { newContacts: [] } as any,
+            businessInsights: { complianceFlags: [] } as any,
+          } as any;
+        });
+      
+      const summary = await processingService.processBatchEmlFiles('dummy/directory');
+
+      expect(processEmlFileSpy).toHaveBeenCalledTimes(3);
+      expect(summary.summary.totalEmails).toBe(2); // Only two succeeded
+      expect(summary.results).toHaveLength(2);
+      // We could also check that console.error was called
     });
   });
 });

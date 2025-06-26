@@ -13,12 +13,22 @@ describe('EmailIngestionService', () => {
     ingestionService = new EmailIngestionService(mockProcessingService, {} as any);
   });
 
-  it('should call the processing service with the EML file path', async () => {
+  it('should call the processing service and return success when an EML path is provided', async () => {
     const filePath = '/test-emails/01.eml';
     (mockProcessingService.processEmlFile as jest.Mock).mockResolvedValue({ success: true });
     
-    await ingestionService.ingestEmail({} as any, filePath);
+    const result = await ingestionService.ingestEmail({} as any, filePath);
     
     expect(mockProcessingService.processEmlFile).toHaveBeenCalledWith(filePath);
+    expect(result.success).toBe(true);
+    expect(result.message).toContain('Email processed successfully');
+  });
+
+  it('should return a failure message if no EML file path is provided', async () => {
+    const result = await ingestionService.ingestEmail({} as any);
+
+    expect(result.success).toBe(false);
+    expect(result.message).toBe('Direct email object ingestion not implemented');
+    expect(mockProcessingService.processEmlFile).not.toHaveBeenCalled();
   });
 });
