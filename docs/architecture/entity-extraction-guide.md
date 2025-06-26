@@ -23,7 +23,22 @@ The service is built with:
 3.  **API Call to NLP Service**: The cleaned text is sent to the `nlp-service`.
 4.  **Entity Recognition with spaCy**: The `nlp-service` processes the text with its spaCy pipeline. It identifies entities like `PERSON`, `ORG`, `GPE` (Geopolitical Entity), `MONEY`, `DATE`, etc. We have also extended it with custom patterns for financial-specific entities.
 5.  **Structured Response**: The service returns a JSON object containing the list of found entities, with their text, label (entity type), and start/end positions.
-6.  **Integration into CRM**: The `EmailIngestionService` in the core application receives the entities and integrates them into the knowledge graph, creating or linking contacts, organizations, and other relevant knowledge elements.
+6.  **Integration into CRM**: The `EmailIngestionService` in the core application receives the entities and prepares them for integration into the knowledge graph.
+
+### 3. Entity Linking and Deduplication with Vector Search
+
+A crucial step after extraction is to link the new entities to existing ones in our Neo4j knowledge graph. This process, often called "entity linking" or "resolution," prevents the creation of duplicate nodes (e.g., multiple nodes for "Apple Inc.").
+
+**It is important to note that vector search is applied to the extracted entities, not the raw email text itself.**
+
+1.  **Vector Embedding**: For each entity extracted from the email, we generate a numerical vector representation (an "embedding") using a sentence-transformer model in our NLP service. This embedding captures the semantic meaning of the entity's name.
+2.  **Similarity Search**: This embedding is then used to query a vector index in Neo4j. The query searches for nodes with a similar vector, returning a "similarity score."
+3.  **Decision Logic**:
+    -   If a node with a high similarity score (e.g., > 0.92) is found, we reuse this existing node.
+    -   If no similar node is found, a new entity node is created in the graph, and its embedding is stored as a property.
+4.  **Graph Update**: The `Communication` node representing the email is then linked to the appropriate entity nodes (either pre-existing or newly created).
+
+This process ensures the knowledge graph remains clean, consistent, and densely connected over time.
 
 ## ✨ Advantages of the spaCy-based approach
 
