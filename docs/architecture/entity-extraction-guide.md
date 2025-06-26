@@ -40,6 +40,42 @@ A crucial step after extraction is to link the new entities to existing ones in 
 
 This process ensures the knowledge graph remains clean, consistent, and densely connected over time.
 
+## 🏛️ Ontology-Driven Entity Processing
+
+A key architectural principle in our system is that the handling of entities is driven by a decentralized ontology defined within each extension. This allows for a modular and extensible system where each business domain (CRM, Financial, etc.) can define its own concepts without altering the core platform.
+
+### Defining Entities as Properties
+
+Not all identified concepts should become distinct nodes in our knowledge graph. Some concepts, like an email address, a monetary amount, or a specific date, are better represented as *properties* of a core entity (like a `Person` or a `Deal`).
+
+To manage this, our ontology supports an `"isProperty"` flag.
+
+When an entity in an `ontology.json` file is marked with `"isProperty": true`, the system-wide `OntologyService` recognizes it not as a standalone node, but as an attribute to be attached to another entity.
+
+**Example: Defining `Email` as a Property**
+
+In the CRM extension (`src/extensions/crm/ontology.json`), the `Email` entity is defined as follows:
+
+```json
+{
+  "Email": {
+    "parent": "ContactPoint",
+    "isProperty": true,
+    "description": "A unique electronic address for sending and receiving messages."
+  }
+}
+```
+
+### Dynamic Processing by the NLP Service
+
+This ontology-driven approach is fully dynamic.
+1.  At startup, the main application reads all `ontology.json` files from the extensions.
+2.  It compiles a list of all entity types that are marked with `"isProperty": true`.
+3.  This list is sent to the Python NLP Service.
+4.  The NLP Service then dynamically adjusts its instructions for the underlying AI model, telling it **not** to create nodes for these types, but to instead attach them as properties to the most relevant core entity it can find.
+
+This ensures that the logic for how an entity is treated resides entirely within the extension that defines it, making the system highly modular and easy to maintain.
+
 ## ✨ Advantages of the spaCy-based approach
 
 The move to a spaCy-based microservice offers significant advantages over the previous regex-based system:

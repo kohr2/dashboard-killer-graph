@@ -55,4 +55,21 @@ describe('OntologyService', () => {
         const uniqueTypes = [...new Set(allRelationshipTypes)];
         expect(allRelationshipTypes.length).toBe(uniqueTypes.length);
     });
+
+    it('should return a list of all entity types designated as properties', () => {
+        // WHEN on récupère les types d'entités qui sont des propriétés
+        const propertyTypes = ontologyService.getPropertyEntityTypes();
+
+        // THEN la liste doit contenir les types marqués avec "isProperty: true"
+        expect(propertyTypes).toContain('Email');
+        expect(propertyTypes).toContain('MonetaryAmount');
+        expect(propertyTypes).toContain('Date');
+        expect(propertyTypes).toContain('Percent');
+        expect(propertyTypes).toContain('Time');
+
+        // AND la liste ne doit pas contenir les types d'entités standards
+        expect(propertyTypes).not.toContain('Person');
+        expect(propertyTypes).not.toContain('Deal');
+        expect(propertyTypes).not.toContain('Organization');
+    });
 }); 
