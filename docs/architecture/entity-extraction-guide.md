@@ -71,7 +71,7 @@ const commLogKE = createInformationElement({
 To ensure the reliability of the entity extraction process, the `SpacyEntityExtractionService` is thoroughly tested with a dedicated suite of unit tests.
 
 ### Unit Testing Approach
-The tests for the service are located in `test/unit/crm-core/application/services/spacy-entity-extraction.service.test.ts`.
+The tests for the service are located in `test/unit/crm/application/services/spacy-entity-extraction.service.test.ts`.
 
 Our testing strategy for this service focuses on:
 - **Mocking the NLP Service**: We use `axios` mocks to simulate responses from the Python `nlp-service`. This allows us to test the TypeScript service in isolation, without needing the Python service to be running.

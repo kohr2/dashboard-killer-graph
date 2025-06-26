@@ -18,6 +18,9 @@ const templatesDir = path.join(projectRoot, 'scripts/templates');
 
 console.log(`Found ${ontologySources.length} structured ontology files.`);
 
+handlebars.registerHelper('kebabCase', toKebabCase);
+handlebars.registerHelper('eq', (a, b) => a === b);
+
 const entityTemplate = handlebars.compile(fs.readFileSync(path.join(templatesDir, 'entity.hbs'), 'utf-8'));
 const repoInterfaceTemplate = handlebars.compile(fs.readFileSync(path.join(templatesDir, 'repository.interface.hbs'), 'utf-8'));
 
@@ -106,7 +109,8 @@ console.log('Ontology synchronization task finished.');
 
 // --- Configuration ---
 const ONTOLOGY_SOURCE_PATH = path.join(projectRoot, 'config/ontology/core.ontology.json');
-const ONTOLOGY_OUTPUT_PATH = path.join(projectRoot, 'src/crm-core/domain/ontology/o-cream-v2.ts');
+const ONTOLOGY_OUTPUT_PATH = path.join(projectRoot, 'src/extensions/crm/domain/ontology/o-cream-v2.ts');
+const EXTENSION_ONTOLOGY_PATH = path.join(projectRoot, 'src/extensions/financial/ontology.json');
 const ENTITY_TEMPLATE_PATH = path.join(projectRoot, 'scripts/templates/entity.hbs');
 const REPO_INTERFACE_TEMPLATE_PATH = path.join(projectRoot, 'scripts/templates/repository.interface.hbs');
 // --- End Configuration ---
@@ -161,4 +165,13 @@ try {
   process.exit(1);
 }
 
-console.log('Ontology synchronization task finished.'); 
+console.log('Ontology synchronization task finished.');
+
+function getOutputBasePath(sourcePath: string): string {
+    const dir = path.dirname(sourcePath);
+    return path.join(dir, '..');
+}
+
+class OntologySynchronizer {
+    // ... existing code ...
+} 

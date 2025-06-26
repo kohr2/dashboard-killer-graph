@@ -139,7 +139,7 @@ Welcome to the **Extensible CRM Platform** documentation! This is your complete 
 - **Jest**: [TDD Approach](development/tdd-approach.md), [Testing Utilities](development/testing-utilities.md)
 
 ### By Feature
-- **Contact Management**: [CRM Core](architecture/overview.md#crm-core), [User Guide](user-guide/README.md)
+- **Contact Management**: [CRM Core](architecture/overview.md#crm), [User Guide](user-guide/README.md)
 - **Deal Tracking**: [Financial Extension](architecture/extensions.md), [User Guide](user-guide/financial-extension.md)
 - **Extension System**: [Extension Architecture](architecture/extensions.md), [Development Guide](development/extension-guide.md)
 - **API Integration**: [API Reference](development/api-reference.md), [Integration Guide](user-guide/integrations.md)

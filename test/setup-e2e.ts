@@ -3,11 +3,27 @@
 
 import 'jest-extended';
 
+// Define the type for our custom global helper
+declare global {
+  var e2eHelpers: {
+    api: {
+      baseUrl: string;
+      timeout: number;
+    };
+    db: {
+      cleanup: () => Promise<void>;
+      seed: () => Promise<void>;
+    };
+    wait: (ms: number) => Promise<void>;
+    waitFor: (condition: () => boolean | Promise<boolean>, timeout?: number) => Promise<boolean>;
+  };
+}
+
 // Set longer timeout for E2E tests
 jest.setTimeout(60000);
 
 // E2E test utilities
-global.e2eHelpers = {
+(global as any).e2eHelpers = {
   // API testing helpers
   api: {
     baseUrl: process.env.TEST_API_URL || 'http://localhost:3000',
@@ -36,7 +52,7 @@ global.e2eHelpers = {
       if (await condition()) {
         return true;
       }
-      await global.e2eHelpers.wait(100);
+      await (global as any).e2eHelpers.wait(100);
     }
     throw new Error(`Condition not met within ${timeout}ms`);
   },

@@ -22,6 +22,9 @@ else:
 class ExtractionRequest(BaseModel):
     text: str
     
+class BatchExtractionRequest(BaseModel):
+    texts: List[str]
+    
 class Entity(BaseModel):
     type: str
     value: str
@@ -49,6 +52,9 @@ class RefinedExtractionResponse(BaseModel):
     raw_entities: List[Entity]
     refined_entities: List[Entity]
     refinement_info: str
+
+class EmbeddingRequest(BaseModel):
+    texts: List[str]
 
 # --- Entity Extractor Class (adapted from the original script) ---
 class SpacyEntityExtractor:
@@ -269,7 +275,7 @@ async def extract_graph_endpoint(request: ExtractionRequest):
         return {
             "entities": graph_data.get("cleaned_entities", []),
             "relationships": graph_data.get("relationships", []),
-            "refinement_info": f"Refined {len(raw_entities)} entities and found {len(graph_data.get('relationships', []))} relationships.",
+            "refinement_info": "LLM-based graph extraction",
             "embedding": embedding
         }
     except HTTPException as e:
@@ -278,6 +284,58 @@ async def extract_graph_endpoint(request: ExtractionRequest):
     except Exception as e:
         # Catch any other unexpected errors during graph extraction
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred during graph extraction: {str(e)}")
+
+@app.post("/embed", summary="Generate sentence embeddings for a list of texts")
+async def embed_endpoint(request: EmbeddingRequest):
+    """
+    Generates sentence-transformer embeddings for a list of text strings.
+    - **texts**: A list of strings to be embedded.
+    """
+    if not embedding_model:
+        raise HTTPException(status_code=503, detail="Embedding model not loaded.")
+    try:
+        embeddings = embedding_model.encode(request.texts).tolist()
+        return {"embeddings": embeddings}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Embedding generation error: {str(e)}")
+
+@app.post("/batch-extract-graph", response_model=List[GraphResponse], summary="Batch Extract Graphs from Multiple Texts")
+async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
+    """
+    Extracts entities, relationships, and embeddings for a batch of texts.
+    - **texts**: A list of strings to process.
+    """
+    results = []
+    for text in request.texts:
+        # Re-using the existing single-text extraction logic
+        raw_entities = extractor.extract_entities(text)
+        
+        embedding = None
+        if embedding_model:
+            embedding = embedding_model.encode(text).tolist()
+            
+        try:
+            graph_data = extract_graph_with_llm(text, raw_entities)
+            
+            results.append({
+                "entities": graph_data.get("cleaned_entities", []),
+                "relationships": graph_data.get("relationships", []),
+                "refinement_info": f"Refined {len(raw_entities)} entities and found {len(graph_data.get('relationships', []))} relationships.",
+                "embedding": embedding
+            })
+        except Exception as e:
+            # If one text fails, we can decide to either skip it or raise an error.
+            # Here, we'll log a warning and continue with the batch.
+            print(f"Warning: Failed to process a text in batch. Error: {e}")
+            # Optionally add a placeholder or error response for the failed item
+            results.append({
+                "entities": [],
+                "relationships": [],
+                "refinement_info": f"Failed to process text. Error: {e}",
+                "embedding": None
+            })
+            
+    return results
 
 @app.get("/health")
 def health_check():

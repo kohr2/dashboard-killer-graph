@@ -81,11 +81,11 @@ Extensions → CRM Core → Platform → Shared Infrastructure
 
 ## 📊 Module Structure
 
-### 🏛️ CRM Core (`src/crm-core/`)
+### 🏛️ CRM Core (`src/crm/`)
 **Purpose**: Generic CRM foundation that works for any business domain
 
 ```
-crm-core/
+crm/
 ├── domain/           # Core business entities
 │   ├── entities/     # Contact, Communication, Task, Organization
 │   ├── value-objects/# Email, Phone, Address, DateTime

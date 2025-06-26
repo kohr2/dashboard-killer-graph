@@ -1,4 +1,4 @@
-import { SpacyExtractedEntity, EntityType } from '../../../../crm-core/application/services/spacy-entity-extraction.service';
+import { SpacyExtractedEntity, EntityType } from '@crm/application/services/spacy-entity-extraction.service';
 
 export interface Deal {
   dealName?: string;

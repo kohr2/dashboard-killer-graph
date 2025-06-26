@@ -14,14 +14,23 @@ git clone https://github.com/your-org/financial-kill-the-crm.git
 cd financial-kill-the-crm
 npm install
 
-# 2. Start development environment
+# 2. Start Core Infrastructure (Databases)
+# This starts Neo4j and other backing services.
 docker-compose up -d
+
+# 3. Start AI Service (in a separate terminal)
+# For full functionality like entity extraction, the Python NLP service must be running.
+# See `python-services/README.md` for first-time setup (virtual env, dependencies).
+cd python-services/nlp-service
+uvicorn main:app --reload # Requires an activated venv with dependencies installed
+
+# 4. Start Main Application (in another terminal)
 npm run dev
 
-# 3. Run tests
+# 5. Run tests
 npm test
 
-# 4. Build project
+# 6. Build project
 npm run build
 ```
 
@@ -99,7 +108,7 @@ This platform implements a **modular architecture** with clear separation of con
 
 ### Run Tests by Module
 ```bash
-npm run test:crm-core      # Test CRM foundation
+npm run test:crm      # Test CRM foundation
 npm run test:financial     # Test deal tracking extension
 npm run test:platform      # Test extension framework
 npm run test:integration   # Test cross-module integration

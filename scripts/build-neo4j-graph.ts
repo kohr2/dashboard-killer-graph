@@ -1,8 +1,11 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { config } from 'dotenv';
-import { Neo4jConnection } from '../src/crm-core/infrastructure/database/neo4j-connection';
-import { EdgarEnrichmentService } from '../src/crm-core/application/services/edgar-enrichment.service';
+import { promises as fs } from 'fs';
+import { Neo4jConnection } from '../src/platform/database/neo4j-connection';
+import { EdgarEnrichmentService } from '../src/extensions/crm/application/services/edgar-enrichment.service';
+import { OCreamV2Ontology } from '../src/extensions/crm/domain/ontology/o-cream-v2';
+import { v4 as uuidv4 } from 'uuid';
 
 config(); // Load environment variables from .env file
 

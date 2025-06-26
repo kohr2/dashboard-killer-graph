@@ -16,7 +16,12 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@crm-core/*": ["src/crm-core/*"]
+      "@/*": ["src/*"],
+      "@crm/*": ["src/extensions/crm/*"],
+      "@financial/*": ["src/extensions/financial/*"],
+      "@platform/*": ["src/platform/*"],
+      "@shared/*": ["src/shared/*"],
+      "@test/*": ["test/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

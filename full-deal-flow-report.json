@@ -1,0 +1,1549 @@
+[
+  {
+    "sourceFile": "01-helix-sourcing.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Helix",
+        "dealType": "Growth Equity",
+        "processType": "Bilateral"
+      },
+      "targetCompany": {
+        "companyName": "HelixFlow Solutions",
+        "gicsCode": "45103010",
+        "sector": "Application Software",
+        "revenue": 40000000,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Vista Equity Partners",
+          "investorType": "Sponsor"
+        },
+        {
+          "investorName": "Morgan Stanley Technology Group",
+          "investorType": "Bank"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "david.chen@morganstanley.com",
+          "to": [
+            "growth-team@vistaequity.com"
+          ],
+          "date": "2025-06-25T10:00:00-0400",
+          "subject": "Growth Equity Opportunity: Project Helix - B2B SaaS Leader"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [],
+      "summary": "Project Helix is a bilateral growth equity opportunity to invest in HelixFlow Solutions, a high-growth B2B SaaS company in the project management space with an ARR of $40M and 80% YoY growth.",
+      "relationships": [
+        {
+          "source": "HelixFlow Solutions",
+          "target": "Project Helix",
+          "type": "IS_TARGET_OF"
+        },
+        {
+          "source": "Vista Equity Partners",
+          "target": "Project Helix",
+          "type": "IS_POTENTIAL_INVESTOR_IN"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "02-helix-follow-up.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Helix",
+        "dealType": "Growth Equity",
+        "processType": "Not specified"
+      },
+      "targetCompany": {
+        "companyName": "HelixFlow Solutions",
+        "gicsCode": null,
+        "sector": null,
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Vista Equity Partners",
+          "investorType": "Sponsor"
+        },
+        {
+          "investorName": "Morgan Stanley",
+          "investorType": "Bank"
+        }
+      ],
+      "mentionedFunds": [
+        {
+          "fundName": "Vista Fund X"
+        }
+      ],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "partner.jane@vistaequity.com",
+          "to": [
+            "david.chen@morganstanley.com"
+          ],
+          "cc": [
+            "team@vistaequity.com"
+          ],
+          "date": "2025-06-25T14:20:00-04:00",
+          "subject": "RE: Growth Equity Opportunity: Project Helix - B2B SaaS Leader"
+        }
+      ],
+      "crmTasks": [
+        {
+          "activityType": "Schedule management presentation for Project Helix",
+          "dueDate": "2025-06-28",
+          "assignedTo": "analyst.bob@vistaequity.com"
+        }
+      ],
+      "competitors": [],
+      "summary": "Jane Miller from Vista Equity Partners expresses interest in HelixFlow Solutions for Vista Fund X and requests a management presentation scheduled by Bob.",
+      "relationships": [
+        {
+          "source": "HelixFlow Solutions",
+          "target": "Project Helix",
+          "type": "IS_TARGET_OF"
+        },
+        {
+          "source": "Vista Fund X",
+          "target": "Project Helix",
+          "type": "IS_POTENTIAL_INVESTOR_IN"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "03-blueowl-history-deal1.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Nightingale",
+        "dealType": "Buyout",
+        "processType": "Proprietary"
+      },
+      "targetCompany": {
+        "companyName": "Nightingale Health Services",
+        "gicsCode": "351020",
+        "sector": "Health Care Providers & Services",
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Blue Owl Capital",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "ir@blueowl.com",
+          "to": [
+            "limited-partners@blueowl.com"
+          ],
+          "date": "2025-01-15T14:00:00Z",
+          "subject": "Closed Deal Announcement: Project Nightingale"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [],
+      "summary": "Blue Owl Capital has completed the acquisition of Nightingale Health Services, a provider of specialized home nursing care, for an enterprise value of $450M.",
+      "relationships": [
+        {
+          "source": "Nightingale Health Services",
+          "target": "Project Nightingale",
+          "type": "IS_TARGET_OF"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "04-gotham-nda-status.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Gotham",
+        "dealType": "Buyout",
+        "processType": "Limited Auction"
+      },
+      "targetCompany": {
+        "companyName": "Gotham Security",
+        "gicsCode": "",
+        "sector": "",
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Thoma Bravo",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "associate.lisa@thoma-bravo.com",
+          "to": [
+            "investment-team@thoma-bravo.com"
+          ],
+          "date": "2025-06-27T11:00:00-04:00",
+          "subject": "Update on Project Gotham"
+        }
+      ],
+      "crmTasks": [
+        {
+          "activityType": "Review NDA",
+          "dueDate": "",
+          "assignedTo": "legal team"
+        }
+      ],
+      "competitors": [],
+      "summary": "Lisa from Thoma Bravo updated the investment team about the NDA from Gotham Security, which is currently under review by their legal team.",
+      "relationships": [
+        {
+          "source": "Gotham Security",
+          "target": "Project Gotham",
+          "type": "IS_TARGET_OF"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "05-blackstone-follow-up-task.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Apex",
+        "dealType": null,
+        "processType": null
+      },
+      "targetCompany": {
+        "companyName": null,
+        "gicsCode": null,
+        "sector": null,
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "example-pe.com",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "managing-partner@example-pe.com",
+          "to": [
+            "deal-team-alpha@example-pe.com"
+          ],
+          "date": "2025-06-28T17:30:00-04:00",
+          "subject": "Project Apex - Next Steps"
+        }
+      ],
+      "crmTasks": [
+        {
+          "activityType": "Follow up with Blackstone on their interest in Project Apex",
+          "dueDate": "2025-07-01",
+          "assignedTo": "sarah.jones@example-pe.com"
+        }
+      ],
+      "competitors": [
+        {
+          "investorName": "Blackstone",
+          "investorType": "Sponsor"
+        }
+      ],
+      "summary": "Email from managing partner discussing next steps for Project Apex, including a follow-up task assigned to Sarah Jones to gauge Blackstone's interest by Monday EOD.",
+      "relationships": [
+        {
+          "source": "Blackstone",
+          "target": "Project Apex",
+          "type": "IS_COMPETING_FOR"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "06-audax-history-deal1.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Forge Add-On",
+        "dealType": "Add-on Acquisition",
+        "processType": "Not specified"
+      },
+      "targetCompany": {
+        "companyName": "a leading supplier of precision machine parts",
+        "gicsCode": "20106020",
+        "sector": "Industrial Machinery",
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Audax Private Equity",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "press-releases@audaxgroup.com",
+          "to": [
+            "general-distribution@pitchbook.com"
+          ],
+          "date": "2025-02-03T16:00:00Z",
+          "subject": "Audax Portfolio News: Project Forge Add-On Acquisition"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [],
+      "summary": "Audax Private Equity's portfolio company, Forge Industrial, has acquired a leading supplier of precision machine parts, marking the third add-on acquisition for the platform.",
+      "relationships": [
+        {
+          "source": "a leading supplier of precision machine parts",
+          "target": "Project Forge Add-On",
+          "type": "IS_TARGET_OF"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "07-new-deal-for-audax-likelihood.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Anvil",
+        "dealType": "Buyout",
+        "processType": "Not specified"
+      },
+      "targetCompany": {
+        "companyName": "Anvil Fasteners Inc.",
+        "gicsCode": "20106020",
+        "sector": "Industrial Machinery",
+        "revenue": 60000000,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "example-pe.com",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "analyst@example-pe.com",
+          "to": [
+            "investment-team@example-pe.com"
+          ],
+          "date": "2025-07-01T09:30:00-04:00",
+          "subject": "New Deal: Project Anvil - Mid-Market Industrial"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [
+        {
+          "investorName": "Audax",
+          "investorType": "Sponsor"
+        }
+      ],
+      "summary": "Analyst at example-pe.com sourced a new buyout opportunity named 'Project Anvil', targeting Anvil Fasteners Inc., a family-owned manufacturer in the Industrial Machinery sector with $60M revenue.",
+      "relationships": [
+        {
+          "source": "Anvil Fasteners Inc.",
+          "target": "Project Anvil",
+          "type": "IS_TARGET_OF"
+        },
+        {
+          "source": "Audax",
+          "target": "Project Anvil",
+          "type": "IS_COMPETING_FOR"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "08-helix-competitive-intel.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Helix",
+        "dealType": null,
+        "processType": null
+      },
+      "targetCompany": {
+        "companyName": null,
+        "gicsCode": null,
+        "sector": null,
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Vista Equity Partners",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "analyst.bob@vistaequity.com",
+          "to": [
+            "partner.jane@vistaequity.com"
+          ],
+          "date": "2025-07-02T15:00:00-04:00",
+          "subject": "Project Helix - Update & Competitive Intel"
+        }
+      ],
+      "crmTasks": [
+        {
+          "activityType": "Prepare for management presentation",
+          "dueDate": "2025-07-05",
+          "assignedTo": "Bob"
+        },
+        {
+          "activityType": "Share meeting notes",
+          "dueDate": "2025-07-05",
+          "assignedTo": "Bob"
+        }
+      ],
+      "competitors": [
+        {
+          "investorName": "Blackstone",
+          "investorType": "Sponsor"
+        }
+      ],
+      "summary": "Project Helix management presentation is scheduled for Friday, and Blackstone is also interested in this opportunity.",
+      "relationships": [
+        {
+          "source": "TargetCompanyName",
+          "target": "Project Helix",
+          "type": "IS_TARGET_OF"
+        },
+        {
+          "source": "Blackstone",
+          "target": "Project Helix",
+          "type": "IS_COMPETING_FOR"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "09-blueowl-history-deal2.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Compass",
+        "dealType": "Growth Equity",
+        "processType": "non-control process"
+      },
+      "targetCompany": {
+        "companyName": "Compass Payments",
+        "gicsCode": "45103020",
+        "sector": "Data Processing & Outsourced Services",
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Blue Owl",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "ir@blueowl.com",
+          "to": [
+            "limited-partners@blueowl.com"
+          ],
+          "date": "2025-03-20T14:00:00Z",
+          "subject": "Portfolio Update: Blue Owl invests in Fintech Innovator"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [],
+      "summary": "Blue Owl has made a significant growth equity investment of $120M in Compass Payments, a fintech company in the cross-border payments sector.",
+      "relationships": [
+        {
+          "source": "Compass Payments",
+          "target": "Project Compass",
+          "type": "IS_TARGET_OF"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "10-gotham-nda-executed.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Gotham",
+        "dealType": "Buyout",
+        "processType": "Limited Auction"
+      },
+      "targetCompany": {
+        "companyName": "Gotham Security",
+        "gicsCode": "",
+        "sector": "",
+        "revenue": "",
+        "ebitda": ""
+      },
+      "involvedParties": [
+        {
+          "investorName": "Thoma Bravo",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "associate.lisa@thoma-bravo.com",
+          "to": [
+            "investment-team@thoma-bravo.com"
+          ],
+          "date": "2025-07-01T16:45:00-04:00",
+          "subject": "RE: Update on Project Gotham"
+        }
+      ],
+      "crmTasks": [
+        {
+          "activityType": "Begin due diligence",
+          "dueDate": "",
+          "assignedTo": "investment-team@thoma-bravo.com"
+        }
+      ],
+      "competitors": [],
+      "summary": "The legal team at Thoma Bravo has reviewed and approved the NDA for Project Gotham, executed it, and returned it to Gotham Security's counsel, granting access to the CIM and data room for due diligence.",
+      "relationships": [
+        {
+          "source": "Gotham Security",
+          "target": "Project Gotham",
+          "type": "IS_TARGET_OF"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "11-helix-loi-submitted.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Helix",
+        "dealType": "Buyout",
+        "processType": "Limited Auction"
+      },
+      "targetCompany": {
+        "companyName": "Not specified",
+        "gicsCode": null,
+        "sector": null,
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Vista Equity Partners",
+          "investorType": "Sponsor"
+        },
+        {
+          "investorName": "Morgan Stanley",
+          "investorType": "Bank"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "partner.jane@vistaequity.com",
+          "to": [
+            "investment.committee@vistaequity.com"
+          ],
+          "date": "2025-07-12T18:00:00-04:00",
+          "subject": "Project Helix - LOI Submitted"
+        }
+      ],
+      "crmTasks": [
+        {
+          "activityType": "Complete confirmatory diligence",
+          "dueDate": "2025-08-11",
+          "assignedTo": "Vista Equity Partners"
+        }
+      ],
+      "competitors": [],
+      "summary": "Vista Equity Partners has submitted a non-binding LOI for Project Helix, based on a pre-money valuation of $500M, and is awaiting a response from Morgan Stanley.",
+      "relationships": [
+        {
+          "source": "Not specified",
+          "target": "Project Helix",
+          "type": "IS_TARGET_OF"
+        },
+        {
+          "source": "Vista Equity Partners",
+          "target": "Project Helix",
+          "type": "IS_POTENTIAL_INVESTOR_IN"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "12-blueowl-history-deal3-passed.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Jetstream",
+        "dealType": "Buyout",
+        "processType": "Broad Auction"
+      },
+      "targetCompany": {
+        "companyName": "Project Jetstream",
+        "gicsCode": "20303010",
+        "sector": "Aerospace & Defense",
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Blue Owl",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "analyst.mike@blueowl.com",
+          "to": [
+            "investment.committee@blueowl.com"
+          ],
+          "date": "2024-11-05T19:00:00Z",
+          "subject": "Internal Memo: Why we passed on Project Jetstream"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [
+        {
+          "investorName": "Strategic Acquirer",
+          "investorType": "Sponsor"
+        }
+      ],
+      "summary": "Blue Owl decided to pass on 'Project Jetstream', an aviation software company, due to a broad auction process and high valuation expectations, despite submitting a bid.",
+      "relationships": [
+        {
+          "source": "Project Jetstream",
+          "target": "Project Jetstream",
+          "type": "IS_TARGET_OF"
+        },
+        {
+          "source": "Strategic Acquirer",
+          "target": "Project Jetstream",
+          "type": "IS_COMPETING_FOR"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "13-audax-wins-anvil-deal.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Anvil",
+        "dealType": "Buyout",
+        "processType": "Not specified"
+      },
+      "targetCompany": {
+        "companyName": "Anvil Fasteners Inc.",
+        "gicsCode": "20106020",
+        "sector": "Industrial Machinery",
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Audax Private Equity",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "pr@audaxgroup.com",
+          "to": [
+            "media-contacts@reuters.com",
+            "private-equity-desk@wsj.com"
+          ],
+          "date": "2025-09-02T09:00:00-04:00",
+          "subject": "PRESS RELEASE: Audax Private Equity Acquires Anvil Fasteners Inc."
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [],
+      "summary": "Audax Private Equity has completed the acquisition of Anvil Fasteners Inc., a manufacturer specializing in aerospace and defense fasteners.",
+      "relationships": [
+        {
+          "source": "Anvil Fasteners Inc.",
+          "target": "Project Anvil",
+          "type": "IS_TARGET_OF"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "14-helix-deal-lost.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Helix",
+        "dealType": "Buyout",
+        "processType": "Limited Auction"
+      },
+      "targetCompany": {
+        "companyName": "Not specified",
+        "gicsCode": null,
+        "sector": null,
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Vista Equity Partners",
+          "investorType": "Sponsor"
+        },
+        {
+          "investorName": "Morgan Stanley",
+          "investorType": "Bank"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "partner.jane@vistaequity.com",
+          "to": [
+            "investment.committee@vistaequity.com"
+          ],
+          "date": "2025-07-23T11:30:00-04:00",
+          "subject": "Project Helix - We Lost the Deal"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [
+        {
+          "investorName": "Blackstone",
+          "investorType": "Sponsor"
+        }
+      ],
+      "summary": "Vista Equity Partners lost the deal for Project Helix to Blackstone, who offered a higher valuation and more flexible terms.",
+      "relationships": [
+        {
+          "source": "Not specified",
+          "target": "Project Helix",
+          "type": "IS_TARGET_OF"
+        },
+        {
+          "source": "Blackstone",
+          "target": "Project Helix",
+          "type": "IS_COMPETING_FOR"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "15-blackstone-logistics-deal.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project ChainLink",
+        "dealType": "Growth Equity",
+        "processType": "Not specified"
+      },
+      "targetCompany": {
+        "companyName": "LogiChain Solutions",
+        "gicsCode": "20301010",
+        "sector": "Air Freight & Logistics",
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Blackstone",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [
+        {
+          "fundName": "Tactical Opportunities fund (BXTO)"
+        }
+      ],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "public-affairs@blackstone.com",
+          "to": [
+            "press@bloomberg.com"
+          ],
+          "date": "2025-06-18T09:00:00-04:00",
+          "subject": "Blackstone Tactical Opportunities - Investment in Logistics Tech"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [],
+      "summary": "Blackstone's Tactical Opportunities fund (BXTO) has invested $250 million in LogiChain Solutions, a supply chain visibility platform, under the deal name Project ChainLink.",
+      "relationships": [
+        {
+          "source": "LogiChain Solutions",
+          "target": "Project ChainLink",
+          "type": "IS_TARGET_OF"
+        },
+        {
+          "source": "Tactical Opportunities fund (BXTO)",
+          "target": "Project ChainLink",
+          "type": "IS_POTENTIAL_INVESTOR_IN"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "16-blueowl-similar-deal.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Lifeline",
+        "dealType": "Buyout",
+        "processType": "Proprietary"
+      },
+      "targetCompany": {
+        "companyName": "Lifeline Home Health Group",
+        "gicsCode": "351020",
+        "sector": "Health Care Providers & Services",
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Blue Owl",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "sourcing-team@blueowl.com",
+          "to": [
+            "deal-team@blueowl.com"
+          ],
+          "date": "2025-07-08T10:00:00-04:00",
+          "subject": "New Opportunity: Project Lifeline - Home Care Roll-up"
+        }
+      ],
+      "crmTasks": [
+        {
+          "activityType": "Engage immediately",
+          "dueDate": null,
+          "assignedTo": "deal-team@blueowl.com"
+        }
+      ],
+      "competitors": [],
+      "summary": "Sourced a new buyout opportunity, Project Lifeline, targeting Lifeline Home Health Group in the Health Care Providers & Services sector, sourced through a proprietary process.",
+      "relationships": [
+        {
+          "source": "Lifeline Home Health Group",
+          "target": "Project Lifeline",
+          "type": "IS_TARGET_OF"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "17-gotham-diligence-kickoff.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Gotham",
+        "dealType": "Buyout",
+        "processType": "Due Diligence"
+      },
+      "targetCompany": {
+        "companyName": "Project Gotham",
+        "gicsCode": "",
+        "sector": "",
+        "revenue": "",
+        "ebitda": ""
+      },
+      "involvedParties": [
+        {
+          "investorName": "Thoma Bravo",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "partner.rick@thoma-bravo.com",
+          "to": [
+            "investment-team@thoma-bravo.com"
+          ],
+          "date": "2025-07-04T16:00:00Z",
+          "subject": "Project Gotham - Diligence Workstreams"
+        }
+      ],
+      "crmTasks": [
+        {
+          "activityType": "Build financial model focusing on the quality of recurring revenue",
+          "dueDate": "",
+          "assignedTo": "Lisa"
+        },
+        {
+          "activityType": "Review all customer contracts",
+          "dueDate": "",
+          "assignedTo": "Legal Counsel"
+        },
+        {
+          "activityType": "Handle customer calls",
+          "dueDate": "",
+          "assignedTo": "Rick"
+        }
+      ],
+      "competitors": [],
+      "summary": "Thoma Bravo is in the due diligence phase for Project Gotham, with specific tasks assigned to team members including financial modeling, legal review, and commercial discussions.",
+      "relationships": [
+        {
+          "source": "Project Gotham",
+          "target": "Project Gotham",
+          "type": "IS_TARGET_OF"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "18-audax-history-deal2-passed.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Evergreen",
+        "dealType": "Venture Capital",
+        "processType": "Not specified"
+      },
+      "targetCompany": {
+        "companyName": "Project Evergreen",
+        "gicsCode": "10102040",
+        "sector": "Renewable Electricity",
+        "revenue": "Not specified",
+        "ebitda": "Not specified"
+      },
+      "involvedParties": [
+        {
+          "investorName": "Audax Group",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "analyst.pete@audaxgroup.com",
+          "to": [
+            "deal-committee@audaxgroup.com"
+          ],
+          "date": "2025-07-09T14:00:00Z",
+          "subject": "Internal Memo: Decision on Project Evergreen"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [],
+      "summary": "Audax Group has decided to pass on 'Project Evergreen', a venture-stage investment in the renewable energy sector, as it does not align with their core strategy of investing in established, middle-market companies.",
+      "relationships": [
+        {
+          "source": "Project Evergreen",
+          "target": "Project Evergreen",
+          "type": "IS_TARGET_OF"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "19-gotham-deal-won.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Gotham",
+        "dealType": "Buyout",
+        "processType": "Not specified"
+      },
+      "targetCompany": {
+        "companyName": "Gotham Security",
+        "gicsCode": "45103020",
+        "sector": "Systems Software",
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Thoma Bravo",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "communications@thoma-bravo.com",
+          "to": [
+            "pr-newswire@prnewswire.com"
+          ],
+          "date": "2025-08-19T09:00:00-04:00",
+          "subject": "Thoma Bravo Announces Strategic Acquisition of Gotham Security"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [],
+      "summary": "Thoma Bravo has successfully acquired Gotham Security, a leader in cybersecurity threat detection, as part of their strategy to partner with top software companies.",
+      "relationships": [
+        {
+          "source": "Gotham Security",
+          "target": "Project Gotham",
+          "type": "IS_TARGET_OF"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "20-blackstone-follow-up-complete.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Apex",
+        "dealType": "Unknown",
+        "processType": "Unknown"
+      },
+      "targetCompany": {
+        "companyName": "Unknown",
+        "gicsCode": "Unknown",
+        "sector": "Unknown",
+        "revenue": "Unknown",
+        "ebitda": "Unknown"
+      },
+      "involvedParties": [
+        {
+          "investorName": "example-pe.com",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "sarah.jones@example-pe.com",
+          "to": [
+            "managing-partner@example-pe.com"
+          ],
+          "cc": [
+            "deal-team-alpha@example-pe.com"
+          ],
+          "date": "2025-07-01T17:00:00-04:00",
+          "subject": "RE: Project Apex - Next Steps"
+        }
+      ],
+      "crmTasks": [
+        {
+          "activityType": "Follow-up with Blackstone",
+          "dueDate": "None",
+          "assignedTo": "Sarah Jones"
+        }
+      ],
+      "competitors": [
+        {
+          "investorName": "Blackstone",
+          "investorType": "Sponsor"
+        }
+      ],
+      "summary": "Sarah Jones from example-pe.com reports lukewarm interest from Blackstone in Project Apex and will not follow up unless contacted.",
+      "relationships": [
+        {
+          "source": "Unknown",
+          "target": "Project Apex",
+          "type": "IS_TARGET_OF"
+        },
+        {
+          "source": "Blackstone",
+          "target": "Project Apex",
+          "type": "IS_COMPETING_FOR"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "compliance-alert.eml",
+    "analysis": {
+      "deal": {
+        "dealName": null,
+        "dealType": null,
+        "processType": null
+      },
+      "targetCompany": {
+        "companyName": "Offshore Holdings Ltd.",
+        "gicsCode": null,
+        "sector": null,
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Global Bank",
+          "investorType": "Bank"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "Risk Management <risk@globalbank.com>",
+          "to": [
+            "Compliance Team <compliance@globalbank.com>",
+            "John Smith <john.smith@globalbank.com>",
+            "Maria Rodriguez <maria.rodriguez@globalbank.com>"
+          ],
+          "date": "2024-03-17T09:15:00-04:00",
+          "subject": "URGENT: Large Transaction Alert - Enhanced Due Diligence Required"
+        }
+      ],
+      "crmTasks": [
+        {
+          "activityType": "Hold transaction pending review",
+          "dueDate": "2024-03-17T17:00:00-04:00",
+          "assignedTo": "Compliance Team"
+        },
+        {
+          "activityType": "Complete risk assessment",
+          "dueDate": "2024-03-18T17:00:00-04:00",
+          "assignedTo": "Compliance Team"
+        },
+        {
+          "activityType": "Regulatory filing (if required)",
+          "dueDate": "2024-03-19",
+          "assignedTo": "Compliance Team"
+        }
+      ],
+      "competitors": [],
+      "summary": "An urgent compliance alert was issued for a large transaction from Offshore Holdings Ltd. requiring enhanced due diligence.",
+      "relationships": [
+        {
+          "source": "Offshore Holdings Ltd.",
+          "target": "URGENT: Large Transaction Alert - Enhanced Due Diligence Required",
+          "type": "IS_TARGET_OF"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "deal-sourcing-tech-buyout.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Titan",
+        "dealType": "Carve-out",
+        "processType": "Limited Auction"
+      },
+      "targetCompany": {
+        "companyName": "Titan Industrial Analytics",
+        "gicsCode": "511210",
+        "sector": "Systems Software",
+        "revenue": 85000000,
+        "ebitda": 22000000
+      },
+      "involvedParties": [
+        {
+          "investorName": "example-pe-firm.com",
+          "investorType": "Sponsor"
+        },
+        {
+          "investorName": "investment-bank.com",
+          "investorType": "Bank"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "claudia.gomez@investment-bank.com",
+          "to": [
+            "investment.team@example-pe-firm.com"
+          ],
+          "date": "2025-06-24T09:15:00-04:00",
+          "subject": "Confidential Opportunity: Project Titan - Leader in Industrial IoT"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [],
+      "summary": "Claudia Gomez from an investment bank presents a confidential investment opportunity named 'Project Titan', a carve-out of Titan Industrial Analytics, a leader in Industrial IoT, with a revenue of $85M and EBITDA of $22M.",
+      "relationships": [
+        {
+          "source": "Titan Industrial Analytics",
+          "target": "Project Titan",
+          "type": "IS_TARGET_OF"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "fwd-nda-and-cim-request.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Titan",
+        "dealType": "Buyout",
+        "processType": "Limited Auction"
+      },
+      "targetCompany": {
+        "companyName": "Leader in Industrial IoT",
+        "gicsCode": "",
+        "sector": "",
+        "revenue": "",
+        "ebitda": ""
+      },
+      "involvedParties": [
+        {
+          "investorName": "Example PE Firm",
+          "investorType": "Sponsor"
+        },
+        {
+          "investorName": "investment-bank.com",
+          "investorType": "Bank"
+        }
+      ],
+      "mentionedFunds": [
+        {
+          "fundName": "Example Capital Partners V"
+        }
+      ],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "partner@example-pe-firm.com",
+          "to": [
+            "claudia.gomez@investment-bank.com"
+          ],
+          "date": "2025-06-24T11:30:00-04:00",
+          "subject": "Fwd: Confidential Opportunity: Project Titan - Leader in Industrial IoT"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [],
+      "summary": "Senior Partner at Example PE Firm expresses interest in Project Titan, a potential buyout target in the Industrial IoT sector, and requests the CIM after executing the NDA.",
+      "relationships": [
+        {
+          "source": "Leader in Industrial IoT",
+          "target": "Project Titan",
+          "type": "IS_TARGET_OF"
+        },
+        {
+          "source": "Example Capital Partners V",
+          "target": "Project Titan",
+          "type": "IS_POTENTIAL_INVESTOR_IN"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "internal-strategy-audax-bid.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Project Titan",
+        "dealType": "Buyout",
+        "processType": "Limited Auction"
+      },
+      "targetCompany": {
+        "companyName": "Not specified",
+        "gicsCode": null,
+        "sector": null,
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Example Capital Partners",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [
+        {
+          "fundName": "Example Capital Partners V"
+        }
+      ],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "partner@example-pe-firm.com",
+          "to": [
+            "investment.committee@example-pe-firm.com"
+          ],
+          "date": "2025-06-26T16:00:00-04:00",
+          "subject": "Notes on Project Titan & Potential Bid from Audax"
+        }
+      ],
+      "crmTasks": [
+        {
+          "activityType": "Submit Indication of Interest (IOI)",
+          "dueDate": "2025-07-10",
+          "assignedTo": "junior.analyst@example-pe-firm.com"
+        }
+      ],
+      "competitors": [
+        {
+          "investorName": "Audax",
+          "investorType": "Sponsor"
+        }
+      ],
+      "summary": "Senior Partner updates on Project Titan, indicating a competitive bidding process likely with Audax, and instructs submission of an IOI by July 10, 2025.",
+      "relationships": [
+        {
+          "source": "Not specified",
+          "target": "Project Titan",
+          "type": "IS_TARGET_OF"
+        },
+        {
+          "source": "Example Capital Partners V",
+          "target": "Project Titan",
+          "type": "IS_POTENTIAL_INVESTOR_IN"
+        },
+        {
+          "source": "Audax",
+          "target": "Project Titan",
+          "type": "IS_COMPETING_FOR"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "investment-advisory.eml",
+    "analysis": {
+      "deal": {
+        "dealName": null,
+        "dealType": null,
+        "processType": null
+      },
+      "targetCompany": {
+        "companyName": null,
+        "gicsCode": null,
+        "sector": null,
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Morgan Stanley Investment Management",
+          "investorType": "Bank"
+        },
+        {
+          "investorName": "Sarah Chen, CFA",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "sarah.chen@morganstanley.com",
+          "to": [
+            "robert.johnson@email.com",
+            "portfolio@morganstanley.com"
+          ],
+          "date": "2024-03-15T10:30:00-04:00",
+          "subject": "Portfolio Review and Investment Recommendations - Q1 2024"
+        }
+      ],
+      "crmTasks": [
+        {
+          "activityType": "Review attached risk assessment",
+          "dueDate": null,
+          "assignedTo": "Robert Johnson"
+        },
+        {
+          "activityType": "Confirm investment preferences",
+          "dueDate": null,
+          "assignedTo": "Robert Johnson"
+        },
+        {
+          "activityType": "Schedule implementation timeline",
+          "dueDate": null,
+          "assignedTo": "Robert Johnson"
+        }
+      ],
+      "competitors": [],
+      "summary": "Sarah Chen from Morgan Stanley Investment Management provided a portfolio review and investment recommendations for Q1 2024 to Robert Johnson, including analysis and proposed adjustments to his investment portfolio.",
+      "relationships": []
+    }
+  },
+  {
+    "sourceFile": "loan-application.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "Commercial Loan Application for TechStart Inc.",
+        "dealType": "Loan Financing",
+        "processType": "Direct Negotiation"
+      },
+      "targetCompany": {
+        "companyName": "TechStart Inc.",
+        "gicsCode": "",
+        "sector": "",
+        "revenue": 12500000,
+        "ebitda": 2800000
+      },
+      "involvedParties": [
+        {
+          "investorName": "Jennifer Martinez",
+          "investorType": "Bank Employee"
+        },
+        {
+          "investorName": "Wells Fargo Commercial Banking",
+          "investorType": "Bank"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "jennifer.martinez@wellsfargo.com",
+          "to": [
+            "david.kim@techstart.com"
+          ],
+          "date": "2024-03-18T11:20:00-04:00",
+          "subject": "Commercial Loan Application Update - TechStart Inc."
+        }
+      ],
+      "crmTasks": [
+        {
+          "activityType": "Environmental assessment of Austin property",
+          "dueDate": "2024-03-22",
+          "assignedTo": "TechStart Inc."
+        },
+        {
+          "activityType": "Equipment appraisal verification",
+          "dueDate": "2024-03-25",
+          "assignedTo": "TechStart Inc."
+        },
+        {
+          "activityType": "Final credit committee approval",
+          "dueDate": "2024-03-25",
+          "assignedTo": "Wells Fargo Commercial Banking"
+        },
+        {
+          "activityType": "Loan documentation preparation",
+          "dueDate": "2024-03-29",
+          "assignedTo": "Wells Fargo Commercial Banking"
+        }
+      ],
+      "competitors": [],
+      "summary": "Update on the commercial loan application of TechStart Inc. by Wells Fargo, detailing financials, collateral, and proposed terms.",
+      "relationships": [
+        {
+          "source": "TechStart Inc.",
+          "target": "Commercial Loan Application for TechStart Inc.",
+          "type": "IS_TARGET_OF"
+        },
+        {
+          "source": "Wells Fargo Commercial Banking",
+          "target": "Commercial Loan Application for TechStart Inc.",
+          "type": "IS_LENDER_OF"
+        }
+      ]
+    }
+  },
+  {
+    "sourceFile": "meeting-request.eml",
+    "analysis": {
+      "deal": {
+        "dealName": null,
+        "dealType": null,
+        "processType": null
+      },
+      "targetCompany": {
+        "companyName": null,
+        "gicsCode": null,
+        "sector": null,
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Michael Thompson",
+          "investorType": "Sponsor"
+        },
+        {
+          "investorName": "Susan Thompson",
+          "investorType": "Sponsor"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "Michael Thompson <michael.thompson@clientcompany.com>",
+          "to": [
+            "Financial Advisor <advisor@wealthmanagement.com>"
+          ],
+          "date": "2024-03-19T16:30:00-04:00",
+          "subject": "Quarterly Portfolio Review Meeting Request"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [],
+      "summary": "Michael Thompson requests a meeting with his financial advisory team to review Q1 2024 portfolio performance, discuss market outlook, evaluate asset allocation, and review retirement planning progress.",
+      "relationships": []
+    }
+  },
+  {
+    "sourceFile": "trade-confirmation.eml",
+    "analysis": {
+      "deal": {
+        "dealName": "MSFT Purchase Order #TC-2024-001",
+        "dealType": "Equity Purchase",
+        "processType": "Direct Purchase"
+      },
+      "targetCompany": {
+        "companyName": "Microsoft Corporation",
+        "gicsCode": null,
+        "sector": null,
+        "revenue": null,
+        "ebitda": null
+      },
+      "involvedParties": [
+        {
+          "investorName": "Acme Corporation",
+          "investorType": "Sponsor"
+        },
+        {
+          "investorName": "JP Morgan Securities LLC",
+          "investorType": "Bank"
+        }
+      ],
+      "mentionedFunds": [],
+      "communicationHistory": [
+        {
+          "type": "Email",
+          "from": "Trading Desk <trading@jpmorgan.com>",
+          "to": [
+            "Acme Corporation <trading@acme-corp.com>"
+          ],
+          "date": "2024-03-16T14:45:00-04:00",
+          "subject": "TRADE CONFIRMATION - MSFT Purchase Order #TC-2024-001"
+        }
+      ],
+      "crmTasks": [],
+      "competitors": [],
+      "summary": "Confirmation of Acme Corporation's purchase of 2,500 shares of Microsoft Corporation at $415.50 per share, executed by JP Morgan Securities LLC.",
+      "relationships": [
+        {
+          "source": "Microsoft Corporation",
+          "target": "MSFT Purchase Order #TC-2024-001",
+          "type": "IS_TARGET_OF"
+        },
+        {
+          "source": "Acme Corporation",
+          "target": "MSFT Purchase Order #TC-2024-001",
+          "type": "IS_INVESTOR_IN"
+        }
+      ]
+    }
+  }
+]

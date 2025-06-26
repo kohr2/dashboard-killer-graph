@@ -1,32 +1,48 @@
 # .cursorrules
 
-# Instructions pour le développement piloté par les tests (TDD)
-# Ces règles guident l'IA pour qu'elle suive une approche TDD stricte.
+# Instructions for Test-Driven Development (TDD)
+# These rules guide the AI to follow a strict TDD approach.
 test-driven-development:
-  - rule: "Pour toute nouvelle fonctionnalité ou modification, toujours commencer par écrire un test qui échoue (phase RED)."
-  - rule: "Lorsqu'on te demande de créer une nouvelle fonctionnalité, propose d'abord le fichier de test (`*.test.ts`)."
-  - rule: "Après avoir écrit le test, génère le code de production le plus simple possible pour que le test passe (phase GREEN)."
-  - rule: "N'écris jamais de logique métier dans un fichier source sans avoir un test correspondant qui la couvre."
-  - rule: "Si je te demande de corriger un bug, demande-moi d'abord d'écrire un test qui reproduit le bug."
+  - rule: "For any new feature or modification, always start by writing a failing test (RED phase)."
+  - rule: "When asked to create a new feature, first propose the test file (`*.test.ts`)."
+  - rule: "After writing the test, generate the simplest possible production code to make the test pass (GREEN phase)."
+  - rule: "Never write business logic in a source file without a corresponding test that covers it."
+  - rule: "If I ask you to fix a bug, first ask me to write a test that reproduces the bug."
 
-# Conventions de test
-# Comment les tests doivent être structurés dans ce projet.
+# Test Conventions
+# How tests should be structured in this project.
 testing-conventions:
-  - rule: "Utiliser la syntaxe `describe`, `it` ou `test` de Jest."
-  - rule: "Les fichiers de test doivent être nommés `[nom-du-fichier].test.ts`."
-  - rule: "Placer les tests unitaires dans `test/unit/` en respectant l'arborescence du répertoire `src/`."
-  - rule: "Simuler systématiquement les dépendances externes (comme les appels API avec `axios` ou les pilotes de base de données) en utilisant `jest.fn()` ou `jest.spyOn()`."
-  - rule: "Chaque bloc `describe` doit se concentrer sur une seule méthode ou un seul composant."
-  - rule: "Chaque test (`it`) doit vérifier un seul comportement."
+  - rule: "Use Jest's `describe`, `it`, or `test` syntax."
+  - rule: "Test files must be named `[file-name].test.ts`."
+  - rule: "Place unit tests in `test/unit/`, respecting the `src/` directory structure."
+  - rule: "Systematically mock external dependencies (like API calls with `axios` or database drivers) using `jest.fn()` or `jest.spyOn()`."
+  - rule: "Each `describe` block should focus on a single method or component."
+  - rule: "Each test (`it`) should verify a single behavior."
 
-# Style de code et qualité
-# Garantir que le code généré est cohérent avec le reste du projet.
+# Code Style and Quality
+# Ensure that the generated code is consistent with the rest of the project.
 code-style:
-  - rule: "Formater tout le code TypeScript généré en utilisant la configuration Prettier du projet."
-  - rule: "Respecter les règles ESLint définies dans le projet. Ne pas introduire de code qui génère des avertissements de lint."
+  - rule: "Format all generated TypeScript code using the project's Prettier configuration."
+  - rule: "Adhere to the ESLint rules defined in the project. Do not introduce code that generates lint warnings."
 
-# Messages de commit
-# S'assurer que les commits générés par l'IA sont clairs et standardisés.
+# Commit Messages
+# Ensure that AI-generated commits are clear and standardized.
 commit-messages:
-  - rule: "Suivre la convention 'Conventional Commits'. Par exemple : `feat(auth): add password reset endpoint` ou `fix(tests): repair user service tests`."
-  - rule: "Le corps du message de commit doit expliquer le 'pourquoi' du changement, pas le 'comment'." 
+  - rule: "Follow the 'Conventional Commits' convention. For example: `feat(auth): add password reset endpoint` or `fix(tests): repair user service tests`."
+  - rule: "The body of the commit message should explain the 'why' of the change, not the 'how'." 
+
+
+code-generation-rules:
+  - rule: "Always search if generated code corresponding to the requested feature is already present in the project."
+  - rule: "If generated code corresponding to the requested feature is already present in the project, do not generate code."
+  - rule: "Do not generate code that is not tested."
+  - rule: "Do not generate code that does not comply with the project's code conventions."
+  - rule: "Do not generate code that does not comply with the project's code quality rules."
+  - rule: "Do not generate code that does not comply with the project's security rules."
+  - rule: "Do not generate code that does not comply with the project's performance rules."
+  - rule: "Do not generate code that does not comply with the project's maintenance rules."
+  - rule: "Do not generate code that does not comply with the project's documentation rules."
+  - rule: "Do not generate code that does not comply with the project's testing rules."
+  - rule: "Do not generate code that does not comply with the project's development rules."
+  - rule: "Do not generate code that does not comply with the project's test-driven development (TDD) rules."
+ 

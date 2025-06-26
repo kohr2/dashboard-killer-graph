@@ -1,5 +1,6 @@
-import { Neo4jConnection } from '../src/crm-core/infrastructure/database/neo4j-connection';
+import { Neo4jConnection } from '../src/platform/database/neo4j-connection';
 import { config } from 'dotenv';
+import { Session } from 'neo4j-driver';
 
 config();
 

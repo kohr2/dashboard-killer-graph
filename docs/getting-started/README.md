@@ -63,7 +63,7 @@ npm test
 ### Run Core Tests
 ```bash
 # Test CRM core functionality
-npm run test:crm-core
+npm run test:crm
 
 # Test financial extension
 npm run test:financial
@@ -91,7 +91,7 @@ npm run test:integration -- --grep "database"
 
 ```
 financial-kill-the-crm/
-├── 🏛️ src/crm-core/        # Generic CRM foundation
+├── 🏛️ src/crm/        # Generic CRM foundation
 ├── 💰 src/extensions/       # Domain-specific extensions
 ├── 🔧 src/platform/         # Extension framework
 ├── 🤝 src/shared/           # Cross-cutting utilities

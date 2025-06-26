@@ -1,0 +1,278 @@
+// Neo4j Contact Repository Implementation
+// Knowledge graph-based contact data access using Cypher queries
+
+import { OCreamContactEntity, ContactOntology } from '../../domain/entities/contact-ontology';
+import { ContactRepository } from '../../domain/repositories/contact-repository';
+import { Neo4jConnection } from '../database/neo4j-connection';
+import { Session } from 'neo4j-driver';
+
+export class Neo4jContactRepository implements ContactRepository {
+  private connection: Neo4jConnection;
+
+  constructor() {
+    this.connection = Neo4jConnection.getInstance();
+  }
+
+  async save(contact: OCreamContactEntity): Promise<OCreamContactEntity> {
+    const session = this.connection.getSession();
+    
+    try {
+      
+      const query = `
+        MERGE (c:Contact {id: $id})
+        SET c.name = $name,
+            c.email = $email,
+            c.phone = $phone,
+            c.firstName = $firstName,
+            c.lastName = $lastName,
+            c.title = $title,
+            c.description = $description,
+            c.createdAt = $createdAt,
+            c.updatedAt = $updatedAt
+        RETURN c
+      `;
+
+      await session.run(query, {
+        id: contact.id,
+        name: contact.name,
+        email: contact.personalInfo.email,
+        phone: contact.personalInfo.phone,
+        firstName: contact.personalInfo.firstName,
+        lastName: contact.personalInfo.lastName,
+        title: contact.personalInfo.title,
+        description: contact.description,
+        createdAt: contact.createdAt.toISOString(),
+        updatedAt: contact.updatedAt.toISOString()
+      });
+
+      return contact;
+    } catch (error) {
+      throw new Error(`Failed to save contact: ${error}`);
+    } finally {
+      await session.close();
+    }
+  }
+
+  async findById(id: string): Promise<OCreamContactEntity | null> {
+    const session = this.connection.getSession();
+    
+    try {
+      const query = `
+        MATCH (c:Contact {id: $id})
+        RETURN c
+      `;
+
+      const result = await session.run(query, { id });
+      
+      if (result.records.length === 0) {
+        return null;
+      }
+
+      const contactNode = result.records[0].get('c').properties;
+      return this.nodeToContact(contactNode);
+    } catch (error) {
+      throw new Error(`Failed to find contact by ID: ${error}`);
+    } finally {
+      await session.close();
+    }
+  }
+
+  async findAll(): Promise<OCreamContactEntity[]> {
+    const session = this.connection.getSession();
+    
+    try {
+      let query = `
+        MATCH (c:Contact)
+        RETURN c
+        ORDER BY c.createdAt DESC
+      `;
+
+      const result = await session.run(query);
+      
+      return result.records.map(record => {
+        const contactNode = record.get('c').properties;
+        return this.nodeToContact(contactNode);
+      });
+    } catch (error) {
+      throw new Error(`Failed to find all contacts: ${error}`);
+    } finally {
+      await session.close();
+    }
+  }
+
+  async delete(id: string): Promise<void> {
+    const session = this.connection.getSession();
+    
+    try {
+      const query = `
+        MATCH (c:Contact {id: $id})
+        DETACH DELETE c
+      `;
+
+      await session.run(query, { id });
+
+    } catch (error) {
+      throw new Error(`Failed to delete contact: ${error}`);
+    } finally {
+      await session.close();
+    }
+  }
+
+  async findByEmail(email: string): Promise<OCreamContactEntity | null> {
+    const session = this.connection.getSession();
+    
+    try {
+      const query = `
+        MATCH (c:Contact {email: $email})
+        RETURN c
+      `;
+
+      const result = await session.run(query, { email });
+      
+      if (result.records.length === 0) {
+        return null;
+      }
+
+      const contactNode = result.records[0].get('c').properties;
+      return this.nodeToContact(contactNode);
+    } catch (error) {
+      throw new Error(`Failed to find contact by email: ${error}`);
+    } finally {
+      await session.close();
+    }
+  }
+
+  async findByOrganizationId(organizationId: string): Promise<OCreamContactEntity[]> {
+    const session = this.connection.getSession();
+    
+    try {
+      const query = `
+        MATCH (c:Contact)-[:WORKS_AT]->(o:Organization {id: $organizationId})
+        RETURN c
+        ORDER BY c.name
+      `;
+
+      const result = await session.run(query, { organizationId });
+      
+      return result.records.map(record => {
+        const contactNode = record.get('c').properties;
+        return this.nodeToContact(contactNode);
+      });
+    } catch (error) {
+      throw new Error(`Failed to find contacts by organization: ${error}`);
+    } finally {
+      await session.close();
+    }
+  }
+
+  async search(query: any): Promise<OCreamContactEntity[]> {
+    const session = this.connection.getSession();
+    
+    try {
+      const cypherQuery = `
+        MATCH (c:Contact)
+        WHERE toLower(c.name) CONTAINS toLower($searchTerm)
+           OR toLower(c.email) CONTAINS toLower($searchTerm)
+        RETURN c
+        ORDER BY c.name
+        LIMIT 50
+      `;
+
+      const result = await session.run(cypherQuery, { searchTerm: query });
+      
+      return result.records.map(record => {
+        const contactNode = record.get('c').properties;
+        return this.nodeToContact(contactNode);
+      });
+    } catch (error) {
+      throw new Error(`Failed to search contacts: ${error}`);
+    } finally {
+      await session.close();
+    }
+  }
+
+  async count(): Promise<number> {
+    const session = this.connection.getSession();
+    
+    try {
+      const query = `
+        MATCH (c:Contact)
+        RETURN count(c) as total
+      `;
+
+      const result = await session.run(query);
+      return result.records[0].get('total').toNumber();
+    } catch (error) {
+      throw new Error(`Failed to count contacts: ${error}`);
+    } finally {
+      await session.close();
+    }
+  }
+
+  async exists(id: string): Promise<boolean> {
+    const session = this.connection.getSession();
+    
+    try {
+      const query = `
+        MATCH (c:Contact {id: $id})
+        RETURN count(c) > 0 as exists
+      `;
+
+      const result = await session.run(query, { id });
+      return result.records[0].get('exists');
+    } catch (error) {
+      throw new Error(`Failed to check contact existence: ${error}`);
+    } finally {
+      await session.close();
+    }
+  }
+
+  // Helper method to convert Neo4j node to Contact entity
+  private nodeToContact(node: any): OCreamContactEntity {
+    return ContactOntology.createOCreamContact({
+      id: node.id,
+      firstName: node.firstName,
+      lastName: node.lastName,
+      email: node.email,
+      phone: node.phone,
+      title: node.title
+    });
+  }
+
+  // Graph-specific methods for relationship management
+  async linkToOrganization(contactId: string, organizationId: string, role?: string): Promise<void> {
+    const session = this.connection.getSession();
+    
+    try {
+      const query = `
+        MATCH (c:Contact {id: $contactId}), (o:Organization {id: $organizationId})
+        MERGE (c)-[r:WORKS_AT]->(o)
+        SET r.role = $role,
+            r.createdAt = datetime()
+      `;
+
+      await session.run(query, { contactId, organizationId, role });
+    } catch (error) {
+      throw new Error(`Failed to link contact to organization: ${error}`);
+    } finally {
+      await session.close();
+    }
+  }
+
+  async unlinkFromOrganization(contactId: string, organizationId: string): Promise<void> {
+    const session = this.connection.getSession();
+    
+    try {
+      const query = `
+        MATCH (c:Contact {id: $contactId})-[r:WORKS_AT]->(o:Organization {id: $organizationId})
+        DELETE r
+      `;
+
+      await session.run(query, { contactId, organizationId });
+    } catch (error) {
+      throw new Error(`Failed to unlink contact from organization: ${error}`);
+    } finally {
+      await session.close();
+    }
+  }
+} 

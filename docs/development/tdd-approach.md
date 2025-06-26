@@ -159,7 +159,7 @@ describe('Platform Orchestrator', () => {
 ### Module-Specific Test Commands
 ```bash
 # Test by module
-npm run test:crm-core        # CRM foundation tests
+npm run test:crm        # CRM foundation tests
 npm run test:financial       # Financial extension tests  
 npm run test:platform        # Platform framework tests
 
@@ -179,7 +179,7 @@ npm run test:debug        # Debug failing tests
 ### Daily Development Cycle
 ```bash
 # Morning (1 hour): Plan & Test
-1. npm run test:watch:crm-core    # Start watch mode
+1. npm run test:watch:crm    # Start watch mode
 2. Write failing tests for user story
 3. Verify tests fail correctly (RED)
 
@@ -258,7 +258,7 @@ npm run test:coverage     # Meet coverage thresholds
 ```
 test/
 ├── unit/                    # Fast, isolated tests
-│   ├── crm-core/
+│   ├── crm/
 │   ├── extensions/financial/
 │   ├── platform/
 │   └── shared/

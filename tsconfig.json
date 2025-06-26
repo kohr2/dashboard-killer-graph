@@ -4,22 +4,13 @@
     "downlevelIteration": true,
     "outDir": "./dist",
     "rootDir": "./",
-    "baseUrl": "./",
-    "paths": {
-      "@crm-core/*": ["src/crm-core/*"],
-      "@financial/*": ["src/extensions/financial/*"],
-      "@platform/*": ["src/platform/*"],
-      "@shared/*": ["src/shared/*"],
-      "@test/*": ["test/*"]
-    }
+    "baseUrl": "./"
   },
-  "include": [
-    "src/**/*.ts",
-    "test/**/*.ts",
-    "scripts/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
+  "files": [],
+  "references": [
+    { "path": "src/extensions/crm" },
+    { "path": "src/extensions/financial" },
+    { "path": "src/platform" },
+    { "path": "test" }
   ]
 }

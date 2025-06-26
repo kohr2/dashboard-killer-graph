@@ -40,7 +40,7 @@ npm run test:coverage        # Evening: Check coverage
 ### Sprint 3-4: CRM Core Foundation
 ```bash
 # Module-specific development
-npm run test:watch:crm-core   # CRM core development
+npm run test:watch:crm   # CRM core development
 npm run test:integration     # Cross-module testing
 ```
 
@@ -170,8 +170,8 @@ npm run test:platform
 npm run coverage:platform
 
 # CRM core development  
-npm run test:crm-core
-npm run coverage:crm-core
+npm run test:crm
+npm run coverage:crm
 
 # Financial extension
 npm run test:financial

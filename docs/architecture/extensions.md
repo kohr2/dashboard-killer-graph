@@ -54,7 +54,7 @@ interface Extension {
 export class FinancialExtension implements Extension {
   readonly name = 'financial';
   readonly version = '1.0.0';
-  readonly dependencies = ['crm-core'];
+  readonly dependencies = ['crm'];
   readonly description = 'Deal tracking and investment management';
   
   async initialize(crmCore: CRMCore): Promise<void> {
@@ -277,7 +277,7 @@ src/extensions/my-domain/
 export class MyDomainExtension implements Extension {
   readonly name = 'my-domain';
   readonly version = '1.0.0';
-  readonly dependencies = ['crm-core'];
+  readonly dependencies = ['crm'];
   
   async initialize(crmCore: CRMCore): Promise<void> {
     // Implementation

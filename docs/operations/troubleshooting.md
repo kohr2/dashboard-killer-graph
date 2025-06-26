@@ -250,7 +250,7 @@ describe('Event Bus Debug', () => {
 class FinancialExtension implements Extension {
   readonly name = 'financial';
   readonly version = '1.0.0';
-  readonly dependencies = ['crm-core'];
+  readonly dependencies = ['crm'];
   
   // Ensure all required methods are implemented
   async initialize(crmCore: CRMCore): Promise<void> { /* */ }
@@ -276,7 +276,7 @@ class FinancialExtension implements Extension {
 npm run test -- --maxWorkers=4
 
 # Run specific test suites
-npm run test:unit -- --testPathPattern=crm-core
+npm run test:unit -- --testPathPattern=crm
 
 # Increase timeout for slow tests
 jest.setTimeout(30000);
@@ -328,7 +328,7 @@ npm run test:coverage -- --coverage-reporter=html
 open coverage/lcov-report/index.html
 
 # Check specific file coverage
-npm run test:coverage -- src/crm-core/domain/entities/contact.ts
+npm run test:coverage -- src/crm/domain/entities/contact.ts
 
 # Exclude files from coverage
 // jest.config.js
@@ -444,7 +444,7 @@ const contactSchema = Joi.object({
 DEBUG=* npm run dev
 
 # Module-specific logging
-DEBUG=crm-core:* npm run dev
+DEBUG=crm:* npm run dev
 DEBUG=financial:* npm run dev
 DEBUG=platform:* npm run dev
 ```
