@@ -9,9 +9,11 @@
       "description": "A collective investment vehicle (CIV) consisting of a pool of funds from multiple investors, managed by a professional firm. Examples include private equity funds, hedge funds, or mutual funds. Based on FIBO's concept of an Investment Fund."
     },
     "Deal": {
+      "keyProperties": ["dealType", "sector", "purpose"],
       "description": "A specific business or financial transaction that is proposed, under negotiation, or completed. It represents an opportunity for investment, acquisition, or partnership between parties, aligned with the FIBO concept of a financial transaction."
     },
     "TargetCompany": {
+      "keyProperties": ["industry", "website"],
       "description": "The legal entity (e.g., corporation, partnership) that is the subject of a deal, such as an acquisition, merger, or investment. It is the company being acquired, invested in, or partnered with. Aligned with FIBO's concept of a 'Contractually Capable Entity'."
     },
     "Sector": {

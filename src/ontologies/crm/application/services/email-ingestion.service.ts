@@ -6,6 +6,7 @@ import { EmailProcessingService } from './email-processing.service';
 import { ContactOntology } from '../../domain/entities/contact-ontology';
 import { User } from '@platform/security/domain/user';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
+import { inject, singleton } from 'tsyringe';
 
 export interface IncomingEmail {
   messageId: string;
@@ -39,10 +40,11 @@ export interface EmailIngestionResult {
   // ontologyInsights: any;
 }
 
+@singleton()
 export class EmailIngestionService {
   constructor(
     private emailProcessingService: EmailProcessingService,
-    private contactRepository: ContactRepository,
+    @inject('ContactRepository') private contactRepository: ContactRepository,
     private accessControlService: AccessControlService,
   ) {}
 

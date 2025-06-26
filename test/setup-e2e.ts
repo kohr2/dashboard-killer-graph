@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 // End-to-end test setup
 // This file configures the environment for E2E tests
 

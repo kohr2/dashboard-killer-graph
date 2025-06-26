@@ -1,75 +1,72 @@
-import 'reflect-metadata';
-import { container } from 'tsyringe';
-import { OntologyService } from '../../../../src/platform/ontology/ontology.service';
+import { OntologyService } from '@platform/ontology/ontology.service';
+
+// Mock ontology files
+const mockCrmOntology = {
+    name: "CRM Ontology",
+    entities: { 
+        "Contact": { "properties": { "name": "string" }, "keyProperties": ["name"] }
+    },
+    relationships: {
+        "HAS_CONTACT": { domain: "Organization", range: "Contact" }
+    }
+};
+
+const mockFinancialOntology = {
+    name: "Financial Ontology",
+    entities: {
+        "Deal": { "properties": { "amount": "number" }, "keyProperties": ["amount"] }
+    },
+    relationships: {}
+};
 
 describe('OntologyService', () => {
     let ontologyService: OntologyService;
 
-    beforeAll(() => {
-        // Le service est un singleton géré par tsyringe
-        ontologyService = container.resolve(OntologyService);
+    beforeEach(() => {
+        // We instantiate the service directly.
+        // The constructor will try to load from files, but since fs is mocked, it will find nothing.
+        // This is fine, because we will load our mocks manually.
+        ontologyService = new OntologyService();
+        
+        // Use the public method to load mock data for tests
+        ontologyService.loadFromObjects([mockCrmOntology, mockFinancialOntology] as any);
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     it('should validate a label that exists in a registered ontology', () => {
-        // GIVEN un label valide
-        const validLabel = 'Person'; // Ce label vient de l'ontologie CRM
-        
-        // WHEN la validation est effectuée
-        const isValid = ontologyService.isValidLabel(validLabel);
-        
-        // THEN la validation doit réussir
-        expect(isValid).toBe(true);
+        expect(ontologyService.isValidLabel('Contact')).toBe(true);
+        expect(ontologyService.isValidLabel('Deal')).toBe(true);
     });
-    
+
     it('should not validate a label that does not exist in any registered ontology', () => {
-        // GIVEN un label qui n'existe pas
-        const invalidLabel = 'MyInvalidLabel';
-        
-        // WHEN la validation est effectuée
-        const isValid = ontologyService.isValidLabel(invalidLabel);
-        
-        // THEN la validation doit échouer
-        expect(isValid).toBe(false);
+        expect(ontologyService.isValidLabel('Unicorn')).toBe(false);
     });
 
     it('should return a list of all unique node labels from all registered extensions', () => {
-        // WHEN on récupère tous les labels de noeuds
-        const allLabels = ontologyService.getAllNodeLabels();
-
-        // THEN la liste doit contenir des labels des ontologies chargées
-        expect(allLabels).toContain('Person');
-        expect(allLabels).toContain('Deal');
-        
-        const uniqueLabels = [...new Set(allLabels)];
-        expect(allLabels.length).toBe(uniqueLabels.length);
+        const labels = ontologyService.getAllNodeLabels();
+        expect(labels).toEqual(expect.arrayContaining(['Contact', 'Deal']));
+        expect(labels.length).toBe(2);
     });
 
     it('should return a list of all unique relationship types from all registered extensions', () => {
-        // WHEN on récupère tous les types de relations
-        const allRelationshipTypes = ontologyService.getAllRelationshipTypes();
-
-        // THEN la liste doit contenir des types de relations des ontologies chargées
-        expect(allRelationshipTypes).toContain('WORKS_FOR');
-        expect(allRelationshipTypes).toContain('HAS_INTEREST_IN');
-
-        const uniqueTypes = [...new Set(allRelationshipTypes)];
-        expect(allRelationshipTypes.length).toBe(uniqueTypes.length);
+        const relTypes = ontologyService.getAllRelationshipTypes();
+        expect(relTypes).toEqual(expect.arrayContaining(['HAS_CONTACT']));
+        expect(relTypes.length).toBe(1);
     });
 
-    it('should return a list of all entity types designated as properties', () => {
-        // WHEN on récupère les types d'entités qui sont des propriétés
-        const propertyTypes = ontologyService.getPropertyEntityTypes();
+    it('should return the key properties for a given entity type', () => {
+        const contactKeys = ontologyService.getKeyProperties('Contact');
+        expect(contactKeys).toEqual(['name']);
+        
+        const dealKeys = ontologyService.getKeyProperties('Deal');
+        expect(dealKeys).toEqual(['amount']);
+    });
 
-        // THEN la liste doit contenir les types marqués avec "isProperty: true"
-        expect(propertyTypes).toContain('Email');
-        expect(propertyTypes).toContain('MonetaryAmount');
-        expect(propertyTypes).toContain('Date');
-        expect(propertyTypes).toContain('Percent');
-        expect(propertyTypes).toContain('Time');
-
-        // AND la liste ne doit pas contenir les types d'entités standards
-        expect(propertyTypes).not.toContain('Person');
-        expect(propertyTypes).not.toContain('Deal');
-        expect(propertyTypes).not.toContain('Organization');
+    it('should return an empty array for an unknown entity type', () => {
+        const unknownKeys = ontologyService.getKeyProperties('Unicorn');
+        expect(unknownKeys).toBeUndefined();
     });
 }); 

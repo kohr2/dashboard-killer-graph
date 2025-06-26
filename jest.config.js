@@ -1,5 +1,5 @@
 const { pathsToModuleNameMapper } = require('ts-jest');
-const { compilerOptions } = require('./tsconfig.test.json');
+const { compilerOptions } = require('./tsconfig.json');
 
 module.exports = {
   preset: 'ts-jest',
@@ -10,14 +10,16 @@ module.exports = {
   
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
 
-  setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
+  moduleDirectories: ["node_modules", "src"],
+
+  setupFilesAfterEnv: ['<rootDir>/test/setup-e2e.ts', 'jest-extended/all'],
   testMatch: [
       "**/test/unit/**/*.test.ts",
       "**/test/integration/**/*.test.ts"
   ],
   globals: {
     'ts-jest': {
-      tsconfig: 'tsconfig.test.json'
+      tsconfig: 'test/tsconfig.json'
     }
   }
 };

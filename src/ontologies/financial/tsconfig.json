@@ -6,12 +6,12 @@
     "rootDir": "./",
     "baseUrl": "../../..",
     "paths": {
-      "@crm/*": ["../crm/*"],
-      "@platform/*": ["../../../platform/*"]
+      "@crm/*": ["src/ontologies/crm/*"],
+      "@platform/*": ["src/platform/*"]
     },
     "emitDecoratorMetadata": true
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"],
-  "references": [{ "path": "../../platform" }]
+  "references": [{ "path": "../../platform" }, { "path": "../crm" }]
 } 

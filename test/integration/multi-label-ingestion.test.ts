@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { Neo4jConnection } from '../../src/platform/database/neo4j-connection';
-import { initializeExtensions } from '../../src/register-extensions';
-import { FinancialToCrmBridge } from '../../src/ontologies/financial/application/ontology-bridges/financial-to-crm.bridge';
+import { Neo4jConnection } from '@platform/database/neo4j-connection';
+import { registerAllOntologies } from '../../src/register-ontologies';
+import { FinancialToCrmBridge } from '@financial/application/ontology-bridges/financial-to-crm.bridge';
 import { v4 as uuidv4 } from 'uuid';
 
 describe('Multi-Label Entity Ingestion via Ontology Bridge', () => {
@@ -11,7 +11,7 @@ describe('Multi-Label Entity Ingestion via Ontology Bridge', () => {
 
   beforeAll(async () => {
     // Initialize all services and dependencies
-    initializeExtensions();
+    registerAllOntologies();
     connection = container.resolve(Neo4jConnection);
     bridge = container.resolve(FinancialToCrmBridge);
     await connection.connect();
@@ -29,7 +29,7 @@ describe('Multi-Label Entity Ingestion via Ontology Bridge', () => {
 
     try {
       // 1. Simulate the core logic: get all labels for a type using the bridge
-      const additionalLabels = bridge.mapEntityTypeToCrmLabels(primaryLabel);
+      const additionalLabels = bridge.getCrmLabelsForFinancialType(primaryLabel);
       const allLabels = [primaryLabel, ...additionalLabels];
       const labelsCypher = allLabels.map((l: string) => `\`${l}\``).join(':');
 
@@ -45,8 +45,8 @@ describe('Multi-Label Entity Ingestion via Ontology Bridge', () => {
       const result = await session.run(verifyQuery, { nodeId });
       const dbLabels: string[] = result.records[0]?.get('labels') || [];
 
-      expect(dbLabels).toHaveLength(2);
-      expect(dbLabels).toEqual(expect.arrayContaining(['Investor', 'Organization']));
+      expect(dbLabels).toHaveLength(3);
+      expect(dbLabels).toEqual(expect.arrayContaining(['Investor', 'Organization', 'FinancialActor']));
 
     } finally {
       // 4. Cleanup: ensure the test node is deleted

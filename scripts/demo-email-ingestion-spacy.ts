@@ -5,15 +5,15 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 import { simpleParser } from 'mailparser';
 import { v4 as uuidv4 } from 'uuid';
-import { Neo4jConnection } from 'src/platform/database/neo4j-connection';
+import { Neo4jConnection } from '../src/platform/database/neo4j-connection';
 import { Session } from 'neo4j-driver';
 import axios from 'axios';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { initializeOntologies } from 'src/register-ontologies';
-import { OntologyService } from 'src/platform/ontology/ontology.service';
-import { FinancialToCrmBridge } from 'src/ontologies/financial/application/ontology-bridges/financial-to-crm.bridge';
-import { ContentProcessingService } from 'src/platform/processing/content-processing.service';
+import { registerAllOntologies } from '../src/register-ontologies';
+import { OntologyService } from '../src/platform/ontology/ontology.service';
+import { FinancialToCrmBridge } from '../src/ontologies/financial/application/ontology-bridges/financial-to-crm.bridge';
+import { ContentProcessingService } from '../src/platform/processing/content-processing.service';
 
 const LABELS_TO_INDEX = ['Person', 'Organization', 'Location', 'Product', 'Event', 'Project', 'Deal', 'RegulatoryInformation', 'LegalDocument'];
 
@@ -54,7 +54,7 @@ function getLabelInfo(entity: any, validOntologyTypes: string[]): { primary: str
 
 export async function demonstrateSpacyEmailIngestionPipeline() {
   // --- INITIALIZATION ---
-  initializeOntologies();
+  registerAllOntologies();
   const ontologyService = container.resolve(OntologyService);
   const bridge = container.resolve(FinancialToCrmBridge);
   const validEntityTypes = ontologyService.getAllEntityTypes();
@@ -122,7 +122,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
     for (const emailFile of filesToProcess) {
         const filePath = join(testEmailsDir, emailFile);
         try {
-            const fileContent = await fs.readFile(filePath);
+            const fileContent = await fs.readFile(filePath, 'utf-8');
             const parsedEmail = await simpleParser(fileContent);
             const emailBody = typeof parsedEmail.text === 'string'
                 ? parsedEmail.text
@@ -189,8 +189,18 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
           }
 
           if (!foundExistingNode) {
-            const additionalLabels = bridge.mapEntityTypeToCrmLabels(primaryLabel);
-            const allLabels = [primaryLabel, ...additionalLabels];
+            const allLabels = [primaryLabel];
+            // Apply CRM labels if the bridge defines them
+            if (primaryLabel && bridge) {
+              try {
+                const crmLabels = bridge.getCrmLabelsForFinancialType(primaryLabel);
+                if (crmLabels.length > 0) {
+                  allLabels.push(...crmLabels);
+                }
+              } catch (error: any) {
+                console.error(`   ❌ Error getting CRM labels for ${primaryLabel}:`, error.message);
+              }
+            }
             const labelsCypher = allLabels.map(l => `\`${l}\``).join(':');
 
             const mergeQuery = entity.embedding

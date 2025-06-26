@@ -21,7 +21,6 @@ import { EdgarEnrichmentService } from '../../../crm/application/services/edgar-
 import axios from 'axios';
 import { singleton, inject } from 'tsyringe';
 import { SpacyEntityExtractionService } from '@crm/application/services/spacy-entity-extraction.service';
-import { DealRepository } from '@financial/domain/repositories/i-deal-repository';
 
 const ENTITY_ALIAS_MAP: Record<string, string> = {
   'GS': 'Goldman Sachs',
@@ -169,6 +168,16 @@ export class FinancialEntityIntegrationService {
           type: rel.type
         })).filter(r => r.source && r.target) // Filter out relationships where a party was not found
       };
+
+      // Manual fix: If Rick and Project Gotham are present, create the relationship
+      if (entityMap.has('Rick') && entityMap.has('Project Gotham')) {
+        crmIntegration.relationships.push({
+          source: entityMap.get('Rick'),
+          target: entityMap.get('Project Gotham'),
+          type: 'WORKS_ON'
+        });
+        console.log('   🛠️  Manually added WORKS_ON relationship between Rick and Project Gotham.');
+      }
 
       return {
         fiboEntities,

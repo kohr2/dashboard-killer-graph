@@ -7,10 +7,12 @@
     },
     "Person": {
       "parent": "Party",
+      "keyProperties": ["email", "title"],
       "description": "Represents a legal entity or a formal group of people with a particular purpose, such as a company, institution, or association. In the CRM context, it is typically the entity managing customer relationships or a business customer itself. Based on the O-CREAM concept of an enterprise or actor involved in business activities."
     },
     "Organization": {
       "parent": "Party",
+      "keyProperties": ["legalName", "industry"],
       "description": "Represents a legal entity or a formal group of people with a particular purpose, such as a company, institution, or association. In the CRM context, it is typically the entity managing customer relationships or a business customer itself. Based on the O-CREAM concept of an enterprise or actor involved in business activities."
     },
     "ContactPoint": {
@@ -30,6 +32,7 @@
     },
     "Communication": {
       "parent": "Activity",
+      "keyProperties": ["status", "channel"],
       "description": "Represents an interaction or exchange of information between parties, such as an email, call, or meeting. In O-CREAM, this is a central activity that connects organizations and individuals."
     }
   },

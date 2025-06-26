@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as glob from 'glob';
-import { singleton } from 'tsyringe';
+import { singleton, injectable } from 'tsyringe';
 
 export interface Ontology {
   name: string;
@@ -20,37 +20,84 @@ export interface OntologySource {
 
 export type EntityFactory<T> = (data: any) => T;
 
-@singleton()
+interface OntologyEntity {
+    parent?: string;
+    description?: string;
+    keyProperties?: string[];
+}
+
+interface OntologyRelationship {
+    domain: string | string[];
+    range: string | string[];
+    description?: string;
+}
+
+interface OntologySchema {
+    entities: { [key: string]: OntologyEntity };
+    relationships: { [key: string]: OntologyRelationship };
+}
+
+@injectable()
 export class OntologyService {
   private ontologies: Ontology[] = [];
   private entityFactories = new Map<string, EntityFactory<any>>();
   private labelCache = new Map<string, string>();
+  private registeredEntityTypes: Set<string> = new Set();
+  private entityCreationMap: Map<string, (data: any) => any> = new Map();
+  private schema: OntologySchema = { entities: {}, relationships: {} };
 
   public constructor() {
+    // We can leave the file-based loading for the real application
+    // but provide a way to load mocks for testing.
     this.loadOntologies();
     console.log('OntologyService initialized');
   }
 
-  private loadOntologies() {
+  /**
+   * Loads ontologies directly from an array of objects.
+   * Useful for testing without relying on file system discovery.
+   * This will clear any previously loaded ontologies.
+   * @param ontologyObjects An array of ontology objects to load.
+   */
+  public loadFromObjects(ontologyObjects: Ontology[]) {
     this.ontologies = [];
-    const projectRoot = process.cwd();
-    const ontologyFiles = glob
-      .sync(path.join(projectRoot, 'src/**/ontology.json'))
-      .concat(glob.sync(path.join(projectRoot, 'config/ontology/*.json')));
+    this.registeredEntityTypes.clear();
+    this.schema = { entities: {}, relationships: {} };
 
-    for (const filePath of ontologyFiles) {
-      try {
-        const content = fs.readFileSync(filePath, 'utf-8');
-        const ontology = JSON.parse(content) as Ontology;
-        if (ontology.entities) {
-          this.ontologies.push(ontology);
-        } else {
-            console.warn(`Skipping non-structured ontology file: ${filePath}`);
-        }
-      } catch (error) {
-        console.error(`Failed to load ontology at ${filePath}:`, error);
+    for (const ontology of ontologyObjects) {
+      this.ontologies.push(ontology);
+      if (ontology.entities) {
+          Object.assign(this.schema.entities, ontology.entities);
+          Object.keys(ontology.entities).forEach(name => this.registeredEntityTypes.add(name));
+      }
+      if (ontology.relationships) {
+          Object.assign(this.schema.relationships, ontology.relationships);
       }
     }
+  }
+
+  private loadOntologies() {
+    const workspaceRoot = path.join(__dirname, '../../..'); // Adjust based on your project structure
+    const ontologyFiles = glob.sync('src/ontologies/**/ontology.json', { cwd: workspaceRoot });
+
+    for (const file of ontologyFiles) {
+        const filePath = path.join(workspaceRoot, file);
+        try {
+            const content = fs.readFileSync(filePath, 'utf-8');
+            const ontology = JSON.parse(content);
+
+            if (ontology.entities) {
+                Object.assign(this.schema.entities, ontology.entities);
+                Object.keys(ontology.entities).forEach(name => this.registeredEntityTypes.add(name));
+            }
+            if (ontology.relationships) {
+                Object.assign(this.schema.relationships, ontology.relationships);
+            }
+        } catch (error) {
+            console.error(`Error loading ontology file ${file}:`, error);
+        }
+    }
+    console.log(`✅ Loaded ${ontologyFiles.length} ontology schemas.`);
   }
 
   public getOntologies(): Ontology[] {
@@ -85,13 +132,11 @@ export class OntologyService {
   }
 
   public getAllEntityTypes(): string[] {
-    const entityTypes = new Set<string>();
-    for (const ontology of this.ontologies) {
-      for (const entityName in ontology.entities) {
-        entityTypes.add(entityName);
-      }
-    }
-    return Array.from(entityTypes);
+    return Array.from(this.registeredEntityTypes);
+  }
+
+  public getKeyProperties(entityType: string): string[] | undefined {
+    return this.schema.entities[entityType]?.keyProperties;
   }
 
   public getPropertyEntityTypes(): string[] {
@@ -134,30 +179,43 @@ export class OntologyService {
     return Array.from(types);
   }
 
-  public getLabelsForEntityType(entityType: string): string {
-    if (this.labelCache.has(entityType)) {
-      return this.labelCache.get(entityType)!;
+  public getLabelsForEntityType(entityName: string): string {
+    // This is a simplified implementation. In a real scenario, you'd traverse the parent chain.
+    const entity = this.schema.entities[entityName];
+    if (entity && entity.parent) {
+        return `${entityName}:${entity.parent}`;
     }
-
-    const labels = this.buildLabelHierarchy(entityType);
-    const labelString = labels.map(l => `\`${l}\``).join(':');
-    this.labelCache.set(entityType, labelString);
-    return labelString;
+    return entityName;
   }
 
-  private buildLabelHierarchy(entityType: string): string[] {
-    const definition = this.getEntityDefinition(entityType);
-    if (!definition) {
-      return [entityType];
+  public getSchemaRepresentation(): string {
+    let schemaText = 'The graph schema is as follows:\n\n';
+
+    schemaText += '## Entities:\n';
+    for (const [name, entity] of Object.entries(this.schema.entities)) {
+        schemaText += `- ${name}`;
+        if (entity.parent) {
+            schemaText += ` (is a type of ${entity.parent})`;
+        }
+        if(entity.description) {
+            schemaText += `: ${entity.description}\n`;
+        } else {
+            schemaText += '\n';
+        }
     }
 
-    const labels = [entityType];
-    let currentDefinition: { parent?: string } | undefined = definition;
-    while (currentDefinition?.parent) {
-      const parentName = currentDefinition.parent;
-      labels.push(parentName);
-      currentDefinition = this.getEntityDefinition(parentName);
+    schemaText += '\n## Relationships:\n';
+    for (const [name, rel] of Object.entries(this.schema.relationships)) {
+        const domain = Array.isArray(rel.domain) ? rel.domain.join(' or ') : rel.domain;
+        const range = Array.isArray(rel.range) ? rel.range.join(' or ') : rel.range;
+        schemaText += `- A ${domain} can have a "${name}" relationship with a ${range}.`;
+        if (rel.description) {
+            schemaText += ` (Meaning: ${rel.description})\n`;
+        } else {
+            schemaText += '\n';
+        }
     }
-    return labels;
+
+    return schemaText;
   }
 } 

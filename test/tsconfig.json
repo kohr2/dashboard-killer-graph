@@ -3,8 +3,9 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "../dist/test",
-    "baseUrl": ".",
+    "baseUrl": "..",
     "paths": {
+      "@/*": ["*"],
       "@platform/*": ["src/platform/*"],
       "@crm/*": ["src/ontologies/crm/*"],
       "@financial/*": ["src/ontologies/financial/*"],
@@ -17,5 +18,5 @@
     { "path": "../src/ontologies/crm" },
     { "path": "../src/ontologies/financial" }
   ],
-  "include": ["./**/*.ts"]
-} 
+  "include": ["./**/*.ts", "../scripts/**/*.ts"]
+}
