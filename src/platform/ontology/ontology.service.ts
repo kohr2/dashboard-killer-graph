@@ -3,38 +3,60 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as glob from 'glob';
 import { singleton, injectable } from 'tsyringe';
+import { z } from 'zod';
 
-export interface Ontology {
-  name: string;
-  entities: Record<string, { description?: string; values?: string[], parent?: string, isProperty?: boolean }>;
-  relationships?: Record<
-    string,
-    { domain: string; range: string | string[]; description?: string }
-  >;
-}
+// Zod Schemas for validation
+const OntologyPropertySchema = z.object({
+  type: z.string(),
+  description: z.string(),
+});
 
-export interface OntologySource {
+const OntologyEntitySchema = z.object({
+  description: z.string().optional(),
+  values: z.array(z.string()).optional(),
+  parent: z.string().optional(),
+  isProperty: z.boolean().optional(),
+  properties: z.record(OntologyPropertySchema).optional(),
+});
+
+const OntologyRelationshipSchema = z.object({
+  domain: z.union([z.string(), z.array(z.string())]),
+  range: z.union([z.string(), z.array(z.string())]),
+  description: z.string().optional(),
+});
+
+const OntologySchemaValidator = z.object({
+  name: z.string(),
+  entities: z.record(OntologyEntitySchema),
+  relationships: z.record(OntologyRelationshipSchema).optional(),
+});
+
+// TypeScript types inferred from Zod schemas
+export type Ontology = z.infer<typeof OntologySchemaValidator>;
+export type EntityFactory<T> = (data: any) => T;
+
+interface OntologySource {
   sourcePath: string;
   ontology: Ontology;
 }
 
-export type EntityFactory<T> = (data: any) => T;
-
-interface OntologyEntity {
+// Keep a simplified internal schema structure
+interface InternalOntologyEntity {
     parent?: string;
     description?: string;
     keyProperties?: string[];
+    properties?: { [key: string]: { type: string; description: string; } };
 }
 
-interface OntologyRelationship {
+interface InternalOntologyRelationship {
     domain: string | string[];
     range: string | string[];
     description?: string;
 }
 
-interface OntologySchema {
-    entities: { [key: string]: OntologyEntity };
-    relationships: { [key: string]: OntologyRelationship };
+interface InternalOntologySchema {
+    entities: { [key: string]: InternalOntologyEntity };
+    relationships: { [key: string]: InternalOntologyRelationship };
 }
 
 @injectable()
@@ -44,7 +66,7 @@ export class OntologyService {
   private labelCache = new Map<string, string>();
   private registeredEntityTypes: Set<string> = new Set();
   private entityCreationMap: Map<string, (data: any) => any> = new Map();
-  private schema: OntologySchema = { entities: {}, relationships: {} };
+  private schema: InternalOntologySchema = { entities: {}, relationships: {} };
 
   public constructor() {
     // We can leave the file-based loading for the real application
@@ -65,13 +87,23 @@ export class OntologyService {
     this.schema = { entities: {}, relationships: {} };
 
     for (const ontology of ontologyObjects) {
-      this.ontologies.push(ontology);
-      if (ontology.entities) {
-          Object.assign(this.schema.entities, ontology.entities);
-          Object.keys(ontology.entities).forEach(name => this.registeredEntityTypes.add(name));
-      }
-      if (ontology.relationships) {
-          Object.assign(this.schema.relationships, ontology.relationships);
+      try {
+        // Validate each object against the schema
+        OntologySchemaValidator.parse(ontology);
+        this.ontologies.push(ontology);
+        if (ontology.entities) {
+            Object.assign(this.schema.entities, ontology.entities);
+            Object.keys(ontology.entities).forEach(name => this.registeredEntityTypes.add(name));
+        }
+        if (ontology.relationships) {
+            Object.assign(this.schema.relationships, ontology.relationships);
+        }
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          console.error(`Validation failed for ontology object '${ontology.name}':`, error.errors);
+        } else {
+          console.error(`An unexpected error occurred while loading ontology object '${ontology.name}':`, error);
+        }
       }
     }
   }
@@ -84,7 +116,10 @@ export class OntologyService {
         const filePath = path.join(workspaceRoot, file);
         try {
             const content = fs.readFileSync(filePath, 'utf-8');
-            const ontology = JSON.parse(content);
+            const ontologyData = JSON.parse(content);
+
+            // Validate the parsed JSON with Zod
+            const ontology = OntologySchemaValidator.parse(ontologyData);
 
             if (ontology.entities) {
                 Object.assign(this.schema.entities, ontology.entities);
@@ -94,10 +129,15 @@ export class OntologyService {
                 Object.assign(this.schema.relationships, ontology.relationships);
             }
         } catch (error) {
-            console.error(`Error loading ontology file ${file}:`, error);
+            if (error instanceof z.ZodError) {
+              console.error(`[Ontology Validation Error] Failed to validate ${file}:`);
+              console.error(error.errors);
+            } else {
+              console.error(`Error loading or parsing ontology file ${file}:`, error);
+            }
         }
     }
-    console.log(`✅ Loaded ${ontologyFiles.length} ontology schemas.`);
+    console.log(`✅ Loaded and validated ${ontologyFiles.length} ontology schemas.`);
   }
 
   public getOntologies(): Ontology[] {
@@ -198,9 +238,15 @@ export class OntologyService {
             schemaText += ` (is a type of ${entity.parent})`;
         }
         if(entity.description) {
-            schemaText += `: ${entity.description}\n`;
-        } else {
-            schemaText += '\n';
+            schemaText += `: ${entity.description}`;
+        }
+        schemaText += '\n';
+
+        if (entity.properties) {
+            schemaText += '    Properties:\n';
+            for (const [propName, propDef] of Object.entries(entity.properties)) {
+                schemaText += `    - ${propName} (${propDef.type}): ${propDef.description}\n`;
+            }
         }
     }
 

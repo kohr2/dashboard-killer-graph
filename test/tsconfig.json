@@ -3,6 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "../dist/test",
+    "rootDir": "..",
     "baseUrl": "..",
     "paths": {
       "@/*": ["*"],

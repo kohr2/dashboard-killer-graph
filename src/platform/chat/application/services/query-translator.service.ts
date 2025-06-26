@@ -5,6 +5,7 @@ import { OntologyService } from '@platform/ontology/ontology.service';
 interface StructuredQuery {
   command: 'show' | 'unknown' | 'show_related';
   resourceTypes: string[];
+  filters?: { [key: string]: string };
   relatedTo?: string[]; // The resource types from the previous context
   sourceEntityName?: string; // The specific entity name from the user's query
   relationshipType?: string; // The specific relationship to look for
@@ -57,7 +58,9 @@ The supported resource types are: ${validEntityTypes}.
 The user can write in any language.
 
 # Rules:
-- If the query is a stand-alone request (e.g., "show all deals"), use the 'show' command and populate 'resourceTypes' with an array of relevant types.
+- If the query is a stand-alone request (e.g., "show all deals"), use the 'show' command and populate 'resourceTypes'.
+- If the query requests resources with specific properties (e.g., "find the person named Rick"), use the 'show' command and populate 'resourceTypes' and 'filters' with the property and value. Use 'CONTAINS' for partial matches.
+- For a complex query that finds entities related to another entity described by properties (e.g., "find companies related to 'John Doe'"), use the 'show_related' command. You must populate 'resourceTypes' with the target entity, 'relatedTo' with the source entity type, and 'filters' with the properties of the source entity.
 - If the query refers to a previous result (e.g., "show their contacts"), use the 'show_related' command. You MUST set 'resourceTypes' to the type(s) of entity the user is asking for now, and 'relatedTo' to the type(s) of entity from the previous context.
 - For 'show_related', if you can't determine the new resourceTypes, classify the command as 'unknown'.
 - For a query like "projets", if both 'Project' and 'Deal' seem plausible based on the ontology, return both in the 'resourceTypes' array.
@@ -73,13 +76,21 @@ ${schemaDescription}
 ${previousContext}
 
 # Output Format
-Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "..."], "relatedTo": ["..."], "sourceEntityName": "...", "relationshipType": "..."}.
-'relatedTo' is required for the 'show_related' command. 'sourceEntityName' and 'relationshipType' are optional.
+Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "..."], "filters": {"key": "value"}, "relatedTo": ["..."], "sourceEntityName": "...", "relationshipType": "..."}.
+'filters', 'relatedTo', 'sourceEntityName' and 'relationshipType' are optional.
 
 # Examples:
 ## Stand-alone query for a specific type
 - User: "list all deals"
 - Assistant: {"command": "show", "resourceTypes": ["Deal"]}
+
+## Stand-alone query with filter
+- User: "trouve la personne qui s'appelle Lisa"
+- Assistant: {"command": "show", "resourceTypes": ["Person"], "filters": {"name": "Lisa"}}
+
+## Complex stand-alone relational query
+- User: "quelles organisations sont liées à la personne nommée Rick?"
+- Assistant: {"command": "show_related", "resourceTypes": ["Organization"], "relatedTo": ["Person"], "filters": {"name": "Rick"}}
 
 ## Stand-alone query for an ambiguous type
 - User: "montre moi les projets"

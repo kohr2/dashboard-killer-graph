@@ -16,7 +16,8 @@
       "description": "Represents a legal entity or a formal group of people with a particular purpose, such as a company, institution, or association. In the CRM context, it is typically the entity managing customer relationships or a business customer itself. Based on the O-CREAM concept of an enterprise or actor involved in business activities."
     },
     "ContactPoint": {
-        "description": "An abstract concept representing a medium for communication, such as an email address or a phone number."
+      "parent": "Thing",
+      "description": "A means of contacting an entity, like an email address or phone number."
     },
     "Email": {
       "parent": "ContactPoint",
@@ -34,6 +35,24 @@
       "parent": "Activity",
       "keyProperties": ["status", "channel"],
       "description": "Represents an interaction or exchange of information between parties, such as an email, call, or meeting. In O-CREAM, this is a central activity that connects organizations and individuals."
+    },
+    "Contact": {
+      "parent": "Person",
+      "description": "A person of interest in a professional context, such as a business lead, a partner, or a team member.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The full name of the contact."
+        },
+        "email": {
+          "type": "string",
+          "description": "The primary email address of the contact."
+        },
+        "title": {
+          "type": "string",
+          "description": "The job title or role of the contact (e.g., 'CEO', 'Investment Analyst')."
+        }
+      }
     }
   },
   "relationships": {

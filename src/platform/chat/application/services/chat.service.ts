@@ -8,6 +8,7 @@ import { PermissionResource } from '@platform/security/domain/role';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { QueryTranslator, ConversationTurn } from './query-translator.service';
+import OpenAI from 'openai';
 
 @singleton()
 export class ChatService {
@@ -15,6 +16,7 @@ export class ChatService {
   private conversations: Map<string, Conversation> = new Map();
   // Simple history for the CLI context
   private queryHistory: ConversationTurn[] = [];
+  private openai: OpenAI;
 
   constructor(
     private readonly accessControlService: AccessControlService,
@@ -22,6 +24,13 @@ export class ChatService {
     private readonly neo4j: Neo4jConnection,
     private readonly queryTranslator: QueryTranslator,
   ) {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY environment variable is not set.');
+    }
+    this.openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
     // Seed with a sample conversation for testing
     const sampleConversation: Conversation = {
         id: 'conv-1',
@@ -106,12 +115,12 @@ export class ChatService {
 
     switch (structuredQuery.command) {
       case 'show':
-        response = await this.getAndFormatResources(user, structuredQuery.resourceTypes as PermissionResource[]);
+        response = await this.getAndFormatResources(user, structuredQuery.resourceTypes as PermissionResource[], structuredQuery.filters);
         responseText = this.formatResults(structuredQuery.resourceTypes, response);
         break;
       
       case 'show_related':
-        if (!structuredQuery.relatedTo || structuredQuery.relatedTo.length === 0 || this.queryHistory.length === 0) {
+        if ((!structuredQuery.relatedTo || structuredQuery.relatedTo.length === 0) && !structuredQuery.filters) {
           responseText = "I'm sorry, I don't have a previous context to relate this query to.";
           response = responseText;
           break;
@@ -121,7 +130,8 @@ export class ChatService {
         response = await this.findRelatedResources(
             user, 
             structuredQuery.resourceTypes, 
-            structuredQuery.relatedTo, 
+            structuredQuery.relatedTo as PermissionResource[], 
+            structuredQuery.filters,
             sourceEntityName, 
             relationshipType
         );
@@ -144,10 +154,67 @@ export class ChatService {
         this.queryHistory.shift();
     }
 
-    return responseText;
+    // NEW: Generate a natural language response
+    const finalResponse = await this.generateNaturalResponse(query, response);
+
+    return finalResponse;
   }
 
-  private async getAndFormatResources(user: User, resourceTypes: PermissionResource[]) {
+  private cleanRecord(record: any): any {
+    if (!record) {
+        return null;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { embedding, ...rest } = record;
+    return rest;
+  }
+
+  private async generateNaturalResponse(originalQuery: string, data: any): Promise<string> {
+    if (typeof data === 'string') {
+        return data; // Return simple messages directly
+    }
+    if (!data || (Array.isArray(data) && data.length === 0)) {
+        return "I couldn't find any information for your query.";
+    }
+
+    const systemPrompt = `You are a helpful assistant. Based ONLY on the provided structured data, answer the user's query in a clear and natural way.
+Do not make up any information that is not in the data. If the data is empty, say that you couldn't find any information.
+Summarize the results if they are numerous, but list key details. Format your answer nicely in markdown.
+If you see a special marker like '{"__truncated__": true, "total": X}', it means the list of results is not complete. You should mention this in your response (e.g., "Here are the first 20 of X total results...").`;
+
+    let dataToSend = data;
+    const MAX_RESULTS_TO_SEND = 20;
+    if (Array.isArray(data) && data.length > MAX_RESULTS_TO_SEND) {
+        dataToSend = data.slice(0, MAX_RESULTS_TO_SEND);
+        dataToSend.push({ __truncated: true, total: data.length });
+    }
+
+    const dataAsString = JSON.stringify(dataToSend, null, 2);
+
+    try {
+        console.log('--- Sending to OpenAI for Final Response Generation ---');
+        const completion = await this.openai.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: `My query was: "${originalQuery}". The data I found is: \n\n${dataAsString}` },
+            ],
+        });
+        const result = completion.choices[0]?.message?.content;
+        console.log('--- Received Natural Language Response from OpenAI ---');
+
+        if (!result) {
+            return "I found some data, but I'm having trouble phrasing a response.";
+        }
+        return result;
+
+    } catch (error) {
+        console.error('Error generating natural response with OpenAI:', error);
+        return 'I encountered an error while formulating the final response.';
+    }
+  }
+
+  private async getAndFormatResources(user: User, resourceTypes: PermissionResource[], filters?: { [key: string]: string }) {
     const allResults: any[] = [];
     for (const resourceType of resourceTypes) {
         if (!this.ontologyService.getAllEntityTypes().includes(resourceType)) {
@@ -162,11 +229,28 @@ export class ChatService {
 
         const session = this.neo4j.getDriver().session();
         try {
-          const result = await session.run(`MATCH (n:\`${resourceType}\`) RETURN n LIMIT 20`);
-          const newRecords = result.records.map(r => ({ ...r.get('n').properties, __type: resourceType }));
-          allResults.push(...newRecords);
+            let whereClauses = '';
+            const params: { [key: string]: any } = {};
+
+            if (filters) {
+                const clauses = Object.entries(filters).map(([key, value], index) => {
+                    const paramName = `param${index}`;
+                    params[paramName] = value;
+                    return `n.\`${key}\` CONTAINS $${paramName}`;
+                });
+                if (clauses.length > 0) {
+                    whereClauses = `WHERE ${clauses.join(' AND ')}`;
+                }
+            }
+
+            const query = `MATCH (n:\`${resourceType}\`) ${whereClauses} RETURN n LIMIT 20`;
+            console.log(`Executing Cypher: ${query}`);
+
+            const result = await session.run(query, params);
+            const newRecords = result.records.map(r => this.cleanRecord({ ...r.get('n').properties, __type: resourceType }));
+            allResults.push(...newRecords);
         } finally {
-          await session.close();
+            await session.close();
         }
     }
     return allResults;
@@ -175,7 +259,8 @@ export class ChatService {
   private async findRelatedResources(
     user: User,
     targetResourceTypes: string[],
-    sourceResourceTypes: string[],
+    sourceResourceTypes: PermissionResource[],
+    filters?: { [key: string]: string },
     sourceEntityName?: string,
     relationshipType?: string
   ): Promise<any[]> {
@@ -183,29 +268,41 @@ export class ChatService {
         throw new Error(`Access denied to query one of the target resource types.`);
     }
 
-    const lastTurn = this.queryHistory[this.queryHistory.length - 1];
-    let sourceEntities = lastTurn.assistantResponse as any[];
+    let sourceEntities: any[] = [];
 
-    if (!sourceEntities || sourceEntities.length === 0 || typeof sourceEntities === 'string') {
+    // Case 1: The query is self-contained and defines the source entity with filters (e.g., "orgs related to person named Rick")
+    if (filters && Object.keys(filters).length > 0) {
+        sourceEntities = await this.getAndFormatResources(user, sourceResourceTypes, filters);
+    } 
+    // Case 2: The query relates to the previous turn in the conversation
+    else {
+        const lastTurn = this.queryHistory.length > 0 ? this.queryHistory[this.queryHistory.length - 1] : null;
+        if (lastTurn && lastTurn.assistantResponse && typeof lastTurn.assistantResponse !== 'string') {
+            sourceEntities = lastTurn.assistantResponse as any[];
+        }
+    }
+    
+    if (sourceEntities.length === 0) {
         return [];
     }
 
-    // If a specific entity name is provided, filter the source entities
+    // If a specific entity name is provided (e.g., from a follow-up "what about 'Project Alpha'"), filter the source entities further
     if (sourceEntityName) {
         sourceEntities = sourceEntities.filter(e => e.name === sourceEntityName);
         if (sourceEntities.length === 0) {
-            // The specific entity from the user's query was not in the last turn's results.
             return [];
         }
     }
 
     const sourceIds = sourceEntities.map(e => e.id);
+    if (sourceIds.length === 0) {
+        return [];
+    }
 
     const session = this.neo4j.getDriver().session();
     try {
         const relationshipCypher = relationshipType ? `[:\`${relationshipType}\`]` : `[*1..2]`;
         
-        // Build the multi-label matchers for source and target nodes.
         const sourceLabelsCypher = sourceResourceTypes.map(l => `\`${l}\``).join('|');
         const targetLabelsCypher = targetResourceTypes.map(l => `\`${l}\``).join('|');
 
@@ -220,8 +317,7 @@ export class ChatService {
         const result = await session.run(cypherQuery, { sourceIds });
         const records = result.records.map(record => record.get('target'));
         
-        // We need to add the type information back for the formatter
-        return records.map(node => ({ ...node.properties, __type: node.labels[0] }));
+        return records.map(node => this.cleanRecord({ ...node.properties, __type: node.labels[0] }));
 
     } finally {
         await session.close();

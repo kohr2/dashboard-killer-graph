@@ -14,6 +14,7 @@ import { registerAllOntologies } from '../src/register-ontologies';
 import { OntologyService } from '../src/platform/ontology/ontology.service';
 import { FinancialToCrmBridge } from '../src/ontologies/financial/application/ontology-bridges/financial-to-crm.bridge';
 import { ContentProcessingService } from '../src/platform/processing/content-processing.service';
+import { resetDatabase } from './reset-neo4j';
 
 const LABELS_TO_INDEX = ['Person', 'Organization', 'Location', 'Product', 'Event', 'Project', 'Deal', 'RegulatoryInformation', 'LegalDocument'];
 
@@ -53,6 +54,13 @@ function getLabelInfo(entity: any, validOntologyTypes: string[]): { primary: str
 }
 
 export async function demonstrateSpacyEmailIngestionPipeline() {
+  // --- Check for reset flag ---
+  if (process.argv.includes('--reset-db')) {
+    console.log('🔄 --reset-db flag found. Resetting database before ingestion...');
+    await resetDatabase();
+    console.log('✅ Database reset complete.');
+  }
+
   // --- INITIALIZATION ---
   registerAllOntologies();
   const ontologyService = container.resolve(OntologyService);
