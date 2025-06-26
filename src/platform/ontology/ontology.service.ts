@@ -6,7 +6,7 @@ import { singleton } from 'tsyringe';
 
 export interface Ontology {
   name: string;
-  entities: Record<string, { description?: string; values?: string[] }>;
+  entities: Record<string, { description?: string; values?: string[], parent?: string }>;
   relationships?: Record<
     string,
     { domain: string; range: string | string[]; description?: string }
@@ -24,6 +24,7 @@ export type EntityFactory<T> = (data: any) => T;
 export class OntologyService {
   private ontologies: Ontology[] = [];
   private entityFactories = new Map<string, EntityFactory<any>>();
+  private labelCache = new Map<string, string>();
 
   public constructor() {
     this.loadOntologies();
@@ -119,5 +120,32 @@ export class OntologyService {
       }
     }
     return Array.from(types);
+  }
+
+  public getLabelsForEntityType(entityType: string): string {
+    if (this.labelCache.has(entityType)) {
+      return this.labelCache.get(entityType)!;
+    }
+
+    const labels = this.buildLabelHierarchy(entityType);
+    const labelString = labels.map(l => `\`${l}\``).join(':');
+    this.labelCache.set(entityType, labelString);
+    return labelString;
+  }
+
+  private buildLabelHierarchy(entityType: string): string[] {
+    const definition = this.getEntityDefinition(entityType);
+    if (!definition) {
+      return [entityType];
+    }
+
+    const labels = [entityType];
+    let currentDefinition: { parent?: string } | undefined = definition;
+    while (currentDefinition?.parent) {
+      const parentName = currentDefinition.parent;
+      labels.push(parentName);
+      currentDefinition = this.getEntityDefinition(parentName);
+    }
+    return labels;
   }
 } 

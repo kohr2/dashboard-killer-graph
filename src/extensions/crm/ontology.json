@@ -2,10 +2,15 @@
   "name": "CrmOntology",
   "source": "https://link.springer.com/article/10.1007/s12599-022-00744-0",
   "entities": {
+    "Party": {
+      "description": "Represents an actor, either an individual (Person) or a group (Organization). This is an abstract concept serving as a parent for more specific actor types."
+    },
     "Person": {
+      "parent": "Party",
       "description": "Represents an individual human being, whether a customer, contact, or employee. Aligned with the O-CREAM (Ontology for Customer Relationship Management) concept of a party in a business relationship and the W3C Person Core Vocabulary. A person is a real individual, not a fictional character."
     },
     "Organization": {
+      "parent": "Party",
       "description": "Represents a legal entity or a formal group of people with a particular purpose, such as a company, institution, or association. In the CRM context, it is typically the entity managing customer relationships or a business customer itself. Based on the O-CREAM concept of an enterprise or actor involved in business activities."
     },
     "Email": {
