@@ -7,7 +7,7 @@
     },
     "Person": {
       "parent": "Party",
-      "description": "Represents an individual human being, whether a customer, contact, or employee. Aligned with the O-CREAM (Ontology for Customer Relationship Management) concept of a party in a business relationship and the W3C Person Core Vocabulary. A person is a real individual, not a fictional character."
+      "description": "Represents a legal entity or a formal group of people with a particular purpose, such as a company, institution, or association. In the CRM context, it is typically the entity managing customer relationships or a business customer itself. Based on the O-CREAM concept of an enterprise or actor involved in business activities."
     },
     "Organization": {
       "parent": "Party",
@@ -18,6 +18,7 @@
     },
     "Email": {
       "parent": "ContactPoint",
+      "isProperty": true,
       "description": "A unique electronic address for sending and receiving messages."
     },
     "PhoneNumber": {

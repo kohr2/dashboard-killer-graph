@@ -31,6 +31,22 @@
     },
     "Event": {
       "description": "A point-in-time happening relevant to a deal or entity, such as a bid, investment, exit, or due diligence process. Aligned with FIBO's general concept of an 'Occurrence' (or 'Event'), often specializing as a 'Transaction Event'."
+    },
+    "MonetaryAmount": {
+        "isProperty": true,
+        "description": "An amount of money, typically associated with a deal size, fund size, or transaction value. To be used as a property of another entity."
+    },
+    "Date": {
+        "isProperty": true,
+        "description": "A specific point in time, such as a deadline, closing date, or event date. To be used as a property of another entity."
+    },
+    "Percent": {
+        "isProperty": true,
+        "description": "A percentage value, such as an interest rate, ownership stake, or deal likelihood. To be used as a property of another entity."
+    },
+    "Time": {
+        "isProperty": true,
+        "description": "A specific time of day, often associated with an event or deadline. To be used as a property of another entity."
     }
   },
   "relationships": {

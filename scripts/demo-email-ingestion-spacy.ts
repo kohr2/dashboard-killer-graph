@@ -58,8 +58,10 @@ async function demonstrateSpacyEmailIngestionPipeline() {
   const ontologyService = container.resolve(OntologyService);
   const bridge = container.resolve(FinancialToCrmBridge);
   const validEntityTypes = ontologyService.getAllEntityTypes();
+  const propertyEntityTypes = ontologyService.getPropertyEntityTypes();
   const validRelationshipTypes = ontologyService.getAllRelationshipTypes();
   console.log('🏛️ Registered Ontology Types:', validEntityTypes);
+  console.log('🏠 Registered Property Types:', propertyEntityTypes);
   console.log('🔗 Registered Relationship Types:', validRelationshipTypes);
 
   // --- NEW: Sync ontology with Python NLP Service ---
@@ -67,6 +69,7 @@ async function demonstrateSpacyEmailIngestionPipeline() {
     console.log('   ⚡ Syncing ontology with NLP service...');
     await axios.post('http://127.0.0.1:8000/ontologies', {
         entity_types: validEntityTypes,
+        property_types: propertyEntityTypes,
         relationship_types: validRelationshipTypes
     });
     console.log('   ✅ Ontology synced successfully.');

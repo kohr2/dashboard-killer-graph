@@ -6,7 +6,7 @@ import { singleton } from 'tsyringe';
 
 export interface Ontology {
   name: string;
-  entities: Record<string, { description?: string; values?: string[], parent?: string }>;
+  entities: Record<string, { description?: string; values?: string[], parent?: string, isProperty?: boolean }>;
   relationships?: Record<
     string,
     { domain: string; range: string | string[]; description?: string }
@@ -92,6 +92,18 @@ export class OntologyService {
       }
     }
     return Array.from(entityTypes);
+  }
+
+  public getPropertyEntityTypes(): string[] {
+    const propertyTypes = new Set<string>();
+    for (const ontology of this.ontologies) {
+      for (const entityName in ontology.entities) {
+        if (ontology.entities[entityName].isProperty) {
+          propertyTypes.add(entityName);
+        }
+      }
+    }
+    return Array.from(propertyTypes);
   }
 
   public isValidLabel(label: string): boolean {

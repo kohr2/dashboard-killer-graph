@@ -60,10 +60,12 @@ class EmbeddingRequest(BaseModel):
 class OntologyUpdateRequest(BaseModel):
     entity_types: List[str]
     relationship_types: List[str]
+    property_types: List[str] = []
 
 # --- Global State ---
 VALID_ONTOLOGY_TYPES: List[str] = []
 VALID_RELATIONSHIP_TYPES: List[str] = []
+PROPERTY_ENTITY_TYPES: List[str] = []
 
 # --- Entity Extractor Class (adapted from the original script) ---
 class SpacyEntityExtractor:
@@ -115,9 +117,8 @@ def extract_graph_with_llm(text: str) -> Dict[str, Any]:
     if not VALID_ONTOLOGY_TYPES:
         raise HTTPException(status_code=400, detail="Ontology not initialized. Please call the /ontologies endpoint first.")
 
-    # Remove property-like types from the list given to the LLM for entity creation
-    property_like_types = {'MonetaryAmount', 'Percent', 'Date'}
-    core_entity_types = [t for t in VALID_ONTOLOGY_TYPES if t not in property_like_types]
+    # Core entity types are all types that are NOT property-like types.
+    core_entity_types = [t for t in VALID_ONTOLOGY_TYPES if t not in PROPERTY_ENTITY_TYPES]
 
     prompt = f"""
     You are an expert financial analyst creating a knowledge graph from a text.
@@ -125,18 +126,19 @@ def extract_graph_with_llm(text: str) -> Dict[str, Any]:
     Your final output must be a single JSON object with two keys: "entities" and "relationships".
 
     **Instructions:**
-    1.  **Entity Classification**: You MUST classify each extracted entity into one of the following predefined types.
-        - Allowed Core Entity Types: `({', '.join(core_entity_types)})`
-        - If an entity cannot be classified into any of the allowed types, you MUST label it as `UnrecognizedEntity`.
+    1.  **Identify Core Entities**: First, read through the text and identify all primary entities like people, organizations, deals, projects, etc. Use ONLY these types: `({', '.join(core_entity_types)})`.
+    2.  **Identify Properties**: Next, find all numerical, date-based, or contact-related values that would correspond to these types: `({', '.join(PROPERTY_ENTITY_TYPES)})`.
+    3.  **Associate Properties**: For each property found in step 2, associate it with the most relevant core entity from step 1. For example:
+        - A monetary amount like "$50M" is likely the `dealSize` of a `Deal`.
+        - An email address like "david.chen@morganstanley.com" is the `email` for the `Person` "David Chen".
+    4.  **Construct JSON**: Assemble your findings into a single JSON object. Entities that have associated properties should have a `properties` object.
+        - **CRITICAL RULE**: Do not create any entities with the types `({', '.join(PROPERTY_ENTITY_TYPES)})`. They must only exist inside the `properties` of a core entity.
+        - Use descriptive camelCase keys (e.g., `dealSize`, `interestRate`, `email`, `deadlineDate`).
+        - **Correct Example 1 (Deal)**: `{{"type": "Deal", "value": "Project Anvil", "properties": {{"dealSize": "$50M"}}}}`
+        - **Correct Example 2 (Person)**: `{{"type": "Person", "value": "David Chen", "properties": {{"email": "david.chen@morganstanley.com"}}}}`
+        - **Incorrect Example**: `[{{ "type": "Person", "value": "David Chen" }}, {{ "type": "Email", "value": "david.chen@morganstanley.com"}}]`
 
-    2.  **Property Extraction**:
-        - You MUST identify values like monetary amounts, percentages, and dates.
-        - **DO NOT** create separate entities for `MonetaryAmount`, `Percent`, or `Date`.
-        - Instead, find the primary entity they are related to (e.g., a `Deal` or `Project`) and add them as a key-value pair inside a `properties` object for that entity.
-        - Use camelCase for the property keys (e.g., `monetaryAmount`, `percent`, `date`).
-        - For example: `{{"type": "Deal", "value": "Project Anvil", "properties": {{"monetaryAmount": "$50M"}}}}`
-
-    3.  **Relationship Identification**: You MUST identify relationships only between the Core Entities identified in step 1.
+    5.  **Relationship Identification**: You MUST identify relationships only between the Core Entities identified in step 1.
         - Allowed Relationship Types: `({', '.join(VALID_RELATIONSHIP_TYPES)})`
         - The `source` and `target` of a relationship must be the `value` of an extracted entity.
 
@@ -311,14 +313,14 @@ async def embed_endpoint(request: EmbeddingRequest):
 @app.post("/ontologies", status_code=204, summary="Update the list of valid ontology types")
 async def update_ontologies(request: OntologyUpdateRequest):
     """
-    Updates the lists of valid entity and relationship types that the LLM can use.
-    This should be called by the main application at startup.
+    Receives the latest ontology from the TypeScript backend to ensure the LLM
+    uses the correct entity and relationship types for extraction.
     """
-    global VALID_ONTOLOGY_TYPES, VALID_RELATIONSHIP_TYPES
+    global VALID_ONTOLOGY_TYPES, VALID_RELATIONSHIP_TYPES, PROPERTY_ENTITY_TYPES
     VALID_ONTOLOGY_TYPES = request.entity_types
     VALID_RELATIONSHIP_TYPES = request.relationship_types
-    print(f"✅ Ontology updated with {len(VALID_ONTOLOGY_TYPES)} entity types and {len(VALID_RELATIONSHIP_TYPES)} relationship types.")
-    return
+    PROPERTY_ENTITY_TYPES = request.property_types
+    print(f"✅ Ontology updated with {len(VALID_ONTOLOGY_TYPES)} entity types, {len(PROPERTY_ENTITY_TYPES)} property types, and {len(VALID_RELATIONSHIP_TYPES)} relationship types.")
 
 @app.post("/batch-extract-graph", response_model=List[GraphResponse], summary="Batch Extract Graphs from Multiple Texts")
 async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
