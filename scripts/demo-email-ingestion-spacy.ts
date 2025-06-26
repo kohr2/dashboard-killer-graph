@@ -12,52 +12,63 @@ import axios from 'axios';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { initializeExtensions } from '../src/register-extensions';
+import { OntologyService } from '../src/platform/ontology/ontology.service';
 
-const LABELS_TO_INDEX = ['Person', 'Organization', 'Location', 'Product', 'WorkOfArt', 'Event', 'Project', 'Deal'];
+const LABELS_TO_INDEX = ['Person', 'Organization', 'Location', 'Product', 'Event', 'Project', 'Deal'];
 
-// A map to define primary and potential fallback labels for an entity type
-const LABEL_STRATEGY: { [key: string]: { primary: string; fallbacks: string[] } } = {
-    DEFAULT: { primary: 'Thing', fallbacks: [] },
-    PERSON: { primary: 'Person', fallbacks: [] },
-    ORG: { primary: 'Organization', fallbacks: ['Deal', 'Project', 'WorkOfArt'] },
-    GPE: { primary: 'Location', fallbacks: [] },
-    LOC: { primary: 'Location', fallbacks: [] },
-    PRODUCT: { primary: 'Product', fallbacks: ['Organization'] },
-    WORK_OF_ART: { primary: 'WorkOfArt', fallbacks: ['Project', 'Deal', 'Organization'] },
-    EVENT: { primary: 'Event', fallbacks: [] },
-    PROJECT: { primary: 'Project', fallbacks: ['Deal', 'WorkOfArt', 'Organization'] },
-    DEAL: { primary: 'Deal', fallbacks: ['Project', 'WorkOfArt', 'Organization'] },
-    // Custom types from LLM / FIBO
-    FIBOPerson: { primary: 'Person', fallbacks: [] },
-    FIBOFinancialInstitution: { primary: 'Organization', fallbacks: ['Deal', 'Project', 'WorkOfArt'] },
-    COMPANY_NAME: { primary: 'Organization', fallbacks: ['Deal', 'Project', 'WorkOfArt'] },
-    FINANCIAL_INSTITUTION: { primary: 'Organization', fallbacks: ['Deal', 'Project', 'WorkOfArt'] },
-    PERSON_NAME: { primary: 'Person', fallbacks: [] },
-    STOCK_SYMBOL: { primary: 'Organization', fallbacks: [] },
-    DEAL_NAME: { primary: 'Deal', fallbacks: ['Project', 'WorkOfArt'] },
-    // Data types
-    DATE: { primary: 'Date', fallbacks: [] },
-    MONEY: { primary: 'MonetaryAmount', fallbacks: [] },
-    SECTOR: { primary: 'Sector', fallbacks: [] },
-    PERCENT: { primary: 'Percent', fallbacks: [] },
-    TIME: { primary: 'Time', fallbacks: [] },
+// This is a controlled mapping from NLP service outputs to official ontology labels.
+// The TARGET value (e.g., 'Organization') MUST exist in one of the loaded ontologies.
+const NLP_TO_ONTOLOGY_MAP: { [key: string]: string } = {
+  PERSON: 'Person',
+  ORG: 'Organization',
+  GPE: 'Location',
+  LOC: 'Location',
+  PRODUCT: 'Product',
+  EVENT: 'Event',
+  PROJECT: 'Project',
+  DEAL: 'Deal',
+  WORK_OF_ART: 'Project',
+  FIBOPerson: 'Person',
+  FIBOFinancialInstitution: 'Organization',
+  COMPANY_NAME: 'Organization',
+  FINANCIAL_INSTITUTION: 'Organization',
+  PERSON_NAME: 'Person',
+  STOCK_SYMBOL: 'Organization',
+  DEAL_NAME: 'Deal',
+  DATE: 'Date',
+  MONEY: 'MonetaryAmount',
+  SECTOR: 'Sector',
+  PERCENT: 'Percent',
+  TIME: 'Time',
 };
 
-function getLabelInfo(entity: any): { primary: string; candidates: string[] } {
-    const type = entity.getOntologicalType ? entity.getOntologicalType() : entity.type;
-    const strategy = LABEL_STRATEGY[type] || { primary: type.charAt(0).toUpperCase() + type.slice(1).toLowerCase(), fallbacks: [] };
+function getLabelInfo(entity: any, validOntologyTypes: string[]): { primary: string; candidates: string[] } {
+    const rawType = entity.getOntologicalType ? entity.getOntologicalType() : entity.type;
+    const mappedType = NLP_TO_ONTOLOGY_MAP[rawType] || rawType;
 
-    const primaryLabel = strategy.primary.replace(/[^a-zA-Z0-9_]/g, '');
-    const candidateLabels = [primaryLabel, ...strategy.fallbacks]
-        .map(l => l.replace(/[^a-zA-Z0-9_]/g, ''))
-        .filter(l => LABELS_TO_INDEX.includes(l)); // Only search indexed labels
+    if (!validOntologyTypes.includes(mappedType)) {
+        console.warn(`[Label Validation] Mapped type "${mappedType}" (from raw type "${rawType}") is not a registered ontology type. Defaulting to 'Thing'.`);
+        return { primary: 'Thing', candidates: ['Thing'] };
+    }
+    
+    // The mapped type is valid. Use it as the primary label.
+    // For candidate labels (for vector search), we can still use a fallback strategy if needed,
+    // but the fallbacks must ALSO be valid ontology types.
+    const primaryLabel = mappedType;
+    const fallbacks: string[] = []; // Simplified: no fallbacks for now to enforce strictness.
+    
+    const candidateLabels = [primaryLabel, ...fallbacks]
+        .filter(l => validOntologyTypes.includes(l) && LABELS_TO_INDEX.includes(l));
 
-    return { primary: primaryLabel, candidates: [...new Set(candidateLabels)] }; // Return unique list
+    return { primary: primaryLabel, candidates: [...new Set(candidateLabels)] };
 }
 
 async function demonstrateSpacyEmailIngestionPipeline() {
   // --- INITIALIZATION ---
   initializeExtensions();
+  const ontologyService = container.resolve(OntologyService);
+  const validEntityTypes = ontologyService.getAllEntityTypes();
+  console.log('🏛️ Registered Ontology Types:', validEntityTypes);
   // --- END INITIALIZATION ---
 
   console.log('📧 Email Ingestion Pipeline Demo - Direct to Neo4j');
@@ -135,7 +146,7 @@ async function demonstrateSpacyEmailIngestionPipeline() {
 
         // 1. Find or Create Entity Nodes using Vector Search
         for (const entity of fiboEntities) {
-          const { primary: primaryLabel, candidates: candidateLabels } = getLabelInfo(entity);
+          const { primary: primaryLabel, candidates: candidateLabels } = getLabelInfo(entity, validEntityTypes);
           let nodeId = entity.id || uuidv4(); // Default new ID
           let foundExistingNode = false;
 
@@ -146,7 +157,7 @@ async function demonstrateSpacyEmailIngestionPipeline() {
           }
 
           // Only perform vector search for entities with embeddings and candidate labels.
-          if (entity.embedding && candidateLabels.length > 0) {
+          if (entity.embedding && candidateLabels.length > 0 && primaryLabel !== 'Thing') {
             for (const label of candidateLabels) {
               const indexName = `${label.toLowerCase()}_embeddings`;
               const searchResult = await session.run(

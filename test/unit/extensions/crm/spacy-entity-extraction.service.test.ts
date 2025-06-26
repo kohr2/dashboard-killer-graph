@@ -9,11 +9,11 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('SpacyEntityExtractionService', () => {
   let service: SpacyEntityExtractionService;
-  const nlpServiceUrl = 'http://testhost:8000';
+  const nlpServiceUrl = 'http://127.0.0.1:8000';
 
   beforeEach(() => {
     jest.clearAllMocks();
-    service = new SpacyEntityExtractionService(nlpServiceUrl);
+    service = new SpacyEntityExtractionService();
   });
 
   describe('extractEntities', () => {

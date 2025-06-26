@@ -82,4 +82,42 @@ export class OntologyService {
     }
     return undefined;
   }
+
+  public getAllEntityTypes(): string[] {
+    const entityTypes = new Set<string>();
+    for (const ontology of this.ontologies) {
+      for (const entityName in ontology.entities) {
+        entityTypes.add(entityName);
+      }
+    }
+    return Array.from(entityTypes);
+  }
+
+  public isValidLabel(label: string): boolean {
+    return this.getAllNodeLabels().includes(label);
+  }
+
+  public getAllNodeLabels(): string[] {
+    const labels = new Set<string>();
+    for (const ontology of this.ontologies) {
+      if (ontology.entities) {
+        Object.keys(ontology.entities).forEach(label => labels.add(label));
+      }
+    }
+    return Array.from(labels);
+  }
+
+  public isValidRelationshipType(type: string): boolean {
+    return this.getAllRelationshipTypes().includes(type);
+  }
+  
+  public getAllRelationshipTypes(): string[] {
+    const types = new Set<string>();
+    for (const ontology of this.ontologies) {
+      if (ontology.relationships) {
+        Object.keys(ontology.relationships).forEach(type => types.add(type));
+      }
+    }
+    return Array.from(types);
+  }
 } 

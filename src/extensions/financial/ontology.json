@@ -25,6 +25,7 @@
     "SIMILAR_TO": { "domain": "Deal", "range": "Deal", "description": "Weighted similarity relationship" },
     "BID_ON": { "domain": "Investor", "range": "Deal", "description": "Investor participated in bid" },
     "HAS_RELATIONSHIP_WITH": { "domain": "Investor", "range": ["Sponsor", "TargetCompany"], "description": "Past interaction or deal co-participation" },
-    "EXITED": { "domain": "Investor", "range": "Deal", "description": "Indicates past divestment" }
+    "EXITED": { "domain": "Investor", "range": "Deal", "description": "Indicates past divestment" },
+    "HAS_INTEREST_IN": { "domain": "Investor", "range": "Sector", "description": "Indicates an investor's interest in a specific market sector." }
   }
 } 

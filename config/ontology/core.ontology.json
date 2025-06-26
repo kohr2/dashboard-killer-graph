@@ -1,68 +1,117 @@
 {
-  "DOLCECategory": [
-    "Endurant",
-    "Perdurant",
-    "Quality",
-    "Abstract",
-    "AgentivePhysicalObject",
-    "NonAgentivePhysicalObject"
-  ],
-  "RelationshipType": [
-    "CustomerRelationship",
-    "SupplierRelationship",
-    "PartnerRelationship",
-    "ProspectRelationship",
-    "Employment",
-    "Collaboration",
-    "Membership",
-    "Before",
-    "After",
-    "During",
-    "Overlaps"
-  ],
-  "KnowledgeType": [
-    "CustomerProfile",
-    "CustomerPreferences",
-    "CustomerBehavior",
-    "CustomerHistory",
-    "MarketIntelligence",
-    "CompetitiveAnalysis",
-    "ProductKnowledge",
-    "ProcessKnowledge",
-    "TransactionData",
-    "InteractionHistory",
-    "CommunicationLog"
-  ],
-  "ActivityType": [
-    "Identify",
-    "Attract",
-    "Acquire",
-    "Develop",
-    "Retain",
-    "LeadQualification",
-    "OpportunityManagement",
-    "ProposalPreparation",
-    "Negotiation",
-    "Closing",
-    "CampaignExecution",
-    "ContentCreation",
-    "MarketResearch",
-    "BrandManagement",
-    "CustomerSupport",
-    "IssueResolution",
-    "Maintenance",
-    "Training",
-    "DataCollection",
-    "DataAnalysis",
-    "Reporting",
-    "DocumentManagement"
-  ],
-  "SoftwareType": [
-    "CRMPlatform",
-    "SalesAutomation",
-    "MarketingAutomation",
-    "EmailSystem",
-    "KnowledgeGraph",
-    "API"
-  ]
+  "name": "CoreOntology",
+  "entities": {
+    "DOLCECategory": {
+      "description": "Fundamental categories from the DOLCE foundational ontology.",
+      "values": [
+        "Endurant",
+        "Perdurant",
+        "Quality",
+        "Abstract",
+        "AgentivePhysicalObject",
+        "NonAgentivePhysicalObject"
+      ]
+    },
+    "RelationshipType": {
+      "description": "Types of relationships between entities.",
+      "values": [
+        "CustomerRelationship",
+        "SupplierRelationship",
+        "PartnerRelationship",
+        "ProspectRelationship",
+        "Employment",
+        "Collaboration",
+        "Membership",
+        "Before",
+        "After",
+        "During",
+        "Overlaps"
+      ]
+    },
+    "KnowledgeType": {
+      "description": "Types of knowledge elements within the CRM.",
+      "values": [
+        "CustomerProfile",
+        "CustomerPreferences",
+        "CustomerBehavior",
+        "CustomerHistory",
+        "MarketIntelligence",
+        "CompetitiveAnalysis",
+        "ProductKnowledge",
+        "ProcessKnowledge",
+        "TransactionData",
+        "InteractionHistory",
+        "CommunicationLog"
+      ]
+    },
+    "ActivityType": {
+      "description": "Types of activities performed within the CRM.",
+      "values": [
+        "Identify",
+        "Attract",
+        "Acquire",
+        "Develop",
+        "Retain",
+        "LeadQualification",
+        "OpportunityManagement",
+        "ProposalPreparation",
+        "Negotiation",
+        "Closing",
+        "CampaignExecution",
+        "ContentCreation",
+        "MarketResearch",
+        "BrandManagement",
+        "CustomerSupport",
+        "IssueResolution",
+        "Maintenance",
+        "Training",
+        "DataCollection",
+        "DataAnalysis",
+        "Reporting",
+        "DocumentManagement"
+      ]
+    },
+    "SoftwareType": {
+      "description": "Types of software integrated with or part of the system.",
+      "values": [
+        "CRMPlatform",
+        "SalesAutomation",
+        "MarketingAutomation",
+        "EmailSystem",
+        "KnowledgeGraph",
+        "API"
+      ]
+    },
+    "Person": {
+      "description": "Represents a human individual."
+    },
+    "Organization": {
+      "description": "Represents a group of people with a particular purpose, such as a company, institution, or association."
+    },
+    "Project": {
+      "description": "Represents a temporary endeavor undertaken to create a unique product, service, or result."
+    },
+    "Location": {
+      "description": "Represents a geographical place or position."
+    },
+    "Product": {
+      "description": "Represents an article or substance that is manufactured or refined for sale."
+    },
+    "Event": {
+        "description": "Represents a planned public or social occasion."
+    },
+    "Date": {
+        "description": "Represents a specific day in time."
+    },
+    "MonetaryAmount": {
+        "description": "Represents a specific sum of money."
+    },
+    "Percent": {
+        "description": "Represents a percentage value."
+    },
+    "Time": {
+        "description": "Represents a specific time of day."
+    }
+  },
+  "relationships": {}
 } 

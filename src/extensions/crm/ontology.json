@@ -1,0 +1,17 @@
+{
+  "name": "CrmOntology",
+  "entities": {
+    "Person": { "description": "An individual human being." },
+    "Organization": { "description": "A company, institution, or other formal group." },
+    "Email": { "description": "An email address." },
+    "PhoneNumber": { "description": "A phone number." },
+    "Communication": { "description": "A record of an interaction, like an email or a call." }
+  },
+  "relationships": {
+    "WORKS_FOR": { "domain": "Person", "range": "Organization", "description": "Indicates employment." },
+    "HAS_EMAIL": { "domain": "Person", "range": "Email", "description": "Links a person to their email." },
+    "HAS_PHONE": { "domain": "Person", "range": "PhoneNumber", "description": "Links a person to their phone number." },
+    "CONTACTED": { "domain": "Person", "range": "Person", "description": "Indicates one person contacted another." },
+    "PART_OF": { "domain": "Communication", "range": ["Person", "Organization"], "description": "An entity mentioned in or part of a communication." }
+  }
+} 
