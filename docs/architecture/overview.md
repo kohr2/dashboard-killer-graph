@@ -218,6 +218,32 @@ interface Extension {
 }
 ```
 
+## 🧠 Ontology-Driven Data Unification
+
+To create a cohesive and queryable knowledge graph, the platform employs an ontology-driven approach to unify data from different domains. This ensures that even though extensions define their own specific entities, they can be understood and linked through a shared, core vocabulary.
+
+### Key Components
+
+1.  **Ontology-Constrained NLP**: The external NLP service does not extract entities and relationships freely. Instead, it is dynamically constrained by the platform's combined ontologies. At startup, the platform sends a complete list of all registered entity types (e.g., `Person`, `Investor`, `Deal`) and relationship types (e.g., `WORKS_FOR`, `INVESTED_IN`) to the NLP service. The Large Language Model (LLM) is then instructed to **only** use these predefined types, ensuring that all extracted data conforms to the system's knowledge model.
+
+2.  **Multi-Labeling for Unified Identity**: A single real-world entity can have multiple roles across different domains. For example, "Vista Equity Partners" is both a generic `Organization` from the CRM perspective and a specific `Investor` from the financial perspective. To capture this, the system uses multi-labeling in the Neo4j graph. A node representing this entity will have both labels: `(:Investor:Organization)`.
+
+3.  **Ontology Bridges**: The mapping between domain-specific types and core types is managed by **Ontology Bridges**. These are dedicated, injectable services that define the translation logic. For instance, the `FinancialToCrmBridge` contains the rule that an `Investor`, `Sponsor`, or `TargetCompany` should also be labeled as an `Organization`. This approach keeps the domain ontologies clean and decoupled while centralizing the integration logic.
+
+### Example Flow
+
+```
+1. NLP receives text and a list of allowed types: ["Person", "Investor", "Organization", ...].
+2. LLM extracts "Vista Equity Partners" and correctly classifies it as an `Investor`.
+3. The ingestion script receives the `Investor` entity.
+4. It consults the `FinancialToCrmBridge`.
+5. The bridge returns the additional label: ["Organization"].
+6. The script creates a node in Neo4j with both labels:
+   MERGE (n:Investor:Organization {name: "Vista Equity Partners"})
+```
+
+This ensures that a simple query for all organizations (`MATCH (o:Organization)`) will correctly return all companies, investors, sponsors, and funds, providing a powerful, unified view of the data.
+
 ## 🎯 Quality Attributes
 
 ### Maintainability
