@@ -1,18 +1,36 @@
 {
   "name": "FinancialExtensionOntology",
+  "source": "https://spec.edmcouncil.org/fibo/",
   "entities": {
-    "Investor": { "description": "A legal or institutional entity making investments (e.g., Audax, Blue Owl)" },
-    "Fund": { "description": "A vehicle managed by an investor, with defined mandate and lifecycle" },
-    "Deal": { "description": "A specific transaction, acquisition, or investment opportunity" },
-    "TargetCompany": { "description": "The company involved in a deal" },
-    "Sector": { "description": "GICS-based sector or sub-industry" },
-    "GeographicRegion": { "description": "Location of target or operation" },
-    "Mandate": { "description": "Fund criteria (check size, geography, sector, deal type)" },
-    "Sponsor": { "description": "PE firm initiating the deal (may overlap with Investor)" },
-    "Relationship": { "description": "Historical relationships between investors, sponsors, or companies" },
+    "Investor": {
+      "description": "A party that owns some stake in an organization by way of investment. This is regardless of whether the investor is also a constitutional owner (e.g., shareholder) in the entity. Based on FIBO definition."
+    },
+    "Fund": {
+      "description": "A collective investment vehicle (CIV) consisting of a pool of funds from multiple investors, managed by a professional firm. Examples include private equity funds, hedge funds, or mutual funds. Based on FIBO's concept of an Investment Fund."
+    },
+    "Deal": {
+      "description": "A specific business or financial transaction that is proposed, under negotiation, or completed. It represents an opportunity for investment, acquisition, or partnership between parties, aligned with the FIBO concept of a financial transaction."
+    },
+    "TargetCompany": {
+      "description": "The legal entity (e.g., corporation, partnership) that is the subject of a deal, such as an acquisition, merger, or investment. It is the company being acquired, invested in, or partnered with. Aligned with FIBO's concept of a 'Contractually Capable Entity'."
+    },
+    "Sector": {
+      "description": "An industry sector or sub-sector used to classify a company based on its primary business activities. Aligned with FIBO's concept of an 'Industry Sector Classifier' and typically based on a standard like GICS (Global Industry Classification Standard)."
+    },
+    "GeographicRegion": {
+      "description": "A geographic or geopolitical area, such as a country, state, or city, relevant to a deal or an entity's operations. Aligned with FIBO's 'Geographic Region' and 'Geopolitical Entity' concepts from its Locations ontology."
+    },
+    "Mandate": {
+      "description": "A set of rules, policies, and objectives that govern an investment fund's strategy. It defines constraints such as asset classes, geographic focus, sector focus, and deal size. Aligned with FIBO's 'Fund Portfolio Investment Policy' concept."
+    },
+    "Sponsor": {
+      "description": "The entity, typically a private equity firm, that initiates, manages, and promotes a specific fund or deal. Aligned with FIBO's 'Fund Management Company' concept, which is also referred to as 'fund sponsor'."
+    },
+    "Relationship": {
+      "description": "A documented connection between two or more legal entities, such as co-investors, a sponsor and a target company, or past employment. Aligned with FIBO's concept of a 'Relationship Record' used for describing relationships between legal entities."
+    },
     "Event": {
-      "description": "Includes Bid, Investment, Exit, DDProcess, AuctionStart, etc.",
-      "values": ["Bid", "Investment", "Exit", "DDProcess", "AuctionStart"]
+      "description": "A point-in-time happening relevant to a deal or entity, such as a bid, investment, exit, or due diligence process. Aligned with FIBO's general concept of an 'Occurrence' (or 'Event'), often specializing as a 'Transaction Event'."
     }
   },
   "relationships": {

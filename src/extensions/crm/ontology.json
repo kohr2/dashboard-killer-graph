@@ -1,11 +1,22 @@
 {
   "name": "CrmOntology",
+  "source": "https://link.springer.com/article/10.1007/s12599-022-00744-0",
   "entities": {
-    "Person": { "description": "An individual human being." },
-    "Organization": { "description": "A company, institution, or other formal group." },
-    "Email": { "description": "An email address." },
-    "PhoneNumber": { "description": "A phone number." },
-    "Communication": { "description": "A record of an interaction, like an email or a call." }
+    "Person": {
+      "description": "Represents an individual human being, whether a customer, contact, or employee. Aligned with the O-CREAM (Ontology for Customer Relationship Management) concept of a party in a business relationship and the W3C Person Core Vocabulary. A person is a real individual, not a fictional character."
+    },
+    "Organization": {
+      "description": "Represents a legal entity or a formal group of people with a particular purpose, such as a company, institution, or association. In the CRM context, it is typically the entity managing customer relationships or a business customer itself. Based on the O-CREAM concept of an enterprise or actor involved in business activities."
+    },
+    "Email": {
+      "description": "A unique electronic address for sending and receiving messages."
+    },
+    "PhoneNumber": {
+      "description": "A sequence of digits assigned to a telephone endpoint for routing calls."
+    },
+    "Communication": {
+      "description": "Represents an interaction or exchange of information between parties, such as an email, call, or meeting. In O-CREAM, this is a central activity that connects organizations and individuals."
+    }
   },
   "relationships": {
     "WORKS_FOR": { "domain": "Person", "range": "Organization", "description": "Indicates employment." },

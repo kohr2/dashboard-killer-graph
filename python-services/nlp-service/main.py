@@ -56,6 +56,14 @@ class RefinedExtractionResponse(BaseModel):
 class EmbeddingRequest(BaseModel):
     texts: List[str]
 
+class OntologyUpdateRequest(BaseModel):
+    entity_types: List[str]
+    relationship_types: List[str]
+
+# --- Global State ---
+VALID_ONTOLOGY_TYPES: List[str] = []
+VALID_RELATIONSHIP_TYPES: List[str] = []
+
 # --- Entity Extractor Class (adapted from the original script) ---
 class SpacyEntityExtractor:
     def __init__(self, model_name: str = "en_core_web_lg"):
@@ -99,30 +107,31 @@ class SpacyEntityExtractor:
         return mapping.get(spacy_label, spacy_label)
 
 # --- LLM Graph Extraction Logic ---
-def extract_graph_with_llm(text: str, spacy_entities: List[Dict]) -> Dict[str, Any]:
+def extract_graph_with_llm(text: str) -> Dict[str, Any]:
     if not client:
         raise HTTPException(status_code=503, detail="OpenAI client not configured.")
-
-    entities_json_str = json.dumps(spacy_entities, indent=2)
+    
+    if not VALID_ONTOLOGY_TYPES:
+        raise HTTPException(status_code=400, detail="Ontology not initialized. Please call the /ontologies endpoint first.")
 
     prompt = f"""
-    You are a financial analyst creating a knowledge graph from an email.
-    Your task is to perform two steps:
-    1.  **Clean Entities**: Review the provided list of entities and remove any that are clearly incorrect (e.g., greetings like "Hi Team", generic terms like "the deal"). Each entity in the output list MUST be a JSON object containing `type`, `value`, and a `confidence` score (e.g., 0.9).
-    2.  **Extract Relationships**: Identify meaningful relationships between the cleaned entities. The relationship type should be a standard verb phrase in uppercase snake_case (e.g., WORKS_FOR, ACQUIRED, INVESTED_IN). Each relationship MUST be a JSON object with `source`, `target`, `type`, `explanation`, and a `confidence` score (e.g., 0.9).
+    You are an expert financial analyst creating a knowledge graph from a text.
+    Your task is to extract all relevant entities and the relationships between them.
 
-    Return a valid JSON object with two keys:
-    -   `"cleaned_entities"`: A list of JSON objects, where each object is an entity.
-    -   `"relationships"`: A list of relationships. The source and target must be values from the cleaned entities list.
+    **Instructions:**
+    1.  **Entity Classification**: You MUST classify each extracted entity into one of the following predefined types. Do NOT use any other types.
+        - Allowed Entity Types: `({', '.join(VALID_ONTOLOGY_TYPES)})`
+        - If an entity cannot be classified into one of the allowed types, you MUST label it as `UnrecognizedEntity`.
+    2.  **Relationship Extraction**: Identify meaningful relationships between the extracted entities. The relationship type MUST be one of the following. Do NOT use any other types.
+        - Allowed Relationship Types: `({', '.join(VALID_RELATIONSHIP_TYPES)})`
+        - Pay close attention to relationships like a person working for a company or participating in a project.
+    3.  **Output Format**: Return a single valid JSON object with two keys:
+        - `"entities"`: A list of JSON objects. Each entity object MUST have `type` and `value`.
+        - `"relationships"`: A list of JSON objects. Each relationship object MUST have `source`, `target`, and `type`. The `source` and `target` values must exactly match the `value` of an entity in the entities list.
 
-    **Original Text:**
+    **Text to Analyze:**
     ---
     {text}
-    ---
-
-    **Entities JSON:**
-    ---
-    {entities_json_str}
     ---
     """
     
@@ -139,7 +148,7 @@ def extract_graph_with_llm(text: str, spacy_entities: List[Dict]) -> Dict[str, A
             graph_data = json.loads(response_str)
             # Validate and fix the structure if needed
             if isinstance(graph_data, dict):
-                entities = graph_data.get("cleaned_entities", [])
+                entities = graph_data.get("entities", [])
                 relationships = graph_data.get("relationships", [])
 
                 # Add default confidence if missing
@@ -150,10 +159,10 @@ def extract_graph_with_llm(text: str, spacy_entities: List[Dict]) -> Dict[str, A
                     if isinstance(rel, dict) and "confidence" not in rel:
                         rel["confidence"] = 0.9
                 
-                return {"cleaned_entities": entities, "relationships": relationships}
+                return {"entities": entities, "relationships": relationships}
         
         # Return a default empty structure if parsing fails
-        return {"cleaned_entities": [], "relationships": []}
+        return {"entities": [], "relationships": []}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"LLM graph extraction error: {str(e)}")
@@ -248,56 +257,57 @@ async def refine_entities_endpoint(request: ExtractionRequest):
     # Step 2: Refine with LLM
     refined_entities = refine_entities_with_llm(request.text, raw_entities)
     
-    return {
-        "raw_entities": raw_entities,
-        "refined_entities": refined_entities,
-        "refinement_info": f"Refined {len(raw_entities)} raw entities down to {len(refined_entities)}."
-    }
+    return RefinedExtractionResponse(
+        raw_entities=[Entity(**e) for e in raw_entities],
+        refined_entities=[Entity(**e) for e in refined_entities],
+        refinement_info="Entities refined by LLM."
+    )
 
 @app.post("/extract-graph", response_model=GraphResponse, summary="Extract Entities and Relationships with LLM")
 async def extract_graph_endpoint(request: ExtractionRequest):
     """
-    Extracts entities, refines them, and extracts relationships between them to build a graph.
+    Extracts a knowledge graph (entities and relationships) from text using an LLM,
+    constrained by a predefined ontology.
+
     - **text**: The input string to process.
     """
-    # Step 1: Raw extraction with spaCy
-    raw_entities = extractor.extract_entities(request.text)
-
-    # Step 2: Generate embedding for the full text
+    graph_data = extract_graph_with_llm(request.text)
+    
+    # Generate a single embedding for the whole text
     embedding = None
     if embedding_model:
         embedding = embedding_model.encode(request.text).tolist()
 
-    # Step 3: Use LLM to refine entities and extract relationships
-    try:
-        graph_data = extract_graph_with_llm(request.text, raw_entities)
-        
-        return {
-            "entities": graph_data.get("cleaned_entities", []),
-            "relationships": graph_data.get("relationships", []),
-            "refinement_info": "LLM-based graph extraction",
-            "embedding": embedding
-        }
-    except HTTPException as e:
-        # Re-raise HTTPException to let FastAPI handle the response
-        raise e
-    except Exception as e:
-        # Catch any other unexpected errors during graph extraction
-        raise HTTPException(status_code=500, detail=f"An unexpected error occurred during graph extraction: {str(e)}")
+    return GraphResponse(
+        entities=[Entity(**e) for e in graph_data.get("entities", [])],
+        relationships=[Relationship(**r) for r in graph_data.get("relationships", [])],
+        refinement_info="Graph generated directly by LLM based on dynamic ontology.",
+        embedding=embedding
+    )
 
 @app.post("/embed", summary="Generate sentence embeddings for a list of texts")
 async def embed_endpoint(request: EmbeddingRequest):
     """
-    Generates sentence-transformer embeddings for a list of text strings.
-    - **texts**: A list of strings to be embedded.
+    Generates sentence embeddings for a list of input texts.
+    - **texts**: A list of strings to embed.
     """
     if not embedding_model:
-        raise HTTPException(status_code=503, detail="Embedding model not loaded.")
-    try:
-        embeddings = embedding_model.encode(request.texts).tolist()
-        return {"embeddings": embeddings}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Embedding generation error: {str(e)}")
+        raise HTTPException(status_code=503, detail="Embedding model not available.")
+    
+    embeddings = embedding_model.encode(request.texts).tolist()
+    return {"embeddings": embeddings}
+
+@app.post("/ontologies", status_code=204, summary="Update the list of valid ontology types")
+async def update_ontologies(request: OntologyUpdateRequest):
+    """
+    Updates the lists of valid entity and relationship types that the LLM can use.
+    This should be called by the main application at startup.
+    """
+    global VALID_ONTOLOGY_TYPES, VALID_RELATIONSHIP_TYPES
+    VALID_ONTOLOGY_TYPES = request.entity_types
+    VALID_RELATIONSHIP_TYPES = request.relationship_types
+    print(f"✅ Ontology updated with {len(VALID_ONTOLOGY_TYPES)} entity types and {len(VALID_RELATIONSHIP_TYPES)} relationship types.")
+    return
 
 @app.post("/batch-extract-graph", response_model=List[GraphResponse], summary="Batch Extract Graphs from Multiple Texts")
 async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
@@ -315,10 +325,10 @@ async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
             embedding = embedding_model.encode(text).tolist()
             
         try:
-            graph_data = extract_graph_with_llm(text, raw_entities)
+            graph_data = extract_graph_with_llm(text)
             
             results.append({
-                "entities": graph_data.get("cleaned_entities", []),
+                "entities": graph_data.get("entities", []),
                 "relationships": graph_data.get("relationships", []),
                 "refinement_info": f"Refined {len(raw_entities)} entities and found {len(graph_data.get('relationships', []))} relationships.",
                 "embedding": embedding

@@ -83,7 +83,8 @@
       ]
     },
     "Person": {
-      "description": "Represents a human individual."
+      "name": "Person",
+      "description": "An individual human being."
     },
     "Organization": {
       "description": "Represents a group of people with a particular purpose, such as a company, institution, or association."
@@ -111,7 +112,53 @@
     },
     "Time": {
         "description": "Represents a specific time of day."
+    },
+    "Thing": {
+      "name": "Thing",
+      "description": "The most generic type of item.",
+      "properties": {
+        "name": { "type": "string", "description": "The name of the thing." }
+      }
+    },
+    "UnrecognizedEntity": {
+      "name": "UnrecognizedEntity",
+      "description": "An entity that could not be classified into a known type by the NLP model.",
+      "properties": {
+        "name": { "type": "string", "description": "The name of the entity." },
+        "original_text": { "type": "string", "description": "The original text from which the entity was extracted." }
+      }
     }
   },
-  "relationships": {}
+  "relationships": {
+    "WORKS_FOR": {
+      "domain": "Person",
+      "range": "Organization",
+      "description": "Indicates that a person is employed by or is a member of an organization."
+    },
+    "PARTICIPATES_IN": {
+      "domain": "Person",
+      "range": "Project",
+      "description": "Indicates that a person is a participant or a member of a project."
+    },
+    "INVESTED_IN": {
+      "domain": ["Organization", "Person", "Investor"],
+      "range": ["Organization", "TargetCompany", "Deal", "Fund"],
+      "description": "Represents an investment relationship from an investor to an asset."
+    },
+    "ACQUIRED": {
+      "domain": "Organization",
+      "range": "Organization",
+      "description": "Indicates that one organization has acquired another."
+    },
+    "MANAGES": {
+      "domain": "Person",
+      "range": ["Project", "Fund", "Deal"],
+      "description": "Indicates a person has a management role over a project, fund, or deal."
+    },
+    "ADVISES": {
+      "domain": ["Person", "Organization"],
+      "range": ["Person", "Organization"],
+      "description": "Represents an advisory relationship."
+    }
+  }
 } 

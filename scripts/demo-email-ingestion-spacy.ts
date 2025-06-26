@@ -16,49 +16,18 @@ import { OntologyService } from '../src/platform/ontology/ontology.service';
 
 const LABELS_TO_INDEX = ['Person', 'Organization', 'Location', 'Product', 'Event', 'Project', 'Deal'];
 
-// This is a controlled mapping from NLP service outputs to official ontology labels.
-// The TARGET value (e.g., 'Organization') MUST exist in one of the loaded ontologies.
-const NLP_TO_ONTOLOGY_MAP: { [key: string]: string } = {
-  PERSON: 'Person',
-  ORG: 'Organization',
-  GPE: 'Location',
-  LOC: 'Location',
-  PRODUCT: 'Product',
-  EVENT: 'Event',
-  PROJECT: 'Project',
-  DEAL: 'Deal',
-  WORK_OF_ART: 'Project',
-  FIBOPerson: 'Person',
-  FIBOFinancialInstitution: 'Organization',
-  COMPANY_NAME: 'Organization',
-  FINANCIAL_INSTITUTION: 'Organization',
-  PERSON_NAME: 'Person',
-  STOCK_SYMBOL: 'Organization',
-  DEAL_NAME: 'Deal',
-  DATE: 'Date',
-  MONEY: 'MonetaryAmount',
-  SECTOR: 'Sector',
-  PERCENT: 'Percent',
-  TIME: 'Time',
-};
-
 function getLabelInfo(entity: any, validOntologyTypes: string[]): { primary: string; candidates: string[] } {
-    const rawType = entity.getOntologicalType ? entity.getOntologicalType() : entity.type;
-    const mappedType = NLP_TO_ONTOLOGY_MAP[rawType] || rawType;
+    const primaryLabel = entity.getOntologicalType ? entity.getOntologicalType() : entity.type;
 
-    if (!validOntologyTypes.includes(mappedType)) {
-        console.warn(`[Label Validation] Mapped type "${mappedType}" (from raw type "${rawType}") is not a registered ontology type. Defaulting to 'Thing'.`);
+    if (!validOntologyTypes.includes(primaryLabel)) {
+        console.warn(`[Label Validation] Received type "${primaryLabel}" is not a registered ontology type. Defaulting to 'Thing'. This may indicate a mismatch between the NLP model's output and the loaded ontologies.`);
         return { primary: 'Thing', candidates: ['Thing'] };
     }
     
-    // The mapped type is valid. Use it as the primary label.
-    // For candidate labels (for vector search), we can still use a fallback strategy if needed,
-    // but the fallbacks must ALSO be valid ontology types.
-    const primaryLabel = mappedType;
-    const fallbacks: string[] = []; // Simplified: no fallbacks for now to enforce strictness.
-    
-    const candidateLabels = [primaryLabel, ...fallbacks]
-        .filter(l => validOntologyTypes.includes(l) && LABELS_TO_INDEX.includes(l));
+    // The type is valid. Use it as the primary label.
+    // Candidate labels for vector search are only those explicitly marked for indexing.
+    const candidateLabels = [primaryLabel]
+        .filter(l => LABELS_TO_INDEX.includes(l));
 
     return { primary: primaryLabel, candidates: [...new Set(candidateLabels)] };
 }
@@ -68,7 +37,23 @@ async function demonstrateSpacyEmailIngestionPipeline() {
   initializeExtensions();
   const ontologyService = container.resolve(OntologyService);
   const validEntityTypes = ontologyService.getAllEntityTypes();
+  const validRelationshipTypes = ontologyService.getAllRelationshipTypes();
   console.log('🏛️ Registered Ontology Types:', validEntityTypes);
+  console.log('🔗 Registered Relationship Types:', validRelationshipTypes);
+
+  // --- NEW: Sync ontology with Python NLP Service ---
+  try {
+    console.log('   ⚡ Syncing ontology with NLP service...');
+    await axios.post('http://127.0.0.1:8000/ontologies', {
+        entity_types: validEntityTypes,
+        relationship_types: validRelationshipTypes
+    });
+    console.log('   ✅ Ontology synced successfully.');
+  } catch (error: any) {
+    console.error('   ❌ Failed to sync ontology with NLP service. The service might not be running or the endpoint is incorrect.', error.message);
+    // Depending on the desired behavior, you might want to exit the process
+    process.exit(1);
+  }
   // --- END INITIALIZATION ---
 
   console.log('📧 Email Ingestion Pipeline Demo - Direct to Neo4j');
@@ -102,7 +87,7 @@ async function demonstrateSpacyEmailIngestionPipeline() {
     const testEmailsDir = join(process.cwd(), 'test-emails');
     const allFiles = await fs.readdir(testEmailsDir);
     const emailFiles = allFiles.filter(f => f.endsWith('.eml')).sort();
-    const filesToProcess = emailFiles;
+    const filesToProcess = emailFiles; // Process all emails
 
     console.log(
       `\n📂 Found ${emailFiles.length} email files, processing ${filesToProcess.length} for this run in '${testEmailsDir}'`,
@@ -150,6 +135,12 @@ async function demonstrateSpacyEmailIngestionPipeline() {
           let nodeId = entity.id || uuidv4(); // Default new ID
           let foundExistingNode = false;
 
+          // Do not attempt to find/create nodes for unrecognized entities. Just log them.
+          if (primaryLabel === 'UnrecognizedEntity') {
+            console.log(`      -> Skipping unrecognized entity '${entity.name}'.`);
+            continue;
+          }
+
           // Skip creating nodes for entities that have no embedding and are not supposed to be indexed.
           if (!entity.embedding && !LABELS_TO_INDEX.includes(primaryLabel)) {
             console.log(`      -> Skipping entity '${entity.name}' (type: ${primaryLabel}) because it has no embedding and is not an indexed type.`);
@@ -177,37 +168,35 @@ async function demonstrateSpacyEmailIngestionPipeline() {
           }
 
           if (!foundExistingNode) {
-            // If no close match, create a new node.
-            if (entity.embedding) {
-                 const createResult = await session.run(
-                   `CREATE (e:\`${primaryLabel}\` {id: $id, name: $name, category: $category, createdAt: datetime($createdAt), embedding: $embedding}) RETURN e`,
-                   {
-                     id: nodeId,
-                     name: entity.name,
-                     category: entity.category || 'Generic',
-                     createdAt: (entity.createdAt || new Date()).toISOString(),
-                     embedding: entity.embedding,
-                   }
-                 );
-                 const newNode = createResult.records[0].get('e');
-                 console.log(`      -> No similar entity found for '${entity.name}'. Created new '${primaryLabel}' node with ID: ${nodeId}`);
-                 entityMap.set(entity.name, { ...newNode.properties, labels: newNode.labels });
-
-            } else {
-                 // For non-indexed labels, or indexed labels that somehow missed getting an embedding.
-                 const createResult = await session.run(
-                   `CREATE (e:\`${primaryLabel}\` {id: $id, name: $name, category: $category, createdAt: datetime($createdAt)}) RETURN e`,
-                   {
-                     id: nodeId,
-                     name: entity.name,
-                     category: entity.category || 'Generic',
-                     createdAt: (entity.createdAt || new Date()).toISOString(),
-                   }
-                 );
-                 const newNode = createResult.records[0].get('e');
-                 console.log(`      -> Creating non-indexed or embedding-less '${primaryLabel}' node for '${entity.name}' with ID: ${nodeId}`);
-                 entityMap.set(entity.name, { ...newNode.properties, labels: newNode.labels });
-            }
+            // If no close match, merge the node. This is safer than CREATE.
+            const mergeQuery = entity.embedding
+              ? `
+                MERGE (e:\`${primaryLabel}\` {name: $name})
+                ON CREATE SET e.id = $id, e.category = $category, e.createdAt = datetime($createdAt), e.embedding = $embedding
+                ON MATCH SET e.embedding = $embedding
+                RETURN e
+              `
+              : `
+                MERGE (e:\`${primaryLabel}\` {name: $name})
+                ON CREATE SET e.id = $id, e.category = $category, e.createdAt = datetime($createdAt)
+                RETURN e
+              `;
+            
+            const mergeResult = await session.run(
+              mergeQuery,
+              {
+                id: nodeId,
+                name: entity.name,
+                category: entity.category || 'Generic',
+                createdAt: (entity.createdAt || new Date()).toISOString(),
+                embedding: entity.embedding, // This is safe; Neo4j driver handles undefined
+              }
+            );
+            const newNode = mergeResult.records[0].get('e');
+            const action = mergeResult.summary.counters.updates().nodesCreated > 0 ? 'Created' : 'Matched';
+            console.log(`      -> ${action} '${primaryLabel}' node for '${entity.name}' with ID: ${newNode.properties.id}`);
+            entityMap.set(entity.name, { ...newNode.properties, labels: newNode.labels });
+            nodeId = newNode.properties.id; // Ensure we use the ID from the database
           }
           entity.resolvedId = nodeId; // Attach resolved ID for relationship creation
         }
@@ -252,8 +241,9 @@ async function demonstrateSpacyEmailIngestionPipeline() {
 
         // 3. Create relationships between entities
         for (const rel of relationships) {
-            const sourceEntity = fiboEntities.find(e => e.name === rel.source);
-            const targetEntity = fiboEntities.find(e => e.name === rel.target);
+            // Corrected: Find entities by their ID-like name, which the LLM now returns.
+            const sourceEntity = fiboEntities.find(e => e.name.toLowerCase().replace(/[\s\W]/g, '_') === rel.source || e.name === rel.source);
+            const targetEntity = fiboEntities.find(e => e.name.toLowerCase().replace(/[\s\W]/g, '_') === rel.target || e.name === rel.target);
 
             if (sourceEntity && sourceEntity.resolvedId && targetEntity && targetEntity.resolvedId) {
                 const sourceInfo = entityMap.get(sourceEntity.name);
