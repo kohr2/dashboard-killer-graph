@@ -1,16 +1,17 @@
-# Domain-Specific Ontologies
+# 🏛️ Ontology-Driven Extension Architecture
 
-This document outlines the architecture for creating and managing domain-specific ontologies within the application. These ontologies encapsulate all the logic, data structures, and behaviors related to a specific business domain (e.g., CRM, Finance, Healthcare).
+This document outlines the architecture for creating and managing domain-specific extensions. These extensions encapsulate all the logic, data structures, and behaviors related to a specific business domain (e.g., CRM, Finance, Healthcare) by providing a domain-specific **ontology**.
 
 ## Guiding Principles
 
-- **Encapsulation**: Each ontology is a self-contained module. All domain-specific logic resides within its directory.
-- **Explicit Dependencies**: Ontologies should not directly depend on each other. Any cross-domain interaction must be handled by dedicated "Ontology Bridges".
-- **Standardized Structure**: All ontologies follow a consistent directory structure to ensure predictability and ease of maintenance.
+- **Encapsulation**: Each extension is a self-contained module. All domain-specific logic resides within its directory.
+- **Explicit Dependencies**: Extensions should not directly depend on each other. Any cross-domain interaction must be handled by dedicated "Ontology Bridges".
+- **Standardized Structure**: All extensions follow a consistent directory structure to ensure predictability and ease of maintenance.
+- **Ontology as the Core**: The heart of each extension is its `ontology.json` file, which defines the entities, relationships, and rules for its domain.
 
-## Ontology Structure
+## Extension Structure
 
-Each ontology, located under `src/ontologies/`, must follow this structure:
+Each extension, located under `src/ontologies/`, must follow this structure:
 
 ```
 src/ontologies/
@@ -29,41 +30,75 @@ src/ontologies/
     ├── interface/
     │   ├── api/                # REST/GraphQL controllers
     │   └── ui/                 # UI components (if any)
-    ├── ontology.json           # Core ontology definition
-    ├── register.ts             # Entry point for service container registration
-    └── tsconfig.json           # TypeScript configuration for this ontology
+    ├── ontology.json           # Core ontology definition for the extension
+    └── register.ts             # Entry point for service container registration
 ```
 
 ### Key Components
 
-- **`ontology.json`**: Defines the entities and relationships for this specific domain. It's the source of truth for the ontology's structure.
-- **`register.ts`**: Handles the registration of the ontology's services into the dependency injection container (`tsyringe`). This is crucial for making the services available to the rest of the application.
+- **`ontology.json`**: Defines the entities and relationships for this specific domain. It's the source of truth for the extension's knowledge model.
+- **`register.ts`**: Handles the registration of the extension's services into the dependency injection container (`tsyringe`). This is crucial for making the services available to the rest of the application.
 - **Application Services**: Contain the core business logic. They orchestrate domain entities and repositories to fulfill specific tasks.
 - **Domain Entities**: Represent the core concepts of the domain, rich with business rules and logic.
 
-## Creating a New Ontology
+## Creating a New Extension
 
-To create a new ontology (e.g., for "Real Estate"):
+To create a new extension (e.g., for "Real Estate"):
 
 1.  Create a new directory: `src/ontologies/real-estate`.
 2.  Follow the standardized structure outlined above.
 3.  Define your entities in `ontology.json`.
 4.  Implement the necessary services, entities, and repositories.
 5.  Register your services in `register.ts`.
-6.  Add the new ontology to the main `initializeOntologies` function in `src/register-ontologies.ts`.
+6.  Ensure the platform's main entry point calls your new `register.ts` function.
 
-## Cross-Ontology Communication: Ontology Bridges
+## Cross-Extension Communication: Ontology Bridges
 
-Direct communication between ontologies is discouraged. To handle cases where domains need to interact (e.g., linking a `Financial::Deal` to a `CRM::Contact`), we use **Ontology Bridges**.
+Direct communication between extensions is discouraged. To handle cases where domains need to interact (e.g., linking a `Financial::Deal` to a `CRM::Contact`), we use **Ontology Bridges**.
 
 An Ontology Bridge is a dedicated service that explicitly defines and manages the mapping and interaction between two domains.
 
 **Example**: `FinancialToCrmBridge`
 
 - **Responsibility**: Translates financial concepts into CRM-compatible entities or relationships.
-- **Location**: Can be located in one of the domains it connects, or in a shared platform directory.
+- **Location**: Typically located in the more specific domain (e.g., `financial` would define how it bridges to the more generic `crm`).
 
 By using bridges, we keep the core domains decoupled and make cross-domain logic explicit and manageable.
+
+## Core Extension Contract
+
+The platform interacts with extensions through a standardized interface.
+
+```typescript
+interface Extension {
+  // Extension metadata
+  readonly name: string;
+  readonly version: string;
+  
+  // Lifecycle methods
+  initialize(context: PlatformContext): Promise<void>;
+  shutdown(): Promise<void>;
+  
+  // Extension capabilities
+  getOntology(): object;
+  getRoutes(): Route[];
+  getComponents(): Component[];
+}
+```
+This contract ensures that the platform can reliably load, initialize, and integrate any extension that adheres to the defined structure and interface.
+
+## Extension Loading Process
+
+The platform's `ExtensionRegistry` is responsible for the lifecycle of all extensions.
+
+### 1. **Discovery**
+The registry scans the `src/ontologies/` directory to find all available extensions.
+
+### 2. **Registration & Validation**
+Each extension's `register.ts` is executed, adding its services to the dependency injection container. The platform can validate the extension against the required contract.
+
+### 3. **Initialization**
+The platform iterates through the loaded extensions and calls their `initialize` method, passing in a `PlatformContext` object that may contain shared services like an event bus or logger. This allows each extension to perform its setup logic, such as subscribing to events.
 
 ## 🔌 Extension System Architecture
 

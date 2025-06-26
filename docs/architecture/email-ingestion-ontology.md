@@ -1,192 +1,39 @@
-# Email Ingestion into O-CREAM-v2 Ontology
+# Email Ingestion Ontology and Process
 
 ## Overview
 
-This document explains how email ingestion works in our CRM system using the O-CREAM-v2 (Ontology for Customer Relationship Management v2) framework. The system transforms raw email data into structured ontological knowledge that can be analyzed, searched, and leveraged for intelligent CRM operations.
+This document explains how email ingestion works in our system. The process transforms raw email data into a structured knowledge graph, enabling advanced analysis, search, and business intelligence.
 
 ## 📧 Email Ingestion Process
 
-### 1. Email Reception & Parsing
+The ingestion pipeline follows a streamlined, multi-step process:
 
-When an email arrives, the system:
-- **Parses email headers** (From, To, CC, Subject, Message-ID, etc.)
-- **Extracts content** (plain text body, HTML body, attachments)
-- **Identifies thread context** (In-Reply-To, References, Thread-ID)
-- **Captures metadata** (timestamps, email provider, size, etc.)
+### 1. Email Parsing
+When an email arrives, the system parses it to extract basic information:
+- **Headers**: From, To, CC, Subject, Message-ID.
+- **Content**: Plain text body.
+- **Metadata**: Timestamps.
 
-### 2. Contact Resolution
+### 2. Batch NLP Extraction
+The core of the process is the interaction with our Python-based NLP service.
+- **Batching**: The text content of all emails is gathered into a single batch.
+- **API Call**: This batch is sent to the `/batch-extract-graph` endpoint of the NLP service.
+- **Concurrent Processing**: The NLP service uses a Large Language Model (LLM), constrained by our system's combined ontologies, to process all documents in parallel.
+- **Structured Output**: The service returns a list of structured graph objects, each containing the entities and relationships found in the corresponding email.
+- **Vector Embeddings**: A subsequent batch call enriches all extracted entities with semantic vector embeddings for similarity searches.
 
-The system identifies or creates contacts:
-- **Lookup existing contacts** by email address
-- **Create new contacts** if not found, extracting names from email addresses
-- **Update contact information** with new data discovered in emails
-- **Link contacts to organizations** based on email domains when applicable
+### 3. Knowledge Graph Ingestion
+For each processed email, the system performs the following steps in Neo4j:
 
-### 3. Email Analysis & Classification
+1.  **Create `Communication` Node**: A single `:Communication` node is created to represent the email itself, storing properties like subject, date, and source file.
+2.  **Entity Resolution & Creation**: For each entity returned by the NLP service:
+    - A **vector similarity search** is performed to see if a similar entity already exists in the graph.
+    - If a close match is found, the existing node is used.
+    - Otherwise, a new entity node is created with the appropriate labels (e.g., `:Person`, `:Organization`) and its vector embedding is stored as a property.
+3.  **Link Entities to Communication**: The `Communication` node is linked to all the entity nodes that were mentioned within it using a `[:CONTAINS_ENTITY]` relationship.
+4.  **Create Entity Relationships**: The direct relationships between entities (e.g., `(Person)-[:WORKS_FOR]->(Organization)`) are created in the graph.
 
-Advanced analysis extracts semantic information:
-
-#### **Content Classification**
-- `general` - Standard communications
-- `meeting_request` - Calendar/scheduling related
-- `business_proposal` - Sales and proposal content
-- `support_request` - Customer service inquiries
-- `financial` - Invoices, payments, financial discussions
-
-#### **Sentiment Analysis**
-- `positive` - Thank you notes, approvals, positive feedback
-- `neutral` - Standard business communications
-- `negative` - Complaints, issues, concerns
-
-#### **Priority Detection**
-- `high` - Urgent keywords, exclamation marks, deadline language
-- `medium` - Standard business communications
-- `low` - FYI, optional, informational content
-
-#### **Entity Extraction**
-- Email addresses, phone numbers, dates
-- Company names, project names, monetary amounts
-- Technical terms and product references
-
-### 4. Ontological Knowledge Creation
-
-The system creates multiple types of O-CREAM-v2 knowledge elements:
-
-#### **Communication Log Knowledge Element**
-```typescript
-{
-  type: KnowledgeType.COMMUNICATION_LOG,
-  title: "Email Communication: [Subject]",
-  content: {
-    messageId: "unique-message-id",
-    subject: "email subject",
-    body: "email content",
-    classification: "business_proposal",
-    sentiment: "positive",
-    priority: "high",
-    participants: ["sender@domain.com", "recipient@domain.com"]
-  },
-  reliability: 0.95,
-  confidentiality: "internal"
-}
-```
-
-#### **Customer Interaction History**
-```typescript
-{
-  type: KnowledgeType.INTERACTION_HISTORY,
-  title: "Customer Interaction: [Email Address]",
-  content: {
-    interactionType: "email",
-    timestamp: "2024-01-15T10:30:00Z",
-    summary: "Project proposal discussion",
-    sentiment: "positive",
-    topics: ["project", "proposal", "meeting"],
-    outcome: "received",
-    followUpRequired: true
-  },
-  reliability: 0.9,
-  confidentiality: "internal"
-}
-```
-
-#### **Business Knowledge Elements**
-For business-critical emails:
-```typescript
-{
-  type: KnowledgeType.TRANSACTION_DATA,
-  title: "Business Communication: [Subject]",
-  content: {
-    businessContext: ["proposal", "budget", "timeline"],
-    extractedEntities: ["$50,000", "3 months", "CRM system"],
-    priority: "high",
-    requiresAction: true
-  },
-  reliability: 0.8,
-  confidentiality: "confidential"
-}
-```
-
-#### **Document Management**
-For email attachments:
-```typescript
-{
-  type: KnowledgeType.DOCUMENT_MANAGEMENT,
-  title: "Email Attachment: [Filename]",
-  content: {
-    filename: "project_proposal.pdf",
-    contentType: "application/pdf",
-    size: 245760,
-    requiresProcessing: true
-  },
-  reliability: 1.0,
-  confidentiality: "confidential"
-}
-```
-
-### 5. Activity Creation
-
-The system creates O-CREAM-v2 activities to track email interactions:
-
-#### **Data Collection Activity**
-```typescript
-{
-  type: ActivityType.DATA_COLLECTION,
-  name: "Email Received",
-  description: "Email received from john.doe@acme.com: Urgent proposal",
-  participants: ["contact-id-1", "contact-id-2"],
-  startTime: "2024-01-15T10:30:00Z",
-  status: "completed",
-  context: {
-    emailProvider: "Gmail",
-    hasAttachments: true,
-    priority: "high"
-  }
-}
-```
-
-#### **Customer Support Activity**
-```typescript
-{
-  type: ActivityType.CUSTOMER_SUPPORT,
-  name: "Customer Email Communication",
-  description: "Email communication with customer",
-  outcome: "Email received: Project proposal discussion",
-  context: {
-    communicationType: "email",
-    direction: "inbound",
-    priority: "high"
-  }
-}
-```
-
-### 6. Relationship Management
-
-The system establishes ontological relationships:
-
-#### **Communication Relationships**
-```typescript
-{
-  relationshipType: "COMMUNICATION",
-  sourceEntityId: "sender-contact-id",
-  targetEntityId: "recipient-contact-id",
-  sourceRole: "sender",
-  targetRole: "recipient",
-  properties: {
-    communicationType: "email",
-    frequency: "occasional"
-  },
-  strength: 0.5
-}
-```
-
-### 7. Knowledge Graph Storage
-
-All ontological data is stored in the knowledge graph:
-- **Neo4j nodes** for entities (contacts, communications, knowledge elements)
-- **Relationships** connecting related entities
-- **Properties** storing metadata and analysis results
-- **Indexes** for fast semantic search and retrieval
+This process results in a rich, interconnected knowledge graph that accurately models the information contained in the emails.
 
 ## 🏛️ Actor Modeling: Person and Organization
 
@@ -230,42 +77,29 @@ graph TD;
 ## 🧠 Ontological Benefits
 
 ### **Semantic Search**
-Query emails by ontological properties:
+Query for communications about a specific topic or involving a specific person:
 ```cypher
-MATCH (c:Contact)-[:HAS_KNOWLEDGE]->(ke:KnowledgeElement)
-WHERE ke.type = 'COMMUNICATION_LOG' 
-  AND ke.sentiment = 'positive'
-  AND ke.priority = 'high'
-RETURN c, ke
+// Find all communications involving 'Vista Equity Partners'
+MATCH (c:Communication)-[:CONTAINS_ENTITY]->(o:Organization {name: 'Vista Equity Partners'})
+RETURN c.subject, c.date
+ORDER BY c.date DESC
 ```
 
 ### **Relationship Discovery**
-Find communication patterns:
+Find all people who work for a specific company:
 ```cypher
-MATCH (c1:Contact)-[r:COMMUNICATION]->(c2:Contact)
-WHERE r.frequency = 'frequent'
-RETURN c1, c2, r
+MATCH (p:Person)-[:WORKS_FOR]->(o:Organization {name: 'Morgan Stanley'})
+RETURN p.name
 ```
 
 ### **Business Intelligence**
-Analyze customer interactions:
+Discover which deals a specific investor is associated with:
 ```cypher
-MATCH (c:Contact)-[:HAS_ACTIVITY]->(a:Activity)
-WHERE a.type = 'CUSTOMER_SUPPORT'
-  AND a.startTime > date('2024-01-01')
-RETURN c.email, count(a) as interaction_count
-ORDER BY interaction_count DESC
+MATCH (i:Investor {name: 'Vista Equity Partners'})<-[:INVESTED_IN]-(d:Deal)
+RETURN d.name
 ```
 
-### **Knowledge Aggregation**
-Combine insights across interactions:
-```cypher
-MATCH (c:Contact)-[:HAS_KNOWLEDGE]->(ke:KnowledgeElement)
-WHERE ke.type = 'INTERACTION_HISTORY'
-RETURN c.email, 
-       avg(ke.sentiment_score) as avg_sentiment,
-       collect(ke.topics) as all_topics
-```
+This streamlined, ontology-driven process ensures that high-quality, structured data is extracted from unstructured emails, powering the intelligent features of the application.
 
 ## 🔄 Integration Points
 

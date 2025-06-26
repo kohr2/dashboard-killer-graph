@@ -2,7 +2,7 @@
 
 ## 🎯 System Architecture
 
-The Extensible CRM Platform implements a **modular, domain-driven architecture** that separates generic CRM functionality from domain-specific business logic.
+The Extensible CRM Platform implements a **modular, domain-driven architecture** where all business logic, including foundational CRM features, is implemented through pluggable extensions. This ensures the core platform remains lean and domain-agnostic.
 
 ## 🏛️ High-Level Architecture
 
@@ -12,26 +12,17 @@ The Extensible CRM Platform implements a **modular, domain-driven architecture**
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
 │  │   CRM UI    │  │ Financial   │  │  Agent APIs │         │
 │  │ Components  │  │ Extension   │  │   Gateway   │         │
-│  │             │  │     UI      │  │             │         │
+│  │  (from Ext) │  │     UI      │  │             │         │
 │  └─────────────┘  └─────────────┘  └─────────────┘         │
 └─────────────────────────────────────────────────────────────┘
                                 │
 ┌─────────────────────────────────────────────────────────────┐
 │                 🎯 Extension Layer                          │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
-│  │             │  │  💰 Financial│  │ 🏠 Real Est │         │
-│  │   Future    │  │  Extension   │  │ Extension   │         │
-│  │ Extensions   │  │ (Active)     │  │  (Future)   │         │
-│  │             │  │              │  │             │         │
-│  └─────────────┘  └─────────────┘  └─────────────┘         │
-└─────────────────────────────────────────────────────────────┘
-                                │
-┌─────────────────────────────────────────────────────────────┐
-│                 🏛️ CRM Core Layer                          │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
-│  │   Contact   │  │Communication│  │    Task     │         │
-│  │ Management  │  │  Tracking   │  │ Management  │         │
-│  │             │  │             │  │             │         │
+│  │  🧩 CRM      │  │  💰 Financial│  │ 🏠 Real Est │         │
+│  │  Extension   │  │  Extension   │  │ Extension   │         │
+│  │ (Active)     │  │ (Active)     │  │  (Future)   │         │
+│  │              │  │              │  │             │         │
 │  └─────────────┘  └─────────────┘  └─────────────┘         │
 └─────────────────────────────────────────────────────────────┘
                                 │
@@ -57,27 +48,25 @@ The Extensible CRM Platform implements a **modular, domain-driven architecture**
 ## 🎯 Core Architectural Principles
 
 ### 1. **Separation of Concerns**
-- **CRM Core**: Generic relationship management (contacts, communications, tasks)
-- **Extensions**: Domain-specific business logic (financial, real estate, healthcare)  
-- **Platform**: Extension orchestration and framework services
-- **Shared**: Cross-cutting infrastructure concerns
+- **Extensions**: All domain-specific business logic (CRM, financial, real estate) resides here.
+- **Platform**: Extension orchestration and framework services.
+- **Shared**: Cross-cutting infrastructure concerns like database connections and configuration.
 
 ### 2. **Dependency Inversion**
 ```typescript
-// Extensions depend on CRM Core, not vice versa
-Extensions → CRM Core → Platform → Shared Infrastructure
+// Extensions depend on the Platform, not on each other.
+Extensions → Platform → Shared Infrastructure
 
 // Clean dependency flow ensures:
-// - CRM Core remains domain-agnostic
-// - Extensions can be developed independently
-// - Platform provides orchestration services
+// - The Platform remains domain-agnostic.
+// - Extensions can be developed and deployed independently.
+// - The Platform provides stable orchestration services and contracts.
 ```
 
 ### 3. **Plugin Architecture**
 - **Dynamic Loading**: Extensions discovered and loaded at runtime
-- **Interface Contracts**: Well-defined extension interfaces
-- **Event-Driven**: Loose coupling through event bus
-- **Modular Deployment**: Independent extension deployment
+- **Event-Driven**: Loose coupling through a platform event bus.
+- **Modular Deployment**: Independent extension deployment.
 
 ## 📊 Module Structure
 
@@ -149,20 +138,18 @@ platform/
 
 ### Request Processing Flow
 ```
-1. API Request → Interface Layer
+1. API Request → Interface Layer (e.g., API Gateway)
 2. Route to Extension → Platform Router
-3. Execute Use Case → Extension Application Layer
-4. Access CRM Data → CRM Core Domain
-5. Persist Changes → Infrastructure Layer
-6. Publish Events → Event Bus
+3. Execute Use Case → Extension's Application Layer
+4. Access Data via Repositories → Extension's Infrastructure Layer
+5. Persist Changes → Shared Infrastructure (e.g., Neo4j)
+6. Publish Events → Platform Event Bus
 7. Return Response → Interface Layer
 ```
 
 ### Cross-Extension Communication
 ```
 Extension A → Platform Event Bus → Extension B
-Extension A → CRM Core Service → Extension B
-Extension A → Shared Infrastructure → Extension B
 ```
 
 ## 🛡️ Security Architecture
@@ -208,12 +195,12 @@ Extension A → Shared Infrastructure → Extension B
 interface Extension {
   readonly name: string;
   readonly version: string;
-  readonly dependencies: string[];
   
-  initialize(crmCore: CRMCore): Promise<void>;
+  initialize(platform: PlatformContext): Promise<void>;
   getRoutes(): Route[];
   getComponents(): Component[];
   getUseCases(): UseCase[];
+  getOntology(): object;
   shutdown(): Promise<void>;
 }
 ```

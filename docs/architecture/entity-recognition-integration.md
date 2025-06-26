@@ -1,124 +1,133 @@
-# Entity Recognition Integration: Core CRM + Extensions
+# Unified Entity Recognition and Integration
 
 ## Overview
 
-This document explains how entity recognition works across our extensible CRM platform, integrating the **core O-CREAM-v2 ontology** with **domain-specific extensions** like the **Financial (FIBO) extension**.
+This document explains how the system performs entity recognition by combining the ontologies from all active extensions into a single, unified model. This approach allows for rich, cross-domain entity extraction in a single pass.
 
 ## Architecture Flow
 
+The system uses a streamlined, ontology-driven process:
+
 ```
 📧 Input Content (Email/Document)
+    │
+    ├─ 1. Collect Ontologies from All Extensions (CRM, Financial, etc.)
+    │
     ↓
-🧠 Core Entity Extraction (spaCy + O-CREAM-v2)
+🧠 Unified NLP Extraction
+    │  (LLM constrained by the combined ontology)
+    │
+    ├─ 2. Extract All Entities & Relationships in a Single Pass
+    │
     ↓
-🏦 Extension-Specific Extraction (FIBO Financial)
+🔗 Entity Resolution & Graph Population
+    │
+    ├─ 3. Resolve Entities via Vector Search
+    ├─ 4. Create Nodes with Multi-Labeling (e.g., :Investor:Organization)
+    ├─ 5. Create Relationships
+    │
     ↓
-🔗 Entity Integration & Relationship Mapping
-    ↓
-📊 Knowledge Graph Population
-    ↓
-💡 Intelligence Generation & CRM Integration
+💡 Intelligence Generation & Application Integration
 ```
 
-## 1. Core CRM Entity Recognition
+## 1. Unified, Ontology-Driven Extraction
 
-### spaCy + O-CREAM-v2 Foundation
-- **spaCy NLP Models**: Context-aware entity recognition with 85-95% accuracy
-- **O-CREAM-v2 Ontology**: DOLCE-based semantic categorization
-- **20+ Entity Types**: PERSON, ORG, MONEY, DATE, LOCATION, etc.
-- **Knowledge Elements**: Automatic creation of ontological knowledge
+The core principle is that there is **no separate extraction step** for different domains. Instead, the system leverages its extension architecture to build a comprehensive model on the fly.
 
-### Core Entity Processing
+1.  **Ontology Aggregation**: At startup, the platform's `OntologyService` scans all active extensions and aggregates their `ontology.json` files. This creates a complete list of all known entity and relationship types across all business domains.
+
+2.  **Dynamic NLP Constraining**: This aggregated list of types is sent to the Python NLP service. The Large Language Model (LLM) is then instructed to **only** extract entities and relationships that conform to this dynamically generated schema.
+
+This ensures that all extracted data is valid and directly mappable to the knowledge graph.
+
+### Example of Unified Extraction
+
+Given an input text, the NLP service, using the combined ontology, can extract entities from multiple domains simultaneously:
+
 ```typescript
-// Core entities extracted by spaCy
-const coreEntities = [
-  { type: 'PERSON', value: 'Robert Johnson', confidence: 0.95 },
-  { type: 'ORG', value: 'Goldman Sachs Group Inc.', confidence: 0.92 },
-  { type: 'MONEY', value: '$2.5 million', confidence: 0.98 },
-  { type: 'DATE', value: 'March 15th, 2024', confidence: 0.89 }
-];
-
-// O-CREAM-v2 ontological categorization
-const ontologyMapping = {
-  'PERSON' → 'AgentivePhysicalObject' (DOLCE category),
-  'ORG' → 'AgentivePhysicalObject' (DOLCE category),
-  'MONEY' → 'Abstract' (DOLCE category)
-};
-```
-
-## 2. Financial Extension (FIBO Integration)
-
-### FIBO-Compliant Entity Types
-- **FIBO_SECURITY**: Financial instruments (stocks, bonds, derivatives)
-- **FIBO_CURRENCY**: Currency codes and monetary amounts
-- **FIBO_FINANCIAL_INSTITUTION**: Banks, investment firms
-- **FIBO_FINANCIAL_RATIO**: P/E ratios, ROI, EBITDA metrics
-- **FIBO_REGULATORY_ID**: CUSIP, ISIN, LEI identifiers
-- **FIBO_MARKET_DATA**: Trading data, prices, volumes
-
-### Financial Entity Processing
-```typescript
-// Financial entities with specialized patterns
-const financialEntities = [
-  { 
-    type: 'FIBO_SECURITY', 
-    value: 'Goldman Sachs Group Inc. (NYSE: GS)',
-    confidence: 0.94,
-    fiboProperties: {
-      instrumentType: 'EQUITY',
-      exchange: 'NYSE',
-      ticker: 'GS'
-    }
-  },
-  {
-    type: 'FIBO_REGULATORY_ID',
-    value: 'CUSIP: 912828XG0',
-    confidence: 0.97,
-    fiboProperties: {
-      idType: 'CUSIP',
-      identifier: '912828XG0'
-    }
-  }
-];
-```
-
-## 3. Cross-Domain Integration
-
-### Entity Relationship Mapping
-```typescript
-// Relationships between core and financial entities
-const relationships = [
-  {
-    type: 'OWNS_INSTRUMENT',
-    source: 'PERSON:Robert Johnson',
-    target: 'FIBO_SECURITY:Goldman Sachs Group Inc.',
-    confidence: 0.85
-  },
-  {
-    type: 'ISSUED_BY',
-    source: 'FIBO_SECURITY:Treasury Bond',
-    target: 'ORG:U.S. Treasury',
-    confidence: 0.92
-  }
-];
-```
-
-### Knowledge Graph Population
-```typescript
-// Unified knowledge graph
-const knowledgeGraph = {
-  entities: [...coreEntities, ...financialEntities],
-  relationships: [...coreRelationships, ...financialRelationships],
-  knowledgeElements: [
+// Sample entities extracted in a single pass
+const extractedGraph = {
+  entities: [
+    // CRM Domain Entities
+    { type: 'Person', value: 'Robert Johnson', confidence: 0.95 },
+    { type: 'Organization', value: 'Morgan Stanley', confidence: 0.92 },
+    // Financial Domain Entities
+    { 
+      type: 'FinancialInstrument', 
+      value: 'Goldman Sachs Group Inc. (NYSE: GS)',
+      confidence: 0.94,
+      properties: {
+        instrumentType: 'EQUITY',
+        exchange: 'NYSE',
+        ticker: 'GS'
+      }
+    },
     {
-      type: 'BusinessKnowledge',
-      category: 'FINANCIAL',
-      entities: financialEntities,
-      confidence: 0.89
+      type: 'RegulatoryIdentifier',
+      value: 'CUSIP: 912828XG0',
+      confidence: 0.97,
+      properties: {
+        idType: 'CUSIP',
+        identifier: '912828XG0'
+      }
+    }
+  ],
+  relationships: [
+    {
+      type: 'WORKS_FOR',
+      source: 'Robert Johnson',
+      target: 'Morgan Stanley',
+      confidence: 0.85
     }
   ]
 };
 ```
+
+## 2. Integration via Multi-Labeling and Bridges
+
+As described in the main `overview.md`, the system uses multi-labeling and Ontology Bridges to create a unified graph. An entity like "Morgan Stanley" can be both an `Organization` (from the CRM ontology) and a `FinancialInstitution` (from the Financial ontology), resulting in a node with both labels: `(:FinancialInstitution:Organization)`.
+
+## 3. Real-World Example
+
+### Input: Investment Advisory Email
+```text
+Dear Mr. Johnson,
+
+Following our discussion, I've prepared recommendations for your portfolio:
+1. Goldman Sachs Group Inc. (NYSE: GS) - A solid equity choice.
+2. A 10-year Treasury Bond with CUSIP: 912828XG0.
+
+Your current portfolio value is $2.5 million.
+
+Best regards,
+Sarah Chen, CFA
+Morgan Stanley Investment Management
+```
+
+### Unified Processing Results
+
+The system processes the email in a single call to the NLP service.
+
+#### Extracted Graph
+- **Entities**:
+  - `Person`: "Mr. Johnson"
+  - `Person`: "Sarah Chen"
+  - `Organization`: "Morgan Stanley Investment Management"
+  - `FinancialInstrument`: "Goldman Sachs Group Inc. (NYSE: GS)"
+  - `RegulatoryIdentifier`: "CUSIP: 912828XG0"
+  - `MonetaryAmount`: "$2.5 million"
+- **Relationships**:
+  - (`Sarah Chen`)-[:WORKS_FOR]->(`Morgan Stanley Investment Management`)
+
+#### Neo4j Ingestion
+- A `:Communication` node is created for the email.
+- Nodes for each entity are created or resolved using vector search.
+- The "Morgan Stanley" node might be created with labels `:FinancialInstitution:Organization` via an Ontology Bridge.
+- All entities are linked to the `:Communication` node.
+- The `[:WORKS_FOR]` relationship is created between the "Sarah Chen" and "Morgan Stanley" nodes.
+```
+
+This unified, ontology-driven approach is what allows the system to be both highly extensible and capable of rich, cross-domain analysis from a single, coherent knowledge graph.
 
 ## 4. Intelligence Generation
 
@@ -147,7 +156,7 @@ const insights = {
 };
 ```
 
-### CRM Integration
+### Application Integration
 ```typescript
 // Contact updates with financial profile
 const contactUpdate = {
@@ -204,71 +213,7 @@ entityExtractor.registerExtension(healthcareExtension);
 entityExtractor.registerExtension(legalExtension);
 ```
 
-## 6. Real-World Example
-
-### Input: Investment Advisory Email
-```text
-Dear Mr. Johnson,
-
-Following our discussion about your portfolio diversification, I've prepared recommendations:
-
-1. Goldman Sachs Group Inc. (NYSE: GS) - Current price $350.25
-2. Treasury Bond CUSIP: 912828XG0 - 10-year maturity, 4.2% yield
-3. EUR/USD currency pair - Consider hedging with €500,000 position
-
-Your current portfolio value stands at $2.5 million with a P/E ratio of 18.5.
-
-Best regards,
-Sarah Chen, CFA
-Morgan Stanley Investment Management
-```
-
-### Processing Results
-
-#### Core Entities (spaCy + O-CREAM-v2)
-- **PERSON**: "Mr. Johnson" (confidence: 0.95)
-- **PERSON**: "Sarah Chen" (confidence: 0.93)
-- **ORG**: "Morgan Stanley Investment Management" (confidence: 0.96)
-- **MONEY**: "$2.5 million" (confidence: 0.98)
-- **DATE**: "10-year maturity" (confidence: 0.87)
-
-#### Financial Entities (FIBO)
-- **FIBO_SECURITY**: "Goldman Sachs Group Inc. (NYSE: GS)" (confidence: 0.94)
-- **FIBO_REGULATORY_ID**: "CUSIP: 912828XG0" (confidence: 0.97)
-- **FIBO_CURRENCY**: "€500,000" (confidence: 0.95)
-- **FIBO_FINANCIAL_RATIO**: "P/E ratio of 18.5" (confidence: 0.91)
-- **FIBO_FINANCIAL_INSTITUTION**: "Morgan Stanley" (confidence: 0.89)
-
-#### FIBO Entities Created
-1. **FIBOFinancialInstrument**: Goldman Sachs equity
-   - Risk Category: MEDIUM (score: 0.7)
-   - Instrument Type: EQUITY
-   - Currency: USD
-
-2. **FIBOFinancialInstrument**: Treasury Bond
-   - Risk Category: LOW (score: 0.3)
-   - Instrument Type: BOND
-   - Maturity: 10 years
-
-3. **FIBOMarketData**: Currency pair data
-   - Data Type: PRICE
-   - Currency: EUR
-   - Value: 500000
-
-#### Financial Insights Generated
-- **Portfolio Value**: $2,500,000
-- **Risk Score**: 0.65 (Medium)
-- **Diversification**: 2 equity, 1 bond, 2 currencies
-- **Client Segment**: Corporate
-- **Compliance Status**: Compliant
-
-#### CRM Integration
-- **Contact Updated**: Financial profile added to Mr. Johnson
-- **Knowledge Elements**: 3 business knowledge elements created
-- **Activities**: Financial analysis activity logged
-- **Relationships**: 4 entity relationships established
-
-## 7. Benefits of This Architecture
+## 6. Benefits of This Architecture
 
 ### ✅ **Extensibility**
 - New domains easily added (healthcare, legal, real estate)
@@ -295,7 +240,7 @@ Morgan Stanley Investment Management
 - Automatic compliance checking
 - Audit trail through ontology
 
-## 8. Usage Examples
+## 7. Usage Examples
 
 ### Basic Usage
 ```typescript
