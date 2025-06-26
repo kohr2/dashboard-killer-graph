@@ -8,7 +8,7 @@ Your root directory has been **completely cleaned up** from complex markdown fil
 
 ### ❌ Before (Complex File Names)
 ```
-financial-kill-the-crm/
+dashboard-killer-graph/
 ├── README.md
 ├── DOCUMENTATION_IMPROVEMENTS.md        # Complex name
 ├── tdd_development_plan.md              # Complex name
@@ -23,7 +23,7 @@ financial-kill-the-crm/
 
 ### ✅ After (Clean Structure)
 ```
-financial-kill-the-crm/
+dashboard-killer-graph/
 ├── 📄 README.md                          # Main entry point
 ├── 📄 package.json                       # Dependencies
 ├── 📄 docker-compose.yml                 # Services
@@ -169,3 +169,13 @@ Your **Extensible CRM Platform** now has:
 - **🏗️ Comprehensive guides** from architecture to troubleshooting
 
 **Your project now presents a professional, organized, and welcoming experience for developers, architects, and business users alike!** 🎉 
+
+### Summary of Changes
+
+| `docs/`                 | `dashboard-killer-graph/docs/`            | Root for all documentation                                     |
+| `python-services/`      | `dashboard-killer-graph/python-services/` | Python-based microservices (NLP, etc.)                         |
+| `scripts/`              | `dashboard-killer-graph/scripts/`         | Standalone scripts for DB initialization, etc.                 |
+| `src/`                  | `dashboard-killer-graph/src/`             | Main application source code                                   |
+| `docker-compose.yml`    | `dashboard-killer-graph/docker-compose.yml` | Main Docker Compose file for application services              |
+| `package.json`          | `dashboard-killer-graph/package.json`     | Project metadata and npm dependencies                          |
+| `README.md`             | `dashboard-killer-graph/README.md`        | Main project README with quick start and overview              | 

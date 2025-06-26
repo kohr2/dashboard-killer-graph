@@ -61,7 +61,7 @@ docker-compose logs neo4j
 
 # Reset Neo4j data
 docker-compose down neo4j
-docker volume rm financial-kill-the-crm_neo4j_data
+docker volume rm dashboard-killer-graph_neo4j_data
 docker-compose up -d neo4j
 
 # Test connection
@@ -463,10 +463,10 @@ curl http://localhost:3000/health/extensions
 
 ### Support Channels
 - **📖 Documentation**: [docs/](../)
-- **🐛 Bug Reports**: [GitHub Issues](https://github.com/your-org/financial-kill-the-crm/issues)
-- **💬 Questions**: [GitHub Discussions](https://github.com/your-org/financial-kill-the-crm/discussions)
+- **🐛 Bug Reports**: [GitHub Issues](https://github.com/your-org/dashboard-killer-graph/issues)
+- **💬 Questions**: [GitHub Discussions](https://github.com/your-org/dashboard-killer-graph/discussions)
 - **🔧 Development**: [Contributing Guide](../development/contributing.md)
 
 ---
 
-**Need immediate help?** Check our [FAQ](faq.md) or [create an issue](https://github.com/your-org/financial-kill-the-crm/issues/new). 
+**Need immediate help?** Check our [FAQ](faq.md) or [create an issue](httpshttps://github.com/your-org/dashboard-killer-graph/issues/new).

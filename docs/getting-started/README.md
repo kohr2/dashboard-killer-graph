@@ -13,8 +13,10 @@ Get your Extensible CRM Platform up and running in **5 minutes**!
 ### 1. Clone & Install
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/financial-kill-the-crm.git
-cd financial-kill-the-crm
+git clone https://github.com/your-org/dashboard-killer-graph.git
+
+# Navigate to the project directory
+cd dashboard-killer-graph
 
 # Install dependencies
 npm install
@@ -90,7 +92,7 @@ npm run test:integration -- --grep "database"
 ## 📊 Project Structure Overview
 
 ```
-financial-kill-the-crm/
+dashboard-killer-graph/
 ├── 🏛️ src/crm/        # Generic CRM foundation
 ├── 💰 src/extensions/       # Domain-specific extensions
 ├── 🔧 src/platform/         # Extension framework
@@ -136,8 +138,9 @@ docker-compose restart neo4j
 
 ### Get Support
 - **📖 Documentation**: Browse [docs/](../)
-- **🐛 Report Issues**: [GitHub Issues](https://github.com/your-org/financial-kill-the-crm/issues)
-- **💬 Ask Questions**: [GitHub Discussions](https://github.com/your-org/financial-kill-the-crm/discussions)
+- **🐛 Report Issues**: [GitHub Issues](https://github.com/your-org/dashboard-killer-graph/issues)
+- **💬 Ask Questions**: [GitHub Discussions](https://github.com/your-org/dashboard-killer-graph/discussions)
+- **📜 Review History**: See the [project history](../project-history.md)
 
 ---
 

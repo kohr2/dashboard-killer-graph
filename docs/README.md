@@ -170,9 +170,9 @@ Welcome to the **Extensible CRM Platform** documentation! This is your complete 
 ## 🤝 Contributing to Documentation
 
 ### How to Help
-1. **Report Issues**: Found outdated or incorrect information? [Create an issue](https://github.com/your-org/financial-kill-the-crm/issues)
-2. **Suggest Improvements**: Have ideas for better documentation? [Start a discussion](https://github.com/your-org/financial-kill-the-crm/discussions)
-3. **Contribute Content**: Want to write documentation? See our [Contributing Guide](development/contributing.md)
+1. **Report Issues**: Found outdated or incorrect information? [Create an issue](https://github.com/your-org/dashboard-killer-graph/issues)
+2. **Suggest Improvements**: Have ideas for better documentation? [Start a discussion](https://github.com/your-org/dashboard-killer-graph/discussions)
+3. **Submit Pull Requests**: Follow the [contribution guide](development/contributing.md) to submit changes.
 
 ### Documentation Standards
 - **Clarity**: Write for your audience's skill level
@@ -185,11 +185,11 @@ Welcome to the **Extensible CRM Platform** documentation! This is your complete 
 ### Need Help?
 - **📖 Browse Documentation**: Use the navigation above
 - **🔍 Search**: Use Ctrl+F to find specific topics
-- **🐛 Report Issues**: [GitHub Issues](https://github.com/your-org/financial-kill-the-crm/issues)
-- **💬 Ask Questions**: [GitHub Discussions](https://github.com/your-org/financial-kill-the-crm/discussions)
+- **🐛 Report Issues**: [GitHub Issues](https://github.com/your-org/dashboard-killer-graph/issues)
+- **💬 Ask Questions**: [GitHub Discussions](https://github.com/your-org/dashboard-killer-graph/discussions)
 
 ### Documentation Feedback
-Help us improve! Please rate our documentation and suggest improvements through our [feedback form](https://github.com/your-org/financial-kill-the-crm/discussions/new?category=documentation).
+Help us improve! Please rate our documentation and suggest improvements through our [feedback form](https://github.com/your-org/dashboard-killer-graph/discussions/new?category=documentation).
 
 ---
 

@@ -1,6 +1,6 @@
 # 🏗️ Extensible CRM Platform
 
-[![CI/CD](https://github.com/your-org/financial-kill-the-crm/workflows/test/badge.svg)](https://github.com/your-org/financial-kill-the-crm/actions)
+[![CI/CD](https://github.com/your-org/dashboard-killer-graph/workflows/test/badge.svg)](https://github.com/your-org/dashboard-killer-graph/actions)
 [![Coverage](https://img.shields.io/badge/coverage-85%25-green.svg)](./docs/testing/coverage-report.md)
 [![Architecture](https://img.shields.io/badge/architecture-clean-brightgreen.svg)](./docs/architecture/overview.md)
 
@@ -10,8 +10,8 @@ A **modular, extensible CRM platform** built with Clean Architecture + DDD, feat
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/your-org/financial-kill-the-crm.git
-cd financial-kill-the-crm
+git clone https://github.com/your-org/dashboard-killer-graph.git
+cd dashboard-killer-graph
 npm install
 
 # 2. Start Core Infrastructure (Databases)
@@ -153,8 +153,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🆘 Support
 
 - **Documentation**: [docs/](docs/)
-- **Issues**: [GitHub Issues](https://github.com/your-org/financial-kill-the-crm/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/financial-kill-the-crm/discussions)
+- **Issues**: [GitHub Issues](https://github.com/your-org/dashboard-killer-graph/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/your-org/dashboard-killer-graph/discussions)
 
 ---
 
