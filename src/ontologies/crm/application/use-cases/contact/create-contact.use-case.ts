@@ -102,7 +102,7 @@ export class CreateContactUseCase {
         // Create initial activity
         const creationActivity: any = {
           id: this.generateId(),
-          category: DOLCECategory.PERDURANT,
+          category: DOLCECategory.PhysicalObject,
           type: ActivityType.IDENTIFY,
           name: 'Contact Created',
           description: `Contact ${fullName} was created in the system`,

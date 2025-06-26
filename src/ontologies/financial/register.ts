@@ -2,14 +2,15 @@ import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { FinancialEntityIntegrationService } from './application/services/financial-entity-integration.service';
 import { FinancialToCrmBridge } from './application/ontology-bridges/financial-to-crm.bridge';
+import { HybridDealExtractionService } from './application/services/hybrid-deal-extraction.service';
 
-export function registerFinancialExtension() {
+export function registerFinancial() {
   const ontologyService = container.resolve(OntologyService);
 
   // Example for registering a financial entity
   // ontologyService.registerEntityType('Investor', (data) => createInvestor(data));
   
-  console.log('✅ Financial Extension registered.');
+  console.log('✅ Financial extension registered.');
 }
 
 export function registerFinancialServices() {

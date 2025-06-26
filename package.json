@@ -1,7 +1,7 @@
 {
   "name": "dashboard-killer-graph",
   "version": "1.0.0",
-  "description": "A graph-based dashboard to replace traditional CRM views",
+  "description": "A conversational knowledge platform that uses a graph database and LLMs to replace traditional dashboards.",
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
@@ -11,7 +11,7 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "lint:crm": "eslint src/ontologies/crm --ext .ts",
+    "lint:ontology:crm": "eslint src/ontologies/crm --ext .ts",
     "lint:financial": "eslint src/ontologies/financial --ext .ts",
     "lint:platform": "eslint src/platform --ext .ts",
     "format": "prettier --write 'src/**/*.{ts,tsx}'",
@@ -38,21 +38,23 @@
     "demo:build-graph": "npx ts-node -r dotenv/config scripts/build-neo4j-graph.ts",
     "demo:hybrid": "npx ts-node -r dotenv/config scripts/demo-hybrid-entity-recognition.ts",
     "ingest:all": "npx ts-node -r dotenv/config scripts/run-full-ingestion.ts",
-    "sync:ontology": "ts-node scripts/sync-ontology.ts"
+    "sync:ontology": "ts-node scripts/sync-ontology.ts",
+    "chat:test": "ts-node -r tsconfig-paths/register scripts/test-chat.ts"
   },
   "keywords": [
-    "crm",
+    "knowledge-graph",
+    "conversational-ai",
+    "llm",
+    "neo4j",
+    "ontology",
     "extensible",
-    "platform",
-    "domain-driven",
-    "microservices",
-    "modular"
+    "platform"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@langchain/community": "^0.3.47",
-    "@langchain/core": "^0.1.5",
+    "@langchain/community": "^0.2.11",
+    "@langchain/core": "^0.2.7",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@types/handlebars": "^4.0.40",
     "axios": "^1.10.0",
@@ -69,6 +71,7 @@
     "jsforce": "^2.0.0-beta.29",
     "jsonwebtoken": "^9.0.2",
     "neo4j-driver": "^5.28.1",
+    "openai": "^5.8.1",
     "rdflib": "^2.2.33",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

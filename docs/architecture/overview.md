@@ -1,49 +1,76 @@
-# 🏗️ Architecture Overview
+# 🏗️ Aperçu de l'Architecture de la Plateforme
 
-## 🎯 System Architecture
+## 🎯 Philosophie Fondamentale
 
-The Extensible CRM Platform implements a **modular, domain-driven architecture** where all business logic, including foundational CRM features, is implemented through pluggable extensions. This ensures the core platform remains lean and domain-agnostic.
+Cette plateforme est conçue selon un modèle **modulaire et extensible**. Elle n'est pas une application monolithique mais un **noyau de plateforme** (`Platform Core`) qui orchestre des **extensions d'ontologie** indépendantes.
 
-## 🏛️ High-Level Architecture
+-   **Platform Core**: Fournit les services essentiels et agnostiques au domaine : chargement des extensions, connexion au graphe de connaissances (Neo4j), services de traitement de contenu, et outils partagés.
+-   **Extensions d'Ontologie**: Modules autonomes qui définissent un domaine métier spécifique (ex: CRM, Finance). Chaque extension apporte son propre modèle de données (`ontology.json`), sa logique métier et ses services.
 
+Ce découplage garantit que le noyau reste stable et que de nouvelles capacités métier peuvent être ajoutées sans modifier le code existant.
+
+## 🏛️ Schéma d'Architecture de Haut Niveau
+
+```mermaid
+graph TD;
+    subgraph "Clients"
+        A[Script d'Ingestion / API / UI]
+    end
+
+    subgraph "Platform Core (TypeScript)"
+        B(Orchestrateur d'Ingestion)
+        C(ContentProcessingService)
+        D(ExtensionRegistry)
+        E(Neo4jConnection)
+    end
+
+    subgraph "Extensions d'Ontologie"
+        F[CRM Extension<br/>(ontology.json, services)]
+        G[Financial Extension<br/>(ontology.json, services)]
+        H[...]
+    end
+
+    subgraph "Services Externes"
+        I[NLP Service (Python/FastAPI)<br/>- /batch-extract-graph<br/>- /ontologies]
+    end
+    
+    subgraph "Base de Données"
+        J[Neo4j Knowledge Graph]
+    end
+
+    A --> B;
+    B --> C;
+    C --> I;
+    B --> D;
+    D -- Charge --> F;
+    D -- Charge --> G;
+    D -- Charge --> H;
+    I -- Reçoit les ontologies de --> D;
+    B -- Ecrit dans --> E;
+    E --> J;
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    🌐 Interface Layer                       │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
-│  │   CRM UI    │  │ Financial   │  │  Agent APIs │         │
-│  │ Components  │  │ Extension   │  │   Gateway   │         │
-│  │  (from Ext) │  │     UI      │  │             │         │
-│  └─────────────┘  └─────────────┘  └─────────────┘         │
-└─────────────────────────────────────────────────────────────┘
-                                │
-┌─────────────────────────────────────────────────────────────┐
-│                 🎯 Extension Layer                          │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
-│  │  🧩 CRM      │  │  💰 Financial│  │ 🏠 Real Est │         │
-│  │  Extension   │  │  Extension   │  │ Extension   │         │
-│  │ (Active)     │  │ (Active)     │  │  (Future)   │         │
-│  │              │  │              │  │             │         │
-│  └─────────────┘  └─────────────┘  └─────────────┘         │
-└─────────────────────────────────────────────────────────────┘
-                                │
-┌─────────────────────────────────────────────────────────────┐
-│                🔧 Platform Layer                            │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
-│  │ Extension   │  │    Event    │  │  Extension  │         │
-│  │ Framework   │  │     Bus     │  │  Registry   │         │
-│  │             │  │             │  │             │         │
-│  └─────────────┘  └─────────────┘  └─────────────┘         │
-└─────────────────────────────────────────────────────────────┘
-                                │
-┌─────────────────────────────────────────────────────────────┐
-│              🤝 Shared Infrastructure                       │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
-│  │  Database   │  │   External  │  │   Config    │         │
-│  │  (Neo4j)    │  │   APIs      │  │ Management  │         │
-│  │             │  │             │  │             │         │
-│  └─────────────┘  └─────────────┘  └─────────────┘         │
-└─────────────────────────────────────────────────────────────┘
-```
+
+## 🔄 Flux de Données Principal : Ingestion par Lots
+
+1.  **Démarrage**: Un client (ex: `scripts/demo-email-ingestion-spacy.ts`) initie le processus.
+2.  **Orchestration**: L'orchestrateur charge les documents (ex: emails) et les envoie au `ContentProcessingService`.
+3.  **Préparation du Traitement**:
+    - Le `ContentProcessingService` demande au `ExtensionRegistry` de charger toutes les ontologies des extensions disponibles.
+    - Les ontologies combinées sont envoyées au **NLP Service** via son endpoint `/ontologies` pour le configurer.
+4.  **Extraction d'Entités en Parallèle**:
+    - Les contenus des documents sont envoyés en un seul lot au **NLP Service** sur l'endpoint `/batch-extract-graph`.
+    - Le service NLP utilise un LLM (comme OpenAI) pour extraire les entités et les relations de tous les documents en parallèle, en se limitant aux types définis par les ontologies.
+5.  **Construction du Graphe**:
+    - L'orchestrateur reçoit le graphe de connaissances extrait.
+    - Il utilise la connexion Neo4j pour créer ou fusionner les nœuds et les relations dans la base de données.
+
+##  ключевые принципы проектирования (Key Design Principles)
+
+-   **Inversion de Dépendances (IoD)**: Nous utilisons `tsyringe` pour l'injection de dépendances. Les services et les repositories sont injectés via des interfaces, ce qui favorise un couplage faible et une haute testabilité.
+-   **Pilotage par l'Ontologie (Ontology-Driven)**: Le fichier `ontology.json` est la source de vérité pour chaque domaine. Il pilote non seulement le schéma de la base de données mais aussi le comportement du service NLP.
+-   **Modularité Forte**: Les extensions sont complètement autonomes. Elles n'ont pas de dépendances directes entre elles. Toute communication inter-extension doit passer par des services dédiés appelés "Ponts Ontologiques" (`Ontology Bridges`).
+
+Pour un guide détaillé sur la création d'extensions, consultez le document [Architecture des Extensions et Ontologies](./ontologies.md).
 
 ## 🎯 Core Architectural Principles
 

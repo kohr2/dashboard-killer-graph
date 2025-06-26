@@ -1,13 +1,15 @@
 import { ContactService } from '../../../../../src/ontologies/crm/application/services/contact.service';
 import { ContactRepository } from '../../../../../src/ontologies/crm/domain/repositories/contact-repository';
-import {
-  Person,
-} from '../../../../../src/ontologies/crm/domain/ontology/o-cream-v2';
+import { Person } from '../../../../../src/ontologies/crm/domain/ontology/o-cream-v2';
 import { CreateContactDto, UpdateContactDto } from '../../../../../src/ontologies/crm/application/dto/contact.dto';
 import { OCreamV2Ontology } from '../../../../../src/ontologies/crm/domain/ontology/o-cream-v2';
 import { ContactOntology } from '../../../../../src/ontologies/crm/domain/entities/contact-ontology';
+import { AccessControlService } from '../../../../../src/platform/security/application/services/access-control.service';
+import { User } from '../../../../../src/platform/security/domain/user';
+import { GUEST_ROLE, ANALYST_ROLE } from '../../../../../src/platform/security/domain/role';
 
 jest.mock('../../../../../src/ontologies/crm/domain/repositories/contact-repository');
+jest.mock('../../../../../src/platform/security/application/services/access-control.service');
 
 const mockPerson = {
   id: 'contact-123',
@@ -62,6 +64,10 @@ describe('ContactService', () => {
   let contactService: ContactService;
   let mockContactRepository: jest.Mocked<ContactRepository>;
   let mockOntology: jest.Mocked<ReturnType<typeof OCreamV2Ontology.getInstance>>;
+  let mockAccessControlService: jest.Mocked<AccessControlService>;
+
+  const analystUser: User = { id: 'analyst-1', username: 'analyst', roles: [ANALYST_ROLE] };
+  const guestUser: User = { id: 'guest-1', username: 'guest', roles: [GUEST_ROLE] };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -74,16 +80,50 @@ describe('ContactService', () => {
       findByEmail: jest.fn(),
       addEmailToContact: jest.fn(),
     };
-    contactService = new ContactService(mockContactRepository);
+    mockAccessControlService = new (AccessControlService as any)();
+    contactService = new ContactService(mockContactRepository, mockAccessControlService);
     // Get the mocked instance here
     mockOntology = OCreamV2Ontology.getInstance() as any;
+  });
+
+  describe('getContactById with Access Control', () => {
+    it('should return a contact DTO if the user has "read" permission', async () => {
+        const contactId = 'contact-123';
+        mockContactRepository.findById.mockResolvedValue(mockPerson as any);
+        mockAccessControlService.can.mockReturnValue(true);
+
+        const result = await contactService.getContactById(analystUser, contactId);
+        
+        expect(mockAccessControlService.can).toHaveBeenCalledWith(analystUser, 'read', 'Contact');
+        expect(result).not.toBeNull();
+        expect(result?.id).toBe(contactId);
+    });
+
+    it('should throw an error if the user does not have "read" permission', async () => {
+        const contactId = 'contact-123';
+        mockContactRepository.findById.mockResolvedValue(mockPerson as any);
+        mockAccessControlService.can.mockReturnValue(false);
+
+        await expect(contactService.getContactById(guestUser, contactId)).rejects.toThrow('Access denied');
+        expect(mockAccessControlService.can).toHaveBeenCalledWith(guestUser, 'read', 'Contact');
+        expect(mockContactRepository.findById).not.toHaveBeenCalled();
+    });
+
+    it('should return null if contact is not found, even with permission', async () => {
+        const contactId = 'non-existent';
+        mockContactRepository.findById.mockResolvedValue(null);
+        mockAccessControlService.can.mockReturnValue(true);
+
+        const result = await contactService.getContactById(analystUser, contactId);
+        expect(result).toBeNull();
+    });
   });
 
   describe('getContactById', () => {
     it('should return a contact DTO when a contact is found', async () => {
       const contactId = 'contact-123';
       mockContactRepository.findById.mockResolvedValue(mockPerson as any);
-      const result = await contactService.getContactById(contactId);
+      const result = await contactService.getContactById(analystUser, contactId);
       expect(result).not.toBeNull();
       expect(result?.id).toBe(contactId);
       expect(result?.firstName).toBe('John');
@@ -92,7 +132,7 @@ describe('ContactService', () => {
 
     it('should return null when a contact is not found', async () => {
       mockContactRepository.findById.mockResolvedValue(null);
-      const result = await contactService.getContactById('non-existent');
+      const result = await contactService.getContactById(analystUser, 'non-existent');
       expect(result).toBeNull();
     });
   });
@@ -105,8 +145,12 @@ describe('ContactService', () => {
         email: 'jane.doe@example.com',
       };
       const savedContact = { ...mockPerson, ...contactData, id: 'new-id' };
+      mockAccessControlService.can.mockReturnValue(true);
       mockContactRepository.save.mockResolvedValue(savedContact as any);
-      const result = await contactService.createContact(contactData);
+
+      const result = await contactService.createContact(analystUser, contactData);
+      
+      expect(mockAccessControlService.can).toHaveBeenCalledWith(analystUser, 'create', 'Contact');
       expect(ContactOntology.createOCreamContact).toHaveBeenCalledWith(contactData);
       expect(mockOntology.addEntity).toHaveBeenCalled();
       expect(mockContactRepository.save).toHaveBeenCalled();
@@ -122,11 +166,13 @@ describe('ContactService', () => {
       const updates: UpdateContactDto = { firstName: 'Johnathan' };
       const updatedContact = { ...mockPerson, ...updates };
       
+      mockAccessControlService.can.mockReturnValue(true);
       mockOntology.getEntity.mockReturnValue(mockPerson);
       mockContactRepository.save.mockResolvedValue(updatedContact as any);
 
-      const result = await contactService.updateContact(contactId, updates);
+      const result = await contactService.updateContact(analystUser, contactId, updates);
       
+      expect(mockAccessControlService.can).toHaveBeenCalledWith(analystUser, 'update', 'Contact');
       expect(mockOntology.getEntity).toHaveBeenCalledWith(contactId);
       expect(mockContactRepository.save).toHaveBeenCalled();
       expect(result).not.toBeNull();
@@ -138,9 +184,10 @@ describe('ContactService', () => {
       const updates: UpdateContactDto = { firstName: 'Ghost' };
 
       mockOntology.getEntity.mockReturnValue(undefined);
+      mockAccessControlService.can.mockReturnValue(true);
 
       await expect(
-        contactService.updateContact(contactId, updates),
+        contactService.updateContact(analystUser, contactId, updates),
       ).rejects.toThrow(`Contact with ID ${contactId} not found.`);
 
       expect(mockOntology.getEntity).toHaveBeenCalledWith(contactId);
@@ -151,9 +198,13 @@ describe('ContactService', () => {
   describe('deleteContact', () => {
     it('should delete a contact', async () => {
       const contactId = 'contact-to-delete';
+      mockAccessControlService.can.mockReturnValue(true);
       mockOntology.getEntity.mockReturnValue(mockPerson);
       mockContactRepository.delete.mockResolvedValue(undefined);
-      await contactService.deleteContact(contactId);
+
+      await contactService.deleteContact(analystUser, contactId);
+
+      expect(mockAccessControlService.can).toHaveBeenCalledWith(analystUser, 'delete', 'Contact');
       expect(mockOntology.getEntity).toHaveBeenCalledWith(contactId);
       expect(mockContactRepository.delete).toHaveBeenCalledWith(contactId);
       expect(mockOntology.removeEntity).toHaveBeenCalledWith(contactId);
@@ -165,10 +216,12 @@ describe('ContactService', () => {
       const searchDto = { name: 'John' };
       const mockContacts = [mockPerson, { ...mockPerson, id: 'contact-456', name: 'Johnny' }];
       
+      mockAccessControlService.can.mockReturnValue(true);
       mockContactRepository.search.mockResolvedValue(mockContacts as any[]);
 
-      const results = await contactService.searchContacts(searchDto);
+      const results = await contactService.searchContacts(analystUser, searchDto);
 
+      expect(mockAccessControlService.can).toHaveBeenCalledWith(analystUser, 'read', 'Contact');
       expect(mockContactRepository.search).toHaveBeenCalledWith(searchDto);
       expect(results).toHaveLength(2);
       expect(results[0].id).toBe('contact-123');
@@ -177,9 +230,10 @@ describe('ContactService', () => {
 
     it('should return an empty array when no contacts match', async () => {
       const searchDto = { name: 'NonExistent' };
+      mockAccessControlService.can.mockReturnValue(true);
       mockContactRepository.search.mockResolvedValue([]);
 
-      const results = await contactService.searchContacts(searchDto);
+      const results = await contactService.searchContacts(analystUser, searchDto);
 
       expect(mockContactRepository.search).toHaveBeenCalledWith(searchDto);
       expect(results).toHaveLength(0);
@@ -195,11 +249,13 @@ describe('ContactService', () => {
       };
       const updatedContact = { ...mockPerson };
 
+      mockAccessControlService.can.mockReturnValue(true);
       mockOntology.getEntity.mockReturnValue(mockPerson);
       mockContactRepository.save.mockResolvedValue(updatedContact as any);
 
-      const result = await contactService.addNoteToContact(contactId, noteDto);
+      const result = await contactService.addNoteToContact(analystUser, contactId, noteDto);
 
+      expect(mockAccessControlService.can).toHaveBeenCalledWith(analystUser, 'update', 'Contact');
       expect(mockOntology.getEntity).toHaveBeenCalledWith(contactId);
       expect(mockOntology.addEntity).toHaveBeenCalled();
       expect(mockPerson.addKnowledgeElement).toHaveBeenCalled();
@@ -215,10 +271,11 @@ describe('ContactService', () => {
         authorId: 'user-1',
       };
 
+      mockAccessControlService.can.mockReturnValue(true);
       mockOntology.getEntity.mockReturnValue(undefined);
 
       await expect(
-        contactService.addNoteToContact(contactId, noteDto),
+        contactService.addNoteToContact(analystUser, contactId, noteDto),
       ).rejects.toThrow(`Contact with id ${contactId} not found`);
 
       expect(mockOntology.getEntity).toHaveBeenCalledWith(contactId);

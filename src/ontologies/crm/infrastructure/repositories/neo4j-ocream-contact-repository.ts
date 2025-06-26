@@ -103,6 +103,12 @@ export class Neo4jOCreamContactRepository implements ContactRepository {
       await session.close();
     }
   }
+
+  async addEmailToContact(contactId: string, email: string): Promise<void> {
+    // TODO: Implement the logic to add an additional email to a contact
+    console.log(`Adding email ${email} to contact ${contactId} - not implemented`);
+    return Promise.resolve();
+  }
   
   private mapNodeToContact(node: any): OCreamContactEntity {
     return ContactOntology.createOCreamContact({

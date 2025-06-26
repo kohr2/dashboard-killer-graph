@@ -3,12 +3,15 @@ import { v4 as uuidv4 } from 'uuid';
 // Based on DOLCE foundational ontology
 
 export enum DOLCECategory {
-  ENDURANT = 'Endurant',
-  PERDURANT = 'Perdurant',
-  QUALITY = 'Quality',
-  ABSTRACT = 'Abstract',
-  AGENTIVEPHYSICALOBJECT = 'AgentivePhysicalObject',
-  NONAGENTIVEPHYSICALOBJECT = 'NonAgentivePhysicalObject',
+  Abstract = 'Abstract',
+  PhysicalObject = 'PhysicalObject',
+  AmountOfMatter = 'AmountOfMatter',
+  ArbitrarySum = 'ArbitrarySum',
+  SocialObject = 'SocialObject',
+  MentalObject = 'MentalObject',
+  LinguisticObject = 'LinguisticObject',
+  InformationObject = 'InformationObject',
+  // CRMPLATFORM = 'CRMPlatform', // Obsolete
 }
 
 export enum RelationshipType {
@@ -62,10 +65,10 @@ export enum ActivityType {
   DATAANALYSIS = 'DataAnalysis',
   REPORTING = 'Reporting',
   DOCUMENTMANAGEMENT = 'DocumentManagement',
+  Other = 'Other',
 }
 
 export enum SoftwareType {
-  CRMPLATFORM = 'CRMPlatform',
   SALESAUTOMATION = 'SalesAutomation',
   MARKETINGAUTOMATION = 'MarketingAutomation',
   EMAILSYSTEM = 'EmailSystem',
@@ -81,7 +84,7 @@ export interface DOLCEEntity {
 }
 
 export interface InformationElement extends DOLCEEntity {
-  category: DOLCECategory.ABSTRACT;
+  category: DOLCECategory.Abstract;
   type: KnowledgeType;
   title: string;
   content: any;
@@ -92,17 +95,12 @@ export interface InformationElement extends DOLCEEntity {
   version: string;
   relatedEntities: string[];
   metadata: Record<string, any>;
+  knowledgeType?: KnowledgeType | string;
 }
 
-export interface CRMActivity extends DOLCEEntity {
-  category: DOLCECategory.PERDURANT;
-  type: ActivityType;
+export interface Activity extends DOLCEEntity {
   name: string;
-  description?: string;
-  participants: string[];
-  resources?: string[];
-  inputs?: string[];
-  outputs?: string[];
+  activityType: ActivityType | string;
   startTime?: Date;
   endTime?: Date;
   duration?: number;
@@ -114,6 +112,7 @@ export interface CRMActivity extends DOLCEEntity {
   location?: string;
   channel?: string;
   context: Record<string, any>;
+  participants?: InformationElement[];
 }
 
 // Relationship definitions
@@ -138,7 +137,7 @@ export interface OCreamRelationship {
 
 // Software module
 export interface SoftwareSystem extends DOLCEEntity {
-  category: DOLCECategory.NONAGENTIVEPHYSICALOBJECT;
+  category: DOLCECategory.PhysicalObject;
   type: SoftwareType;
   name: string;
   version: string;
@@ -150,14 +149,14 @@ export interface SoftwareSystem extends DOLCEEntity {
 
 // Core CRM Entities based on DOLCE
 export interface Agent extends DOLCEEntity {
-  category: DOLCECategory.AGENTIVEPHYSICALOBJECT;
+  category: DOLCECategory.PhysicalObject;
   name: string;
 }
 
 export interface Person extends Agent {
   firstName?: string;
   lastName?: string;
-  email?: string;
+  email: string;
   phone?: string;
   title?: string; // e.g., 'Managing Director'
 }
@@ -168,6 +167,7 @@ export interface Organization extends Agent {
   industry?: string;
   website?: string;
   metadata?: Record<string, any>; // For EDGAR, CIK, etc.
+  name: string;
 }
 
 export type OCreamContactEntity = (Person | Organization) & {
@@ -204,8 +204,8 @@ export class OCreamV2Ontology {
     return {
       entityCount: this.entities.size,
       relationshipCount: this.relationships.size,
-      knowledgeElementCount: this.getEntitiesByType(DOLCECategory.ABSTRACT).length,
-      activityCount: this.getEntitiesByType(DOLCECategory.PERDURANT).length,
+      knowledgeElementCount: this.getEntitiesByType(DOLCECategory.Abstract).length,
+      activityCount: this.getEntitiesByType(DOLCECategory.PhysicalObject).length,
       typeDistribution: Object.fromEntries(
         Array.from(this.typeIndex.entries()).map(([type, ids]) => [type, ids.size])
       )
@@ -213,6 +213,9 @@ export class OCreamV2Ontology {
   }
 
   addEntity(entity: DOLCEEntity): void {
+    if (this.entities.has(entity.id)) {
+      throw new Error(`Entity with id ${entity.id} already exists.`);
+    }
     this.entities.set(entity.id, entity);
     
     // Update type index
@@ -301,37 +304,17 @@ export class OCreamV2Ontology {
   validateEntity(entity: DOLCEEntity): boolean {
     // Validate DOLCE category constraints
     switch (entity.category) {
-      case DOLCECategory.ENDURANT:
-      case DOLCECategory.AGENTIVEPHYSICALOBJECT:
-      case DOLCECategory.NONAGENTIVEPHYSICALOBJECT:
-        return this.validateEndurant(entity);
-      case DOLCECategory.PERDURANT:
-        return this.validatePerdurant(entity);
-      case DOLCECategory.QUALITY:
-        return this.validateQuality(entity);
-      case DOLCECategory.ABSTRACT:
+      case DOLCECategory.PhysicalObject:
+        return this.validatePhysicalObject(entity);
+      case DOLCECategory.Abstract:
         return this.validateAbstract(entity);
       default:
         return false;
     }
   }
 
-  private validateEndurant(entity: DOLCEEntity): boolean {
-    // Endurants persist through time
-    return entity.createdAt <= entity.updatedAt;
-  }
-
-  private validatePerdurant(entity: DOLCEEntity): boolean {
-    // Perdurants occur in time (events, activities)
-    const activity = entity as CRMActivity;
-    if (activity.startTime && activity.endTime) {
-      return activity.startTime <= activity.endTime;
-    }
-    return entity.createdAt <= entity.updatedAt;
-  }
-
-  private validateQuality(entity: DOLCEEntity): boolean {
-    // Qualities are properties that inhere in other entities
+  private validatePhysicalObject(entity: DOLCEEntity): boolean {
+    // Physical objects persist through time
     return entity.createdAt <= entity.updatedAt;
   }
 
@@ -364,9 +347,12 @@ export class OCreamV2Ontology {
     this.addEntity(knowledgeElement);
   }
 
-  addActivity(id: string, type: string, activity: CRMActivity): void {
-    // Add activity as a perdurant entity
-    this.addEntity(activity);
+  addActivity(id: string, type: string, activity: Activity): void {
+    const fullId = `${type}:${id}`;
+    if (this.entities.has(fullId)) {
+      throw new Error(`Activity with id ${fullId} already exists.`);
+    }
+    this.entities.set(fullId, { ...activity, id: fullId, category: DOLCECategory.PhysicalObject });
   }
 
   removeEntity(id: string): void {
@@ -392,7 +378,7 @@ export function createInformationElement(data: Partial<InformationElement>): Inf
   const now = new Date();
   return {
     id: data.id || uuidv4(),
-    category: DOLCECategory.ABSTRACT,
+    category: DOLCECategory.Abstract,
     type: data.type || KnowledgeType.COMMUNICATIONLOG,
     title: data.title || 'Untitled Information Element',
     content: data.content || null,
@@ -405,17 +391,18 @@ export function createInformationElement(data: Partial<InformationElement>): Inf
     metadata: data.metadata || {},
     createdAt: now,
     updatedAt: now,
+    knowledgeType: data.knowledgeType,
     ...data,
   };
 }
 
-export function createActivity(data: Partial<CRMActivity>): CRMActivity {
+export function createActivity(data: Partial<Activity>): Activity {
   const now = new Date();
   return {
-    id: data.id || uuidv4(),
-    category: DOLCECategory.PERDURANT,
-    type: data.type || ActivityType.DATACOLLECTION,
-    name: data.name || 'Untitled Activity',
+    id: data.id || `activity-${Date.now()}`,
+    name: data.name || 'Activity',
+    category: DOLCECategory.SocialObject,
+    activityType: data.activityType || ActivityType.Other,
     status: data.status || 'planned',
     success: data.success ?? false,
     context: data.context || {},
@@ -424,4 +411,17 @@ export function createActivity(data: Partial<CRMActivity>): CRMActivity {
     updatedAt: now,
     ...data,
   };
+}
+
+export function isPerson(entity: DOLCEEntity): entity is Person {
+  return entity.category === DOLCECategory.PhysicalObject && 'email' in entity;
+}
+
+export function isOrganization(entity: DOLCEEntity): entity is Organization {
+  return entity.category === DOLCECategory.SocialObject && 'name' in entity;
+}
+
+export function isActivity(entity: DOLCEEntity): entity is Activity {
+  const activity = entity as Activity;
+  return activity.activityType !== undefined;
 }

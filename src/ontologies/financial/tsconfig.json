@@ -3,17 +3,15 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "../../../dist/extensions/financial",
-    "rootDir": ".",
+    "rootDir": "./",
     "baseUrl": "../../..",
     "paths": {
-      "@crm/*": ["src/ontologies/crm/*"],
-      "@financial/*": ["src/ontologies/financial/*"],
-      "@platform/*": ["src/platform/*"],
-      "@shared/*": ["src/shared/*"]
+      "@crm/*": ["../crm/*"],
+      "@platform/*": ["../../../platform/*"]
     },
     "emitDecoratorMetadata": true
   },
   "include": ["**/*.ts"],
-  "exclude": ["**/*.test.ts"],
-  "references": [{ "path": "../../../src/platform" }, { "path": "../crm" }]
+  "exclude": ["node_modules", "dist"],
+  "references": [{ "path": "../../platform" }]
 } 

@@ -1,106 +1,121 @@
-# 🏛️ Ontology-Driven Extension Architecture
+# 🏛️ Architecture des Extensions et Ontologies
 
-This document outlines the architecture for creating and managing domain-specific extensions. These extensions encapsulate all the logic, data structures, and behaviors related to a specific business domain (e.g., CRM, Finance, Healthcare) by providing a domain-specific **ontology**.
+Ce document décrit l'architecture de la plateforme, conçue autour d'extensions modulaires et pilotées par des ontologies. Chaque extension encapsule la logique, les structures de données et les comportements d'un domaine métier spécifique (ex: CRM, Finance, Santé).
 
-## Guiding Principles
+## Principes Directeurs
 
-- **Encapsulation**: Each extension is a self-contained module. All domain-specific logic resides within its directory.
-- **Explicit Dependencies**: Extensions should not directly depend on each other. Any cross-domain interaction must be handled by dedicated "Ontology Bridges".
-- **Standardized Structure**: All extensions follow a consistent directory structure to ensure predictability and ease of maintenance.
-- **Ontology as the Core**: The heart of each extension is its `ontology.json` file, which defines the entities, relationships, and rules for its domain.
+- **Encapsulation & Modularité**: Chaque extension est un module autonome. Toute la logique spécifique à un domaine réside dans son répertoire, la rendant indépendante et facile à maintenir.
+- **Ontologie au Centre**: Le cœur de chaque extension est son fichier `ontology.json`. Il définit les entités, les relations et les règles du domaine, servant de source de vérité pour le modèle de connaissances.
+- **Dépendances Explicites**: Les extensions ne doivent pas dépendre directement les unes des autres. Toute interaction inter-domaines est gérée par des "Ponts Ontologiques" (`Ontology Bridges`).
+- **Structure Standardisée**: Toutes les extensions suivent une structure de répertoires cohérente pour assurer la prévisibilité et la facilité de développement.
 
-## Extension Structure
+## Structure d'une Extension
 
-Each extension, located under `src/ontologies/`, must follow this structure:
+Chaque extension, située sous `src/ontologies/`, doit respecter la structure suivante :
 
 ```
 src/ontologies/
-└── my-domain/
+└── mon-domaine/
     ├── application/
-    │   ├── dto/                # Data Transfer Objects
-    │   ├── services/           # Application services (business logic)
-    │   └── use-cases/          # High-level use cases
+    │   ├── dto/                # Data Transfer Objects pour les API
+    │   ├── services/           # Services applicatifs (logique métier)
+    │   └── use-cases/          # Cas d'utilisation de haut niveau
     ├── domain/
-    │   ├── entities/           # Core domain entities
-    │   ├── repositories/       # Interfaces for data persistence
-    │   └── value-objects/      # Domain value objects
+    │   ├── entities/           # Entités du domaine (logique et règles métier)
+    │   ├── repositories/       # Interfaces pour la persistance des données
+    │   └── value-objects/      # Objets de valeur du domaine
     ├── infrastructure/
-    │   ├── database/           # Neo4j queries, repository implementations
-    │   └── external-apis/      # Clients for external services
+    │   ├── database/           # Implémentations des repositories (ex: requêtes Neo4j)
+    │   └── external-apis/      # Clients pour les services externes
     ├── interface/
-    │   ├── api/                # REST/GraphQL controllers
-    │   └── ui/                 # UI components (if any)
-    ├── ontology.json           # Core ontology definition for the extension
-    └── register.ts             # Entry point for service container registration
+    │   ├── api/                # Contrôleurs REST/GraphQL (si nécessaire)
+    │   └── ui/                 # Composants d'interface (si nécessaire)
+    ├── ontology.json           # Définition de l'ontologie du domaine
+    └── index.ts                # Point d'entrée pour l'enregistrement des services
 ```
 
-### Key Components
+## Le Fichier `ontology.json`
 
-- **`ontology.json`**: Defines the entities and relationships for this specific domain. It's the source of truth for the extension's knowledge model.
-- **`register.ts`**: Handles the registration of the extension's services into the dependency injection container (`tsyringe`). This is crucial for making the services available to the rest of the application.
-- **Application Services**: Contain the core business logic. They orchestrate domain entities and repositories to fulfill specific tasks.
-- **Domain Entities**: Represent the core concepts of the domain, rich with business rules and logic.
+Ce fichier est la clé de voûte de l'extension. Il définit le schéma du graphe de connaissances pour le domaine concerné. Le `OntologyService` de la plateforme utilise ce fichier pour configurer la base de données et valider les données.
 
-## Creating a New Extension
-
-To create a new extension (e.g., for "Real Estate"):
-
-1.  Create a new directory: `src/ontologies/real-estate`.
-2.  Follow the standardized structure outlined above.
-3.  Define your entities in `ontology.json`.
-4.  Implement the necessary services, entities, and repositories.
-5.  Register your services in `register.ts`.
-6.  Ensure the platform's main entry point calls your new `register.ts` function.
-
-## Cross-Extension Communication: Ontology Bridges
-
-Direct communication between extensions is discouraged. To handle cases where domains need to interact (e.g., linking a `Financial::Deal` to a `CRM::Contact`), we use **Ontology Bridges**.
-
-An Ontology Bridge is a dedicated service that explicitly defines and manages the mapping and interaction between two domains.
-
-**Example**: `FinancialToCrmBridge`
-
-- **Responsibility**: Translates financial concepts into CRM-compatible entities or relationships.
-- **Location**: Typically located in the more specific domain (e.g., `financial` would define how it bridges to the more generic `crm`).
-
-By using bridges, we keep the core domains decoupled and make cross-domain logic explicit and manageable.
-
-## Core Extension Contract
-
-The platform interacts with extensions through a standardized interface.
-
-```typescript
-interface Extension {
-  // Extension metadata
-  readonly name: string;
-  readonly version: string;
-  
-  // Lifecycle methods
-  initialize(context: PlatformContext): Promise<void>;
-  shutdown(): Promise<void>;
-  
-  // Extension capabilities
-  getOntology(): object;
-  getRoutes(): Route[];
-  getComponents(): Component[];
+**Exemple simplifié d' `ontology.json`** :
+```json
+{
+  "name": "crm",
+  "entities": [
+    { "name": "Contact", "properties": { "email": "string", "name": "string" } },
+    { "name": "Organization", "properties": { "name": "string" } }
+  ],
+  "relationships": [
+    { "name": "WORKS_AT", "source": "Contact", "target": "Organization" }
+  ]
 }
 ```
-This contract ensures that the platform can reliably load, initialize, and integrate any extension that adheres to the defined structure and interface.
 
-## Extension Loading Process
+## Comment Créer une Nouvelle Extension ?
 
-The platform's `ExtensionRegistry` is responsible for the lifecycle of all extensions.
+Voici les étapes pour créer une extension "Immobilier" (`real-estate`):
 
-### 1. **Discovery**
-The registry scans the `src/ontologies/` directory to find all available extensions.
+1.  **Créer le Répertoire**:
+    Créez `src/ontologies/real-estate` avec la structure de répertoires décrite ci-dessus.
 
-### 2. **Registration & Validation**
-Each extension's `register.ts` is executed, adding its services to the dependency injection container. The platform can validate the extension against the required contract.
+2.  **Définir l'Ontologie**:
+    Créez `src/ontologies/real-estate/ontology.json`. Définissez les entités (`Property`, `Agent`) et leurs relations.
 
-### 3. **Initialization**
-The platform iterates through the loaded extensions and calls their `initialize` method, passing in a `PlatformContext` object that may contain shared services like an event bus or logger. This allows each extension to perform its setup logic, such as subscribing to events.
+3.  **Implémenter le Domaine**:
+    - Créez les entités dans `domain/entities/`.
+    - Définissez les interfaces des repositories dans `domain/repositories/` (ex: `i-property-repository.ts`).
 
-## 🔌 Extension System Architecture
+4.  **Implémenter l'Application et l'Infrastructure**:
+    - Créez les services dans `application/services/`.
+    - Implémentez les repositories dans `infrastructure/database/` pour interagir avec Neo4j.
+
+5.  **Enregistrer les Services**:
+    Dans `src/ontologies/real-estate/index.ts`, enregistrez vos services dans le conteneur d'injection de dépendances (`tsyringe`).
+
+    ```typescript
+    // src/ontologies/real-estate/index.ts
+    import { container } from "tsyringe";
+    import { RealEstateService } from "./application/services/real-estate.service";
+    import { Neo4jPropertyRepository } from "./infrastructure/database/neo4j-property.repository";
+
+    export function registerRealEstate() {
+      container.register("IPropertyRepository", {
+        useClass: Neo4jPropertyRepository,
+      });
+      container.register("RealEstateService", {
+        useClass: RealEstateService,
+      });
+    }
+    ```
+
+6.  **Intégrer à la Plateforme**:
+    Assurez-vous que la fonction `registerRealEstate()` est appelée au démarrage de l'application, généralement dans un fichier central comme `src/register-ontologies.ts`.
+
+    ```typescript
+    // src/register-ontologies.ts
+    import { registerCrm } from "./ontologies/crm";
+    import { registerFinancial } from "./ontologies/financial";
+    import { registerRealEstate } from "./ontologies/real-estate"; // <-- AJOUTER ICI
+
+    export function registerAllOntologies() {
+      registerCrm();
+      registerFinancial();
+      registerRealEstate(); // <-- AJOUTER ICI
+    }
+    ```
+
+    > **Note sur les Singletons**: Pour certains services fondamentaux et transverses, comme un service d'ontologie qui maintient un état en mémoire, un modèle Singleton (ex: `MyOntologyService.getInstance()`) peut être utilisé à la place de l'injection de dépendances pour garantir une instance unique à travers toute l'application. C'est une approche pragmatique utilisée par certains services existants.
+
+## Communication Inter-Extensions : Les Ponts Ontologiques
+
+Pour éviter un couplage fort, les extensions communiquent via des **Ponts Ontologiques**. Un pont est un service dédié qui gère la traduction et l'interaction entre deux domaines.
+
+**Exemple**: Lier un `Deal` (domaine `Financial`) à un `Contact` (domaine `CRM`).
+
+Le pont `FinancialToCrmBridge` serait responsable de créer les liens appropriés dans le graphe. Il serait situé dans le domaine qui initie la communication (ici, `financial`).
+
+En utilisant ce modèle, les domaines restent découplés, et la logique inter-domaines est explicite et centralisée dans les ponts.
 
 ## 🎯 Overview
 

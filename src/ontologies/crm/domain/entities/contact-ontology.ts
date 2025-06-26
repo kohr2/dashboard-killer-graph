@@ -1,4 +1,4 @@
-import { DOLCEEntity, InformationElement, CRMActivity, DOLCECategory } from '../ontology/o-cream-v2';
+import { DOLCEEntity, InformationElement, Activity, DOLCECategory } from '../ontology/o-cream-v2';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
@@ -55,7 +55,7 @@ export const ContactOntology = {
     const now = new Date();
     const contact: OCreamContactEntity = {
       id: contactId,
-      category: DOLCECategory.ENDURANT,
+      category: DOLCECategory.PhysicalObject,
       name: `${data.firstName || ''} ${data.lastName || ''}`.trim(),
       description: `Contact entity for ${data.email}`,
       createdAt: now,

@@ -2,12 +2,20 @@
   "extends": "../config/tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
-    "outDir": "../dist/test"
+    "outDir": "../dist/test",
+    "baseUrl": ".",
+    "paths": {
+      "@platform/*": ["src/platform/*"],
+      "@crm/*": ["src/ontologies/crm/*"],
+      "@financial/*": ["src/ontologies/financial/*"],
+      "@shared/*": ["src/shared/*"]
+    },
+    "types": ["jest", "node"]
   },
   "references": [
+    { "path": "../src/platform" },
     { "path": "../src/ontologies/crm" },
-    { "path": "../src/ontologies/financial" },
-    { "path": "../src/platform" }
+    { "path": "../src/ontologies/financial" }
   ],
-  "include": []
+  "include": ["./**/*.ts"]
 } 

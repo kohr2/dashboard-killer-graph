@@ -5,7 +5,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { ExtensibleEntityExtractionService, ExtensionEntityExtractionResult } from '../../../crm/application/services/extensible-entity-extraction.service';
 import { ContactRepository } from '../../../crm/domain/repositories/contact-repository';
-import { OCreamV2Ontology, ActivityType, KnowledgeType, createInformationElement, InformationElement, CRMActivity, DOLCECategory, DOLCEEntity, OCreamRelationship, Person, Organization } from '../../../crm/domain/ontology/o-cream-v2';
+import { OCreamV2Ontology, ActivityType, KnowledgeType, Activity, Person, DOLCECategory, DOLCEEntity, OCreamRelationship, Organization } from '../../../crm/domain/ontology/o-cream-v2';
 // import { FIBOFinancialInstrument, 
 //     FIBOTransaction, 
 //     FIBOMarketData,
@@ -21,6 +21,7 @@ import { EdgarEnrichmentService } from '../../../crm/application/services/edgar-
 import axios from 'axios';
 import { singleton, inject } from 'tsyringe';
 import { SpacyEntityExtractionService } from '@crm/application/services/spacy-entity-extraction.service';
+import { DealRepository } from '@financial/domain/repositories/i-deal-repository';
 
 const ENTITY_ALIAS_MAP: Record<string, string> = {
   'GS': 'Goldman Sachs',

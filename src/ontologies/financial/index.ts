@@ -1,11 +1,17 @@
 // Financial Extension Exports
 // Deal tracking and financial CRM functionality
 
-// Domain Layer
-export * from './domain';
+// Exports for the Financial Ontology Extension
 
 // Application Layer
-export * from './application';
+export * from './application/services/financial-entity-integration.service';
+// export * from './application/services/hybrid-deal-extraction.service'; // Exports 'Deal', creating a conflict
+export * from './application/ontology-bridges/financial-to-crm.bridge';
+
+// Domain Layer
+export * from './domain/entities/deal';
+export * from './domain/entities/fund';
+// export * from './domain/entities/investment'; // File does not exist
 
 // Infrastructure Layer
 export * from './infrastructure';
@@ -14,4 +20,7 @@ export * from './infrastructure';
 export * from './interface';
 
 // Extension Definition
-export { FinancialExtension } from './financial.extension'; 
+export { FinancialExtension } from './financial.extension';
+
+// Registration
+export { registerFinancial } from './register'; 

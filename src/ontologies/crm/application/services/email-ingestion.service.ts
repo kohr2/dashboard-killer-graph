@@ -4,6 +4,8 @@
 import { ContactRepository } from '../../domain/repositories/contact-repository';
 import { EmailProcessingService } from './email-processing.service';
 import { ContactOntology } from '../../domain/entities/contact-ontology';
+import { User } from '@platform/security/domain/user';
+import { AccessControlService } from '@platform/security/application/services/access-control.service';
 
 export interface IncomingEmail {
   messageId: string;
@@ -41,9 +43,14 @@ export class EmailIngestionService {
   constructor(
     private emailProcessingService: EmailProcessingService,
     private contactRepository: ContactRepository,
+    private accessControlService: AccessControlService,
   ) {}
 
-  async ingestEmail(email: IncomingEmail, emlFilePath?: string): Promise<EmailIngestionResult> {
+  async ingestEmail(user: User, email: IncomingEmail, emlFilePath?: string): Promise<EmailIngestionResult> {
+    if (!this.accessControlService.can(user, 'create', 'Communication')) {
+      throw new Error('Access denied');
+    }
+
     if (emlFilePath) {
       await this.emailProcessingService.processEmlFile(emlFilePath);
       return {

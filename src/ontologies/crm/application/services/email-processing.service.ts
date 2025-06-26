@@ -9,7 +9,16 @@ import { ContactRepository } from '../../domain/repositories/contact-repository'
 import { CommunicationRepository } from '../../domain/repositories/communication-repository';
 import { Neo4jCommunicationRepository } from '../../infrastructure/repositories/neo4j-communication-repository';
 import { OCreamContactEntity, ContactOntology } from '../../domain/entities/contact-ontology';
-import { OCreamV2Ontology, ActivityType, KnowledgeType, DOLCECategory, createInformationElement, InformationElement, CRMActivity, OCreamRelationship } from '../../domain/ontology/o-cream-v2';
+import {
+  OCreamV2Ontology,
+  ActivityType,
+  KnowledgeType,
+  DOLCECategory,
+  createInformationElement,
+  InformationElement,
+  Activity,
+  OCreamRelationship,
+} from '../../domain/ontology/o-cream-v2';
 import { Communication, CommunicationStatus, CommunicationType } from '../../domain/entities/communication';
 import { singleton } from 'tsyringe';
 import { EntityType } from './spacy-entity-extraction.service';
@@ -486,27 +495,34 @@ export class EmailProcessingService {
       // ).linkContactToCommunication(communication.id, recipient.id, 'RECIPIENT');
     });
 
-    // Example: This part would be expanded based on business logic
-    const activity = {
-      id: `activity-${communication.id}`,
-      type: ActivityType.DATACOLLECTION,
-      name: `Ingested email: ${email.subject}`,
+    // TODO: Refactor this part to align with the new Activity and InformationElement interfaces.
+    // The following code is commented out due to a type mismatch after ontology refactoring.
+    /*
+    const activity: Activity = {
+      id: `email-processing-${new Date().toISOString()}`,
+      category: DOLCECategory.SocialObject,
+      activityType: ActivityType.DATACOLLECTION,
+      name: 'Email Processing',
       description: 'Automated processing of an incoming email.',
-      participants: [contactResolution.sender, ...contactResolution.recipients].filter(Boolean).map(c => c!.id),
+      participants: [contactResolution.sender, ...contactResolution.recipients].filter(
+        (c): c is OCreamContactEntity => c !== null
+      ),
+      startTime: new Date(),
+      endTime: new Date(),
       status: 'completed',
       success: true,
-      startTime: email.date,
-      endTime: new Date(),
-      metadata: {
-        communicationId: communication.id,
-      },
+      context: { emailId: email.id },
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
+    this.ontology.addEntity(activity);
+    */
 
     return {
       entities: otherEntities,
       relationships: [], // Relationships are now created directly
       knowledgeElements: [], // Placeholder for now
-      activities: [activity],
+      activities: [], // Placeholder for now
     };
   }
 

@@ -1,8 +1,9 @@
 import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { ContactOntology } from './domain/entities/contact-ontology';
+import { SpacyEntityExtractionService } from './application/services/spacy-entity-extraction.service';
 
-export function registerCrmExtension() {
+export function registerCrm() {
   const ontologyService = container.resolve(OntologyService);
 
   ontologyService.registerEntityType(
@@ -12,5 +13,5 @@ export function registerCrmExtension() {
 
   // TODO: Register Organization entity once it is defined.
   
-  console.log('✅ CRM Extension registered.');
+  console.log('✅ CRM extension registered.');
 } 

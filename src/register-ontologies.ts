@@ -1,13 +1,24 @@
-import { registerCrmExtension } from './ontologies/crm/register';
-import { registerFinancialExtension } from './ontologies/financial/register';
+import { container } from 'tsyringe';
+import { registerCrm } from './ontologies/crm';
+import { registerFinancial } from './ontologies/financial';
+// import { registerSecurity } from './ontologies/security';
+// import { registerHealthcare } from './ontologies/healthcare';
+// import { registerLegal } from './ontologies/legal';
+// import { registerRealEstate } from './ontologies/real-estate';
 
 /**
- * Initializes all domain-specific extensions (ontologies) for the application.
- * This function should be called once at application startup.
+ * Registers all ontology extensions with the dependency injection container.
+ * This function should be called at the application's entry point.
  */
-export function initializeOntologies(): void {
-  console.log('🏁 Initializing all extensions...');
-  registerCrmExtension();
-  registerFinancialExtension();
-  console.log('🚀 All extensions initialized.');
+export function registerAllOntologies() {
+  console.log('Registering all ontologies...');
+
+  registerCrm();
+  registerFinancial();
+  // registerSecurity();
+  // registerHealthcare();
+  // registerLegal();
+  // registerRealEstate();
+
+  console.log('All ontologies registered.');
 } 
