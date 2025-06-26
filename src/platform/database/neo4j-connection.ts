@@ -10,6 +10,7 @@ config(); // Make sure environment variables are loaded
 
 @singleton()
 export class Neo4jConnection {
+  private static instance: Neo4jConnection;
   private driver: Driver | null = null;
   private readonly uri: string;
   private readonly user: string;
@@ -19,6 +20,13 @@ export class Neo4jConnection {
     this.uri = process.env.NEO4J_URI || 'bolt://localhost:7687';
     this.user = process.env.NEO4J_USERNAME || 'neo4j';
     this.pass = process.env.NEO4J_PASSWORD || 'password';
+  }
+
+  public static getInstance(): Neo4jConnection {
+    if (!Neo4jConnection.instance) {
+      Neo4jConnection.instance = new Neo4jConnection();
+    }
+    return Neo4jConnection.instance;
   }
 
   public async connect(): Promise<void> {
@@ -57,8 +65,8 @@ export class Neo4jConnection {
     try {
       // Create constraints and indexes for optimal performance
       await session.run(`
-        CREATE CONSTRAINT contact_id_unique IF NOT EXISTS
-        FOR (c:Contact) REQUIRE c.id IS UNIQUE
+        CREATE CONSTRAINT person_id_unique IF NOT EXISTS
+        FOR (p:Person) REQUIRE p.id IS UNIQUE
       `);
 
       await session.run(`
@@ -78,8 +86,8 @@ export class Neo4jConnection {
 
       // Create indexes for frequently queried properties
       await session.run(`
-        CREATE INDEX contact_email_index IF NOT EXISTS
-        FOR (c:Contact) ON (c.email)
+        CREATE INDEX person_email_index IF NOT EXISTS
+        FOR (p:Person) ON (p.email)
       `);
 
       await session.run(`

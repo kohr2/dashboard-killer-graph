@@ -188,6 +188,45 @@ All ontological data is stored in the knowledge graph:
 - **Properties** storing metadata and analysis results
 - **Indexes** for fast semantic search and retrieval
 
+## 🏛️ Actor Modeling: Person and Organization
+
+In our CRM ontology, which is inspired by O-CREAM, we distinguish between two main types of actors: **Persons** (individuals) and **Organizations** (companies, institutions). To model this relationship efficiently and enable flexible queries, we adopt the concept of a generalized **`Party`** and leverage Neo4j's multi-labeling feature.
+
+### The `Party` Concept
+
+`Party` is an abstract concept representing any actor that can participate in a business relationship or transaction. It is not directly instantiated but serves as a parent class for `Person` and `Organization`. This approach allows us to define common properties and relationships (like owning an asset or participating in a communication) at a higher level of abstraction.
+
+### Neo4j Multi-Label Implementation
+
+This conceptual hierarchy is implemented in Neo4j using multi-labels:
+- A node representing an individual will have both the `:Person` and `:Party` labels.
+- A node representing a company will have both the `:Organization` and `:Party` labels.
+
+This strategy offers significant querying advantages:
+- **Query all actors**: `MATCH (p:Party) RETURN p`
+- **Query only persons**: `MATCH (p:Person) RETURN p`
+- **Query only organizations**: `MATCH (o:Organization) RETURN o`
+
+The following diagram illustrates this model:
+
+```mermaid
+graph TD;
+    subgraph "Conceptual Model & Neo4j Implementation"
+        A("<b>Party</b><br/><i>Abstract concept for any actor</i><br/>Base Label: <b>:Party</b>");
+        B("<b>Person</b><br/><i>Specialization of Party</i><br/>Neo4j Labels: <b>:Person:Party</b>");
+        C("<b>Organization</b><br/><i>Specialization of Party</i><br/>Neo4j Labels: <b>:Organization:Party</b>");
+    end
+
+    A -- "can be a" --> B;
+    A -- "can be a" --> C;
+
+    classDef abstract fill:#f2f2f2,stroke:#555,stroke-dasharray: 5 5,color:black;
+    classDef concrete fill:#e8f4ff,stroke:#5a9dd8,color:black;
+
+    class A abstract;
+    class B,C concrete;
+```
+
 ## 🧠 Ontological Benefits
 
 ### **Semantic Search**
