@@ -51,7 +51,7 @@ Your task is to identify the user's intent and the target resource, considering 
 
 You have three commands:
 1. 'show': For listing all resources of a certain type.
-2. 'show_related': For listing resources related to the entities from the previous turn in the conversation.
+2. 'show_related': For listing resources related to the entities from the previous turn in the conversation, or for complex self-contained relational queries.
 3. 'unknown': For anything else (greetings, general questions, etc.).
 
 The supported resource types are: ${validEntityTypes}.
@@ -59,9 +59,9 @@ The user can write in any language.
 
 # Rules:
 - If the query is a stand-alone request (e.g., "show all deals"), use the 'show' command and populate 'resourceTypes'.
-- If the query requests resources with specific properties (e.g., "find the person named Rick"), use the 'show' command and populate 'resourceTypes' and 'filters' with the property and value. Use 'CONTAINS' for partial matches.
-- For a complex query that finds entities related to another entity described by properties (e.g., "find companies related to 'John Doe'"), use the 'show_related' command. You must populate 'resourceTypes' with the target entity, 'relatedTo' with the source entity type, and 'filters' with the properties of the source entity.
-- If the query refers to a previous result (e.g., "show their contacts"), use the 'show_related' command. You MUST set 'resourceTypes' to the type(s) of entity the user is asking for now, and 'relatedTo' to the type(s) of entity from the previous context.
+- If the query requests resources with specific properties (e.g., "find the person named Rick"), use the 'show' command and populate 'resourceTypes' and 'filters'.
+- For a complex query that finds entities related to another entity described by properties (e.g., "find companies related to 'John Doe'"), use the 'show_related' command. You must populate 'resourceTypes' with the target entity type, 'relatedTo' with the source entity type, and 'filters' with the properties of the source entity.
+- If the query refers to a previous result (e.g., "show their contacts"), use the 'show_related' command. You MUST set 'resourceTypes' to the type(s) of entity the user is asking for now. The 'relatedTo' field will be inferred from the context.
 - For 'show_related', if you can't determine the new resourceTypes, classify the command as 'unknown'.
 - For a query like "projets", if both 'Project' and 'Deal' seem plausible based on the ontology, return both in the 'resourceTypes' array.
 - If the query refers to a *specific entity* from the history (e.g., "who is related to 'Project Alpha'"), you MUST also extract the 'sourceEntityName'.
@@ -90,23 +90,27 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
 
 ## Complex stand-alone relational query
 - User: "quelles organisations sont liées à la personne nommée Rick?"
-- Assistant: {"command": "show_related", "resourceTypes": ["Organization"], "relatedTo": ["Person"], "filters": {"name": "Rick"}}
+- Assistant: {"command": "show_related", "resourceTypes": ["Organization"], "relatedTo": ["Contact"], "filters": {"name": "Rick"}}
+
+## Complex stand-alone relational query (FR)
+- User: "liste moi les projets liés à Offshore Holdings Ltd."
+- Assistant: {"command": "show_related", "resourceTypes": ["Project", "Deal"], "relatedTo": ["Organization"], "filters": {"name": "Offshore Holdings Ltd."}}
 
 ## Stand-alone query for an ambiguous type
 - User: "montre moi les projets"
 - Assistant: {"command": "show", "resourceTypes": ["Deal", "Project"]}
 
 ## General follow-up query
-- (After getting a list of Deals) User: "show me the contacts for them"
-- Assistant: {"command": "show_related", "resourceTypes": ["Contact"], "relatedTo": ["Deal"]}
+- (After getting a list of Organizations, one of which is 'Offshore Holdings Ltd.') User: "je cherche les projets liés"
+- Assistant: {"command": "show_related", "resourceTypes": ["Project", "Deal"], "relatedTo": ["Organization"], "sourceEntityName": "Offshore Holdings Ltd."}
 
 ## Specific follow-up query with relationship
 - (After getting a list of Deals, one of which is 'Project Alpha') User: "who works on Project Alpha?"
-- Assistant: {"command": "show_related", "resourceTypes": ["Person"], "relatedTo": ["Deal"], "sourceEntityName": "Project Alpha", "relationshipType": "WORKS_ON"}
+- Assistant: {"command": "show_related", "resourceTypes": ["Person", "Contact"], "relatedTo": ["Deal"], "sourceEntityName": "Project Alpha", "relationshipType": "WORKS_ON"}
 
 ## Vague follow-up query
 - (After getting a list of Deals) User: "what about the people?"
-- Assistant: {"command": "show_related", "resourceTypes": ["Person"], "relatedTo": ["Deal"]}
+- Assistant: {"command": "show_related", "resourceTypes": ["Person", "Contact"], "relatedTo": ["Deal"]}
 
 ## Unrelated follow-up
 - (After getting a list of Deals) User: "show all organizations"

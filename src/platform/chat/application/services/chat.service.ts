@@ -112,6 +112,7 @@ export class ChatService {
 
     let response: any;
     let responseText: string;
+    let sourceEntityForResponse: any = null;
 
     switch (structuredQuery.command) {
       case 'show':
@@ -127,7 +128,7 @@ export class ChatService {
         }
         const sourceEntityName = structuredQuery.sourceEntityName;
         const relationshipType = structuredQuery.relationshipType;
-        response = await this.findRelatedResources(
+        const relatedResult = await this.findRelatedResources(
             user, 
             structuredQuery.resourceTypes, 
             structuredQuery.relatedTo as PermissionResource[], 
@@ -135,7 +136,15 @@ export class ChatService {
             sourceEntityName, 
             relationshipType
         );
-        responseText = this.formatResults(structuredQuery.resourceTypes, response);
+
+        if (relatedResult) {
+            response = relatedResult.relatedResources;
+            sourceEntityForResponse = relatedResult.sourceEntity;
+            responseText = this.formatResults(structuredQuery.resourceTypes, response);
+        } else {
+            response = [];
+            responseText = "Could not find the specified entity to find related resources for.";
+        }
         break;
 
       default:
@@ -155,7 +164,7 @@ export class ChatService {
     }
 
     // NEW: Generate a natural language response
-    const finalResponse = await this.generateNaturalResponse(query, response);
+    const finalResponse = await this.generateNaturalResponse(query, response, sourceEntityForResponse);
 
     return finalResponse;
   }
@@ -169,7 +178,7 @@ export class ChatService {
     return rest;
   }
 
-  private async generateNaturalResponse(originalQuery: string, data: any): Promise<string> {
+  private async generateNaturalResponse(originalQuery: string, data: any, sourceEntity: any = null): Promise<string> {
     if (typeof data === 'string') {
         return data; // Return simple messages directly
     }
@@ -177,15 +186,20 @@ export class ChatService {
         return "I couldn't find any information for your query.";
     }
 
-    const systemPrompt = `You are a helpful assistant. Based ONLY on the provided structured data, answer the user's query in a clear and natural way.
+    let systemPrompt = `You are a helpful assistant. Based ONLY on the provided structured data, answer the user's query in a clear and natural way.
 Do not make up any information that is not in the data. If the data is empty, say that you couldn't find any information.
-Summarize the results if they are numerous, but list key details. Format your answer nicely in markdown.
-If you see a special marker like '{"__truncated__": true, "total": X}', it means the list of results is not complete. You should mention this in your response (e.g., "Here are the first 20 of X total results...").`;
+Summarize the results if they are numerous, but list key details. Format your answer nicely in markdown.`;
 
-    let dataToSend = data;
+    if (sourceEntity) {
+        const entityName = sourceEntity.name || sourceEntity.summary || 'the specified entity';
+        systemPrompt += `\nThe user's query was about finding information related to '${entityName}'. The provided data is the result of that search. Frame your response accordingly, for example: 'Here are the organizations related to ${entityName}: ...'`;
+    }
+
+    let dataToSend = Array.isArray(data) ? data.map(this.cleanRecord) : this.cleanRecord(data);
+    
     const MAX_RESULTS_TO_SEND = 20;
     if (Array.isArray(data) && data.length > MAX_RESULTS_TO_SEND) {
-        dataToSend = data.slice(0, MAX_RESULTS_TO_SEND);
+        dataToSend = data.slice(0, MAX_RESULTS_TO_SEND).map(this.cleanRecord);
         dataToSend.push({ __truncated: true, total: data.length });
     }
 
@@ -263,7 +277,7 @@ If you see a special marker like '{"__truncated__": true, "total": X}', it means
     filters?: { [key: string]: string },
     sourceEntityName?: string,
     relationshipType?: string
-  ): Promise<any[]> {
+  ): Promise<{ sourceEntity: any; relatedResources: any[] } | null> {
     if (targetResourceTypes.some(rt => !this.accessControlService.can(user, 'query', rt as PermissionResource))) {
         throw new Error(`Access denied to query one of the target resource types.`);
     }
@@ -283,20 +297,23 @@ If you see a special marker like '{"__truncated__": true, "total": X}', it means
     }
     
     if (sourceEntities.length === 0) {
-        return [];
+        return null;
     }
 
     // If a specific entity name is provided (e.g., from a follow-up "what about 'Project Alpha'"), filter the source entities further
     if (sourceEntityName) {
         sourceEntities = sourceEntities.filter(e => e.name === sourceEntityName);
         if (sourceEntities.length === 0) {
-            return [];
+            return null;
         }
     }
+    
+    // For now, let's assume the filter identifies a single source entity.
+    const sourceEntity = sourceEntities[0];
 
-    const sourceIds = sourceEntities.map(e => e.id);
+    const sourceIds = [sourceEntity.id];
     if (sourceIds.length === 0) {
-        return [];
+        return null;
     }
 
     const session = this.neo4j.getDriver().session();
@@ -317,7 +334,9 @@ If you see a special marker like '{"__truncated__": true, "total": X}', it means
         const result = await session.run(cypherQuery, { sourceIds });
         const records = result.records.map(record => record.get('target'));
         
-        return records.map(node => this.cleanRecord({ ...node.properties, __type: node.labels[0] }));
+        const relatedResources = records.map(node => this.cleanRecord({ ...node.properties, __type: node.labels[0] }));
+
+        return { sourceEntity, relatedResources };
 
     } finally {
         await session.close();
