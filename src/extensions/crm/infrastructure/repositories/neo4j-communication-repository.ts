@@ -1,57 +1,31 @@
-import { injectable } from 'inversify';
-import { Neo4jConnection } from '../database/neo4j-connection';
+import { injectable, inject } from 'inversify';
+import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { Communication, CommunicationType, CommunicationStatus } from '../../domain/entities/communication';
 import { CommunicationRepository, PaginationOptions } from '../../domain/repositories/communication-repository';
-import {
-  SpacyEntityExtractionService,
-  SpacyExtractedEntity,
-  EntityType,
-} from '../../application/services/spacy-entity-extraction.service';
+import { SpacyExtractedEntity } from '../../application/services/spacy-entity-extraction.service';
+import { OntologyService } from '@platform/ontology/ontology.service';
 
 @injectable()
 export class Neo4jCommunicationRepository implements CommunicationRepository {
   private connection: Neo4jConnection;
+  private ontologyService: OntologyService;
+  private communicationLabels: string;
 
-  constructor() {
+  // A simple mapping from spaCy's coarse-grained labels to our more specific ontology types.
+  private spacyToOntologyMap: Record<string, string> = {
+    'PERSON': 'Person',
+    'ORG': 'Organization',
+    'GPE': 'GeographicRegion',
+    'LOC': 'GeographicRegion',
+    'DATE': 'Date', // Assuming 'Date' is a defined entity type in one of the ontologies
+    'MONEY': 'MonetaryAmount', // Assuming 'MonetaryAmount' is defined
+    'PRODUCT': 'Product', // Assuming 'Product' is defined
+  };
+
+  constructor(@inject(OntologyService) ontologyService: OntologyService) {
     this.connection = Neo4jConnection.getInstance();
-  }
-
-  private getLabelForEntityType(entityType: EntityType): string {
-    const mapping: Partial<Record<EntityType, string>> = {
-      [EntityType.PERSON_NAME]: 'Person',
-      [EntityType.COMPANY_NAME]: 'Organization',
-      [EntityType.FINANCIAL_INSTITUTION]: 'Organization',
-      [EntityType.LOCATION]: 'Location',
-      [EntityType.CITY]: 'Location',
-      [EntityType.STATE]: 'Location',
-      [EntityType.COUNTRY]: 'Location',
-      [EntityType.MONETARY_AMOUNT]: 'MonetaryAmount',
-      [EntityType.DATE]: 'Date',
-      [EntityType.EMAIL_ADDRESS]: 'Email',
-      [EntityType.PROJECT_NAME]: 'Project',
-      [EntityType.PRODUCT_NAME]: 'Product',
-    };
-    // Sanitize the type to be a valid label
-    const fallbackLabel = entityType
-      .toString()
-      .replace(/[^a-zA-Z0-9_]/g, '')
-      .replace(/_(\w)/g, (_, c) => c.toUpperCase())
-      .replace(/^\w/, c => c.toUpperCase());
-
-    return mapping[entityType] || fallbackLabel;
-  }
-
-  private getLabelForSpacyType(spacyType: string): string {
-    const mapping: Record<string, string> = {
-        'PERSON': 'Person',
-        'ORG': 'Organization',
-        'GPE': 'Location',
-        'LOC': 'Location',
-        'DATE': 'Date',
-        'MONEY': 'MonetaryAmount',
-    };
-    const label = mapping[spacyType] || spacyType.charAt(0).toUpperCase() + spacyType.slice(1).toLowerCase();
-    return label.replace(/[^a-zA-Z0-9_]/g, '');
+    this.ontologyService = ontologyService;
+    this.communicationLabels = this.ontologyService.getLabelsForEntityType('Communication');
   }
 
   async linkEntitiesToCommunication(
@@ -61,14 +35,22 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
     const session = this.connection.getDriver().session();
     try {
       for (const entity of entities) {
-        const label = this.getLabelForSpacyType(entity.spacyLabel);
-        // Step 1: Create or merge the entity node with a specific label
+        // Map the spaCy label to our internal ontology entity type
+        const entityType = this.spacyToOntologyMap[entity.spacyLabel] || entity.spacyLabel;
+        const entityLabels = this.ontologyService.getLabelsForEntityType(entityType);
+        
+        // If the entity type doesn't exist in our ontologies, we can either skip it or use a default label.
+        // Skipping is safer to maintain ontological integrity.
+        if (!this.ontologyService.isValidLabel(entityType)) {
+            console.warn(`[Neo4jCommunicationRepository] Ontology label not found for type: "${entityType}" (from spaCy label "${entity.spacyLabel}"). Skipping entity linking.`);
+            continue;
+        }
+
+        // Create or merge the entity node
         await session.run(
-          // We use backticks for the label to allow for a wider range of characters
-          `MERGE (e:\`${label}\` {value: $value})
+          `MERGE (e:${entityLabels} {value: $value})
            ON CREATE SET e += $props, e.createdAt = timestamp()
-           ON MATCH SET e.lastSeen = timestamp()
-           RETURN e`,
+           ON MATCH SET e.lastSeen = timestamp()`,
           {
             value: entity.value,
             props: {
@@ -79,11 +61,13 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
           },
         );
 
-        // Step 2: Create the relationship between the communication and the entity
+        // Create the relationship between the communication and the entity
         await session.run(
           `
-          MATCH (c:Communication {id: $communicationId})
-          MATCH (e:\`${label}\` {value: $value})
+          MATCH (c:${this.communicationLabels} {id: $communicationId})
+          MATCH (e {value: $value})
+          // Ensure we match the exact node we just created by checking its primary label
+          WHERE e:\`${entityType}\`
           MERGE (c)-[r:CONTAINS_ENTITY]->(e)
           ON CREATE SET r.confidence = $confidence, r.context = $context
           `,
@@ -104,7 +88,7 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
     const session = this.connection.getSession();
     try {
       const query = `
-        MERGE (c:Communication {id: $id})
+        MERGE (c:${this.communicationLabels} {id: $id})
         SET c += {
           type: $type,
           subject: $subject,
@@ -144,7 +128,7 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
     const session = this.connection.getSession();
     try {
       const query = `
-        MATCH (c:Communication {id: $id})
+        MATCH (c:${this.communicationLabels} {id: $id})
         RETURN c
       `;
       const result = await session.run(query, { id });
