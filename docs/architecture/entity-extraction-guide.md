@@ -2,9 +2,9 @@
 
 ## Overview
 
-Entity extraction is a critical component of our O-CREAM-v2 email ingestion system that transforms unstructured email text into structured, actionable knowledge. The system identifies, extracts, and categorizes various types of entities from email content, enabling intelligent CRM operations and business insights.
+Entity extraction is a critical component of our email ingestion system that transforms unstructured email text into structured, actionable knowledge. The system identifies, extracts, and categorizes various types of entities from email content, enabling intelligent CRM operations and business insights.
 
-Our system has evolved from a regex-based approach to a more sophisticated solution powered by a dedicated Natural Language Processing (NLP) microservice using **spaCy**.
+Our system has evolved from a regex-based approach to a more sophisticated solution powered by a dedicated Natural Language Processing (NLP) microservice.
 
 ## 🎯 Entity Extraction Process with NLP Microservice
 
@@ -56,15 +56,17 @@ The new architecture addresses this with two key components:
 
 This batch-oriented, asynchronous architecture provides a massive improvement in throughput for the email ingestion pipeline.
 
-## 🏛️ Ontology-Driven Entity Processing
+## 🏛️ Ontology-Driven Architecture
 
-A key architectural principle in our system is that the handling of entities is driven by a decentralized ontology defined within each extension. This allows for a modular and extensible system where each business domain (CRM, Financial, etc.) can define its own concepts without altering the core platform.
+A key architectural principle of the system is that its capabilities are extended through modular business domains (like CRM or Financial), each providing its own `ontology.json` file. This makes the system's logic fundamentally **ontology-driven**.
+
+This approach allows for a modular and extensible system where each business domain can define its own concepts, relationships, and rules without altering the core platform.
 
 ### Defining Entities as Properties
 
 Not all identified concepts should become distinct nodes in our knowledge graph. Some concepts, like an email address, a monetary amount, or a specific date, are better represented as *properties* of a core entity (like a `Person` or a `Deal`).
 
-To manage this, our ontology supports an `"isProperty"` flag.
+To manage this, each extension's ontology can use an `"isProperty"` flag.
 
 When an entity in an `ontology.json` file is marked with `"isProperty": true`, the system-wide `OntologyService` recognizes it not as a standalone node, but as an attribute to be attached to another entity.
 
@@ -90,63 +92,36 @@ This ontology-driven approach is fully dynamic.
 3.  This list is sent to the Python NLP Service.
 4.  The NLP Service then dynamically adjusts its instructions for the underlying AI model, telling it **not** to create nodes for these types, but to instead attach them as properties to the most relevant core entity it can find.
 
-This ensures that the logic for how an entity is treated resides entirely within the extension that defines it, making the system highly modular and easy to maintain.
+This ensures that the logic for how an entity is treated resides entirely within the ontology of the extension that defines it, making the system highly modular and easy to maintain.
 
-## ✨ Advantages of the spaCy-based approach
+## ✨ Advantages of the NLP-based approach
 
-The move to a spaCy-based microservice offers significant advantages over the previous regex-based system:
+The move to an NLP-based microservice offers significant advantages over the previous regex-based system:
 
 -   **Higher Accuracy**: SpaCy's models are trained on vast amounts of data and can understand context, leading to much more accurate entity recognition than hand-crafted regular expressions. Accuracy is over 95%.
 -   **Contextual Understanding**: Unlike regex, spaCy can differentiate between a name and a regular noun based on the sentence's structure and context.
 -   **Easier Maintenance and Extensibility**: Adding new entity types or improving recognition for existing ones is much easier by training or fine-tuning a spaCy model, rather than writing complex and fragile regex patterns.
--   **Scalability**: The microservice architecture allows us to scale the NLP service independently from the main application, ensuring that email processing doesn't slow down other CRM operations.
+-   **Scalability**: The microservice architecture allows us to scale the NLP service independently from the main application, ensuring that email processing doesn't slow down other operations.
 -   **Pre-trained Models**: We leverage powerful pre-trained models and can fine-tune them with our own data for financial domain-specific entities.
 
-##  fallback Mechanism
+## fallback Mechanism
 
 For resilience, the system may include a fallback mechanism. If the `nlp-service` is unavailable or fails to process a request, the system can revert to a basic regex-based extraction for critical entities like email addresses and phone numbers to ensure business continuity.
 
-## 🔗 Integration with O-CREAM-v2
-
-The integration with O-CREAM-v2 remains conceptually similar. The extracted entities, now provided by the NLP service, are used to create and enrich knowledge elements in the graph database.
-
-```typescript
-// Example of how entities from the NLP service are used
-const entitiesFromNlpService = [
-  { text: "John Doe", label: "PERSON" },
-  { text: "Acme Corp", label: "ORG" },
-  { text: "$50,000", label: "MONEY" }
-];
-
-// This part of the logic remains the same
-const commLogKE = createInformationElement({
-  title: `Email Communication: ${email.subject}`,
-  type: KnowledgeType.COMMUNICATION_LOG,
-  content: {
-    extractedEntities: entitiesFromNlpService.map(e => ({
-      type: e.label,
-      value: e.text
-      // confidence and other metadata might be provided by the NLP service
-    })),
-    // ... other email data
-  }
-});
-```
-
 ## 🧪 Testing and Validation
 
-To ensure the reliability of the entity extraction process, the `SpacyEntityExtractionService` is thoroughly tested with a dedicated suite of unit tests.
+To ensure the reliability of the entity extraction process, the integration with the NLP service is thoroughly tested with a dedicated suite of unit tests.
 
 ### Unit Testing Approach
 The tests for the service are located in `test/unit/crm/application/services/spacy-entity-extraction.service.test.ts`.
 
 Our testing strategy for this service focuses on:
 - **Mocking the NLP Service**: We use `axios` mocks to simulate responses from the Python `nlp-service`. This allows us to test the TypeScript service in isolation, without needing the Python service to be running.
-- **Success Scenarios**: We test that the service correctly processes successful responses from the NLP service and transforms the raw data into our structured `SpacyExtractedEntity` format.
-- **Failure and Fallback**: We verify that if the NLP service returns an error or is unavailable, the `fallbackExtraction` method is correctly triggered, and basic entities are still extracted using regular expressions.
+- **Success Scenarios**: We test that the service correctly processes successful responses from the NLP service and transforms the raw data into the expected structured format.
+- **Failure and Fallback**: We verify that if the NLP service returns an error or is unavailable, a fallback mechanism can be triggered to ensure business continuity.
 - **Data Filtering**: We ensure that the filtering logic for entity types and confidence scores works as expected.
 - **Service Capabilities**: We test the `getCapabilities` method to ensure it correctly reports the status of the NLP service.
 
 This testing approach guarantees that our integration with the NLP service is robust and that we can handle failures gracefully, ensuring the stability of the email ingestion pipeline.
 
-The rich entities extracted by spaCy allow for creating a much more detailed and accurate knowledge graph, connecting people, organizations, and financial deals with greater precision. 
+The rich entities extracted by the NLP service allow for creating a much more detailed and accurate knowledge graph, connecting people, organizations, and financial deals with greater precision. 
