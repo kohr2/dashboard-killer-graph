@@ -6,20 +6,34 @@ module.exports = {
   testEnvironment: 'node',
   clearMocks: true,
   coverageDirectory: 'coverage',
-  roots: ['<rootDir>'],
+  roots: ['<rootDir>/src', '<rootDir>/test'],
   
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
+  moduleNameMapper: {
+    '^@platform/(.*)$': '<rootDir>/src/platform/$1',
+    '^@crm/(.*)$': '<rootDir>/src/ontologies/crm/$1',
+    '^@financial/(.*)$': '<rootDir>/src/ontologies/financial/$1',
+    '^@shared/(.*)$': '<rootDir>/src/shared/$1',
+  },
 
   moduleDirectories: ["node_modules", "src"],
 
-  setupFilesAfterEnv: ['<rootDir>/test/setup-e2e.ts', 'jest-extended/all'],
+  setupFilesAfterEnv: ['<rootDir>/test/setup-e2e.ts', 'jest-extended/all', './test/setup.ts'],
   testMatch: [
-      "**/test/unit/**/*.test.ts",
-      "**/test/integration/**/*.test.ts"
+    '**/test/**/*.test.ts',
+    '**/src/ontologies/**/test/**/*.test.ts',
   ],
   globals: {
     'ts-jest': {
       tsconfig: 'test/tsconfig.json'
     }
-  }
+  },
+  testTimeout: 30000,
+  reporters: ['default'],
+  collectCoverage: true,
+  coverageReporters: ['json', 'lcov', 'text', 'clover'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/*.d.ts',
+    '!src/index.ts',
+  ],
 };
