@@ -40,6 +40,64 @@ A crucial step after extraction is to link the new entities to existing ones in 
 
 This process ensures the knowledge graph remains clean, consistent, and densely connected over time.
 
+### 🏛️ Data Enrichment Framework
+
+Once entities are extracted and linked, the system can further enhance them through a generic **Data Enrichment Framework**. This framework is designed to augment our internal data with valuable information from external sources like Salesforce, financial databases (e.g., EDGAR), or other third-party APIs.
+
+The entire framework is located in `src/platform/enrichment/`.
+
+#### Key Components
+
+1.  **`IEnrichmentService.ts`**: This is the core interface that defines the contract for any enrichment service. It mandates a single method, `enrich(entities: any[])`, which takes a list of entities and returns them, potentially with new data appended.
+
+2.  **`EnrichmentOrchestrator.service.ts`**: This service acts as a registry and a dispatcher for all available enrichment services.
+    -   **Registration**: Other parts of the application (like extensions) can register their specific enrichment services with the orchestrator.
+    -   **Execution**: It has a primary method, `enrichEntities(entities)`, that iterates through all registered services and executes them sequentially, passing the output of one service as the input to the next.
+
+3.  **`ContentProcessingService.ts`**: The main `ContentProcessingService` (in `src/platform/processing/`) is responsible for invoking the enrichment process. After extracting the initial graph from content, it passes the list of entities to the `EnrichmentOrchestratorService` before they are saved to the database.
+
+#### How to Add a New Enrichment Service
+
+The framework is designed to be highly extensible. Adding a new data source is a straightforward process:
+
+1.  **Create the Service Class**: Create a new file, for example, `MyApiEnrichment.service.ts`, in a relevant module. The class must implement the `IEnrichmentService` interface.
+
+    ```typescript
+    // src/extensions/my-extension/application/services/my-api-enrichment.service.ts
+    import { IEnrichmentService } from '@platform/enrichment';
+
+    export class MyApiEnrichmentService implements IEnrichmentService {
+      readonly name = 'MyAPI'; // Unique name for the service
+
+      async enrich(entities: any[]): Promise<any[]> {
+        for (const entity of entities) {
+          if (entity.type === 'Organization' && entity.properties.website) {
+            // Call your external API
+            const extraData = await myApiClient.getData(entity.properties.website);
+            // Append new data
+            entity.properties.extraData = extraData;
+          }
+        }
+        return entities;
+      }
+    }
+    ```
+
+2.  **Register the Service**: In the main application entry point or the extension's registration file, instantiate and register your new service with the orchestrator.
+
+    ```typescript
+    // In a suitable initialization file
+    import { EnrichmentOrchestratorService } from '@platform/enrichment';
+    import { MyApiEnrichmentService } from './my-api-enrichment.service';
+
+    const orchestrator = new EnrichmentOrchestratorService();
+    orchestrator.register(new MyApiEnrichmentService());
+
+    // The orchestrator is now ready to be used by the ContentProcessingService
+    ```
+
+This modular approach allows us to easily connect new data sources, making our knowledge graph richer and more valuable over time.
+
 ### 🚀 High-Performance Batch Processing
 
 To handle large volumes of emails efficiently, the system has been refactored to support high-performance batch processing. The previous sequential approach, where each email was processed one by one, created a significant bottleneck due to network latency and the serial nature of the API calls.
