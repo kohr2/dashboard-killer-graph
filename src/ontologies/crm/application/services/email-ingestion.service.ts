@@ -1,7 +1,7 @@
 // Email Ingestion Service - Application Layer
 // Service for ingesting emails into the O-CREAM-v2 ontological system
 
-import { ContactRepository } from '../../domain/repositories/contact-repository';
+import type { ContactRepository } from '../../domain/repositories/contact-repository';
 import { EmailProcessingService } from './email-processing.service';
 import { ContactOntology } from '../../domain/entities/contact-ontology';
 import { User } from '@platform/security/domain/user';

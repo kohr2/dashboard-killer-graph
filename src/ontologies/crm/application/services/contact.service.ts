@@ -11,7 +11,7 @@ import {
   AddNoteDto,
   SearchContactsDto,
 } from '../dto/contact.dto';
-import { ContactRepository } from '../../domain/repositories/contact-repository';
+import type { ContactRepository } from '../../domain/repositories/contact-repository';
 import {
   OCreamContactEntity,
   ContactOntology,

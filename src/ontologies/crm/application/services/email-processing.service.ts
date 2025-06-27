@@ -5,8 +5,8 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { simpleParser, ParsedMail, AddressObject } from 'mailparser';
 import { SpacyEntityExtractionService, SpacyEntityExtractionResult } from './spacy-entity-extraction.service';
-import { ContactRepository } from '../../domain/repositories/contact-repository';
-import { CommunicationRepository } from '../../domain/repositories/communication-repository';
+import type { ContactRepository } from '../../domain/repositories/contact-repository';
+import type { CommunicationRepository } from '../../domain/repositories/communication-repository';
 import { Neo4jCommunicationRepository } from '../../infrastructure/repositories/neo4j-communication-repository';
 import { OCreamContactEntity, ContactOntology } from '../../domain/entities/contact-ontology';
 import {
