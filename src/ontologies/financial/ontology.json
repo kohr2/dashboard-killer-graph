@@ -49,6 +49,16 @@
     "Time": {
         "isProperty": true,
         "description": "A specific time of day, often associated with an event or deadline. To be used as a property of another entity."
+    },
+    "Document": {
+      "description": "A piece of written, printed, or electronic matter that provides information or evidence related to a financial context, such as an NDA, CIM, or legal agreement. Aligned with FIBO's concept of a 'Legal Document' or 'Contractual Document'."
+    },
+    "Process": {
+      "description": "A series of actions or steps taken to achieve a financial outcome, such as a due diligence process, a bidding process, or an underwriting process. Aligned with FIBO's 'Business Process' concept."
+    },
+    "LegalDocument": {
+      "parent": "Document",
+      "description": "A document with legal significance within a financial context, such as a merger agreement, NDA, or credit agreement. Aligned with FIBO's 'Legal Document' concept."
     }
   },
   "relationships": {
@@ -62,6 +72,8 @@
     "BID_ON": { "domain": "Investor", "range": "Deal", "description": "Investor participated in bid" },
     "HAS_RELATIONSHIP_WITH": { "domain": "Investor", "range": ["Sponsor", "TargetCompany"], "description": "Past interaction or deal co-participation" },
     "EXITED": { "domain": "Investor", "range": "Deal", "description": "Indicates past divestment" },
-    "HAS_INTEREST_IN": { "domain": "Investor", "range": "Sector", "description": "Indicates an investor's interest in a specific market sector." }
+    "HAS_INTEREST_IN": { "domain": "Investor", "range": "Sector", "description": "Indicates an investor's interest in a specific market sector." },
+    "HAS_DOCUMENT": { "domain": "Deal", "range": "Document", "description": "Associates a deal with a related document, such as an NDA or CIM." },
+    "FOLLOWS_PROCESS": { "domain": "Deal", "range": "Process", "description": "Describes the process a deal is following, such as an auction or a proprietary sourcing method." }
   }
 } 
