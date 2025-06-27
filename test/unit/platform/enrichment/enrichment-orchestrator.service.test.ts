@@ -3,8 +3,8 @@ import {
   EnrichmentOrchestratorService,
   IEnrichmentService,
   EnrichableEntity,
-} from '../../../../src/platform/enrichment'; // Adjust path once created
-import { Organization } from '../../../../src/ontologies/crm/domain/entities/organization';
+} from '@platform/enrichment'; // Correct path using alias
+import { Organization } from '@crm/domain/entities/organization';
 
 // Mock Implementation of IEnrichmentService for testing
 class MockEdgarService implements IEnrichmentService {
@@ -110,5 +110,37 @@ describe('EnrichmentOrchestratorService', () => {
 
     expect(enrichedEntity?.metadata?.source).toBe('initial-source');
     expect(enrichedEntity?.metadata?.cik).toBe('12345');
+  });
+
+  it('should continue enrichment even if one service fails', async () => {
+    const failingService: IEnrichmentService = {
+      name: 'FailingService',
+      enrich: jest.fn().mockRejectedValue(new Error('API is down')),
+    };
+
+    // Spy on console.error to ensure it's called
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    orchestrator.register(failingService);
+    orchestrator.register(edgarService); // This one should still run
+
+    const initialEntity: Organization = {
+        id: 'org-1',
+        name: 'TestCorp',
+        label: 'Organization',
+        legalName: 'Test Corporation Inc.',
+    };
+
+    const enrichedEntity = await orchestrator.enrich(initialEntity);
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Error during enrichment with service 'FailingService':",
+        expect.any(Error)
+    );
+    // The second service should still have enriched the entity
+    expect(enrichedEntity.metadata?.cik).toBe('12345');
+
+    // Clean up the spy
+    consoleErrorSpy.mockRestore();
   });
 }); 

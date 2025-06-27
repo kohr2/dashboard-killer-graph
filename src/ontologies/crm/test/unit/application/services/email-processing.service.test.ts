@@ -1,22 +1,22 @@
-import { EmailProcessingService } from '../../../../../src/ontologies/crm/application/services/email-processing.service';
-import { CommunicationRepository } from '../../../../../src/ontologies/crm/domain/repositories/communication-repository';
-import { ContactRepository } from '../../../../../src/ontologies/crm/domain/repositories/contact-repository';
-import { SpacyEntityExtractionService, EntityType } from '../../../../../src/ontologies/crm/application/services/spacy-entity-extraction.service';
-import { OCreamV2Ontology } from '../../../../../src/ontologies/crm/domain/ontology/o-cream-v2';
+import { EmailProcessingService } from '../../../../application/services/email-processing.service';
+import { CommunicationRepository } from '../../../../domain/repositories/communication-repository';
+import { ContactRepository } from '../../../../domain/repositories/contact-repository';
+import { SpacyEntityExtractionService, EntityType } from '../../../../application/services/spacy-entity-extraction.service';
+import { OCreamV2Ontology } from '../../../../domain/ontology/o-cream-v2';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const { EmailProcessingService: ActualEmailProcessingService } = jest.requireActual('../../../../../src/ontologies/crm/application/services/email-processing.service');
+const { EmailProcessingService: ActualEmailProcessingService } = jest.requireActual('../../../../application/services/email-processing.service');
 
 // Mock dependencies
 jest.mock('fs');
 jest.mock('path');
-jest.mock('../../../../../src/ontologies/crm/application/services/spacy-entity-extraction.service');
-jest.mock('../../../../../src/ontologies/crm/domain/repositories/contact-repository');
-jest.mock('../../../../../src/ontologies/crm/domain/repositories/communication-repository');
-jest.mock('../../../../../src/ontologies/crm/domain/ontology/o-cream-v2', () => {
+jest.mock('../../../../application/services/spacy-entity-extraction.service');
+jest.mock('../../../../domain/repositories/contact-repository');
+jest.mock('../../../../domain/repositories/communication-repository');
+jest.mock('../../../../domain/ontology/o-cream-v2', () => {
   const originalModule = jest.requireActual(
-    '../../../../../src/ontologies/crm/domain/ontology/o-cream-v2',
+    '../../../../domain/ontology/o-cream-v2',
   );
   return {
     ...originalModule,

@@ -11,7 +11,7 @@ import {
   Organization,
   Activity, // Corrected from CRMActivity
   SoftwareSystem,
-} from '../../../../../src/ontologies/crm/domain/ontology/o-cream-v2';
+} from '../../../../domain/ontology/o-cream-v2';
 
 describe('O-CREAM-v2 Ontology', () => {
   describe('Basic Entity Creation', () => {

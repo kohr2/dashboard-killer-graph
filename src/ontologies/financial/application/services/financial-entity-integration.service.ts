@@ -6,18 +6,11 @@ import { join } from 'path';
 import { ExtensibleEntityExtractionService, ExtensionEntityExtractionResult } from '../../../crm/application/services/extensible-entity-extraction.service';
 import { ContactRepository } from '../../../crm/domain/repositories/contact-repository';
 import { OCreamV2Ontology, ActivityType, KnowledgeType, Activity, Person, DOLCECategory, DOLCEEntity, OCreamRelationship, Organization } from '../../../crm/domain/ontology/o-cream-v2';
-// import { FIBOFinancialInstrument, 
-//     FIBOTransaction, 
-//     FIBOMarketData,
-//     FIBOFinancialInstitution,
-//     FIBOEntityFactory,
-//     FIBOPerson } from '../../domain/entities/fibo-financial-entities';
-// import { Contact } from '../../../crm-core/domain/entities/contact';
 import { EntityResolutionService } from './entity-resolution.service';
 import { RelationshipExtractionService } from './relationship-extraction.service';
 import { HybridDealExtractionService } from './hybrid-deal-extraction.service';
 import { EmailProcessingService } from '../../../crm/application/services/email-processing.service';
-import { EdgarEnrichmentService } from '../../../crm/application/services/edgar-enrichment.service';
+import { EdgarEnrichmentService } from '@platform/enrichment';
 import axios from 'axios';
 import { singleton, inject } from 'tsyringe';
 import { SpacyEntityExtractionService } from '@crm/application/services/spacy-entity-extraction.service';

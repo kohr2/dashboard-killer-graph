@@ -36,18 +36,20 @@ export class ContentProcessingService {
       const allEntities: any[] = [];
       const documentEntityMap: Map<number, any[]> = new Map();
 
-      graphs.forEach((graph, docIndex) => {
-        const docEntities = (graph.entities || []).map(entity => ({
-            id: entity.value.toLowerCase().replace(/ /g, '_').replace(/[^a-z0-9_]/g, ''),
-            name: entity.value,
-            type: entity.type,
-            label: entity.type,
-            properties: entity.properties || {},
-            originalDocIndex: docIndex 
-          }));
-        allEntities.push(...docEntities);
-        documentEntityMap.set(docIndex, docEntities);
-      });
+      if (Array.isArray(graphs)) {
+        graphs.forEach((graph, docIndex) => {
+          const docEntities = (graph.entities || []).map(entity => ({
+              id: entity.value.toLowerCase().replace(/ /g, '_').replace(/[^a-z0-9_]/g, ''),
+              name: entity.value,
+              type: entity.type,
+              label: entity.type,
+              properties: entity.properties || {},
+              originalDocIndex: docIndex 
+            }));
+          allEntities.push(...docEntities);
+          documentEntityMap.set(docIndex, docEntities);
+        });
+      }
       
       if (allEntities.length > 0) {
         const entityNames = allEntities.map(e => e.name);
@@ -71,23 +73,26 @@ export class ContentProcessingService {
         }
       }
 
-      const finalResults = graphs.map((graph, docIndex) => {
-        const entities = documentEntityMap.get(docIndex) || [];
-        const entityIdMap = new Map(entities.map(e => [e.name, e.id]));
-        
-        const relationships = (graph.relationships || []).map(rel => ({
-          source: entityIdMap.get(rel.source),
-          target: entityIdMap.get(rel.target),
-          type: rel.type
-        })).filter(r => r.source && r.target);
+      if (Array.isArray(graphs)) {
+        const finalResults = graphs.map((graph, docIndex) => {
+          const entities = documentEntityMap.get(docIndex) || [];
+          const entityIdMap = new Map(entities.map(e => [e.name, e.id]));
+          
+          const relationships = (graph.relationships || []).map(rel => ({
+            source: entityIdMap.get(rel.source),
+            target: entityIdMap.get(rel.target),
+            type: rel.type
+          })).filter(r => r.source && r.target);
 
-        return {
-            entities,
-            relationships
-        };
-      });
+          return {
+              entities,
+              relationships
+          };
+        });
 
-      return finalResults;
+        return finalResults;
+      }
+      return [];
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
