@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 import OpenAI from 'openai';
-import { OntologyService } from '@platform/ontology/ontology.service';
+import { OntologyService } from '../../../ontology/ontology.service';
 
 interface StructuredQuery {
   command: 'show' | 'unknown' | 'show_related';
