@@ -125,45 +125,92 @@ describe('ChatService', () => {
         mockAccessControlService.can.mockReturnValue(true);
         const mockQueryResult = { records: [{ get: (key: string) => ({ properties: { name: 'John Doe' } }) }] };
         mockSession.run.mockResolvedValue(mockQueryResult);
-        mockQueryTranslator.translate.mockResolvedValue({ command: 'show', resourceType: 'Contact' });
+        mockQueryTranslator.translate.mockResolvedValue({ command: 'show', resourceTypes: ['Contact'] });
 
         const query = "show all Contact";
         const result = await chatService.handleQuery(analystUser, query);
 
         expect(mockQueryTranslator.translate).toHaveBeenCalledWith(query, expect.any(Array));
         expect(mockAccessControlService.can).toHaveBeenCalledWith(analystUser, 'query', 'Contact');
-        expect(mockSession.run).toHaveBeenCalledWith('MATCH (n:Contact) RETURN n LIMIT 20');
+        const executedCypher = mockSession.run.mock.calls[0][0];
+        expect(executedCypher).toContain('MATCH (n:`Contact`)');
+        expect(executedCypher).toContain('RETURN n LIMIT 20');
         expect(result).toContain('John Doe');
     });
 
     it('should deny access if user does not have query permission', async () => {
-        mockQueryTranslator.translate.mockResolvedValue({ command: 'show', resourceType: 'Deal' });
+        mockQueryTranslator.translate.mockResolvedValue({ command: 'show', resourceTypes: ['Deal'] });
         mockAccessControlService.can.mockReturnValue(false);
         const query = "show all Deal";
         
-        await expect(chatService.handleQuery(guestUser, query)).rejects.toThrow("Access denied to query resource 'Deal'");
+        const result = await chatService.handleQuery(guestUser, query);
         
         expect(mockAccessControlService.can).toHaveBeenCalledWith(guestUser, 'query', 'Deal');
         expect(mockSession.run).not.toHaveBeenCalled();
+        expect(result).toContain("I couldn't find any information for your query.");
     });
 
-    it('should throw an error for an unknown resource type', async () => {
-        mockQueryTranslator.translate.mockResolvedValue({ command: 'show', resourceType: 'Unicorn' });
+    it('should return an empty result for an unknown resource type', async () => {
+        mockQueryTranslator.translate.mockResolvedValue({ command: 'show', resourceTypes: ['Unicorn'] });
         mockAccessControlService.can.mockReturnValue(true);
         const query = "show all Unicorn";
 
-        await expect(chatService.handleQuery(analystUser, query)).rejects.toThrow("Unknown resource type 'Unicorn'");
+        const result = await chatService.handleQuery(analystUser, query);
         
         expect(mockOntologyService.getAllEntityTypes).toHaveBeenCalled();
         expect(mockAccessControlService.can).not.toHaveBeenCalled();
         expect(mockSession.run).not.toHaveBeenCalled();
+        expect(result).toContain("I couldn't find any information for your query.");
     });
 
      it('should return a graceful message for a malformed query', async () => {
-        mockQueryTranslator.translate.mockResolvedValue({ command: 'unknown', resourceType: '' });
+        mockQueryTranslator.translate.mockResolvedValue({ command: 'unknown', resourceTypes: [] });
         const query = "show everything";
         const result = await chatService.handleQuery(analystUser, query);
         expect(result).toContain("I'm sorry, I can only show resources");
+    });
+
+    describe('handleQuery with show_related', () => {
+        it('should correctly handle a show_related command and call generateNaturalResponse with source entity', async () => {
+            const rawQuery = 'what are the deals for Organization X';
+            const structuredQuery = {
+                command: 'show_related',
+                resourceTypes: ['Deal'],
+                relatedTo: ['Organization'],
+                filters: { name: 'Organization X' },
+            };
+            const sourceEntity = { id: 'org-x', name: 'Organization X' };
+            const relatedResources = [{ id: 'deal-1', name: 'Project Alpha' }];
+            const finalResponse = 'Here is the deal for Organization X: Project Alpha.';
+
+            mockQueryTranslator.translate.mockResolvedValue(structuredQuery as any);
+            
+            // Mock the internal findRelatedResources call
+            const findRelatedResourcesSpy = jest.spyOn(chatService as any, 'findRelatedResources').mockResolvedValue({
+                sourceEntity,
+                relatedResources,
+            });
+
+            // Mock the final response generation
+            const generateNaturalResponseSpy = jest.spyOn(chatService as any, 'generateNaturalResponse').mockResolvedValue(finalResponse);
+
+            const result = await chatService.handleQuery(analystUser, rawQuery);
+
+            expect(mockQueryTranslator.translate).toHaveBeenCalledWith(rawQuery, expect.any(Array));
+            expect(findRelatedResourcesSpy).toHaveBeenCalledWith(
+                analystUser,
+                structuredQuery.resourceTypes,
+                structuredQuery.relatedTo,
+                structuredQuery.filters,
+                undefined, // sourceEntityName
+                undefined  // relationshipType
+            );
+            expect(generateNaturalResponseSpy).toHaveBeenCalledWith(rawQuery, relatedResources, sourceEntity);
+            expect(result).toBe(finalResponse);
+
+            findRelatedResourcesSpy.mockRestore();
+            generateNaturalResponseSpy.mockRestore();
+        });
     });
   });
 }); 

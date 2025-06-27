@@ -37,26 +37,23 @@ const port = 3001; // Port for the API backend
 app.use(cors());
 app.use(express.json());
 
+const apiRouter = express.Router();
+
 // Chat endpoint
-app.post('/api/chat', async (req, res) => {
+apiRouter.post('/chat', async (req, res) => {
+    console.log(`Received query from UI: "${req.body.query}"`);
     try {
         const { query } = req.body;
-
-        if (!query || typeof query !== 'string') {
-            return res.status(400).json({ error: 'Query is required and must be a string.' });
-        }
-
-        console.log(`Received query from UI: "${query}"`);
         const response = await chatService.handleQuery(demoUser, query);
         console.log(`Sending response to UI: "${response}"`);
-
         res.json({ response });
-
     } catch (error) {
         console.error('Error handling chat query:', error);
         res.status(500).json({ error: 'An internal server error occurred.' });
     }
 });
+
+app.use('/api', apiRouter);
 
 async function startServer() {
     try {
@@ -71,4 +68,9 @@ async function startServer() {
     }
 }
 
-startServer(); 
+// This allows the app to be imported for testing without starting the server
+if (require.main === module) {
+    startServer();
+}
+
+export { app, apiRouter }; 

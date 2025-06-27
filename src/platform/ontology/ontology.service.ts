@@ -16,7 +16,7 @@ const OntologyEntitySchema = z.object({
   values: z.array(z.string()).optional(),
   parent: z.string().optional(),
   isProperty: z.boolean().optional(),
-  properties: z.record(OntologyPropertySchema).optional(),
+  properties: z.record(z.union([z.string(), OntologyPropertySchema])).optional(),
 });
 
 const OntologyRelationshipSchema = z.object({

@@ -19,5 +19,5 @@
     { "path": "../src/ontologies/crm" },
     { "path": "../src/ontologies/financial" }
   ],
-  "include": ["./**/*.ts", "../scripts/**/*.ts"]
+  "include": ["./**/*.ts", "../scripts/**/*.ts", "../src/**/*.ts"]
 }
