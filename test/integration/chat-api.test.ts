@@ -1,53 +1,61 @@
 import 'reflect-metadata';
 import request from 'supertest';
-import express from 'express';
+import { app } from '../../src/api'; // Import the configured Express app
 import { ChatService } from '@platform/chat/application/services/chat.service';
-import { apiRouter } from '../../src/api'; // Import the router, not the app
+import { container } from 'tsyringe';
 
-// Mock the ChatService module
-jest.mock('@platform/chat/application/services/chat.service');
+// Mock the ChatService
+// We replace the actual ChatService with a mock to avoid real AI/DB calls.
+const mockChatService = {
+  handleQuery: jest.fn(),
+};
 
-// Create a typed mock
-const MockedChatService = ChatService as jest.MockedClass<typeof ChatService>;
+// Before all tests, tell tsyringe to use our mock for any ChatService injection
+container.register<ChatService>(ChatService, { useValue: mockChatService as any });
 
-// Create a test-specific Express app
-const testApp = express();
-testApp.use(express.json());
-testApp.use('/api', apiRouter); // Mount the actual router
+describe('POST /api/chat/query', () => {
+  beforeEach(() => {
+    // Reset the mock before each test
+    mockChatService.handleQuery.mockClear();
+  });
 
-describe('POST /api/chat', () => {
-    beforeEach(() => {
-        // Reset the mock before each test
-        MockedChatService.mockClear();
-        // Also clear any mock implementations on the methods
-        (MockedChatService.prototype.handleQuery as jest.Mock).mockClear();
-    });
+  it('should return a 200 OK with the chat response for a valid query', async () => {
+    const mockResponse = 'Here are the deals you asked for.';
+    mockChatService.handleQuery.mockResolvedValue(mockResponse);
 
-    it('should return a 200 OK status and a response for a valid query', async () => {
-        const mockResponse = 'This is a test response.';
-        // Mock the implementation for this specific test
-        (MockedChatService.prototype.handleQuery as jest.Mock).mockResolvedValue(mockResponse);
+    const response = await request(app)
+      .post('/api/chat/query')
+      .send({ query: 'show me all deals' });
 
-        const response = await request(testApp)
-            .post('/api/chat')
-            .send({ query: 'hello world' });
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ response: mockResponse });
+    expect(mockChatService.handleQuery).toHaveBeenCalledTimes(1);
+    expect(mockChatService.handleQuery).toHaveBeenCalledWith(
+      expect.any(Object), // We don't need to test the user object here
+      'show me all deals'
+    );
+  });
 
-        expect(response.status).toBe(200);
-        expect(response.body).toEqual({ response: mockResponse });
+  it('should return a 400 Bad Request if the query is missing', async () => {
+    const response = await request(app)
+      .post('/api/chat/query')
+      .send({});
 
-        expect(MockedChatService.prototype.handleQuery).toHaveBeenCalledWith(expect.any(Object), 'hello world');
-        expect(MockedChatService.prototype.handleQuery).toHaveBeenCalledTimes(1);
-    });
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({ error: 'Query is required' });
+    expect(mockChatService.handleQuery).not.toHaveBeenCalled();
+  });
 
-    it('should return a 500 status when the service throws an error', async () => {
-        // Mock the implementation to throw an error for this test
-        (MockedChatService.prototype.handleQuery as jest.Mock).mockRejectedValue(new Error('Service failure'));
+  it('should return a 500 Internal Server Error if the service fails', async () => {
+    const errorMessage = 'Internal service error';
+    mockChatService.handleQuery.mockRejectedValue(new Error(errorMessage));
 
-        const response = await request(testApp)
-            .post('/api/chat')
-            .send({ query: 'a query that fails' });
+    const response = await request(app)
+      .post('/api/chat/query')
+      .send({ query: 'a query that will fail' });
 
-        expect(response.status).toBe(500);
-        expect(response.body).toEqual({ error: 'An internal server error occurred.' });
-    });
+    expect(response.status).toBe(500);
+    expect(response.body.error).toBe('An internal error occurred');
+    expect(response.body.details).toBe(errorMessage);
+  });
 });

@@ -62,6 +62,7 @@ This modular design allows new capabilities to be added without modifying the co
 
 -   [**Architecture Overview**](./docs/architecture/overview.md) - High-level system design.
 -   [**Extension & Ontology Architecture**](./docs/architecture/ontologies.md) - A guide on how to create and manage extensions.
+-   [**API Reference**](./docs/development/api-reference.md) - A guide to the available API endpoints.
 -   [**Entity Extraction Guide**](./docs/architecture/entity-extraction-guide.md) - How the NLP pipeline works.
 -   [**Development Roadmap**](./docs/development/roadmap.md) - See what's next.
 
