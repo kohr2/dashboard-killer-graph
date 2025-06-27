@@ -1,10 +1,22 @@
 import { singleton } from 'tsyringe';
 import axios from 'axios';
 
+export interface LlmGraphEntity {
+  value: string;
+  type: string;
+  properties: Record<string, any>;
+}
+
+export interface LlmGraphRelationship {
+  source: string;
+  target: string;
+  type: string;
+}
+
 // Define the response structure here to avoid cross-dependencies
 export interface LlmGraphResponse {
-  entities: any[];
-  relationships: any[];
+  entities: LlmGraphEntity[];
+  relationships: LlmGraphRelationship[];
   refinement_info: string;
 }
 
@@ -30,15 +42,25 @@ export class ContentProcessingService {
         { timeout: 360000 } // 360-second timeout for the full batch
       );
 
-      const graphs = batchResponse.data;
-      console.log(`      -> LLM extracted graphs for ${graphs.length} documents.`);
+      let graphs = batchResponse.data as any;
+
+      // Handle cases where the data is nested under a 'graphs' key
+      if (graphs && typeof graphs === 'object' && !Array.isArray(graphs) && 'graphs' in graphs && Array.isArray(graphs.graphs)) {
+        graphs = graphs.graphs;
+      }
+
+      console.log(`      -> LLM extracted graphs for ${graphs?.length ?? 0} documents.`);
       
       const allEntities: any[] = [];
       const documentEntityMap: Map<number, any[]> = new Map();
 
-      if (Array.isArray(graphs)) {
-        graphs.forEach((graph, docIndex) => {
-          const docEntities = (graph.entities || []).map(entity => ({
+      if (!Array.isArray(graphs)) {
+        console.error('   ❌ NLP service did not return a valid array of graphs. Original Response:', batchResponse.data);
+        return [];
+      }
+
+      graphs.forEach((graph, docIndex) => {
+        const docEntities = (graph.entities || []).map((entity: LlmGraphEntity) => ({
               id: entity.value.toLowerCase().replace(/ /g, '_').replace(/[^a-z0-9_]/g, ''),
               name: entity.value,
               type: entity.type,
@@ -46,10 +68,9 @@ export class ContentProcessingService {
               properties: entity.properties || {},
               originalDocIndex: docIndex 
             }));
-          allEntities.push(...docEntities);
-          documentEntityMap.set(docIndex, docEntities);
-        });
-      }
+        allEntities.push(...docEntities);
+        documentEntityMap.set(docIndex, docEntities);
+      });
       
       if (allEntities.length > 0) {
         const entityNames = allEntities.map(e => e.name);
@@ -78,11 +99,11 @@ export class ContentProcessingService {
           const entities = documentEntityMap.get(docIndex) || [];
           const entityIdMap = new Map(entities.map(e => [e.name, e.id]));
           
-          const relationships = (graph.relationships || []).map(rel => ({
+          const relationships = (graph.relationships || []).map((rel: LlmGraphRelationship) => ({
             source: entityIdMap.get(rel.source),
             target: entityIdMap.get(rel.target),
             type: rel.type
-          })).filter(r => r.source && r.target);
+          })).filter((r: { source: string | undefined, target: string | undefined }) => r.source && r.target);
 
           return {
               entities,

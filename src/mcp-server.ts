@@ -1,78 +1,47 @@
 import 'reflect-metadata';
-import {
-  McpServer,
-  ResourceTemplate,
-} from '@modelcontextprotocol/sdk/server/mcp.js';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { container } from 'tsyringe';
-import { ContactService } from '@crm/application/services/contact.service';
-import { registerAllOntologies } from './register-ontologies';
-import { User } from '@platform/security/domain/user';
-import { ADMIN_ROLE } from '@platform/security/domain/role';
-import { ContactResponseDto } from '@crm/application/dto/contact.dto';
+import axios from 'axios';
+import { z } from 'zod';
+import './register-ontologies'; // Ensure all services are registered
 
-// Initialize services and container
-registerAllOntologies();
-const contactService = container.resolve(ContactService);
-
-// A mock user for service calls, as MCP doesn't have an auth context yet.
-const mockUser: User = {
-  id: 'mcp-server-user',
-  username: 'mcp-server',
-  roles: [ADMIN_ROLE],
-};
+const CHAT_API_URL = process.env.CHAT_API_URL || 'http://localhost:3001/api/chat/query';
 
 // Create a new MCP server
-const server = new McpServer({
-  name: 'dashboard-killer-graph-server',
-  version: '1.0.0',
-});
-
-// Define a 'ResourceTemplate' for Contacts.
-// The 'list' handler is defined here, as it's part of the template's capability.
-const contactResourceTemplate = new ResourceTemplate('contacts://{id}', {
-  list: async () => {
-    console.log('MCP Server: Received request for all contacts.');
-    const contacts = await contactService.searchContacts(mockUser, {});
-    return {
-      resources: contacts.map((contact: ContactResponseDto) => ({
-        name: contact.id,
-        uri: `contacts://${contact.id}`,
-        title: `${contact.firstName} ${contact.lastName}`,
-      })),
-    };
-  },
-});
-
-// The 'get' handler is separate, as it resolves a specific instance of the template.
-const getContactHandler = async (uri: URL, { id }: Record<string, any>) => {
-  console.log(`MCP Server: Received request for contact with id: ${id}`);
-  const contact = await contactService.getContactById(mockUser, id);
-
-  if (!contact) {
-    throw new Error(`Contact with ID ${id} not found.`);
-  }
-
-  return {
-    contents: [{
-      uri: uri.href,
-      text: JSON.stringify(contact, null, 2)
-    }]
-  };
-};
-
-// Register the resource with its template, metadata, and the 'get' handler.
-server.registerResource(
-  'contacts',
-  contactResourceTemplate,
+const server = new Server(
   {
-    title: 'Contacts',
-    description: 'Access contact information from the CRM.',
-  },
-  getContactHandler,
-);
+    name: 'knowledge-platform-query-agent',
+    version: '1.0.0',
+    tools: [
+      {
+        name: 'query',
+        description: 'Queries the knowledge platform with a natural language question and returns the answer.',
+        arguments: z.object({
+          query: z.string().describe('The natural language query to ask the platform.'),
+        }),
+        handler: async ({ query }: { query: string }) => {
+          console.log(`MCP Tool: Received query: \"${query}\"`);
+          try {
+            // The MCP server calls the main API server
+            const response = await axios.post(CHAT_API_URL, { query });
 
-// TODO: Add resources for other entities like Deals, Organizations, etc.
+            const apiResponse = response.data.response;
+            console.log(`MCP Tool: Received API response: \"${apiResponse}\"`);
+
+            return { content: [{ type: 'text', text: apiResponse }] };
+          } catch (error: any) {
+            console.error('MCP Tool: Error calling Chat API:', JSON.stringify(error, null, 2));
+            let errorMessage = 'Failed to query platform.';
+            if (axios.isAxiosError(error)) {
+              errorMessage = error.message;
+            }
+            return { isError: true, content: [{ type: 'text', text: `Failed to query platform: ${errorMessage}` }] };
+          }
+        },
+      },
+    ],
+  },
+);
 
 // Start the server with a transport
 async function startServer() {
