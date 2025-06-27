@@ -7,6 +7,7 @@ import {
   CallToolResult,
   Tool,
 } from '@modelcontextprotocol/sdk/types.js';
+import { translateQueryBasic } from './query-translator-basic';
 
 // Version fallback sans appels OpenAI
 const mcpServer = new Server(
@@ -20,57 +21,6 @@ const mcpServer = new Server(
     },
   }
 );
-
-// Fonction simple de traduction de requêtes sans IA
-function translateQueryBasic(query: string) {
-  const lowercaseQuery = query.toLowerCase();
-  
-  // Détection des types d'entités
-  const entityTypes = [];
-  if (lowercaseQuery.includes('deal') || lowercaseQuery.includes('transaction')) {
-    entityTypes.push('Deal');
-  }
-  if (lowercaseQuery.includes('contact') || lowercaseQuery.includes('person') || lowercaseQuery.includes('people')) {
-    entityTypes.push('Contact', 'Person');
-  }
-  if (lowercaseQuery.includes('organization') || lowercaseQuery.includes('company') || lowercaseQuery.includes('firm')) {
-    entityTypes.push('Organization');
-  }
-  if (lowercaseQuery.includes('communication') || lowercaseQuery.includes('email') || lowercaseQuery.includes('message')) {
-    entityTypes.push('Communication');
-  }
-  if (lowercaseQuery.includes('investor') || lowercaseQuery.includes('fund')) {
-    entityTypes.push('Investor', 'Fund');
-  }
-  
-  // Si aucun type détecté, utiliser Deal par défaut
-  if (entityTypes.length === 0) {
-    entityTypes.push('Deal');
-  }
-  
-  // Détection des filtres
-  const filters: any = {};
-  
-  // Extraire les noms propres (mots avec majuscule)
-  const words = query.split(/\s+/);
-  const properNouns = words.filter(word => /^[A-Z][a-z]+/.test(word));
-  if (properNouns.length > 0) {
-    filters.name = properNouns.join(' ');
-  }
-  
-  // Détection de commandes
-  let command = 'show';
-  if (lowercaseQuery.includes('related') || lowercaseQuery.includes('with') || lowercaseQuery.includes('lié')) {
-    command = 'show_related';
-  }
-  
-  return {
-    command,
-    resourceTypes: entityTypes,
-    filters: Object.keys(filters).length > 0 ? filters : undefined,
-    relatedTo: command === 'show_related' ? ['Organization'] : undefined
-  };
-}
 
 // Définir l'outil query
 const queryTool: Tool = {
@@ -135,7 +85,7 @@ mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 
     try {
-      // Traduction simple sans IA
+      // Utiliser le module testé pour la traduction
       const structuredQuery = translateQueryBasic(query);
       
       const response = `🔍 Query Translation Result (Fallback Mode):
