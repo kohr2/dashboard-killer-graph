@@ -29,7 +29,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/benoit/Documents/Code/financial-kill-the-crm/python-services/nlp-service/venv"
+set -gx VIRTUAL_ENV "/Users/benoit/Documents/Code/dashboard-killer-graph/python-services/nlp-service/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

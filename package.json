@@ -4,6 +4,8 @@
   "description": "A conversational knowledge platform that uses a graph database and LLMs to replace traditional dashboards.",
   "main": "dist/index.js",
   "scripts": {
+    "setup:nlp": "cd python-services/nlp-service && rm -rf venv && python3 -m venv venv && source venv/bin/activate && python -m pip install -r requirements.txt",
+    "start:nlp": "cd python-services/nlp-service && source venv/bin/activate && uvicorn main:app --host 127.0.0.1 --port 8000",
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/api.ts",
     "dev:nlp": "cd python-services/nlp-service && source venv/bin/activate && uvicorn main:app --host 127.0.0.1 --port 8000",
     "dev:all": "concurrently -n \"API,NLP\" -c \"blue,magenta\" \"npm:dev\" \"npm:dev:nlp\"",
@@ -66,7 +68,7 @@
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.6.0",
     "express": "^4.21.2",
     "express-rate-limit": "^7.1.5",
     "handlebars": "^4.7.8",

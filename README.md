@@ -22,10 +22,10 @@ docker-compose -f docker-compose.neo4j.yml up -d
 
 # 3. Start AI Service (in a separate terminal)
 # For entity extraction, the Python NLP service must be running.
-# See `python-services/README.md` for first-time setup.
-cd python-services/nlp-service
-source venv/bin/activate
-uvicorn main:app --host 127.0.0.1 --port 8000
+# First time setup:
+npm run setup:nlp
+# Start the service:
+npm run start:nlp
 
 # 4. Run the demo ingestion script
 # This script processes sample emails and builds the knowledge graph.

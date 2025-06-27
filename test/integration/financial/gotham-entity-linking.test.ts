@@ -6,6 +6,7 @@ import axios from 'axios';
 import { FinancialEntityIntegrationService } from '../../../src/ontologies/financial/application/services/financial-entity-integration.service';
 import { Neo4jConnection } from '../../../src/platform/database/neo4j-connection';
 import { LlmGraphResponse } from '../../../src/ontologies/financial/application/services/financial-entity-integration.service';
+import { Transaction } from 'neo4j-driver';
 
 // Mock the axios call to the Python NLP service
 jest.mock('axios');
@@ -14,6 +15,7 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 describe('Gotham Entity Linking - Integration Test', () => {
     let financialService: FinancialEntityIntegrationService;
     let neo4jConnection: Neo4jConnection;
+    let transaction: Transaction;
 
     beforeAll(async () => {
         // Initialize services from the container
@@ -27,12 +29,17 @@ describe('Gotham Entity Linking - Integration Test', () => {
     });
 
     beforeEach(async () => {
-        // Clear the database before each test
         const session = neo4jConnection.getDriver().session();
-        try {
-            await session.run('MATCH (n) DETACH DELETE n');
-        } finally {
-            await session.close();
+        transaction = session.beginTransaction();
+    });
+
+    afterEach(async () => {
+        if (transaction) {
+            try {
+                await transaction.rollback();
+            } finally {
+                await transaction.close();
+            }
         }
     });
 
@@ -60,40 +67,30 @@ describe('Gotham Entity Linking - Integration Test', () => {
         const { fiboEntities, crmIntegration } = await financialService.processFinancialContent(emailContent);
 
         // 4. Persist to DB: Simulate the ingestion process
-        const session = neo4jConnection.getDriver().session();
-        try {
-            for (const entity of fiboEntities) {
-                await session.run(
-                    `MERGE (n:${entity.type} {name: $name}) SET n += $props`,
-                    { name: entity.name, props: { ...entity.properties, id: entity.id, name: entity.name } }
-                );
-            }
-            for (const rel of crmIntegration.relationships) {
-                await session.run(
-                    `
-                    MATCH (a {id: $sourceId}), (b {id: $targetId})
-                    MERGE (a)-[r:${rel.type}]->(b)
-                    `,
-                    { sourceId: rel.source, targetId: rel.target }
-                );
-            }
-        } finally {
-            await session.close();
+        for (const entity of fiboEntities) {
+            await transaction.run(
+                `MERGE (n:${entity.type} {name: $name}) SET n += $props`,
+                { name: entity.name, props: { ...entity.properties, id: entity.id, name: entity.name } }
+            );
+        }
+        for (const rel of crmIntegration.relationships) {
+            await transaction.run(
+                `
+                MATCH (a {id: $sourceId}), (b {id: $targetId})
+                MERGE (a)-[r:${rel.type}]->(b)
+                `,
+                { sourceId: rel.source, targetId: rel.target }
+            );
         }
 
-        // 5. Assertion: Verify the relationship exists in the database
-        const verificationSession = neo4jConnection.getDriver().session();
-        try {
-            const query = `
-                MATCH (p:Person {name: 'Rick'})-[:WORKS_ON]->(d:Deal {name: 'Project Gotham'})
-                RETURN p, d
-            `;
-            const result = await verificationSession.run(query);
-            expect(result.records.length).toBeGreaterThan(0);
-            expect(result.records[0].get('p').properties.name).toBe('Rick');
-            expect(result.records[0].get('d').properties.name).toBe('Project Gotham');
-        } finally {
-            await verificationSession.close();
-        }
+        // 5. Assertion: Verify the relationship exists in the transaction
+        const query = `
+            MATCH (p:Person {name: 'Rick'})-[:WORKS_ON]->(d:Deal {name: 'Project Gotham'})
+            RETURN p, d
+        `;
+        const result = await transaction.run(query);
+        expect(result.records.length).toBeGreaterThan(0);
+        expect(result.records[0].get('p').properties.name).toBe('Rick');
+        expect(result.records[0].get('d').properties.name).toBe('Project Gotham');
     });
 }); 

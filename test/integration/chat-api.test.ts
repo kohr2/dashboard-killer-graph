@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import request from 'supertest';
 import { container } from 'tsyringe';
 import { ChatService } from '@platform/chat/application/services/chat.service';
-import { Neo4jConnection } from '@platform/database/neo4j-connection';
 
 // Mock the ChatService *before* it's imported by other modules
 const mockChatService = {
@@ -14,16 +13,6 @@ container.register<ChatService>(ChatService, { useValue: mockChatService as any 
 import { app } from '../../src/api';
 
 describe('POST /api/chat/query', () => {
-  let connection: Neo4jConnection;
-
-  beforeAll(async () => {
-    connection = container.resolve(Neo4jConnection);
-    await connection.connect();
-  });
-
-  afterAll(async () => {
-    await connection.close();
-  });
 
   beforeEach(() => {
     // Reset the mock before each test
