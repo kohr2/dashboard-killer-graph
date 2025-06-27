@@ -4,7 +4,7 @@
   "description": "A conversational knowledge platform that uses a graph database and LLMs to replace traditional dashboards.",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/api.ts",
+    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/api.ts",
     "dev:nlp": "cd python-services/nlp-service && source venv/bin/activate && uvicorn main:app --host 127.0.0.1 --port 8000",
     "dev:all": "concurrently -n \"API,NLP\" -c \"blue,magenta\" \"npm:dev\" \"npm:dev:nlp\"",
     "build": "tsc -b",
