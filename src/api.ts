@@ -7,6 +7,9 @@ import { registerAllOntologies } from './register-ontologies';
 import { User } from './platform/security/domain/user';
 import { Role } from './platform/security/domain/role';
 import { Neo4jConnection } from './platform/database/neo4j-connection';
+import helmet from 'helmet';
+import compression from 'compression';
+import { chatRouter } from '@platform/chat/chat.router';
 
 // Initialize services
 registerAllOntologies();
@@ -36,8 +39,13 @@ const port = 3001; // Port for the API backend
 
 app.use(cors());
 app.use(express.json());
+app.use(helmet());
+app.use(compression());
 
 const apiRouter = express.Router();
+
+// Mount the chat router
+apiRouter.use('/chat', chatRouter);
 
 // Chat endpoint
 apiRouter.post('/chat', async (req, res) => {
@@ -51,6 +59,11 @@ apiRouter.post('/chat', async (req, res) => {
         console.error('Error handling chat query:', error);
         res.status(500).json({ error: 'An internal server error occurred.' });
     }
+});
+
+// Example: Health check endpoint
+apiRouter.get('/health', (req, res) => {
+    res.status(200).send('OK');
 });
 
 app.use('/api', apiRouter);
