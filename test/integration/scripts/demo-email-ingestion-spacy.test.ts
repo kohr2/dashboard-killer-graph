@@ -1,7 +1,6 @@
 import { demonstrateSpacyEmailIngestionPipeline } from '../../../scripts/demo-email-ingestion-spacy';
 import { Neo4jConnection } from '../../../src/platform/database/neo4j-connection';
 import axios from 'axios';
-import { mocked } from 'ts-jest/utils';
 import * as fs from 'fs';
 import { simpleParser } from 'mailparser';
 

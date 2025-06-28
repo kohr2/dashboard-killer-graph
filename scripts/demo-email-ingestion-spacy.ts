@@ -10,7 +10,7 @@ import { Session } from 'neo4j-driver';
 import axios from 'axios';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { registerAllOntologies } from 'src/register-ontologies';
+import { registerAllOntologies } from '../src/register-ontologies';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { FinancialToCrmBridge } from '@financial/application/ontology-bridges/financial-to-crm.bridge';
 import { ContentProcessingService } from '@platform/processing/content-processing.service';
@@ -163,8 +163,36 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
         console.log('   [3] Starting Neo4j ingestion with vector search...');
         const entityMap = new Map<string, any>();
 
-        // 1. Find or Create Entity Nodes using Vector Search
-        for (const entity of entities) {
+        // NEW: Separate property entities (Email, Percent, Date, MonetaryAmount, Time) from other entities
+        const propertyEntityTypes = ['Email', 'Percent', 'Date', 'MonetaryAmount', 'Time'];
+        const propertyEntities = entities.filter(entity => propertyEntityTypes.includes(entity.type));
+        const nonPropertyEntities = entities.filter(entity => !propertyEntityTypes.includes(entity.type));
+        
+        // Create a map of property relationships for later property assignment
+        const propertyRelationships = new Map<string, Map<string, string[]>>();
+        relationships.forEach(rel => {
+          if (['HAS_EMAIL', 'HAS_PERCENT', 'HAS_DATE', 'HAS_MONETARY_AMOUNT', 'HAS_TIME'].includes(rel.type)) {
+            const sourceId = rel.source;
+            const targetEntity = entities.find(e => e.id === rel.target);
+            if (targetEntity && propertyEntityTypes.includes(targetEntity.type)) {
+              if (!propertyRelationships.has(sourceId)) {
+                propertyRelationships.set(sourceId, new Map());
+              }
+              const entityPropertyMap = propertyRelationships.get(sourceId)!;
+              const propertyType = targetEntity.type.toLowerCase();
+              if (!entityPropertyMap.has(propertyType)) {
+                entityPropertyMap.set(propertyType, []);
+              }
+              entityPropertyMap.get(propertyType)!.push(targetEntity.name);
+            }
+          }
+        });
+
+        console.log(`      -> Found ${propertyEntities.length} property entities (${propertyEntityTypes.join(', ')}) to be converted to properties`);
+        console.log(`      -> Processing ${nonPropertyEntities.length} non-property entities`);
+
+        // 1. Find or Create Entity Nodes using Vector Search (excluding property entities)
+        for (const entity of nonPropertyEntities) {
           const { primary: primaryLabel, candidates: candidateLabels } = getLabelInfo(entity, validEntityTypes);
           let nodeId = entity.id || uuidv4();
           let foundExistingNode = false;
@@ -211,6 +239,56 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
             }
             const labelsCypher = allLabels.map(l => `\`${l}\``).join(':');
 
+            // NEW: Add property values if this entity has associated properties
+            const entityProperties = propertyRelationships.get(entity.id) || new Map();
+            const additionalProperties: any = {};
+            
+            // Handle different property types
+            if (entityProperties.has('email')) {
+              const emails = entityProperties.get('email')!;
+              additionalProperties.email = emails[0]; // Primary email
+              if (emails.length > 1) {
+                additionalProperties.additionalEmails = emails.slice(1);
+              }
+              console.log(`      -> Adding email properties to ${entity.name}: ${emails.join(', ')}`);
+            }
+            
+            if (entityProperties.has('percent')) {
+              const percents = entityProperties.get('percent')!;
+              additionalProperties.percentage = percents[0]; // Primary percentage
+              if (percents.length > 1) {
+                additionalProperties.additionalPercentages = percents.slice(1);
+              }
+              console.log(`      -> Adding percent properties to ${entity.name}: ${percents.join(', ')}`);
+            }
+            
+            if (entityProperties.has('date')) {
+              const dates = entityProperties.get('date')!;
+              additionalProperties.date = dates[0]; // Primary date
+              if (dates.length > 1) {
+                additionalProperties.additionalDates = dates.slice(1);
+              }
+              console.log(`      -> Adding date properties to ${entity.name}: ${dates.join(', ')}`);
+            }
+            
+            if (entityProperties.has('monetaryamount')) {
+              const amounts = entityProperties.get('monetaryamount')!;
+              additionalProperties.amount = amounts[0]; // Primary amount
+              if (amounts.length > 1) {
+                additionalProperties.additionalAmounts = amounts.slice(1);
+              }
+              console.log(`      -> Adding monetary amount properties to ${entity.name}: ${amounts.join(', ')}`);
+            }
+            
+            if (entityProperties.has('time')) {
+              const times = entityProperties.get('time')!;
+              additionalProperties.time = times[0]; // Primary time
+              if (times.length > 1) {
+                additionalProperties.additionalTimes = times.slice(1);
+              }
+              console.log(`      -> Adding time properties to ${entity.name}: ${times.join(', ')}`);
+            }
+
             const mergeQuery = entity.embedding
               ? `
                 MERGE (e {id: $id})
@@ -237,6 +315,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
                   createdAt: (entity.createdAt || new Date()).toISOString(),
                   embedding: entity.embedding,
                   ...(entity.properties || {}),
+                  ...additionalProperties, // Add all property values here
                 }
               }
             );
@@ -266,7 +345,8 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
         );
         console.log(`      -> Merged Communication node.`);
         
-        for (const entity of entities) {
+        // Only link non-property entities to communication (property entities are now properties)
+        for (const entity of nonPropertyEntities) {
           if (entity.resolvedId) {
             const entityInfo = entityMap.get(entity.name);
             const labels = entityInfo.labels;
@@ -286,12 +366,14 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
           }
         }
         console.log(
-          `      -> Linked ${entities.filter(e => e.resolvedId).length} entities to communication.`,
+          `      -> Linked ${nonPropertyEntities.filter(e => e.resolvedId).length} non-property entities to communication.`,
         );
 
-        // 3. Create relationships between entities
-        const entityIdMap = new Map<string, IngestionEntity>(entities.map((e: any) => [e.id, e]));
-        for (const rel of relationships) {
+        // 3. Create relationships between entities (excluding HAS_EMAIL, HAS_PERCENT, HAS_DATE, HAS_MONETARY_AMOUNT, HAS_TIME since they are now properties)
+        const entityIdMap = new Map<string, IngestionEntity>(nonPropertyEntities.map((e: any) => [e.id, e]));
+        const nonPropertyRelationships = relationships.filter(rel => !['HAS_EMAIL', 'HAS_PERCENT', 'HAS_DATE', 'HAS_MONETARY_AMOUNT', 'HAS_TIME'].includes(rel.type));
+        
+        for (const rel of nonPropertyRelationships) {
             const sourceEntity = entityIdMap.get(rel.source);
             const targetEntity = entityIdMap.get(rel.target);
             
@@ -316,7 +398,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
             }
         }
         console.log(
-          `      -> Merged ${relationships.length} relationships between entities.`,
+          `      -> Merged ${nonPropertyRelationships.length} non-property relationships between entities.`,
         );
         console.log('   [4] Neo4j ingestion complete for this email.');
         // --- Neo4j Ingestion End ---
