@@ -1,3 +1,3 @@
 
-- MCP server
+- organize ingestion pipelines 
 - deploy
