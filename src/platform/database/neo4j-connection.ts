@@ -5,6 +5,7 @@ import 'reflect-metadata';
 import { singleton } from 'tsyringe';
 import neo4j, { Driver, Session } from 'neo4j-driver';
 import { config } from 'dotenv';
+import { logger } from '@shared/utils/logger';
 
 config(); // Make sure environment variables are loaded
 
@@ -33,9 +34,9 @@ export class Neo4jConnection {
     try {
       this.driver = neo4j.driver(this.uri, neo4j.auth.basic(this.user, this.pass));
       await this.driver.verifyConnectivity();
-      console.log('✅ Successfully connected to Neo4j.');
+      logger.info('✅ Successfully connected to Neo4j.');
     } catch (error) {
-      console.error('❌ Failed to connect to Neo4j:', error);
+      logger.error('❌ Failed to connect to Neo4j:', error);
       throw new Error(`Neo4j connection failed: ${error}`);
     }
   }
@@ -55,7 +56,7 @@ export class Neo4jConnection {
     if (this.driver) {
       await this.driver.close();
       this.driver = null;
-      console.log('Neo4j connection closed.');
+      logger.info('Neo4j connection closed.');
     }
   }
 
@@ -115,9 +116,9 @@ export class Neo4jConnection {
         }}
       `);
 
-      console.log('🏗️ Neo4j schema initialized with constraints and indexes');
+      logger.info('🏗️ Neo4j schema initialized with constraints and indexes');
     } catch (error) {
-      console.error('❌ Schema initialization failed:', error);
+      logger.error('❌ Schema initialization failed:', error);
       throw error;
     } finally {
       await session.close();
@@ -129,9 +130,9 @@ export class Neo4jConnection {
     
     try {
       await session.run('MATCH (n) DETACH DELETE n');
-      console.log('🧹 Database cleared');
+      logger.info('🧹 Database cleared');
     } catch (error) {
-      console.error('❌ Failed to clear database:', error);
+      logger.error('❌ Failed to clear database:', error);
       throw error;
     } finally {
       await session.close();

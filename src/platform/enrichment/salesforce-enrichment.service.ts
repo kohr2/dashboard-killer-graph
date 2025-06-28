@@ -1,5 +1,6 @@
 import { singleton } from 'tsyringe';
 import { IEnrichmentService, EnrichableEntity } from './i-enrichment-service.interface';
+import { logger } from '@shared/utils/logger';
 
 @singleton()
 export class SalesforceEnrichmentService implements IEnrichmentService {
@@ -26,12 +27,12 @@ export class SalesforceEnrichmentService implements IEnrichmentService {
 
     // Simulate an API call failure for testing purposes
     if (externalId === 'FAIL-TRIGGER') {
-      console.error('Salesforce API error: Simulated failure.');
+      logger.error('Salesforce API error: Simulated failure.');
       return null;
     }
 
     // Simulate a successful API call
-    console.log(`Querying Salesforce for entity with CIK: ${externalId}`);
+    logger.info(`Querying Salesforce for entity with CIK: ${externalId}`);
     const salesforceData = {
       salesforceId: `SFDC-MOCK-${externalId}`,
       accountStatus: 'Active',

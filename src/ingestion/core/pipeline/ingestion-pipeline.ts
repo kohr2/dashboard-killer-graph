@@ -7,6 +7,7 @@ import { singleton } from 'tsyringe';
 import { DataSource, SourceType } from '../types/data-source.interface';
 import { IngestionPipeline as IPipeline, ProcessingResult, PipelineMetrics } from '../types/pipeline.interface';
 import { NormalizedData } from '../types/normalized-data.interface';
+import { logger } from '@shared/utils/logger';
 
 @singleton()
 export class IngestionPipeline implements IPipeline {
@@ -26,7 +27,7 @@ export class IngestionPipeline implements IPipeline {
    */
   async process(source: DataSource): Promise<ProcessingResult> {
     const startTime = Date.now();
-    console.log(`🚀 Starting unified pipeline for source: ${source.id}`);
+    logger.info(`🚀 Starting unified pipeline for source: ${source.id}`);
 
     try {
       await source.connect();
@@ -36,7 +37,7 @@ export class IngestionPipeline implements IPipeline {
       let itemsFailed = 0;
       let entitiesCreated = 0;
       let relationshipsCreated = 0;
-      const errors: any[] = [];
+      const errors: unknown[] = [];
 
       // Process each item from the source
       try {
@@ -56,7 +57,7 @@ export class IngestionPipeline implements IPipeline {
             await this.storeData(normalized, extraction);
             
             itemsSucceeded++;
-            console.log(`   ✅ Processed item ${itemsProcessed}`);
+            logger.info(`   ✅ Processed item ${itemsProcessed}`);
             
           } catch (error) {
             itemsFailed++;
@@ -66,12 +67,12 @@ export class IngestionPipeline implements IPipeline {
               timestamp: new Date(),
               recoverable: true
             });
-            console.error(`   ❌ Failed to process item ${itemsProcessed}:`, error);
+            logger.error(`   ❌ Failed to process item ${itemsProcessed}:`, error);
           }
         }
       } catch (sourceError) {
         // Handle source-level errors (like fetch failures)
-        console.error(`💥 Source fetch error for ${source.id}:`, sourceError);
+        logger.error(`💥 Source fetch error for ${source.id}:`, sourceError);
         // If we processed at least one item successfully, continue
         if (itemsSucceeded === 0) {
           throw sourceError; // Re-throw if no items were processed successfully
@@ -83,7 +84,7 @@ export class IngestionPipeline implements IPipeline {
         await source.disconnect();
       } catch (disconnectError) {
         // Log disconnect errors but don't fail the pipeline
-        console.warn(`⚠️ Disconnect error for source ${source.id}:`, disconnectError);
+        logger.warn(`⚠️ Disconnect error for source ${source.id}:`, disconnectError);
       }
       
       const duration = Date.now() - startTime;
@@ -105,7 +106,7 @@ export class IngestionPipeline implements IPipeline {
       };
 
     } catch (error) {
-      console.error(`💥 Pipeline failed for source ${source.id}:`, error);
+      logger.error(`💥 Pipeline failed for source ${source.id}:`, error);
       throw error;
     }
   }
@@ -114,7 +115,7 @@ export class IngestionPipeline implements IPipeline {
    * Get pipeline metrics
    */
   monitor(): PipelineMetrics {
-    // TODO: Implement real metrics collection
+    // Implementation pending real metrics collection
     return {
       totalProcessed: 0,
       averageProcessingTime: 0,
@@ -128,15 +129,15 @@ export class IngestionPipeline implements IPipeline {
    * Stop the pipeline
    */
   async stop(): Promise<void> {
-    console.log('🛑 Stopping unified pipeline...');
-    // TODO: Implement graceful shutdown
+    logger.info('🛑 Stopping unified pipeline...');
+    // Implementation pending graceful shutdown
   }
 
   /**
    * Normalize raw data to unified format
    */
-  private async normalizeData(rawData: any, sourceType: SourceType): Promise<NormalizedData> {
-    // TODO: Implement normalization based on source type
+  private async normalizeData(rawData: unknown, sourceType: SourceType): Promise<NormalizedData> {
+    // Implementation pending normalization based on source type
     return {
       id: `${sourceType}-${Date.now()}`,
       sourceType,
@@ -165,8 +166,8 @@ export class IngestionPipeline implements IPipeline {
   /**
    * Store data in knowledge graph
    */
-  private async storeData(data: NormalizedData, extraction: any): Promise<void> {
+  private async storeData(data: NormalizedData, extraction: unknown): Promise<void> {
     // TODO: Use unified storage manager
-    console.log(`💾 Storing data for ${data.id}`);
+    logger.info(`💾 Storing data for ${data.id}`);
   }
 }

@@ -22,6 +22,6 @@
     { "path": "src/platform" },
     { "path": "test" }
   ],
-  "include": ["src/**/*.ts", "scripts/**/*.ts"],
-  "exclude": ["node_modules", "dist", "test", "src/ontologies"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "test", "src/ontologies", "scripts"]
 }

@@ -134,8 +134,7 @@ describe('EnrichmentOrchestratorService', () => {
     const enrichedEntity = await orchestrator.enrich(initialEntity);
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Error during enrichment with service 'FailingService':",
-        expect.any(Error)
+        expect.stringContaining("Error during enrichment with service 'FailingService':")
     );
     // The second service should still have enriched the entity
     expect(enrichedEntity.metadata?.cik).toBe('12345');

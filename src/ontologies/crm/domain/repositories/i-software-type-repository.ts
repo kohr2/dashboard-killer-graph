@@ -6,5 +6,5 @@ import { SoftwareType } from '../entities/software-type';
 export interface ISoftwareTypeRepository {
   findById(id: string): Promise<SoftwareType | null>;
   save(entity: SoftwareType): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

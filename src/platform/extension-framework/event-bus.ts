@@ -3,7 +3,7 @@
 
 interface EventHistoryEntry {
   eventType: string;
-  data: any;
+  data: unknown;
   timestamp: Date;
 }
 
@@ -18,7 +18,7 @@ export class EventBus {
     this.subscribers.get(eventType)!.push(handler);
   }
   
-  async publish(eventType: string, data: any): Promise<void> {
+  async publish(eventType: string, data: unknown): Promise<void> {
     // Record the event in history
     this.eventHistory.push({
       eventType,

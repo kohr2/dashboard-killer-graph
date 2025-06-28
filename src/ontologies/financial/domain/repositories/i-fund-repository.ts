@@ -6,5 +6,5 @@ import { Fund } from '../entities/fund';
 export interface IFundRepository {
   findById(id: string): Promise<Fund | null>;
   save(entity: Fund): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

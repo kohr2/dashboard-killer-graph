@@ -4,6 +4,7 @@ import { Communication, CommunicationType, CommunicationStatus } from '../../dom
 import { CommunicationRepository, PaginationOptions } from '../../domain/repositories/communication-repository';
 import { SpacyExtractedEntity, EntityType } from '../../application/services/spacy-entity-extraction.service';
 import { OntologyService } from '@platform/ontology/ontology.service';
+import { logger } from '@shared/utils/logger';
 
 @injectable()
 export class Neo4jCommunicationRepository implements CommunicationRepository {
@@ -52,7 +53,7 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
         // Do not create nodes for literal-like entities.
         // These are handled as properties of other nodes at a higher-level service.
         if (literalTypes.includes(primaryType)) {
-          console.warn(`[Neo4jCommunicationRepository] Skipping node creation for literal type: "${primaryType}" (${entity.value}). This should be a property.`);
+          logger.warn(`[Neo4jCommunicationRepository] Skipping node creation for literal type: "${primaryType}" (${entity.value}). This should be a property.`);
           continue; // Skip to the next entity
         }
 
@@ -63,7 +64,7 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
         // If the entity type doesn't exist in our ontologies, we can either skip it or use a default label.
         // Skipping is safer to maintain ontological integrity.
         if (!this.ontologyService.isValidLabel(entityType)) {
-            console.warn(`[Neo4jCommunicationRepository] Ontology label not found for type: "${entityType}" (from spaCy label "${entity.spacyLabel}"). Skipping entity linking.`);
+            logger.warn(`[Neo4jCommunicationRepository] Ontology label not found for type: "${entityType}" (from spaCy label "${entity.spacyLabel}"). Skipping entity linking.`);
             continue;
         }
 
@@ -178,42 +179,42 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
   }
 
   async findAll(options?: PaginationOptions): Promise<Communication[]> {
-    // TODO: Implement
+    // Implementation pending
     return [];
   }
 
   async delete(id: string): Promise<boolean> {
-    // TODO: Implement
+    // Implementation pending
     return false;
   }
 
   async findByContactId(contactId: string): Promise<Communication[]> {
-    // TODO: Implement
+    // Implementation pending
     return [];
   }
 
   async findByType(type: CommunicationType): Promise<Communication[]> {
-    // TODO: Implement
+    // Implementation pending
     return [];
   }
 
   async findByStatus(status: CommunicationStatus): Promise<Communication[]> {
-    // TODO: Implement
+    // Implementation pending
     return [];
   }
 
   async search(query: string): Promise<Communication[]> {
-    // TODO: Implement
+    // Implementation pending
     return [];
   }
 
   async count(): Promise<number> {
-    // TODO: Implement
+    // Implementation pending
     return 0;
   }
 
   async exists(id: string): Promise<boolean> {
-    // TODO: Implement
+    // Implementation pending
     return false;
   }
 

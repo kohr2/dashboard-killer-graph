@@ -1,6 +1,7 @@
 import { singleton } from 'tsyringe';
 import { IEnrichmentService, EnrichableEntity } from './i-enrichment-service.interface';
 import { merge } from 'lodash';
+import { logger } from '@shared/utils/logger';
 
 @singleton()
 export class EnrichmentOrchestratorService {
@@ -12,7 +13,7 @@ export class EnrichmentOrchestratorService {
    */
   public register(service: IEnrichmentService): void {
     this.services.push(service);
-    console.log(`Enrichment service '${service.name}' registered.`);
+    logger.info(`Enrichment service '${service.name}' registered.`);
   }
 
   /**
@@ -39,7 +40,7 @@ export class EnrichmentOrchestratorService {
           enrichedEntity = merge(enrichedEntity, result);
         }
       } catch (error) {
-        console.error(`Error during enrichment with service '${service.name}':`, error);
+        logger.error(`Error during enrichment with service '${service.name}':`, error);
         // Continue with the next service even if one fails
       }
     }

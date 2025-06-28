@@ -13,7 +13,7 @@ describe('Unified Email Ingestion Pipeline', () => {
   });
 
   it('should process .eml files through unified pipeline', async () => {
-    // TODO: Implement when EmailSource is fully implemented
+    // Implementation pending when EmailSource is fully implemented
     const emailSource = new EmailSource({
       name: 'test-email-source',
       enabled: true,

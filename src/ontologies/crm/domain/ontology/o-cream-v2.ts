@@ -87,7 +87,7 @@ export interface InformationElement extends DOLCEEntity {
   category: DOLCECategory.Abstract;
   type: KnowledgeType;
   title: string;
-  content: any;
+  content: unknown;
   format: 'text' | 'json' | 'xml' | 'binary' | 'multimedia';
   source: string;
   reliability: number;

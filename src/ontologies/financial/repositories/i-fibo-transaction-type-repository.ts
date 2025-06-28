@@ -6,5 +6,5 @@ import { FIBOTransactionType } from '../entities/fibo-transaction-type';
 export interface IFIBOTransactionTypeRepository {
   findById(id: string): Promise<FIBOTransactionType | null>;
   save(entity: FIBOTransactionType): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

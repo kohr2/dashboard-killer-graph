@@ -6,5 +6,5 @@ import { KnowledgeType } from '../entities/knowledge-type';
 export interface IKnowledgeTypeRepository {
   findById(id: string): Promise<KnowledgeType | null>;
   save(entity: KnowledgeType): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

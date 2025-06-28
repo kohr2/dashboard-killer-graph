@@ -79,7 +79,7 @@ describe('EdgarEnrichmentService', () => {
 
         const result = await service.enrich(baseEntity);
         expect(result).toBeNull();
-        expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('Failed to initialize'), expect.any(Error));
+        expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('Failed to initialize'));
     });
 
     it('should not enrich entities that are not Organizations', async () => {

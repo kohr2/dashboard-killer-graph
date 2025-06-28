@@ -1,6 +1,7 @@
 import { singleton } from 'tsyringe';
 import OpenAI from 'openai';
 import { OntologyService } from '../../../ontology/ontology.service';
+import { logger } from '@shared/utils/logger';
 
 interface StructuredQuery {
   command: 'show' | 'unknown' | 'show_related';
@@ -13,7 +14,7 @@ interface StructuredQuery {
 
 export interface ConversationTurn {
     userQuery: string;
-    assistantResponse: any; // Could be a string or a list of entities
+    assistantResponse: unknown; // Could be a string or a list of entities
 }
 
 @singleton()
@@ -122,10 +123,10 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
 `;
 
     try {
-      console.log('--- Sending to OpenAI ---');
-      console.log('User Query:', rawQuery);
-      console.log('System Prompt:', systemPrompt);
-      console.log('-------------------------');
+      logger.info('--- Sending to OpenAI ---');
+      logger.info('User Query:', rawQuery);
+      logger.info('System Prompt:', systemPrompt);
+      logger.info('-------------------------');
 
       const completion = await this.openai.chat.completions.create({
         model: 'gpt-4o-mini',
@@ -138,9 +139,9 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
 
       const result = completion.choices[0]?.message?.content;
 
-      console.log('--- Received from OpenAI ---');
-      console.log('Raw Response:', result);
-      console.log('----------------------------');
+      logger.info('--- Received from OpenAI ---');
+      logger.info('Raw Response:', result);
+      logger.info('----------------------------');
 
       if (!result) {
         throw new Error('OpenAI returned an empty response.');
@@ -156,7 +157,7 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
       return parsedResult;
 
     } catch (error) {
-      console.error('Error translating query with OpenAI:', error);
+      logger.error('Error translating query with OpenAI:', error);
       // Fallback to a safe default in case of any API or parsing error
       return { command: 'unknown', resourceTypes: [] };
     }

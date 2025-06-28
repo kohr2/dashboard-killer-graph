@@ -108,7 +108,7 @@ export class ContactService {
     if (!this.accessControlService.can(user, 'read', 'Contact')) {
       throw new Error('Access denied');
     }
-    // TODO: Implement a more robust search than just by a single field
+    // Implementation pending a more robust search than just by a single field
     const query = searchDto.name || searchDto.email || searchDto.company || '';
     const contacts = await this.contactRepository.search(query);
     return contacts.map(c => this.toContactResponseDto(c));

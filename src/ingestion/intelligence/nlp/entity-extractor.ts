@@ -8,13 +8,14 @@
 
 import axios from 'axios';
 import { singleton } from 'tsyringe';
+import { logger } from '@shared/utils/logger';
 
 // TODO: Update these imports to use unified types
 // import { NormalizedData } from '../../core/types/normalized-data.interface';
 
 export interface EntityExtractionResult {
-  entities: any[]; // TODO: Use unified entity types
-  relationships: any[]; // TODO: Use unified relationship types
+  entities: unknown[]; // TODO: Use unified entity types
+  relationships: unknown[]; // TODO: Use unified relationship types
   confidence: number;
   processingTime: number;
 }
@@ -31,11 +32,11 @@ export class EntityExtractor {
    * Extract entities from any normalized data source
    * TODO: Refactor to work with unified NormalizedData interface
    */
-  async extractEntities(data: any): Promise<EntityExtractionResult> {
-    console.log('🔍 Extracting entities using unified NLP service...');
+  async extractEntities(data: unknown): Promise<EntityExtractionResult> {
+    logger.info('🔍 Extracting entities using unified NLP service...');
     
     try {
-      // TODO: Implement unified entity extraction
+      // Implementation pending unified entity extraction
       // 1. Prepare data for NLP service
       // 2. Call batch extraction endpoint
       // 3. Return standardized results
@@ -47,7 +48,7 @@ export class EntityExtractor {
         processingTime: 0
       };
     } catch (error) {
-      console.error('❌ Entity extraction failed:', error);
+      logger.error('❌ Entity extraction failed:', error);
       throw error;
     }
   }

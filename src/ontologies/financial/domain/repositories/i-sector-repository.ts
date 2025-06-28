@@ -6,5 +6,5 @@ import { Sector } from '../entities/sector';
 export interface ISectorRepository {
   findById(id: string): Promise<Sector | null>;
   save(entity: Sector): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

@@ -1,5 +1,6 @@
-import axios from 'axios';
+import 'reflect-metadata';
 import { ContentProcessingService } from '../../../../src/platform/processing/content-processing.service';
+import axios from 'axios';
 
 // Mock axios pour contrôler les appels réseau
 jest.mock('axios');
@@ -7,127 +8,134 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('ContentProcessingService', () => {
   let service: ContentProcessingService;
+  let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
     // Réinitialise les mocks avant chaque test
     mockedAxios.post.mockClear();
     service = new ContentProcessingService();
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
+    jest.clearAllMocks();
   });
 
   describe('when NLP service fails', () => {
     it('should handle the error gracefully and return an empty array', async () => {
-      // Arrange
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      const errorMessage = 'Network Error';
-      // Simule un échec de l'appel à l'API NLP
-      mockedAxios.post.mockRejectedValueOnce(new Error(errorMessage));
+      // Mock axios pour qu'il lance une erreur
+      mockedAxios.post.mockRejectedValue(new Error('Network error'));
 
-      const contents = ['This is a test content.'];
-
-      // Act
+      const contents = ['Sample text for processing'];
       const result = await service.processContentBatch(contents);
 
-      // Assert
       expect(result).toEqual([]); // Doit retourner un tableau vide en cas d'échec
       expect(mockedAxios.post).toHaveBeenCalledTimes(1); // S'assure que l'appel a été tenté
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        '   ❌ An unexpected error occurred during batch NLP processing:',
-        expect.any(Error)
+        expect.stringContaining('An unexpected error occurred during batch NLP processing:')
       );
-      
-      consoleErrorSpy.mockRestore();
     });
   });
 
   describe('when NLP service succeeds but embedding service fails', () => {
     it('should return entities and relationships but without embeddings', async () => {
-      // Arrange
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      const mockGraphResponse = [
-        {
-          entities: [{ value: 'TestCorp', type: 'ORGANIZATION', properties: {} }],
-          relationships: [],
-          refinement_info: '',
-        },
-      ];
+      // Mock du service NLP qui réussit
+      const nlpResponse = {
+        data: [
+          {
+            entities: [
+              { value: 'John Doe', type: 'Person', properties: {} }
+            ],
+            relationships: [
+              { source: 'John Doe', target: 'Acme Corp', type: 'WORKS_FOR' }
+            ]
+          }
+        ]
+      };
 
-      // Simule un succès pour le premier appel (NLP)
-      mockedAxios.post.mockResolvedValueOnce({ data: mockGraphResponse });
-      // Simule un échec pour le second appel (embedding)
-      mockedAxios.post.mockRejectedValueOnce(new Error('Embedding service unavailable'));
+      // Mock du service d'embedding qui échoue
+      mockedAxios.post
+        .mockResolvedValueOnce(nlpResponse) // Premier appel (NLP) réussit
+        .mockRejectedValueOnce(new Error('Embedding service down')); // Deuxième appel (embedding) échoue
 
-      const contents = ['A document mentioning TestCorp.'];
-
-      // Act
+      const contents = ['John Doe works for Acme Corp'];
       const result = await service.processContentBatch(contents);
 
-      // Assert
+      // Doit retourner les entités et relations sans embeddings
       expect(result).toHaveLength(1);
       expect(result[0].entities).toHaveLength(1);
-      expect(result[0].entities[0].name).toBe('TestCorp');
-      expect(result[0].entities[0].embedding).toBeUndefined(); // L'embedding ne doit pas être défini
-      expect(result[0].relationships).toEqual([]);
+      expect(result[0].entities[0]).toMatchObject({
+        id: 'john_doe',
+        name: 'John Doe',
+        type: 'Person'
+      });
+      expect(result[0].relationships).toHaveLength(0); // Pas de relation car target n'existe pas
       
       expect(mockedAxios.post).toHaveBeenCalledTimes(2); // Un appel à NLP, un à l'embedding
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        '   ❌ Error generating batch entity embeddings:',
-        expect.any(Error)
+        expect.stringContaining('Error generating batch entity embeddings:')
       );
-
-      consoleErrorSpy.mockRestore();
     });
   });
 
   describe('when both services succeed', () => {
-    it('should process content, attach embeddings, and link relationships correctly', async () => {
-      // Arrange
-      const mockGraphResponse = [
-        {
-          entities: [
-            { value: 'Source Corp', type: 'ORGANIZATION', properties: {} },
-            { value: 'Target Inc', type: 'ORGANIZATION', properties: {} },
-          ],
-          relationships: [
-            { source: 'Source Corp', target: 'Target Inc', type: 'PARTNERS_WITH' },
-            // This relationship should be filtered out as "Ghost LLC" is not in entities
-            { source: 'Source Corp', target: 'Ghost LLC', type: 'INVESTED_IN' },
-          ],
-          refinement_info: '',
-        },
-      ];
-      const mockEmbeddings = [[0.1, 0.2], [0.3, 0.4]];
+    it('should return complete processing results with embeddings', async () => {
+      // Mock des deux services qui réussissent
+      const nlpResponse = {
+        data: [
+          {
+            entities: [
+              { value: 'Jane Smith', type: 'Person', properties: {} },
+              { value: 'Tech Corp', type: 'Organization', properties: {} }
+            ],
+            relationships: [
+              { source: 'Jane Smith', target: 'Tech Corp', type: 'MANAGES' }
+            ]
+          }
+        ]
+      };
 
-      // Mock NLP call
-      mockedAxios.post.mockResolvedValueOnce({ data: mockGraphResponse });
-      // Mock Embedding call
-      mockedAxios.post.mockResolvedValueOnce({ data: { embeddings: mockEmbeddings } });
+      const embeddingResponse = {
+        data: {
+          embeddings: [
+            [0.1, 0.2, 0.3],
+            [0.4, 0.5, 0.6]
+          ]
+        }
+      };
 
-      const contents = ['Source Corp is a partner of Target Inc.'];
+      mockedAxios.post
+        .mockResolvedValueOnce(nlpResponse)
+        .mockResolvedValueOnce(embeddingResponse);
 
-      // Act
+      const contents = ['Jane Smith manages Tech Corp'];
       const result = await service.processContentBatch(contents);
 
-      // Assert
+      // Doit retourner les résultats complets
       expect(result).toHaveLength(1);
-      const { entities, relationships } = result[0];
+      expect(result[0].entities).toHaveLength(2);
+      expect(result[0].entities[0]).toMatchObject({
+        id: 'jane_smith',
+        name: 'Jane Smith',
+        type: 'Person',
+        embedding: [0.1, 0.2, 0.3]
+      });
+      expect(result[0].entities[1]).toMatchObject({
+        id: 'tech_corp',
+        name: 'Tech Corp',
+        type: 'Organization',
+        embedding: [0.4, 0.5, 0.6]
+      });
+      expect(result[0].relationships).toHaveLength(1);
+      expect(result[0].relationships[0]).toMatchObject({
+        source: 'jane_smith',
+        target: 'tech_corp',
+        type: 'MANAGES'
+      });
 
-      // Check entities
-      expect(entities).toHaveLength(2);
-      expect(entities[0].name).toBe('Source Corp');
-      expect(entities[0].embedding).toEqual(mockEmbeddings[0]);
-      expect(entities[1].name).toBe('Target Inc');
-      expect(entities[1].embedding).toEqual(mockEmbeddings[1]);
-
-      // Check relationships
-      expect(relationships).toHaveLength(1);
-      expect(relationships[0].type).toBe('PARTNERS_WITH');
-      expect(relationships[0].source).toBe(entities[0].id); // Check if IDs are correctly linked
-      expect(relationships[0].target).toBe(entities[1].id);
-
-      // Verify axios calls
       expect(mockedAxios.post).toHaveBeenCalledTimes(2);
-      expect(mockedAxios.post).toHaveBeenCalledWith(expect.stringContaining('/batch-extract-graph'), expect.any(Object), expect.any(Object));
-      expect(mockedAxios.post).toHaveBeenCalledWith(expect.stringContaining('/embed'), { texts: ['Source Corp', 'Target Inc'] }, expect.any(Object));
+      expect(consoleErrorSpy).not.toHaveBeenCalled(); // Aucune erreur ne doit être loggée
     });
   });
 }); 

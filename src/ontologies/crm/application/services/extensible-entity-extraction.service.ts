@@ -4,6 +4,7 @@
 import { EntityExtractionService, EntityExtractionResult, ExtractedEntity } from './entity-extraction.service';
 import { SpacyEntityExtractionService, SpacyEntityExtractionResult, SpacyExtractedEntity, EntityType } from './spacy-entity-extraction.service';
 import { OCreamV2Ontology, KnowledgeType, ActivityType } from '../../domain/ontology/o-cream-v2';
+import { logger } from '@shared/utils/logger';
 
 // Extension-specific entity types
 export interface ExtensionEntityRegistry {
@@ -26,12 +27,12 @@ export interface ExtensionEntityType {
 export interface CustomExtractor {
   name: string;
   entityTypes: string[];
-  extract: (text: string, context?: any) => Promise<ExtractedEntity[]>;
+  extract: (text: string, context?: unknown) => Promise<ExtractedEntity[]>;
 }
 
 export interface ValidationRule {
   type: 'format' | 'range' | 'context' | 'custom';
-  rule: string | RegExp | ((value: string, context?: any) => boolean);
+  rule: string | RegExp | ((value: string, context?: unknown) => boolean);
   errorMessage: string;
 }
 
@@ -141,12 +142,12 @@ export const HEALTHCARE_ENTITY_TYPES: ExtensionEntityType[] = [
 ];
 
 export interface ExtensionInsights {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface ExtensionEntityExtractionResult extends EntityExtractionResult {
   extensionResults: Record<string, ExtractedEntity[]>;
-  knowledgeElements: any[];
+  knowledgeElements: unknown[];
   insights: ExtensionInsights;
 }
 
@@ -164,13 +165,13 @@ export class ExtensibleEntityExtractionService extends EntityExtractionService {
 
   public registerExtension(extension: ExtensionEntityRegistry): void {
     if (this.extensionRegistry.has(extension.extensionName)) {
-      console.warn(`⚠️ Extension "${extension.extensionName}" is already registered. Overwriting.`);
+      logger.warn(`⚠️ Extension "${extension.extensionName}" is already registered. Overwriting.`);
     }
     this.extensionRegistry.set(extension.extensionName, extension);
-    console.log(`📦 Registered extension: ${extension.extensionName} with ${extension.entityTypes.length} entity types`);
+    logger.info(`📦 Registered extension: ${extension.extensionName} with ${extension.entityTypes.length} entity types`);
   }
 
-  public async extractEntities(text: string, options?: any): Promise<EntityExtractionResult> {
+  public async extractEntities(text: string, options?: unknown): Promise<EntityExtractionResult> {
     const result = await this.coreExtractor.extractEntities(text, options);
     return {
         entities: result.entities,
@@ -186,7 +187,7 @@ export class ExtensibleEntityExtractionService extends EntityExtractionService {
     options?: {
       enabledExtensions?: string[];
       coreModel?: 'en_core_web_sm' | 'en_core_web_lg' | 'en_core_web_trf';
-      contextMetadata?: any;
+      contextMetadata?: unknown;
     }
   ): Promise<ExtensionEntityExtractionResult> {
     

@@ -6,5 +6,5 @@ import { Sponsor } from '../entities/sponsor';
 export interface ISponsorRepository {
   findById(id: string): Promise<Sponsor | null>;
   save(entity: Sponsor): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

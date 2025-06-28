@@ -3,6 +3,7 @@
 
 import { singleton } from 'tsyringe';
 import axios from 'axios';
+import { logger } from '@shared/utils/logger';
 
 export interface SpacyExtractedEntity {
   type: EntityType;
@@ -177,7 +178,7 @@ export class SpacyEntityExtractionService {
       };
 
     } catch (error) {
-      console.error('spaCy entity extraction failed:', error);
+      logger.error('spaCy entity extraction failed:', error);
       
       // Fallback to basic regex extraction
       return this.fallbackExtraction(text, options, Date.now() - startTime);
@@ -282,10 +283,10 @@ export class SpacyEntityExtractionService {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.code === 'ECONNREFUSED') {
-        console.error(`Connection to NLP service at ${this.nlpServiceUrl} failed. Is the service running?`);
+        logger.error(`Connection to NLP service at ${this.nlpServiceUrl} failed. Is the service running?`);
         throw new Error(`NLP service is unavailable.`);
       }
-      console.error('An error occurred while calling the NLP service:', error);
+      logger.error('An error occurred while calling the NLP service:', error);
       throw error;
     }
   }
@@ -446,10 +447,10 @@ export class SpacyEntityExtractionService {
    */
   private async fallbackExtraction(
     text: string, 
-    options: any, 
+    options: unknown, 
     processingTime: number
   ): Promise<SpacyEntityExtractionResult> {
-    console.warn('Using fallback regex extraction due to spaCy failure');
+    logger.warn('Using fallback regex extraction due to spaCy failure');
     
     const entities: SpacyExtractedEntity[] = [];
     

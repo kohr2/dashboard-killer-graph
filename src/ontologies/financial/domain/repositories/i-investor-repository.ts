@@ -6,5 +6,5 @@ import { Investor } from '../entities/investor';
 export interface IInvestorRepository {
   findById(id: string): Promise<Investor | null>;
   save(entity: Investor): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

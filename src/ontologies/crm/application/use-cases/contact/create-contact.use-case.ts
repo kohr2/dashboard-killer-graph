@@ -124,7 +124,7 @@ export class CreateContactUseCase {
         savedContact.addActivity(creationActivity.id);
 
       } catch (ontologyError) {
-        console.warn('Failed to register contact with O-CREAM-v2 ontology:', ontologyError);
+        logger.warn('Failed to register contact with O-CREAM-v2 ontology:', ontologyError);
         ontologyStatus = 'error';
       }
 

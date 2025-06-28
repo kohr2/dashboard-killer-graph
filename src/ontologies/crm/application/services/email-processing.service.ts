@@ -22,6 +22,7 @@ import {
 import { Communication, CommunicationStatus, CommunicationType } from '../../domain/entities/communication';
 import { singleton } from 'tsyringe';
 import { EntityType } from './spacy-entity-extraction.service';
+import { logger } from '@shared/utils/logger';
 
 export interface ParsedEmail {
   messageId: string;
@@ -65,10 +66,10 @@ export interface EmailProcessingResult {
     newContacts: OCreamContactEntity[];
   };
   knowledgeGraphInsertions: {
-    entities: any[];
-    relationships: any[];
-    knowledgeElements: any[];
-    activities: any[];
+    entities: unknown[];
+    relationships: unknown[];
+    knowledgeElements: unknown[];
+    activities: unknown[];
   };
   businessInsights: {
     emailClassification: string;
@@ -78,13 +79,13 @@ export interface EmailProcessingResult {
     followUpRequired: boolean;
     complianceFlags: string[];
   };
-  financialAnalysis?: any;
+  financialAnalysis?: unknown;
   recommendations: string[];
 }
 
 @singleton()
 export class EmailProcessingService {
-  private ontology: any; // OCreamV2Ontology;
+  private ontology: unknown; // OCreamV2Ontology;
 
   constructor(
     private contactRepository: ContactRepository,
@@ -98,7 +99,7 @@ export class EmailProcessingService {
    * Process a single .eml file through the complete pipeline
    */
   public async processEmlFile(emlFilePath: string): Promise<EmailProcessingResult> {
-    console.log(`📧 Processing EML file: ${emlFilePath}`);
+    logger.info(`📧 Processing EML file: ${emlFilePath}`);
 
     // 1. Parse .eml file
     const parsedEmail = await this.parseEmlFile(emlFilePath);
@@ -145,9 +146,9 @@ export class EmailProcessingService {
         //   emailContent,
         //   financialContext
         // );
-        console.log(`   💰 Financial analysis would be completed here.`);
+        logger.info(`   💰 Financial analysis would be completed here.`);
       } catch (error) {
-        console.warn(`   ⚠️ Financial analysis failed:`, error);
+        logger.warn(`   ⚠️ Financial analysis failed:`, error);
       }
     }
     */
@@ -200,7 +201,7 @@ export class EmailProcessingService {
     };
   }> {
     const startTime = Date.now();
-    console.log(`📂 Processing batch EML files from: ${emlDirectory}`);
+    logger.info(`📂 Processing batch EML files from: ${emlDirectory}`);
 
     const fs = require('fs');
     const path = require('path');
@@ -209,7 +210,7 @@ export class EmailProcessingService {
       .filter((file: string) => file.endsWith('.eml'))
       .map((file: string) => path.join(emlDirectory, file));
 
-    console.log(`   Found ${emlFiles.length} EML files`);
+    logger.info(`   Found ${emlFiles.length} EML files`);
 
     const results: EmailProcessingResult[] = [];
     let totalEntities = 0;
@@ -220,7 +221,7 @@ export class EmailProcessingService {
 
     for (const [index, emlFile] of emlFiles.entries()) {
       try {
-        console.log(`\n📧 [${index + 1}/${emlFiles.length}] Processing: ${path.basename(emlFile)}`);
+        logger.info(`\n📧 [${index + 1}/${emlFiles.length}] Processing: ${path.basename(emlFile)}`);
         
         const result = await this.processEmlFile(emlFile);
         results.push(result);
@@ -237,7 +238,7 @@ export class EmailProcessingService {
         complianceAlerts += result.businessInsights.complianceFlags.length;
 
       } catch (error) {
-        console.error(`   ❌ Error processing ${emlFile}:`, error instanceof Error ? error.message : 'Unknown error');
+        logger.error(`   ❌ Error processing ${emlFile}:`, error instanceof Error ? error.message : 'Unknown error');
       }
     }
 
@@ -254,14 +255,14 @@ export class EmailProcessingService {
       processingTime
     };
 
-    console.log(`\n📊 Batch Processing Summary:`);
-    console.log(`   📧 Emails processed: ${summary.totalEmails}`);
-    console.log(`   🔍 Total entities: ${summary.totalEntities}`);
-    console.log(`   👥 New contacts: ${summary.totalContacts}`);
-    console.log(`   💰 Financial emails: ${summary.financialEmails}`);
-    console.log(`   ⚠️  Compliance alerts: ${summary.complianceAlerts}`);
-    console.log(`   🎯 Average confidence: ${(summary.averageConfidence * 100).toFixed(1)}%`);
-    console.log(`   ⏱️  Processing time: ${summary.processingTime}ms`);
+    logger.info(`\n📊 Batch Processing Summary:`);
+    logger.info(`   📧 Emails processed: ${summary.totalEmails}`);
+    logger.info(`   🔍 Total entities: ${summary.totalEntities}`);
+    logger.info(`   👥 New contacts: ${summary.totalContacts}`);
+    logger.info(`   💰 Financial emails: ${summary.financialEmails}`);
+    logger.info(`   ⚠️  Compliance alerts: ${summary.complianceAlerts}`);
+    logger.info(`   🎯 Average confidence: ${(summary.averageConfidence * 100).toFixed(1)}%`);
+    logger.info(`   ⏱️  Processing time: ${summary.processingTime}ms`);
 
     return { results, summary };
   }
@@ -417,12 +418,12 @@ export class EmailProcessingService {
       recipients: OCreamContactEntity[];
     },
   ): Promise<{
-    entities: any[];
-    relationships: any[];
-    knowledgeElements: any[];
-    activities: any[];
+    entities: unknown[];
+    relationships: unknown[];
+    knowledgeElements: unknown[];
+    activities: unknown[];
   }> {
-    console.log(`     🧠 Inserting into Knowledge Graph...`);
+    logger.info(`     🧠 Inserting into Knowledge Graph...`);
 
     // 1. Save the communication activity
     const communication = await this.communicationRepository.save({
@@ -627,7 +628,7 @@ export class EmailProcessingService {
     return 'neutral';
   }
 
-  private assessPriority(email: ParsedEmail, entityExtraction: SpacyEntityExtractionResult, financialAnalysis?: any): 'high' | 'medium' | 'low' {
+  private assessPriority(email: ParsedEmail, entityExtraction: SpacyEntityExtractionResult, financialAnalysis?: unknown): 'high' | 'medium' | 'low' {
     const text = (email.subject + ' ' + email.body).toLowerCase();
     if (text.includes('urgent') || text.includes('asap') || text.includes('!')) {
         return 'high';
@@ -675,7 +676,7 @@ export class EmailProcessingService {
     return followUpIndicators.some(indicator => text.includes(indicator));
   }
 
-  private identifyComplianceFlags(entityExtraction: SpacyEntityExtractionResult, financialAnalysis?: any): string[] {
+  private identifyComplianceFlags(entityExtraction: SpacyEntityExtractionResult, financialAnalysis?: unknown): string[] {
     const flags: string[] = [];
     
     // Example compliance flags based on entities
@@ -723,7 +724,7 @@ export class EmailProcessingService {
   private generateRecommendations(
     email: ParsedEmail,
     entityExtraction: SpacyEntityExtractionResult,
-    businessInsights: any,
+    businessInsights: unknown,
     financialAnalysis?: any
   ): string[] {
     const recommendations: string[] = [];

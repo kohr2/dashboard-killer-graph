@@ -1,13 +1,13 @@
 interface EventHistoryEntry {
     eventType: string;
-    data: any;
+    data: unknown;
     timestamp: Date;
 }
 export declare class EventBus {
     private subscribers;
     private eventHistory;
     subscribe(eventType: string, handler: Function): void;
-    publish(eventType: string, data: any): Promise<void>;
+    publish(eventType: string, data: unknown): Promise<void>;
     unsubscribe(eventType: string, handler: Function): void;
     getSubscribers(eventType: string): Function[];
     getEventHistory(): EventHistoryEntry[];

@@ -37,8 +37,8 @@ export interface OCreamContactEntity extends DOLCEEntity, Omit<z.infer<typeof OC
     addActivity(activityId: string): void;
     addKnowledgeElement(elementId: string): void;
     updatePersonalInfo(info: Partial<PersonalInfo>): void;
-    updatePreferences(prefs: any): void;
-    updateStatus(status: any): void;
+    updatePreferences(prefs: unknown): void;
+    updateStatus(status: unknown): void;
     markAsModified(): void;
 }
 
@@ -90,10 +90,10 @@ export const ContactOntology = {
       updatePersonalInfo(info: Partial<PersonalInfo>) {
         this.personalInfo = { ...this.personalInfo, ...info };
       },
-      updatePreferences(prefs: any) {
+      updatePreferences(prefs: unknown) {
         this.preferences = { ...this.preferences, ...prefs };
       },
-      updateStatus(status: any) {
+      updateStatus(status: unknown) {
         // Placeholder
       },
       markAsModified() {

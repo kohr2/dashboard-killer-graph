@@ -3,6 +3,7 @@ import { OntologyService } from '@platform/ontology/ontology.service';
 import { ContactOntology } from './domain/entities/contact-ontology';
 import { SpacyEntityExtractionService } from './application/services/spacy-entity-extraction.service';
 import { Neo4jContactRepository } from './infrastructure/repositories/neo4j-contact-repository';
+import { logger } from '@shared/utils/logger';
 
 export function registerCrm() {
   // Register service dependencies
@@ -19,5 +20,5 @@ export function registerCrm() {
 
   // TODO: Register Organization entity once it is defined.
   
-  console.log('✅ CRM extension registered.');
+  logger.info('✅ CRM extension registered.');
 } 

@@ -21,13 +21,13 @@ export interface ContactResponseDto {
   email: string;
   phone?: string;
   title?: string;
-  preferences?: any;
-  status?: any;
+  preferences?: unknown;
+  status?: unknown;
   validationStatus: 'valid' | 'invalid';
-  errors?: any[];
+  errors?: unknown[];
   knowledgeElements: string[];
   activities: string[];
-  ontologyMetadata: any;
+  ontologyMetadata: unknown;
 }
 
 export interface ContactSearchResponseDto {

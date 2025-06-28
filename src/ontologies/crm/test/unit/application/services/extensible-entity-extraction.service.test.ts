@@ -38,7 +38,7 @@ describe('ExtensibleEntityExtractionService', () => {
       const registry = (service as any).extensionRegistry as Map<string, ExtensionEntityRegistry>;
       expect(registry.has('TestExtension')).toBe(true);
       expect(registry.get('TestExtension')).toEqual(newExtension);
-      expect(consoleSpy).toHaveBeenCalledWith('📦 Registered extension: TestExtension with 1 entity types');
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Registered extension: TestExtension with 1 entity types'));
       
       consoleSpy.mockRestore();
     });

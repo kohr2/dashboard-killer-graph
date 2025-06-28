@@ -26,7 +26,7 @@ export interface SourceConfig {
   batchSize?: number;
   retryAttempts?: number;
   timeout?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface FetchParams {

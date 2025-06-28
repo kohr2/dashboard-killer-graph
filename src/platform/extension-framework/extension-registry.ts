@@ -4,7 +4,7 @@
 export class ExtensionRegistry {
   private extensions: Map<string, any> = new Map();
   
-  register(name: string, extension: any): void {
+  register(name: string, extension: unknown): void {
     if (this.extensions.has(name)) {
       throw new Error(`Extension with name "${name}" is already registered`);
     }

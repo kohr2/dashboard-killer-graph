@@ -98,17 +98,17 @@ export class GetContactUseCase {
         const activities = oCreamContact.activities
           .map((actId: string) => oCreamV2.getEntity(actId))
           .filter(Boolean);
-        const relationships: any[] = [];
+        const relationships: unknown[] = [];
 
         response.contact!.ontologyData = {
-          knowledgeElements: knowledgeElements.map((ke: any) => ({
+          knowledgeElements: knowledgeElements.map((ke: unknown) => ({
             id: ke.id,
             type: ke.type,
             title: ke.title,
             reliability: ke.reliability,
             createdAt: ke.createdAt
           })),
-          activities: activities.map((act: any) => ({
+          activities: activities.map((act: unknown) => ({
             id: act.id,
             type: act.type,
             name: act.name,
@@ -150,7 +150,7 @@ export class GetContactUseCase {
         .filter(Boolean);
     if (knowledgeElements.length > 0) score += 15;
     if (knowledgeElements.length > 2) score += 10;
-    if (knowledgeElements.some((ke: any) => ke.type === KnowledgeType.CUSTOMERPREFERENCES)) score += 5;
+    if (knowledgeElements.some((ke: unknown) => ke.type === KnowledgeType.CUSTOMERPREFERENCES)) score += 5;
 
     // Activities (10 points)
     if (contact.activities.length > 0) score += 5;

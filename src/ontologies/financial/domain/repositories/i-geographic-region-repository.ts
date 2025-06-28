@@ -6,5 +6,5 @@ import { GeographicRegion } from '../entities/geographic-region';
 export interface IGeographicRegionRepository {
   findById(id: string): Promise<GeographicRegion | null>;
   save(entity: GeographicRegion): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

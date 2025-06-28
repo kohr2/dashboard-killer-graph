@@ -6,5 +6,5 @@ import { FIBOMarketDataType } from '../entities/fibo-market-data-type';
 export interface IFIBOMarketDataTypeRepository {
   findById(id: string): Promise<FIBOMarketDataType | null>;
   save(entity: FIBOMarketDataType): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

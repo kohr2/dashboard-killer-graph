@@ -37,7 +37,7 @@ export interface EmailIngestionResult {
   contactsProcessed: number;
   knowledgeElementsCreated: number;
   activitiesCreated: number;
-  // ontologyInsights: any;
+  // ontologyInsights: unknown;
 }
 
 @singleton()

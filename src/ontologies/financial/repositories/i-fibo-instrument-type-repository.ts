@@ -6,5 +6,5 @@ import { FIBOInstrumentType } from '../entities/fibo-instrument-type';
 export interface IFIBOInstrumentTypeRepository {
   findById(id: string): Promise<FIBOInstrumentType | null>;
   save(entity: FIBOInstrumentType): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

@@ -6,5 +6,5 @@ import { FIBOInstitutionType } from '../entities/fibo-institution-type';
 export interface IFIBOInstitutionTypeRepository {
   findById(id: string): Promise<FIBOInstitutionType | null>;
   save(entity: FIBOInstitutionType): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

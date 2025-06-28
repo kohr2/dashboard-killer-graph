@@ -10,6 +10,7 @@ import { Neo4jConnection } from './platform/database/neo4j-connection';
 import helmet from 'helmet';
 import compression from 'compression';
 import { chatRouter } from '@platform/chat/chat.router';
+import { logger } from '@shared/utils/logger';
 
 // Initialize services
 registerAllOntologies();
@@ -49,14 +50,14 @@ apiRouter.use('/chat', chatRouter);
 
 // Chat endpoint
 apiRouter.post('/chat', async (req, res) => {
-    console.log(`Received query from UI: "${req.body.query}"`);
+    logger.info(`Received query from UI: "${req.body.query}"`);
     try {
         const { query } = req.body;
         const response = await chatService.handleQuery(demoUser, query);
-        console.log(`Sending response to UI: "${response}"`);
+        logger.info(`Sending response to UI: "${response}"`);
         res.json({ response });
     } catch (error) {
-        console.error('Error handling chat query:', error);
+        logger.error('Error handling chat query:', error);
         res.status(500).json({ error: 'An internal server error occurred.' });
     }
 });
@@ -71,12 +72,12 @@ app.use('/api', apiRouter);
 async function startServer() {
     try {
         await neo4jConnection.connect();
-        console.log('✅ Successfully connected to Neo4j.');
+        logger.info('✅ Successfully connected to Neo4j.');
         app.listen(port, () => {
-            console.log(`🚀 Chat API server listening at http://localhost:${port}`);
+            logger.info(`🚀 Chat API server listening at http://localhost:${port}`);
         });
     } catch (error) {
-        console.error('❌ Failed to start the server:', error);
+        logger.error('❌ Failed to start the server:', error);
         process.exit(1);
     }
 }

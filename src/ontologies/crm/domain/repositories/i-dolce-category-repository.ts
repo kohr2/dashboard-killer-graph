@@ -6,5 +6,5 @@ import { DOLCECategory } from '../entities/dolce-category';
 export interface IDOLCECategoryRepository {
   findById(id: string): Promise<DOLCECategory | null>;
   save(entity: DOLCECategory): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

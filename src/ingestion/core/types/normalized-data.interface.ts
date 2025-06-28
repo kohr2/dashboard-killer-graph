@@ -19,7 +19,7 @@ export interface NormalizedData {
     tags?: string[];
     classification?: string;
     confidence?: number;
-    [key: string]: any;
+    [key: string]: unknown;
   };
-  raw: any; // Données originales pour référence
+  raw: unknown; // Données originales pour référence
 }

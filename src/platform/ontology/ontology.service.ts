@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as glob from 'glob';
 import { singleton, injectable } from 'tsyringe';
 import { z } from 'zod';
+import { logger } from '@shared/utils/logger';
 
 // Zod Schemas for validation
 const OntologyPropertySchema = z.object({
@@ -33,7 +34,7 @@ const OntologySchemaValidator = z.object({
 
 // TypeScript types inferred from Zod schemas
 export type Ontology = z.infer<typeof OntologySchemaValidator>;
-export type EntityFactory<T> = (data: any) => T;
+export type EntityFactory<T> = (data: unknown) => T;
 
 interface OntologySource {
   sourcePath: string;
@@ -65,14 +66,14 @@ export class OntologyService {
   private entityFactories = new Map<string, EntityFactory<any>>();
   private labelCache = new Map<string, string>();
   private registeredEntityTypes: Set<string> = new Set();
-  private entityCreationMap: Map<string, (data: any) => any> = new Map();
+  private entityCreationMap: Map<string, (data: unknown) => any> = new Map();
   private schema: InternalOntologySchema = { entities: {}, relationships: {} };
 
   public constructor() {
     // We can leave the file-based loading for the real application
     // but provide a way to load mocks for testing.
     this.loadOntologies();
-    console.log('OntologyService initialized');
+    logger.info('OntologyService initialized');
   }
 
   /**
@@ -100,9 +101,9 @@ export class OntologyService {
         }
       } catch (error) {
         if (error instanceof z.ZodError) {
-          console.error(`Validation failed for ontology object '${ontology.name}':`, error.errors);
+          logger.error(`Validation failed for ontology object '${ontology.name}':`, error.errors);
         } else {
-          console.error(`An unexpected error occurred while loading ontology object '${ontology.name}':`, error);
+          logger.error(`An unexpected error occurred while loading ontology object '${ontology.name}':`, error);
         }
       }
     }
@@ -130,14 +131,14 @@ export class OntologyService {
             }
         } catch (error) {
             if (error instanceof z.ZodError) {
-              console.error(`[Ontology Validation Error] Failed to validate ${file}:`);
-              console.error(error.errors);
+              logger.error(`[Ontology Validation Error] Failed to validate ${file}:`);
+              logger.error(error.errors);
             } else {
-              console.error(`Error loading or parsing ontology file ${file}:`, error);
+              logger.error(`Error loading or parsing ontology file ${file}:`, error);
             }
         }
     }
-    console.log(`✅ Loaded and validated ${ontologyFiles.length} ontology schemas.`);
+    logger.info(`✅ Loaded and validated ${ontologyFiles.length} ontology schemas.`);
   }
 
   public getOntologies(): Ontology[] {
@@ -146,15 +147,15 @@ export class OntologyService {
 
   public registerEntityType<T>(typeName: string, factory: EntityFactory<T>) {
     if (this.entityFactories.has(typeName)) {
-      console.warn(
+      logger.warn(
         `Entity type "${typeName}" is already registered. Overwriting.`,
       );
     }
     this.entityFactories.set(typeName, factory);
-    console.log(`Entity type "${typeName}" registered.`);
+    logger.info(`Entity type "${typeName}" registered.`);
   }
 
-  public createEntity<T>(typeName: string, data: any): T {
+  public createEntity<T>(typeName: string, data: unknown): T {
     const factory = this.entityFactories.get(typeName);
     if (!factory) {
       throw new Error(`Entity type "${typeName}" is not registered.`);

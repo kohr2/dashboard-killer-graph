@@ -19,7 +19,7 @@ async function runFullIngestion() {
   const emailsDirectory = join(__dirname, '../test-emails');
   const outputReportPath = join(__dirname, '../full-deal-flow-report.json');
   
-  const allAnalyses: any[] = [];
+  const allAnalyses: unknown[] = [];
   const emailFiles = readdirSync(emailsDirectory).filter(f => f.endsWith('.eml'));
 
   console.log(`Found ${emailFiles.length} email files to process...`);

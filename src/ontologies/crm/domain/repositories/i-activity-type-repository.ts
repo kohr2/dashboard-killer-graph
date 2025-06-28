@@ -6,5 +6,5 @@ import { ActivityType } from '../entities/activity-type';
 export interface IActivityTypeRepository {
   findById(id: string): Promise<ActivityType | null>;
   save(entity: ActivityType): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

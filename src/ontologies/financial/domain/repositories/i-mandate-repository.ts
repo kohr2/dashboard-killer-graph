@@ -6,5 +6,5 @@ import { Mandate } from '../entities/mandate';
 export interface IMandateRepository {
   findById(id: string): Promise<Mandate | null>;
   save(entity: Mandate): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

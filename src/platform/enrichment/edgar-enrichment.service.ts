@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 import { singleton, inject } from 'tsyringe';
 import { IEnrichmentService, EnrichableEntity } from './i-enrichment-service.interface';
+import { logger } from '@shared/utils/logger';
 
 const CIK_LOOKUP_URL = 'https://www.sec.gov/files/company_tickers.json';
 const COMPANY_DATA_URL_BASE = 'https://data.sec.gov/submissions/';
@@ -35,7 +36,7 @@ export class EdgarEnrichmentService implements IEnrichmentService {
     try {
       await this.initializeCikMap();
     } catch (error) {
-      console.error('Failed to initialize EdgarEnrichmentService CIK map. Enrichment will be skipped.', error);
+      logger.error('Failed to initialize EdgarEnrichmentService CIK map. Enrichment will be skipped.', error);
       return null;
     }
 
@@ -63,7 +64,7 @@ export class EdgarEnrichmentService implements IEnrichmentService {
         },
       };
     } catch (error) {
-      console.error(`Error fetching EDGAR data for CIK ${cik}:`, error);
+      logger.error(`Error fetching EDGAR data for CIK ${cik}:`, error);
       return null;
     }
   }
@@ -92,7 +93,7 @@ export class EdgarEnrichmentService implements IEnrichmentService {
       });
       this.cikMap = newMap;
     } catch (error) {
-      console.error('Failed to initialize SEC CIK map:', error);
+      logger.error('Failed to initialize SEC CIK map:', error);
       throw new Error('Failed to fetch or process data from SEC EDGAR API');
     }
   }

@@ -1,5 +1,6 @@
 import { singleton } from 'tsyringe';
 import axios from 'axios';
+import { logger } from '@shared/utils/logger';
 
 export interface LlmGraphEntity {
   value: string;
@@ -31,11 +32,11 @@ export class ContentProcessingService {
   public async processContentBatch(
     contents: string[],
   ): Promise<Array<{
-    entities: any[];
-    relationships: any[];
+    entities: unknown[];
+    relationships: unknown[];
   }>> {
     try {
-      console.log(`   🧠 Calling batch /extract-graph endpoint for ${contents.length} documents...`);
+      logger.info(`   🧠 Calling batch /extract-graph endpoint for ${contents.length} documents...`);
       const batchResponse = await axios.post<LlmGraphResponse[]>(
         `${this.nlpServiceUrl}/batch-extract-graph`,
         { texts: contents },
@@ -49,13 +50,13 @@ export class ContentProcessingService {
         graphs = graphs.graphs;
       }
 
-      console.log(`      -> LLM extracted graphs for ${graphs?.length ?? 0} documents.`);
+      logger.info(`      -> LLM extracted graphs for ${graphs?.length ?? 0} documents.`);
       
-      const allEntities: any[] = [];
+      const allEntities: unknown[] = [];
       const documentEntityMap: Map<number, any[]> = new Map();
 
       if (!Array.isArray(graphs)) {
-        console.error('   ❌ NLP service did not return a valid array of graphs. Original Response:', batchResponse.data);
+        logger.error('   ❌ NLP service did not return a valid array of graphs. Original Response:', batchResponse.data);
         return [];
       }
 
@@ -74,7 +75,7 @@ export class ContentProcessingService {
       
       if (allEntities.length > 0) {
         const entityNames = allEntities.map(e => e.name);
-        console.log(`   ↪️ Generating embeddings for ${entityNames.length} total entities...`);
+        logger.info(`   ↪️ Generating embeddings for ${entityNames.length} total entities...`);
         try {
           const embeddingResponse = await axios.post<{ embeddings: number[][] }>(
             `${this.nlpServiceUrl}/embed`,
@@ -87,10 +88,10 @@ export class ContentProcessingService {
             allEntities.forEach((entity, index) => {
               entity.embedding = embeddings[index];
             });
-            console.log(`      -> All embeddings attached successfully.`);
+            logger.info(`      -> All embeddings attached successfully.`);
           }
         } catch (embeddingError) {
-          console.error('   ❌ Error generating batch entity embeddings:', embeddingError);
+          logger.error('   ❌ Error generating batch entity embeddings:', embeddingError);
         }
       }
 
@@ -117,9 +118,9 @@ export class ContentProcessingService {
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error('   ❌ Error calling batch NLP graph service:', error.response?.data?.detail || error.message);
+        logger.error('   ❌ Error calling batch NLP graph service:', error.response?.data?.detail || error.message);
       } else {
-        console.error('   ❌ An unexpected error occurred during batch NLP processing:', error);
+        logger.error('   ❌ An unexpected error occurred during batch NLP processing:', error);
       }
       return [];
     }

@@ -18,5 +18,5 @@ export interface EntityExtractionResult {
 }
 
 export abstract class EntityExtractionService {
-  abstract extractEntities(text: string, options?: any): Promise<EntityExtractionResult>;
+  abstract extractEntities(text: string, options?: unknown): Promise<EntityExtractionResult>;
 }

@@ -9,17 +9,18 @@
 import { readFileSync } from 'fs';
 import { simpleParser, ParsedMail, AddressObject } from 'mailparser';
 import { singleton } from 'tsyringe';
+import { logger } from '@shared/utils/logger';
 
-// TODO: Update these imports to use the new unified architecture
+// Imports will be updated during architecture refactoring
 // import { SpacyEntityExtractionService } from '../../../intelligence/nlp/entity-extractor';
 // import { NormalizedData } from '../../../core/types/normalized-data.interface';
 
 export interface EmailProcessingResult {
   success: boolean;
-  email: any; // TODO: Define proper email type
-  entities: any[]; // TODO: Use unified entity types
-  relationships: any[]; // TODO: Use unified relationship types
-  insights: any; // TODO: Use unified insights type
+  email: unknown; // TODO: Define proper email type
+  entities: unknown[]; // TODO: Use unified entity types
+  relationships: unknown[]; // TODO: Use unified relationship types
+  insights: unknown; // TODO: Use unified insights type
 }
 
 @singleton()
@@ -35,9 +36,9 @@ export class EmailProcessor {
    * TODO: Refactor to use unified interfaces
    */
   async processEmlFile(emlFilePath: string): Promise<EmailProcessingResult> {
-    console.log(`📧 Processing EML file: ${emlFilePath}`);
+    logger.info(`📧 Processing EML file: ${emlFilePath}`);
     
-    // TODO: Implement using unified pipeline
+    // Implementation pending using unified pipeline
     // 1. Parse email
     // 2. Normalize to unified format
     // 3. Extract entities using unified extractor

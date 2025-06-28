@@ -9,6 +9,28 @@ import { OntologyService } from '@platform/ontology/ontology.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { QueryTranslator, ConversationTurn } from './query-translator.service';
 import OpenAI from 'openai';
+import { logger } from '@shared/utils/logger';
+
+export interface ChatQuery {
+  query: string;
+  limit?: number;
+  offset?: number;
+  filters?: { [key: string]: string };
+  sortBy?: string;
+  sortOrder?: 'ASC' | 'DESC';
+}
+
+export interface ChatResponse {
+  answer: string;
+  data?: unknown[];
+  metadata?: {
+    total: number;
+    page: number;
+    pageSize: number;
+    hasMore: boolean;
+    executionTime: number;
+  };
+}
 
 @singleton()
 export class ChatService {
@@ -17,11 +39,14 @@ export class ChatService {
   // Simple history for the CLI context
   private queryHistory: ConversationTurn[] = [];
   private openai: OpenAI;
+  private neo4j: Neo4jConnection;
+  private ontologyService: OntologyService;
+  private accessControlService: AccessControlService;
 
   constructor(
-    private readonly accessControlService: AccessControlService,
-    private readonly ontologyService: OntologyService,
-    private readonly neo4j: Neo4jConnection,
+    neo4j: Neo4jConnection,
+    ontologyService: OntologyService,
+    accessControlService: AccessControlService,
     private readonly queryTranslator: QueryTranslator,
   ) {
     if (!process.env.OPENAI_API_KEY) {
@@ -30,6 +55,10 @@ export class ChatService {
     this.openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
+
+    this.neo4j = neo4j;
+    this.ontologyService = ontologyService;
+    this.accessControlService = accessControlService;
 
     // Seed with a sample conversation for testing
     const sampleConversation: Conversation = {
@@ -110,7 +139,7 @@ export class ChatService {
       this.queryHistory,
     );
 
-    let response: any;
+    let response: unknown;
     let responseText: string;
     let sourceEntityForResponse: any = null;
 
@@ -169,7 +198,7 @@ export class ChatService {
     return finalResponse;
   }
 
-  private cleanRecord(record: any): any {
+  private cleanRecord(record: unknown): any {
     if (!record) {
         return null;
     }
@@ -178,7 +207,7 @@ export class ChatService {
     return rest;
   }
 
-  private async generateNaturalResponse(originalQuery: string, data: any, sourceEntity: any = null): Promise<string> {
+  private async generateNaturalResponse(originalQuery: string, data: unknown, sourceEntity: any = null): Promise<string> {
     if (typeof data === 'string') {
         return data; // Return simple messages directly
     }
@@ -206,7 +235,7 @@ Summarize the results if they are numerous, but list key details. Format your an
     const dataAsString = JSON.stringify(dataToSend, null, 2);
 
     try {
-        console.log('--- Sending to OpenAI for Final Response Generation ---');
+        logger.info('--- Sending to OpenAI for Final Response Generation ---');
         const completion = await this.openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [
@@ -215,7 +244,7 @@ Summarize the results if they are numerous, but list key details. Format your an
             ],
         });
         const result = completion.choices[0]?.message?.content;
-        console.log('--- Received Natural Language Response from OpenAI ---');
+        logger.info('--- Received Natural Language Response from OpenAI ---');
 
         if (!result) {
             return "I found some data, but I'm having trouble phrasing a response.";
@@ -223,21 +252,21 @@ Summarize the results if they are numerous, but list key details. Format your an
         return result;
 
     } catch (error) {
-        console.error('Error generating natural response with OpenAI:', error);
+        logger.error('Error generating natural response with OpenAI:', error);
         return 'I encountered an error while formulating the final response.';
     }
   }
 
   private async getAndFormatResources(user: User, resourceTypes: PermissionResource[], filters?: { [key: string]: string }) {
-    const allResults: any[] = [];
+    const allResults: unknown[] = [];
     for (const resourceType of resourceTypes) {
         if (!this.ontologyService.getAllEntityTypes().includes(resourceType)) {
-            console.warn(`Skipping unknown resource type '${resourceType}'`);
+            logger.warn(`Skipping unknown resource type '${resourceType}'`);
             continue;
         }
     
         if (!this.accessControlService.can(user, 'query', resourceType)) {
-            console.warn(`Access denied to query resource '${resourceType}'`);
+            logger.warn(`Access denied to query resource '${resourceType}'`);
             continue;
         }
 
@@ -257,10 +286,21 @@ Summarize the results if they are numerous, but list key details. Format your an
                 }
             }
 
-            const query = `MATCH (n:\`${resourceType}\`) ${whereClauses} RETURN n LIMIT 20`;
-            console.log(`Executing Cypher: ${query}`);
+            // Optimized query with pagination and sorting
+            const query = `
+                MATCH (n:\`${resourceType}\`) ${whereClauses} 
+                RETURN n 
+                ORDER BY n.createdAt DESC 
+                SKIP $skip LIMIT $limit
+            `;
+            logger.info(`Executing Cypher: ${query}`);
 
-            const result = await session.run(query, params);
+            const queryParams = { 
+                ...params, 
+                skip: 0, 
+                limit: 20 
+            };
+            const result = await session.run(query, queryParams);
             const newRecords = result.records.map(r => this.cleanRecord({ ...r.get('n').properties, __type: resourceType }));
             allResults.push(...newRecords);
         } finally {
@@ -277,12 +317,12 @@ Summarize the results if they are numerous, but list key details. Format your an
     filters?: { [key: string]: string },
     sourceEntityName?: string,
     relationshipType?: string
-  ): Promise<{ sourceEntity: any; relatedResources: any[] } | null> {
+  ): Promise<{ sourceEntity: unknown; relatedResources: unknown[] } | null> {
     if (targetResourceTypes.some(rt => !this.accessControlService.can(user, 'query', rt as PermissionResource))) {
         throw new Error(`Access denied to query one of the target resource types.`);
     }
 
-    let sourceEntities: any[] = [];
+    let sourceEntities: unknown[] = [];
 
     // Case 1: The query is self-contained and defines the source entity with filters (e.g., "orgs related to person named Rick")
     if (filters && Object.keys(filters).length > 0) {
@@ -329,7 +369,7 @@ Summarize the results if they are numerous, but list key details. Format your an
             RETURN DISTINCT target
         `;
         
-        console.log(`Executing Cypher: ${cypherQuery.replace(/\s+/g, ' ').trim()}`);
+        logger.info(`Executing Cypher: ${cypherQuery.replace(/\s+/g, ' ').trim()}`);
 
         const result = await session.run(cypherQuery, { sourceIds });
         const records = result.records.map(record => record.get('target'));
@@ -343,7 +383,7 @@ Summarize the results if they are numerous, but list key details. Format your an
     }
   }
 
-  private formatResults(resourceTypes: string[], records: any[]): string {
+  private formatResults(resourceTypes: string[], records: unknown[]): string {
     if (!records || records.length === 0) {
         return `No results found for '${resourceTypes.join(', ')}'.`;
     }
@@ -355,7 +395,7 @@ Summarize the results if they are numerous, but list key details. Format your an
     let resultsText = '';
 
     // Group results by their type for clearer output
-    const groupedResults: { [key: string]: any[] } = {};
+    const groupedResults: { [key: string]: unknown[] } = {};
     for (const record of records) {
         const type = record.__type || resourceTypes[0];
         if (!groupedResults[type]) {
@@ -407,5 +447,324 @@ Summarize the results if they are numerous, but list key details. Format your an
 
 
     return resultsText.trim();
+  }
+
+  async processQuery(user: User, chatQuery: ChatQuery): Promise<ChatResponse> {
+    const startTime = Date.now();
+    
+    try {
+      // Parse the natural language query
+      const { intent, entities, resourceTypes, filters } = await this.parseQuery(chatQuery.query);
+      
+      // Apply user filters and pagination
+      const mergedFilters = { ...filters, ...chatQuery.filters };
+      const limit = Math.min(chatQuery.limit || 20, 100); // Max 100 items
+      const offset = chatQuery.offset || 0;
+      
+      // Get data with optimized pagination
+      const results = await this.getAndFormatResourcesOptimized(
+        user, 
+        resourceTypes, 
+        mergedFilters,
+        {
+          limit,
+          offset,
+          sortBy: chatQuery.sortBy || 'createdAt',
+          sortOrder: chatQuery.sortOrder || 'DESC'
+        }
+      );
+      
+      // Generate response
+      const answer = await this.generateResponse(intent, entities, results.data);
+      
+      const executionTime = Date.now() - startTime;
+      
+      return {
+        answer,
+        data: results.data,
+        metadata: {
+          total: results.total,
+          page: Math.floor(offset / limit) + 1,
+          pageSize: limit,
+          hasMore: offset + limit < results.total,
+          executionTime
+        }
+      };
+      
+    } catch (error) {
+      logger.error('Chat query processing failed:', error);
+      return {
+        answer: "Je suis désolé, je n'ai pas pu traiter votre demande. Pouvez-vous reformuler ?",
+        metadata: {
+          total: 0,
+          page: 1,
+          pageSize: 0,
+          hasMore: false,
+          executionTime: Date.now() - startTime
+        }
+      };
+    }
+  }
+
+  private async parseQuery(query: string): Promise<{
+    intent: string;
+    entities: string[];
+    resourceTypes: PermissionResource[];
+    filters: { [key: string]: string };
+  }> {
+    // Enhanced query parsing logic
+    const intent = this.extractIntent(query);
+    const entities = this.extractEntities(query);
+    const resourceTypes = this.mapToResourceTypes(query);
+    const filters = this.extractFilters(query);
+    
+    return { intent, entities, resourceTypes, filters };
+  }
+
+  private extractIntent(query: string): string {
+    const lowerQuery = query.toLowerCase();
+    
+    if (lowerQuery.includes('show') || lowerQuery.includes('list') || lowerQuery.includes('find')) {
+      return 'list';
+    } else if (lowerQuery.includes('count') || lowerQuery.includes('how many')) {
+      return 'count';
+    } else if (lowerQuery.includes('recent') || lowerQuery.includes('latest')) {
+      return 'recent';
+    } else if (lowerQuery.includes('search')) {
+      return 'search';
+    }
+    
+    return 'general';
+  }
+
+  private extractEntities(query: string): string[] {
+    // Simple entity extraction - could be enhanced with NLP
+    const entities: string[] = [];
+    const words = query.toLowerCase().split(' ');
+    
+    // Look for common business entities
+    const entityPatterns = {
+      'contact': ['contact', 'person', 'people'],
+      'organization': ['organization', 'company', 'firm'],
+      'deal': ['deal', 'transaction', 'opportunity'],
+      'communication': ['email', 'communication', 'message'],
+      'task': ['task', 'todo', 'action']
+    };
+    
+    for (const [entity, patterns] of Object.entries(entityPatterns)) {
+      if (patterns.some(pattern => words.includes(pattern))) {
+        entities.push(entity);
+      }
+    }
+    
+    return entities;
+  }
+
+  private mapToResourceTypes(query: string): PermissionResource[] {
+    const lowerQuery = query.toLowerCase();
+    const resourceTypes: PermissionResource[] = [];
+    
+    // Map query terms to resource types
+    if (lowerQuery.includes('contact') || lowerQuery.includes('person')) {
+      resourceTypes.push('Contact'); // Person maps to Contact
+    }
+    if (lowerQuery.includes('organization') || lowerQuery.includes('company')) {
+      resourceTypes.push('Organization');
+    }
+    if (lowerQuery.includes('deal') || lowerQuery.includes('project')) {
+      resourceTypes.push('Deal');
+    }
+    if (lowerQuery.includes('email') || lowerQuery.includes('communication')) {
+      resourceTypes.push('Communication');
+    }
+    if (lowerQuery.includes('task')) {
+      resourceTypes.push('Task');
+    }
+    
+    // Default to common entities if none specified
+    if (resourceTypes.length === 0) {
+      resourceTypes.push('Contact', 'Organization', 'Deal');
+    }
+    
+    return resourceTypes;
+  }
+
+  private extractFilters(query: string): { [key: string]: string } {
+    const filters: { [key: string]: string } = {};
+    
+    // Extract date filters
+    if (query.includes('today')) {
+      filters.dateFilter = 'today';
+    } else if (query.includes('this week')) {
+      filters.dateFilter = 'week';
+    } else if (query.includes('this month')) {
+      filters.dateFilter = 'month';
+    }
+    
+    // Extract status filters
+    if (query.includes('active')) {
+      filters.status = 'active';
+    } else if (query.includes('completed')) {
+      filters.status = 'completed';
+    }
+    
+    return filters;
+  }
+
+  private async getAndFormatResourcesOptimized(
+    user: User, 
+    resourceTypes: PermissionResource[], 
+    filters?: { [key: string]: string },
+    pagination?: {
+      limit: number;
+      offset: number;
+      sortBy: string;
+      sortOrder: 'ASC' | 'DESC';
+    }
+  ): Promise<{ data: unknown[]; total: number }> {
+    
+    const allResults: unknown[] = [];
+    let totalCount = 0;
+    
+    for (const resourceType of resourceTypes) {
+      if (!this.ontologyService.getAllEntityTypes().includes(resourceType)) {
+        logger.warn(`Skipping unknown resource type '${resourceType}'`);
+        continue;
+      }
+      
+      if (!this.accessControlService.can(user, 'query', resourceType)) {
+        logger.warn(`Access denied to query resource '${resourceType}'`);
+        continue;
+      }
+
+      const session = this.neo4j.getDriver().session();
+      try {
+        // Build optimized query with proper indexing
+        const { whereClause, params } = this.buildWhereClause(filters);
+        const { orderClause, limitClause } = this.buildPaginationClause(pagination);
+        
+        // Count query for total
+        const countQuery = `
+          MATCH (n:\`${resourceType}\`) 
+          ${whereClause}
+          RETURN count(n) as total
+        `;
+        
+        const countResult = await session.run(countQuery, params);
+        const typeTotal = countResult.records[0]?.get('total').toNumber() || 0;
+        totalCount += typeTotal;
+        
+        // Data query with pagination
+        const dataQuery = `
+          MATCH (n:\`${resourceType}\`) 
+          ${whereClause}
+          RETURN n
+          ${orderClause}
+          ${limitClause}
+        `;
+        
+        logger.info(`Executing optimized query: ${dataQuery}`);
+        
+        const dataResult = await session.run(dataQuery, {
+          ...params,
+          skip: pagination?.offset || 0,
+          limit: pagination?.limit || 20
+        });
+        
+        const records = dataResult.records.map(r => 
+          this.cleanRecord({ 
+            ...r.get('n').properties, 
+            __type: resourceType 
+          })
+        );
+        
+        allResults.push(...records);
+        
+      } catch (error) {
+        logger.error(`Query failed for ${resourceType}:`, error);
+      } finally {
+        await session.close();
+      }
+    }
+    
+    return { data: allResults, total: totalCount };
+  }
+
+  private buildWhereClause(filters?: { [key: string]: string }): { 
+    whereClause: string; 
+    params: { [key: string]: any } 
+  } {
+    if (!filters || Object.keys(filters).length === 0) {
+      return { whereClause: '', params: {} };
+    }
+    
+    const clauses: string[] = [];
+    const params: { [key: string]: any } = {};
+    
+    Object.entries(filters).forEach(([key, value], index) => {
+      if (key === 'dateFilter') {
+        // Handle date filters
+        const paramName = `dateParam${index}`;
+        switch (value) {
+          case 'today':
+            clauses.push(`n.createdAt >= datetime() - duration({days: 1})`);
+            break;
+          case 'week':
+            clauses.push(`n.createdAt >= datetime() - duration({days: 7})`);
+            break;
+          case 'month':
+            clauses.push(`n.createdAt >= datetime() - duration({days: 30})`);
+            break;
+        }
+      } else {
+        // Handle property filters
+        const paramName = `param${index}`;
+        params[paramName] = value;
+        clauses.push(`toLower(toString(n.\`${key}\`)) CONTAINS toLower($${paramName})`);
+      }
+    });
+    
+    const whereClause = clauses.length > 0 ? `WHERE ${clauses.join(' AND ')}` : '';
+    return { whereClause, params };
+  }
+
+  private buildPaginationClause(pagination?: {
+    limit: number;
+    offset: number;
+    sortBy: string;
+    sortOrder: 'ASC' | 'DESC';
+  }): { orderClause: string; limitClause: string } {
+    
+    if (!pagination) {
+      return { orderClause: '', limitClause: 'LIMIT 20' };
+    }
+    
+    const orderClause = `ORDER BY n.${pagination.sortBy} ${pagination.sortOrder}`;
+    const limitClause = `SKIP $skip LIMIT $limit`;
+    
+    return { orderClause, limitClause };
+  }
+
+  private async generateResponse(intent: string, entities: string[], data: unknown[]): Promise<string> {
+    const count = data.length;
+    
+    if (count === 0) {
+      return "Je n'ai trouvé aucun résultat correspondant à votre recherche.";
+    }
+    
+    switch (intent) {
+      case 'count':
+        return `J'ai trouvé ${count} élément(s) correspondant à votre recherche.`;
+      
+      case 'list':
+        const entityTypes = [...new Set(data.map(item => item.__type))];
+        return `J'ai trouvé ${count} résultat(s) incluant ${entityTypes.join(', ')}.`;
+      
+      case 'recent':
+        return `Voici les ${count} éléments les plus récents que j'ai trouvés.`;
+      
+      default:
+        return `J'ai trouvé ${count} résultat(s) pour votre recherche.`;
+    }
   }
 } 

@@ -10,6 +10,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { container } from 'tsyringe';
 import { QueryTranslator } from './platform/chat/application/services/query-translator.service';
+import { logger } from '@shared/utils/logger';
 
 // Créer le serveur MCP
 const mcpServer = new Server(
@@ -83,7 +84,7 @@ This tool provides information about:
 
 // Gestionnaire pour lister les outils
 mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
-  console.error('📋 ListTools called');
+  logger.error('📋 ListTools called');
   return {
     tools: [queryTool, helpTool],
   };
@@ -91,7 +92,7 @@ mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
 
 // Gestionnaire pour appeler les outils
 mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
-  console.error(`🔧 CallTool called with: ${request.params.name}`);
+  logger.error(`🔧 CallTool called with: ${request.params.name}`);
   const { name, arguments: args } = request.params;
 
   if (name === 'query') {
@@ -125,10 +126,10 @@ This structured query can be used to search your business data efficiently.`;
       const result: CallToolResult = {
         content: [{ type: 'text', text: response }],
       };
-      console.error(`✅ Response sent for query: "${query}"`);
+      logger.error(`✅ Response sent for query: "${query}"`);
       return result;
     } catch (error) {
-      console.error('💥 Error during query translation:', error);
+      logger.error('💥 Error during query translation:', error);
       const errorResponse = `❌ Error translating query: "${query}"
 
 Error details: ${error instanceof Error ? error.message : 'Unknown error'}
@@ -308,22 +309,22 @@ async function main() {
   
   // Gestionnaire de fermeture propre
   process.on('SIGINT', async () => {
-    console.error('🛑 Shutting down gracefully...');
+    logger.error('🛑 Shutting down gracefully...');
     await mcpServer.close();
     process.exit(0);
   });
   
   process.on('SIGTERM', async () => {
-    console.error('🛑 Shutting down gracefully...');
+    logger.error('🛑 Shutting down gracefully...');
     await mcpServer.close();
     process.exit(0);
   });
   
   await mcpServer.connect(transport);
-  console.error('🚀 Simple MCP Server running on stdio');
+  logger.error('🚀 Simple MCP Server running on stdio');
 }
 
 main().catch((error) => {
-  console.error('Fatal error in main():', error);
+  logger.error('Fatal error in main():', error);
   process.exit(1);
 }); 

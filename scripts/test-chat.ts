@@ -52,7 +52,7 @@ function displayPrompt() {
             // For simplicity, we'll let the service manage the history for now.
             // In a real client, you'd manage the state here.
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(`\n[ERROR] ${error.message}\n`);
         }
 

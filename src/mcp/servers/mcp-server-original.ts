@@ -12,6 +12,7 @@ import {
 import { container } from 'tsyringe';
 import { QueryTranslator } from './platform/chat/application/services/query-translator.service';
 import './register-ontologies';
+import { logger } from '@shared/utils/logger';
 
 const app = express();
 const port = process.env.MCP_PORT || 3000;
@@ -49,14 +50,14 @@ function createMcpServer(): Server {
   };
 
   mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
-    console.error('📋 ListTools called');
+    logger.error('📋 ListTools called');
     return {
       tools: [queryTool],
     };
   });
 
   mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
-    console.error(`🔧 CallTool called with: ${request.params.name}`);
+    logger.error(`🔧 CallTool called with: ${request.params.name}`);
     const { name, arguments: args } = request.params;
 
     if (name === 'query') {
@@ -72,10 +73,10 @@ function createMcpServer(): Server {
         const result: CallToolResult = {
           content: [{ type: 'text', text: response }],
         };
-        console.error(`✅ Response sent:`, result);
+        logger.error(`✅ Response sent:`, result);
         return result;
       } catch (error) {
-        console.error('💥 Error during query translation:', error);
+        logger.error('💥 Error during query translation:', error);
         throw new Error('Failed to translate query');
       }
     }
@@ -88,7 +89,7 @@ function createMcpServer(): Server {
 
 // Handle POST requests in a stateless manner
 app.post('/mcp', async (req: Request, res: Response) => {
-  console.log('Incoming POST /mcp request');
+  logger.info('Incoming POST /mcp request');
   // For stateless mode, we create a new server and transport for each request
   // to ensure isolation and prevent request ID collisions.
   const server = createMcpServer();
@@ -98,7 +99,7 @@ app.post('/mcp', async (req: Request, res: Response) => {
 
   // Clean up server and transport when the client connection closes
   res.on('close', () => {
-    console.log('Request closed, cleaning up resources.');
+    logger.info('Request closed, cleaning up resources.');
     transport.close();
     server.close();
   });
@@ -107,7 +108,7 @@ app.post('/mcp', async (req: Request, res: Response) => {
     await server.connect(transport);
     await transport.handleRequest(req, res, req.body);
   } catch (error) {
-    console.error('Error handling MCP request:', error);
+    logger.error('Error handling MCP request:', error);
     if (!res.headersSent) {
       res.status(500).json({
         jsonrpc: '2.0',
@@ -137,5 +138,5 @@ app.delete('/mcp', (req: Request, res: Response) => {
 
 // Démarrer le serveur
 app.listen(port, () => {
-  console.log(`🚀 MCP Server is online and listening at http://localhost:${port}/mcp`);
+  logger.info(`🚀 MCP Server is online and listening at http://localhost:${port}/mcp`);
 }); 

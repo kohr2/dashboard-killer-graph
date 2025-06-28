@@ -14,6 +14,7 @@ import { EdgarEnrichmentService } from '@platform/enrichment';
 import axios from 'axios';
 import { singleton, inject } from 'tsyringe';
 import { SpacyEntityExtractionService } from '@crm/application/services/spacy-entity-extraction.service';
+import { logger } from '@shared/utils/logger';
 
 const ENTITY_ALIAS_MAP: Record<string, string> = {
   'GS': 'Goldman Sachs',
@@ -43,7 +44,7 @@ export interface FinancialEntityContext {
 export interface FinancialInsights {
   portfolioAnalysis: {
     totalValue: number;
-    instruments: any[];
+    instruments: unknown[];
     riskProfile: {
       score: number;
       distribution: Record<string, number>;
@@ -57,13 +58,13 @@ export interface FinancialInsights {
   transactionAnalysis: {
     volume: number;
     totalValue: number;
-    transactions: any[];
+    transactions: unknown[];
     patterns: string[];
     complianceAlerts: string[];
   };
   marketIntelligence: {
     instruments: string[];
-    marketData: any[];
+    marketData: unknown[];
     trends: string[];
     alerts: string[];
   };
@@ -81,8 +82,8 @@ export interface FinancialInsights {
 }
 
 export interface LlmGraphResponse {
-  entities: any[];
-  relationships: any[];
+  entities: unknown[];
+  relationships: unknown[];
   refinement_info: string;
 }
 
@@ -101,13 +102,13 @@ export class FinancialEntityIntegrationService {
   public async processFinancialContent(
     content: string,
   ): Promise<{
-    fiboEntities: any[];
+    fiboEntities: unknown[];
     crmIntegration: {
-      relationships: any[];
+      relationships: unknown[];
     };
   }> {
     try {
-      console.log('   🧠 Calling advanced /extract-graph endpoint...');
+      logger.info('   🧠 Calling advanced /extract-graph endpoint...');
       const response = await axios.post<LlmGraphResponse>(
         `${this.nlpServiceUrl}/extract-graph`,
         { text: content },
@@ -115,7 +116,7 @@ export class FinancialEntityIntegrationService {
       );
 
       const graph = response.data;
-      console.log(`      -> LLM extracted ${graph.entities.length} entities and ${graph.relationships.length} relationships.`);
+      logger.info(`      -> LLM extracted ${graph.entities.length} entities and ${graph.relationships.length} relationships.`);
 
       // The LLM now returns generic entities. We no longer need to map them to strict FIBO types here.
       // The `embedding` property will be added in the next step.
@@ -130,7 +131,7 @@ export class FinancialEntityIntegrationService {
       // --- NEW: Generate and attach embeddings for each entity ---
       if (fiboEntities.length > 0) {
         const entityNames = fiboEntities.map(e => e.name);
-        console.log(`   ↪️ Generating embeddings for ${entityNames.length} entities...`);
+        logger.info(`   ↪️ Generating embeddings for ${entityNames.length} entities...`);
         try {
           const embeddingResponse = await axios.post<{ embeddings: number[][] }>(
             `${this.nlpServiceUrl}/embed`,
@@ -143,10 +144,10 @@ export class FinancialEntityIntegrationService {
             fiboEntities.forEach((entity, index) => {
               (entity as any).embedding = embeddings[index];
             });
-            console.log(`      -> Embeddings attached successfully.`);
+            logger.info(`      -> Embeddings attached successfully.`);
           }
         } catch (embeddingError) {
-          console.error('   ❌ Error generating entity embeddings:', embeddingError);
+          logger.error('   ❌ Error generating entity embeddings:', embeddingError);
           // Continue without embeddings if this step fails
         }
       }
@@ -169,7 +170,7 @@ export class FinancialEntityIntegrationService {
           target: entityMap.get('Project Gotham'),
           type: 'WORKS_ON'
         });
-        console.log('   🛠️  Manually added WORKS_ON relationship between Rick and Project Gotham.');
+        logger.info('   🛠️  Manually added WORKS_ON relationship between Rick and Project Gotham.');
       }
 
       return {
@@ -179,9 +180,9 @@ export class FinancialEntityIntegrationService {
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error('   ❌ Error calling NLP graph service:', error.response?.data?.detail || error.message);
+        logger.error('   ❌ Error calling NLP graph service:', error.response?.data?.detail || error.message);
       } else {
-        console.error('   ❌ An unexpected error occurred during NLP processing:', error);
+        logger.error('   ❌ An unexpected error occurred during NLP processing:', error);
       }
       // Return an empty structure on failure
       return { fiboEntities: [], crmIntegration: { relationships: [] } };

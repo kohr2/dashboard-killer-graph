@@ -3,6 +3,7 @@ import { Router, Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { ChatService } from './application/services/chat.service';
 import { User } from '@platform/security/domain/user';
+import { logger } from '@shared/utils/logger';
 
 const chatRouter = Router();
 const chatService = container.resolve(ChatService);
@@ -32,7 +33,7 @@ chatRouter.post('/query', async (req: Request, res: Response) => {
     res.json({ response });
   } catch (error) {
     const err = error as Error;
-    console.error('Error handling query:', err.message);
+    logger.error('Error handling query:', err.message);
     res.status(500).json({ error: 'An internal error occurred', details: err.message });
   }
 });

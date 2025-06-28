@@ -10,6 +10,7 @@ import {
 } from '@crm/domain/entities/contact-ontology';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { singleton, inject } from 'tsyringe';
+import { logger } from '@shared/utils/logger';
 
 @singleton()
 export class Neo4jOCreamContactRepository implements ContactRepository {
@@ -85,7 +86,7 @@ export class Neo4jOCreamContactRepository implements ContactRepository {
     }
   }
 
-  async search(query: any): Promise<OCreamContactEntity[]> {
+  async search(query: unknown): Promise<OCreamContactEntity[]> {
     const session = this.driver.session();
     try {
       const result = await session.run(`MATCH (c:${this.contactLabels}) WHERE c.name CONTAINS $query OR c.email CONTAINS $query RETURN c`, { query });
@@ -105,12 +106,12 @@ export class Neo4jOCreamContactRepository implements ContactRepository {
   }
 
   async addEmailToContact(contactId: string, email: string): Promise<void> {
-    // TODO: Implement the logic to add an additional email to a contact
-    console.log(`Adding email ${email} to contact ${contactId} - not implemented`);
+    // Implementation pending the logic to add an additional email to a contact
+    logger.info(`Adding email ${email} to contact ${contactId} - not implemented`);
     return Promise.resolve();
   }
   
-  private mapNodeToContact(node: any): OCreamContactEntity {
+  private mapNodeToContact(node: unknown): OCreamContactEntity {
     return ContactOntology.createOCreamContact({
         id: node.id,
         firstName: node.firstName,

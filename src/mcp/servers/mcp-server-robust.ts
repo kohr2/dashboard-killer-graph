@@ -9,6 +9,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { logger } from '@shared/utils/logger';
 
 // Variables pour les services optionnels
 let queryTranslator: any = null;
@@ -17,7 +18,7 @@ let isAdvancedMode = false;
 // Initialisation robuste des dépendances
 async function initializeDependencies() {
   try {
-    console.error('🔄 Initializing dependencies...');
+    logger.error('🔄 Initializing dependencies...');
     
     // Charger reflect-metadata d'abord
     await import('reflect-metadata');
@@ -29,7 +30,7 @@ async function initializeDependencies() {
       
       queryTranslator = tsyringe.container.resolve(QueryTranslatorModule.QueryTranslator);
       isAdvancedMode = true;
-      console.error('✅ Advanced mode enabled');
+      logger.error('✅ Advanced mode enabled');
       return;
     } catch (requireError) {
       // Si require échoue, essayer avec import dynamique
@@ -47,7 +48,7 @@ async function initializeDependencies() {
           const { QueryTranslator } = await import(path);
           queryTranslator = container.resolve(QueryTranslator);
           isAdvancedMode = true;
-          console.error('✅ Advanced mode enabled');
+          logger.error('✅ Advanced mode enabled');
           return;
         } catch (pathError) {
           continue;
@@ -58,8 +59,8 @@ async function initializeDependencies() {
     }
     
   } catch (error) {
-    console.error(`⚠️ Advanced features not available: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    console.error('🔄 Running in basic mode');
+    logger.error(`⚠️ Advanced features not available: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    logger.error('🔄 Running in basic mode');
     isAdvancedMode = false;
   }
 }
@@ -136,7 +137,7 @@ This tool provides information about:
 
 // Gestionnaire pour lister les outils
 mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
-  console.error('📋 ListTools called');
+  logger.error('📋 ListTools called');
   return {
     tools: [queryTool, helpTool],
   };
@@ -144,7 +145,7 @@ mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
 
 // Gestionnaire pour appeler les outils
 mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
-  console.error(`🔧 CallTool called with: ${request.params.name}`);
+  logger.error(`🔧 CallTool called with: ${request.params.name}`);
   const { name, arguments: args } = request.params;
 
   if (name === 'query') {
@@ -175,12 +176,12 @@ ${JSON.stringify(structuredQuery, null, 2)}
 
 This structured query can be used to search your business data efficiently.`;
 
-        console.error(`✅ Advanced response sent for query: "${query}"`);
+        logger.error(`✅ Advanced response sent for query: "${query}"`);
         return {
           content: [{ type: 'text', text: response }],
         };
       } catch (error) {
-        console.error('💥 Error in advanced mode:', error);
+        logger.error('💥 Error in advanced mode:', error);
         // Fallback au mode de base
       }
     }
@@ -208,7 +209,7 @@ ${isAdvancedMode ? 'Try rephrasing your query or check server logs for details.'
 - Financial Deals and Investments
 - Business Relationships`;
 
-    console.error(`📝 Basic response sent for query: "${query}"`);
+    logger.error(`📝 Basic response sent for query: "${query}"`);
     return {
       content: [{ type: 'text', text: basicResponse }],
     };
@@ -313,22 +314,22 @@ async function main() {
   
   // Gestionnaire de fermeture propre
   process.on('SIGINT', async () => {
-    console.error('🛑 Shutting down gracefully...');
+    logger.error('🛑 Shutting down gracefully...');
     await mcpServer.close();
     process.exit(0);
   });
   
   process.on('SIGTERM', async () => {
-    console.error('🛑 Shutting down gracefully...');
+    logger.error('🛑 Shutting down gracefully...');
     await mcpServer.close();
     process.exit(0);
   });
   
   await mcpServer.connect(transport);
-  console.error(`🚀 Robust MCP Server running on stdio (${isAdvancedMode ? 'Advanced' : 'Basic'} mode)`);
+  logger.error(`🚀 Robust MCP Server running on stdio (${isAdvancedMode ? 'Advanced' : 'Basic'} mode)`);
 }
 
 main().catch((error) => {
-  console.error('Fatal error in main():', error);
+  logger.error('Fatal error in main():', error);
   process.exit(1);
 }); 

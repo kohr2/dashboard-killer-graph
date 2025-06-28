@@ -8,6 +8,7 @@ import {
   Tool,
 } from '@modelcontextprotocol/sdk/types.js';
 import { translateQueryBasic } from './query-translator-basic';
+import { logger } from '@shared/utils/logger';
 
 // Version fallback sans appels OpenAI
 const mcpServer = new Server(
@@ -67,7 +68,7 @@ const helpTool: Tool = {
 
 // Gestionnaire pour lister les outils
 mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
-  console.error('📋 ListTools called');
+  logger.error('📋 ListTools called');
   return {
     tools: [queryTool, helpTool],
   };
@@ -75,7 +76,7 @@ mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
 
 // Gestionnaire pour appeler les outils
 mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
-  console.error(`🔧 CallTool called with: ${request.params.name}`);
+  logger.error(`🔧 CallTool called with: ${request.params.name}`);
   const { name, arguments: args } = request.params;
 
   if (name === 'query') {
@@ -104,12 +105,12 @@ ${JSON.stringify(structuredQuery, null, 2)}
 
 **Note:** This is a simplified translation without AI processing. For more accurate results, ensure the advanced mode is working.`;
 
-      console.error(`✅ Fallback response sent for query: "${query}"`);
+      logger.error(`✅ Fallback response sent for query: "${query}"`);
       return {
         content: [{ type: 'text', text: response }],
       };
     } catch (error) {
-      console.error('💥 Error in fallback mode:', error);
+      logger.error('💥 Error in fallback mode:', error);
       return {
         content: [{ type: 'text', text: `❌ Error processing query: ${error instanceof Error ? error.message : 'Unknown error'}` }],
       };
@@ -177,12 +178,12 @@ Server is running in fallback mode for maximum stability. Advanced features are 
 
 // Gestionnaire d'arrêt propre
 process.on('SIGINT', () => {
-  console.error('🛑 Shutting down gracefully...');
+  logger.error('🛑 Shutting down gracefully...');
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.error('🛑 Shutting down gracefully...');
+  logger.error('🛑 Shutting down gracefully...');
   process.exit(0);
 });
 
@@ -190,10 +191,10 @@ process.on('SIGTERM', () => {
 async function main() {
   const transport = new StdioServerTransport();
   await mcpServer.connect(transport);
-  console.error('🚀 Fallback MCP Server running on stdio');
+  logger.error('🚀 Fallback MCP Server running on stdio');
 }
 
 main().catch((error) => {
-  console.error('💥 Failed to start server:', error);
+  logger.error('💥 Failed to start server:', error);
   process.exit(1);
 }); 

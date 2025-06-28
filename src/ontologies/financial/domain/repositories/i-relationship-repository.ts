@@ -6,5 +6,5 @@ import { Relationship } from '../entities/relationship';
 export interface IRelationshipRepository {
   findById(id: string): Promise<Relationship | null>;
   save(entity: Relationship): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 

@@ -5,6 +5,7 @@
 
 import { DataSource, SourceType, SourceConfig, FetchParams, HealthStatus } from '../../core/types/data-source.interface';
 import { existsSync } from 'fs';
+import { logger } from '@shared/utils/logger';
 
 export interface EmailSourceConfig extends SourceConfig {
   provider: 'eml' | 'imap' | 'exchange' | 'gmail';
@@ -24,7 +25,7 @@ export interface RawEmail {
   body: string;
   date: Date;
   headers: Record<string, string>;
-  attachments?: any[];
+  attachments?: unknown[];
 }
 
 export class EmailSource implements DataSource<RawEmail> {
@@ -41,14 +42,14 @@ export class EmailSource implements DataSource<RawEmail> {
   }
 
   async connect(): Promise<void> {
-    console.log(`📧 Connecting to email source: ${this.config.provider}`);
-    // TODO: Implement connection logic based on provider
+    logger.info(`📧 Connecting to email source: ${this.config.provider}`);
+    // Implementation pending connection logic based on provider
   }
 
   async *fetch(params?: FetchParams): AsyncIterable<RawEmail> {
-    console.log(`📥 Fetching emails from ${this.config.provider}...`);
+    logger.info(`📥 Fetching emails from ${this.config.provider}...`);
     
-    // TODO: Implement based on provider type
+    // Implementation pending based on provider type
     if (this.config.provider === 'eml' && this.config.directory) {
       yield* this.fetchFromEmlFiles(this.config.directory);
     } else if (this.config.provider === 'eml' && !this.config.directory) {
@@ -59,8 +60,8 @@ export class EmailSource implements DataSource<RawEmail> {
   }
 
   async disconnect(): Promise<void> {
-    console.log(`📧 Disconnecting from email source`);
-    // TODO: Implement cleanup
+    logger.info(`📧 Disconnecting from email source`);
+    // Implementation pending cleanup
   }
 
   async healthCheck(): Promise<HealthStatus> {
@@ -120,9 +121,9 @@ export class EmailSource implements DataSource<RawEmail> {
    * Fetch emails from .eml files directory
    */
   private async *fetchFromEmlFiles(directory: string): AsyncIterable<RawEmail> {
-    // TODO: Implement .eml file processing
+    // Implementation pending .eml file processing
     // This should replace the logic from demo-email-ingestion-spacy.ts
-    console.log(`📂 Processing .eml files from ${directory}`);
+    logger.info(`📂 Processing .eml files from ${directory}`);
     
     // Placeholder - implement actual file processing
     yield {

@@ -37,10 +37,10 @@ export interface HybridDealReport {
   deal: Deal;
   targetCompany: TargetCompany;
   involvedParties: InvolvedParty[];
-  mentionedFunds: any[];
+  mentionedFunds: unknown[];
   communicationHistory: Communication[];
-  crmTasks: any[];
-  competitors: any[];
+  crmTasks: unknown[];
+  competitors: unknown[];
   summary: string;
   relationships: Relationship[];
 }

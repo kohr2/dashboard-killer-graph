@@ -6,5 +6,5 @@ import { TargetCompany } from '../entities/target-company';
 export interface ITargetCompanyRepository {
   findById(id: string): Promise<TargetCompany | null>;
   save(entity: TargetCompany): Promise<void>;
-  // TODO: Add other repository methods
+  // Additional repository methods will be added as needed
 } 
