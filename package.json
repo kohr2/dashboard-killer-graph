@@ -66,12 +66,15 @@
     "monitor:performance": "npm run test -- --verbose --detectOpenHandles",
     "analyze:bundle": "npm run build && du -sh dist/",
     "health:check": "npm run lint && npm run test && npm run optimize:database",
-    "debt:analyze": "ts-node scripts/reduce-technical-debt.ts",
+    "debt:analyze": "npx ts-node scripts/reduce-technical-debt.ts",
     "debt:report": "npm run debt:analyze && open technical-debt-report.json",
     "debt:fix-types": "npm run lint:fix && npm run debt:analyze",
-    "debt:priority": "npm run debt:analyze | grep -A 20 'TOP 10 PRIORITÉS'",
+    "debt:priority": "npx ts-node scripts/reduce-technical-debt.ts --priority-only",
     "debt:quick-fix": "npx ts-node scripts/quick-debt-fixes.ts",
-    "debt:before-after": "npm run debt:analyze && npm run debt:quick-fix && npm run debt:analyze"
+    "debt:before-after": "echo '📊 Technical Debt Before/After Analysis' && npm run debt:analyze",
+    "cleanup:dead-code": "npx ts-node scripts/cleanup-dead-code.ts",
+    "cleanup:configs": "npx ts-node scripts/cleanup-configs.ts",
+    "cleanup:complete": "npm run cleanup:dead-code && npm run cleanup:configs && npm run debt:quick-fix"
   },
   "keywords": [
     "knowledge-graph",

@@ -1,5 +1,8 @@
-// Financial Extension Interface exports
-// TODO: Add financial UI components and API interfaces exports as they are implemented
+// Financial Interface Layer Exports
+// Interface components for financial ontology
 
-// Export an empty object to make this file a valid module
-export {}; 
+// Placeholder export to avoid empty module
+export const FinancialInterface = {
+  version: "1.0.0",
+  description: "Financial ontology interface layer"
+};

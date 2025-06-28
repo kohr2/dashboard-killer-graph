@@ -3,7 +3,7 @@
 
 import { promises as fs } from 'fs';
 import { join } from 'path';
-import { simpleParser } from 'mailparser';
+import { simpleParser, ParsedMail } from 'mailparser';
 import { v4 as uuidv4 } from 'uuid';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { Session } from 'neo4j-driver';
@@ -29,6 +29,7 @@ interface IngestionEntity {
   category?: string;
   createdAt?: Date;
   properties?: { [key: string]: any };
+  getOntologicalType?: () => string;
 }
 
 interface Relationship {
@@ -37,7 +38,16 @@ interface Relationship {
   type: string;
 }
 
-function getLabelInfo(entity: unknown, validOntologyTypes: string[]): { primary: string; candidates: string[] } {
+interface ParsedEmailWithSource extends ParsedMail {
+  sourceFile: string;
+}
+
+interface ProcessingResult {
+  entities: IngestionEntity[];
+  relationships: Relationship[];
+}
+
+function getLabelInfo(entity: IngestionEntity, validOntologyTypes: string[]): { primary: string; candidates: string[] } {
     const primaryLabel = entity.getOntologicalType ? entity.getOntologicalType() : entity.type;
 
     if (!validOntologyTypes.includes(primaryLabel)) {
@@ -81,7 +91,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
         relationship_types: validRelationshipTypes
     });
     console.log('   ✅ Ontology synced successfully.');
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error('   ❌ Failed to sync ontology with NLP service. The service might not be running or the endpoint is incorrect.', error.message);
     // Depending on the desired behavior, you might want to exit the process
     process.exit(1);
@@ -121,7 +131,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
     const emailFiles = allFiles.filter(f => f.endsWith('.eml')).sort();
     const filesToProcess = emailFiles; // Process all emails
     const emailBodies: string[] = [];
-    const parsedEmails: unknown[] = [];
+    const parsedEmails: ParsedEmailWithSource[] = [];
 
     console.log(
       `\n📂 Found ${emailFiles.length} email files, parsing all of them before batch processing in '${testEmailsDir}'`,
@@ -136,14 +146,14 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
                 ? parsedEmail.text
                 : (parsedEmail.html || '').replace(/<[^>]*>/g, '');
             emailBodies.push(emailBody);
-            parsedEmails.push({ ...parsedEmail, sourceFile: emailFile });
-        } catch (e: unknown) {
+            parsedEmails.push({ ...parsedEmail, sourceFile: emailFile } as ParsedEmailWithSource);
+        } catch (e: any) {
             console.error(`   ❌ Error reading or parsing email file ${emailFile}:`, e.message);
         }
     }
 
     console.log(`\n[1] All ${emailBodies.length} emails parsed. Starting batch ingestion...`);
-    const batchResults = await contentProcessingService.processContentBatch(emailBodies);
+    const batchResults = await contentProcessingService.processContentBatch(emailBodies) as ProcessingResult[];
     console.log(`[2] Batch processing complete. Ingesting ${batchResults.length} results into Neo4j...`);
 
     let emailIndex = 0;
@@ -233,7 +243,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
                 if (crmLabels.length > 0) {
                   allLabels.push(...crmLabels);
                 }
-              } catch (error: unknown) {
+              } catch (error: any) {
                 console.error(`   ❌ Error getting CRM labels for ${primaryLabel}:`, error.message);
               }
             }
@@ -370,7 +380,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
         );
 
         // 3. Create relationships between entities (excluding HAS_EMAIL, HAS_PERCENT, HAS_DATE, HAS_MONETARY_AMOUNT, HAS_TIME since they are now properties)
-        const entityIdMap = new Map<string, IngestionEntity>(nonPropertyEntities.map((e: unknown) => [e.id, e]));
+        const entityIdMap = new Map<string, IngestionEntity>(nonPropertyEntities.map((e: IngestionEntity) => [e.id, e]));
         const nonPropertyRelationships = relationships.filter(rel => !['HAS_EMAIL', 'HAS_PERCENT', 'HAS_DATE', 'HAS_MONETARY_AMOUNT', 'HAS_TIME'].includes(rel.type));
         
         for (const rel of nonPropertyRelationships) {
@@ -402,7 +412,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
         );
         console.log('   [4] Neo4j ingestion complete for this email.');
         // --- Neo4j Ingestion End ---
-      } catch (error: unknown) {
+      } catch (error: any) {
         console.error(`   ❌ Error during Neo4j processing for ${emailFile}:`, error.message);
       }
     }
