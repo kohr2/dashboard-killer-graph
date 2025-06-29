@@ -21,9 +21,10 @@ testing-conventions:
 
 # Code Style and Quality
 # Ensure that the generated code is consistent with the rest of the project.
-code-style:
+code-style-typescript:
   - rule: "Format all generated TypeScript code using the project's Prettier configuration."
   - rule: "Adhere to the ESLint rules defined in the project. Do not introduce code that generates lint warnings."
+  - rule: "Utilise les alias de tsconfig-paths pour les imports."
 
 # Commit Messages
 # Ensure that AI-generated commits are clear and standardized.

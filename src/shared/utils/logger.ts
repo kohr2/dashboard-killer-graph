@@ -39,6 +39,9 @@ class Logger {
   }
 
   private shouldLog(level: LogLevel): boolean {
+    if (process.env.LOG_SILENT === 'true') {
+      return false;
+    }
     return level <= this.level;
   }
 
@@ -57,9 +60,8 @@ class Logger {
     if (process.env.NODE_ENV === 'production') {
       return JSON.stringify(entry);
     } else {
-      // Pretty format for development
-      const emoji = level === 'ERROR' ? '❌' : level === 'WARN' ? '⚠️' : level === 'INFO' ? 'ℹ️' : '🐛';
-      return `${emoji} [${entry.timestamp}] ${level}: ${message}${data ? ` | ${JSON.stringify(data)}` : ''}`;
+      // Pretty format for development, without emojis
+      return `[${entry.timestamp}] ${level}: ${message}${data ? ` | ${JSON.stringify(data)}` : ''}`;
     }
   }
 
@@ -71,34 +73,34 @@ class Logger {
 
   warn(message: string, data?: unknown): void {
     if (this.shouldLog(LogLevel.WARN)) {
-      console.warn(this.formatMessage('WARN', message, data));
+      console.error(this.formatMessage('WARN', message, data));
     }
   }
 
   info(message: string, data?: unknown): void {
     if (this.shouldLog(LogLevel.INFO)) {
-      console.log(this.formatMessage('INFO', message, data));
+      console.error(this.formatMessage('INFO', message, data));
     }
   }
 
   debug(message: string, data?: unknown): void {
     if (this.shouldLog(LogLevel.DEBUG)) {
-      console.log(this.formatMessage('DEBUG', message, data));
+      console.error(this.formatMessage('DEBUG', message, data));
     }
   }
 
   // Convenience methods for common patterns
   success(message: string, data?: unknown): void {
-    this.info(`✅ ${message}`, data);
+    this.info(message, data);
   }
 
   failure(message: string, error?: unknown): void {
-    this.error(`❌ ${message}`, error);
+    this.error(message, error);
   }
 
   progress(message: string, step?: number, total?: number): void {
     const progress = step && total ? ` (${step}/${total})` : '';
-    this.info(`🔄 ${message}${progress}`);
+    this.info(`${message}${progress}`);
   }
 }
 

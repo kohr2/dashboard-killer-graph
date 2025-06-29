@@ -1,241 +1,132 @@
 #!/usr/bin/env node
 
+// Set environment variables to silence logs specifically for the MCP server context
+process.env.LOG_SILENT = 'true';
+process.env.DOTENV_CONFIG_DEBUG = 'false';
+
+require('ts-node').register();
+
+// Programmatically register tsconfig-paths
+const tsconfigPaths = require('tsconfig-paths');
+const path = require('path');
+// __dirname is .../src/mcp/servers, so project root is 3 levels up
+const projectRoot = path.resolve(__dirname, '../../../'); 
+const tsconfig = require(path.join(projectRoot, 'tsconfig.json'));
+
+tsconfigPaths.register({
+  baseUrl: path.join(projectRoot, '.'),
+  paths: tsconfig.compilerOptions.paths,
+});
+
 const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
 const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio.js');
 const {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } = require('@modelcontextprotocol/sdk/types.js');
+require('reflect-metadata');
+const { container } = require('tsyringe');
 
-// Traduction basique des requêtes sans dépendances
-function translateQueryBasic(query) {
-  if (!query || typeof query !== 'string') {
-    throw new Error('Query must be a non-empty string');
-  }
+// Since we are in a pure JS file, we manually register dependencies
+const { Neo4jConnection } = require('@platform/database/neo4j-connection');
+const { OntologyService } = require('@platform/ontology/ontology.service');
+const { QueryTranslator } = require('@platform/chat/application/services/query-translator.service');
+const { ChatService } = require('@platform/chat/application/services/chat.service');
+const { AccessControlService } = require('@platform/security/application/services/access-control.service');
 
-  const lowercaseQuery = query.toLowerCase();
-  
-  // Détection des types d'entités
-  const entityTypes = [];
-  
-  if (lowercaseQuery.includes('deal') || lowercaseQuery.includes('transaction')) {
-    entityTypes.push('Deal');
-  }
-  if (lowercaseQuery.includes('contact') || lowercaseQuery.includes('person') || lowercaseQuery.includes('people')) {
-    entityTypes.push('Contact', 'Person');
-  }
-  if (lowercaseQuery.includes('organization') || lowercaseQuery.includes('company') || lowercaseQuery.includes('companies') || lowercaseQuery.includes('firm')) {
-    entityTypes.push('Organization');
-  }
-  if (lowercaseQuery.includes('communication') || lowercaseQuery.includes('email') || lowercaseQuery.includes('message')) {
-    entityTypes.push('Communication');
-  }
-  if (lowercaseQuery.includes('investor') || lowercaseQuery.includes('fund')) {
-    entityTypes.push('Investor', 'Fund');
-  }
-  
-  // Si aucun type détecté, utiliser Deal par défaut
-  if (entityTypes.length === 0) {
-    entityTypes.push('Deal');
-  }
-  
-  // Détection des filtres
-  const filters = {};
-  
-  // Extraire les noms propres
-  const words = query.split(/\s+/);
-  const commonWords = ['Show', 'Find', 'Get', 'List', 'Display', 'Search'];
-  const properNouns = words.filter(word => 
-    /^[A-Z][a-z]+/.test(word) && !commonWords.includes(word)
-  );
-  if (properNouns.length > 0) {
-    filters.name = properNouns.join(' ');
-  }
-  
-  // Détection de commandes
-  let command = 'show';
-  if (lowercaseQuery.includes('related') || lowercaseQuery.includes('with') || lowercaseQuery.includes('lié')) {
-    command = 'show_related';
-  }
-  
-  return {
-    command,
-    resourceTypes: entityTypes,
-    filters: Object.keys(filters).length > 0 ? filters : undefined,
-    relatedTo: command === 'show_related' ? ['Organization'] : undefined
-  };
-}
+// --- Dependency Injection Setup ---
+const connection = Neo4jConnection.getInstance();
+container.register("Neo4jConnection", { useValue: connection });
+container.register("OntologyService", { useClass: OntologyService });
+container.register("QueryTranslator", { useClass: QueryTranslator });
+container.register("AccessControlService", { useClass: AccessControlService });
+container.register("ChatService", { useClass: ChatService });
+// ---------------------------------
 
-// Serveur MCP sans logs pour éviter l'interférence JSON
-const mcpServer = new Server(
-  {
-    name: 'llm-orchestrator-simple',
-    version: '1.0.0',
-  },
-  {
-    capabilities: {
-      tools: {},
-    },
-  }
-);
-
-// Définir l'outil query
-const queryTool = {
-  name: 'query',
-  description: `Intelligent query processor for business data. 
-  
-This tool processes natural language queries about:
-- CRM data (contacts, communications, organizations)
-- Financial data (deals, investments, funds)
-- Business relationships and insights
-
-Examples:
-- "Show recent deals with Blackstone"
-- "Find contacts in technology sector"
-- "List communications from last week"`,
-  inputSchema: {
-    type: 'object',
-    properties: {
-      query: {
-        type: 'string',
-        description: 'Natural language query about business data',
-      },
-    },
-    required: ['query'],
-  },
+// A mock user for the MCP server context, conforming to the User and Role interfaces.
+const mcpUser = {
+  id: 'mcp-server-user',
+  username: 'mcp-server',
+  roles: [
+    { 
+      name: 'admin',
+      permissions: [{ action: '*', resource: '*' }]
+    }
+  ],
 };
 
-// Définir l'outil d'aide
-const helpTool = {
-  name: 'help',
-  description: 'Get help about server capabilities',
-  inputSchema: {
-    type: 'object',
-    properties: {
-      topic: {
-        type: 'string',
-        description: 'Help topic',
-        enum: ['queries', 'examples', 'status'],
-      },
-    },
-    required: [],
-  },
-};
 
-// Gestionnaire pour lister les outils
-mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
-  return {
-    tools: [queryTool, helpTool],
-  };
-});
-
-// Gestionnaire pour appeler les outils
-mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
-  const { name, arguments: args } = request.params;
-
-  if (name === 'query') {
-    const query = args?.query;
-    if (typeof query !== 'string') {
-      throw new Error("The 'query' parameter must be a string");
-    }
-
-    try {
-      const structuredQuery = translateQueryBasic(query);
-      
-      const response = `🔍 Query Translation Result (Simple Mode):
-
-**Original Query:** "${query}"
-
-**Structured Query:**
-\`\`\`json
-${JSON.stringify(structuredQuery, null, 2)}
-\`\`\`
-
-**Analysis:**
-- Command: ${structuredQuery.command}
-- Resource Types: ${structuredQuery.resourceTypes?.join(', ') || 'N/A'}
-- Filters: ${structuredQuery.filters ? JSON.stringify(structuredQuery.filters) : 'None'}
-
-**Note:** This is a simplified JavaScript translation without external dependencies.`;
-
-      return {
-        content: [{ type: 'text', text: response }],
-      };
-    } catch (error) {
-      return {
-        content: [{ type: 'text', text: `❌ Error processing query: ${error.message}` }],
-      };
-    }
-  }
-
-  if (name === 'help') {
-    const topic = args?.topic;
-    
-    let helpContent = `# 🛠️ MCP Server Help (Simple Mode)
-
-## Server Status
-- **Mode:** 🟢 Simple JavaScript (No Dependencies)
-- **Query Translation:** Basic pattern matching
-- **Logs:** Completely disabled
-
-## Available Tools
-
-### 1. \`query\` - Basic Query Processing
-Processes natural language queries using simple pattern matching.
-
-**Examples:**
-- "Show recent deals with Blackstone"
-- "Find contacts in technology"
-- "List communications"
-
-### 2. \`help\` - Documentation
-Get help about server capabilities.
-
-## Supported Data Types
-- Contacts and People
-- Organizations and Companies  
-- Communications and Messages
-- Financial Deals and Investments
-- Business Relationships
-
-## Note
-This server runs pure JavaScript with no external dependencies for maximum stability.`;
-
-    if (topic === 'status') {
-      helpContent = `# 📊 Server Status Report (Simple Mode)
-
-## Current Configuration
-- **Server Mode:** Simple JavaScript
-- **Query Translation:** ✅ Basic Pattern Matching
-- **Dependencies:** ✅ None
-- **Logs:** ✅ Completely Disabled
-
-## Features Available
-✅ Basic query pattern matching
-✅ Simple entity detection
-✅ Help and documentation
-✅ Maximum stability
-
-## Troubleshooting
-Server is running in simple mode with no dependencies. Should work reliably with Claude Desktop.`;
-    }
-
-    return {
-      content: [{ type: 'text', text: helpContent }],
-    };
-  }
-
-  throw new Error(`Unknown tool: ${name}`);
-});
-
-// Gestionnaire d'arrêt propre (silencieux)
-process.on('SIGINT', () => process.exit(0));
-process.on('SIGTERM', () => process.exit(0));
-
-// Démarrer le serveur (silencieux)
+// The Server implementation
 async function main() {
+  await connection.connect();
+  const chatService = container.resolve(ChatService);
+  
+  const mcpServer = new Server(
+    {
+      name: 'llm-orchestrator-platform',
+      version: '1.1.0',
+    },
+    {
+      capabilities: {
+        tools: {},
+      },
+    }
+  );
+
+  const queryTool = {
+    name: 'queryGraph',
+    description: `Processes a natural language query against the enterprise knowledge graph. 
+This tool can understand queries about CRM and financial data, including contacts, organizations, deals, and their relationships.
+Examples:
+- "Show me all deals"
+- "Find contacts related to the deal 'Project Alpha'"
+- "List companies in the technology sector"`,
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: {
+          type: 'string',
+          description: 'The natural language query to execute.',
+        },
+      },
+      required: ['query'],
+    },
+  };
+
+  mcpServer.setRequestHandler(ListToolsRequestSchema, async () => ({
+    tools: [queryTool],
+  }));
+
+  mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
+    if (request.params.name === 'queryGraph') {
+      const query = request.params.arguments?.query;
+      if (typeof query !== 'string') {
+        throw new Error("The 'query' parameter must be a string.");
+      }
+
+      try {
+        const responseText = await chatService.handleQuery(mcpUser, query);
+        return {
+          content: [{ type: 'text', text: responseText }],
+        };
+      } catch (error) {
+        // In a real app, use a structured logger writing to stderr
+        process.stderr.write(`Error handling query: ${error.stack}\n`);
+        return {
+          content: [{ type: 'text', text: `An error occurred: ${error.message}` }],
+        };
+      }
+    }
+
+    throw new Error(`Unknown tool: ${request.params.name}`);
+  });
+
   const transport = new StdioServerTransport();
   await mcpServer.connect(transport);
 }
 
-main().catch(() => process.exit(1)); 
+main().catch((error) => {
+  // Use stderr for logging errors to not interfere with the protocol
+  process.stderr.write(`Failed to start server: ${error.stack}\n`);
+  process.exit(1);
+}); 
