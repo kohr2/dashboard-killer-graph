@@ -1,6 +1,8 @@
-import { singleton } from 'tsyringe';
+import { singleton, inject } from 'tsyringe';
 import axios from 'axios';
 import { logger } from '@shared/utils/logger';
+import { EnrichmentOrchestratorService } from '@platform/enrichment';
+import { Organization } from '@crm/domain/entities/organization';
 
 export interface LlmGraphEntity {
   value: string;
@@ -35,7 +37,9 @@ interface IngestionEntity {
 export class ContentProcessingService {
   private nlpServiceUrl: string;
 
-  constructor() {
+  constructor(
+    @inject(EnrichmentOrchestratorService) private enrichmentOrchestrator: EnrichmentOrchestratorService
+  ) {
     this.nlpServiceUrl = 'http://127.0.0.1:8000';
   }
 
@@ -83,8 +87,31 @@ export class ContentProcessingService {
         documentEntityMap.set(docIndex, docEntities);
       });
       
-      if (allEntities.length > 0) {
-        const entityNames = allEntities.map(e => e.name);
+      // --- Automatic Enrichment Step ---
+      const enrichedEntities: IngestionEntity[] = [];
+      for(const entity of allEntities) {
+        if (entity.type === 'Organization') {
+          logger.info(`      -> Auto-enriching Organization: ${entity.name}`);
+          try {
+            const org = new Organization(entity.id, entity.name);
+            const enrichedOrg = await this.enrichmentOrchestrator.enrich(org);
+            if (enrichedOrg) {
+              const finalEntity = { ...entity, ...enrichedOrg, properties: { ...entity.properties, ...enrichedOrg.enrichedData } };
+              enrichedEntities.push(finalEntity);
+            } else {
+              enrichedEntities.push(entity);
+            }
+          } catch (enrichError: any) {
+            logger.error(`      ❌ Error enriching ${entity.name}:`, enrichError.message);
+            enrichedEntities.push(entity); // Keep original entity if enrichment fails
+          }
+        } else {
+          enrichedEntities.push(entity);
+        }
+      }
+      
+      if (enrichedEntities.length > 0) {
+        const entityNames = enrichedEntities.map(e => e.name);
         logger.info(`   ↪️ Generating embeddings for ${entityNames.length} total entities...`);
         try {
           const embeddingResponse = await axios.post<{ embeddings: number[][] }>(
@@ -94,8 +121,8 @@ export class ContentProcessingService {
           );
           const { embeddings } = embeddingResponse.data;
           
-          if (embeddings && embeddings.length === allEntities.length) {
-            allEntities.forEach((entity, index) => {
+          if (embeddings && embeddings.length === enrichedEntities.length) {
+            enrichedEntities.forEach((entity, index) => {
               entity.embedding = embeddings[index];
             });
             logger.info(`      -> All embeddings attached successfully.`);
@@ -107,7 +134,7 @@ export class ContentProcessingService {
 
       if (Array.isArray(graphs)) {
         const finalResults = graphs.map((graph, docIndex) => {
-          const entities = documentEntityMap.get(docIndex) || [];
+          const entities = enrichedEntities.filter(e => e.originalDocIndex === docIndex);
           const entityIdMap = new Map(entities.map(e => [e.name, e.id]));
           
           const relationships = (graph.relationships || []).map((rel: LlmGraphRelationship) => ({
