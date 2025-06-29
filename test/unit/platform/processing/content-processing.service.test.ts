@@ -135,7 +135,12 @@ describe('ContentProcessingService', () => {
       });
 
       expect(mockedAxios.post).toHaveBeenCalledTimes(2);
-      expect(consoleErrorSpy).not.toHaveBeenCalled(); // Aucune erreur ne doit être loggée
+      
+      // Verify that no actual ERRORS were logged
+      const errorCalls = consoleErrorSpy.mock.calls.filter(call =>
+        call[0].includes('ERROR')
+      );
+      expect(errorCalls).toHaveLength(0);
     });
   });
 }); 

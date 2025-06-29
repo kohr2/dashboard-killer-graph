@@ -1,27 +1,29 @@
+import { OCreamContactEntity } from '../../ontologies/crm/domain/entities/contact-ontology';
 import { Organization } from '../../ontologies/crm/domain/entities/organization';
-import { Person } from '../../ontologies/crm/domain/entities/person';
 
 /**
- * Defines a type for entities that can be processed by the enrichment services.
- * This can be expanded in the future.
+ * Represents a generic entity that can be enriched.
+ * It could be a person, an organization, a deal, etc.
  */
-export type EnrichableEntity = Organization | Person;
+export type EnrichableEntity = OCreamContactEntity | Organization;
 
 /**
  * Defines the contract for an enrichment service.
- * Each service provides data from a specific source (e.g., EDGAR, Salesforce).
+ * Each enrichment service (e.g., for SEC EDGAR, Salesforce, etc.)
+ * must implement this interface.
  */
 export interface IEnrichmentService {
   /**
-   * A unique, human-readable name for the service (e.g., 'EDGAR', 'Salesforce').
+   * The name of the enrichment service.
+   * Used for logging and identification.
    */
   readonly name: string;
 
   /**
-   * Enriches the given entity with additional data.
+   * Performs the enrichment on the entity.
+   *
    * @param entity The entity to enrich.
-   * @returns A promise that resolves to a partial entity object containing the new data,
-   *          or null if no enrichment could be made.
+   * @returns A promise that resolves to a record containing the enriched data.
    */
-  enrich(entity: EnrichableEntity): Promise<Partial<EnrichableEntity> | null>;
+  enrich(entity: EnrichableEntity): Promise<Record<string, any> | null>;
 } 

@@ -18,6 +18,7 @@
     "experimentalDecorators": true,
     "baseUrl": "./",
     "paths": {
+      "@src/*": ["src/*"],
       "@platform/*": ["src/platform/*"],
       "@crm/*": ["src/ontologies/crm/*"],
       "@financial/*": ["src/ontologies/financial/*"],

@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import spacy
 import re
 import time # Import the time module
+import uvicorn
 from typing import List, Dict, Any, Optional
 from openai import OpenAI, AsyncOpenAI
 from dotenv import load_dotenv
@@ -481,4 +482,9 @@ async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
 
 @app.get("/health")
 def health_check():
-    return {"status": "ok"} 
+    """Simple health check to confirm the service is running."""
+    return {"status": "ok"}
+
+if __name__ == "__main__":
+    print("🚀 Starting NLP service on http://127.0.0.1:8000")
+    uvicorn.run(app, host="127.0.0.1", port=8000) 

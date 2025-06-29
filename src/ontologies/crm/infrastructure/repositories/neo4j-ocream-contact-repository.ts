@@ -11,21 +11,28 @@ import {
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { singleton, inject } from 'tsyringe';
 import { logger } from '@shared/utils/logger';
+import { injectable } from 'tsyringe';
+import { Driver, Session } from 'neo4j-driver';
 
-@singleton()
+@injectable()
 export class Neo4jOCreamContactRepository implements ContactRepository {
-  private driver: neo4j.Driver;
+  private driver: Driver;
   private contactLabels: string;
 
   constructor(
     @inject(OntologyService) private ontologyService: OntologyService,
+    @inject(Neo4jConnection) connection: Neo4jConnection
   ) {
-    this.driver = Neo4jConnection.getInstance().getDriver();
+    this.driver = connection.getDriver();
     this.contactLabels = this.ontologyService.getLabelsForEntityType('Person');
   }
 
+  private getSession(): Session {
+    return this.driver.session();
+  }
+
   async save(contact: OCreamContactEntity): Promise<OCreamContactEntity> {
-    const session = this.driver.session();
+    const session = this.getSession();
     try {
       await session.run(
         `MERGE (c:${this.contactLabels} {id: $id}) SET c += $props`,
@@ -52,7 +59,7 @@ export class Neo4jOCreamContactRepository implements ContactRepository {
   }
 
   async findById(id: string): Promise<OCreamContactEntity | null> {
-    const session = this.driver.session();
+    const session = this.getSession();
     try {
       const result = await session.run(`MATCH (c:${this.contactLabels} {id: $id}) RETURN c`, { id });
       const record = result.records[0];
@@ -65,7 +72,7 @@ export class Neo4jOCreamContactRepository implements ContactRepository {
   }
 
   async findAll(): Promise<OCreamContactEntity[]> {
-    const session = this.driver.session();
+    const session = this.getSession();
     try {
       const result = await session.run(`MATCH (c:${this.contactLabels}) RETURN c`);
       return result.records.map(record => this.mapNodeToContact(record.get('c').properties));
@@ -75,7 +82,7 @@ export class Neo4jOCreamContactRepository implements ContactRepository {
   }
 
   async findByEmail(email: string): Promise<OCreamContactEntity | null> {
-    const session = this.driver.session();
+    const session = this.getSession();
     try {
       const result = await session.run(`MATCH (c:${this.contactLabels} {email: $email}) RETURN c`, { email });
       const record = result.records[0];
@@ -87,7 +94,7 @@ export class Neo4jOCreamContactRepository implements ContactRepository {
   }
 
   async search(query: unknown): Promise<OCreamContactEntity[]> {
-    const session = this.driver.session();
+    const session = this.getSession();
     try {
       const result = await session.run(`MATCH (c:${this.contactLabels}) WHERE c.name CONTAINS $query OR c.email CONTAINS $query RETURN c`, { query });
       return result.records.map(record => this.mapNodeToContact(record.get('c').properties));
@@ -97,7 +104,7 @@ export class Neo4jOCreamContactRepository implements ContactRepository {
   }
 
   async delete(id: string): Promise<void> {
-    const session = this.driver.session();
+    const session = this.getSession();
     try {
       await session.run(`MATCH (c:${this.contactLabels} {id: $id}) DETACH DELETE c`, { id });
     } finally {

@@ -17,7 +17,7 @@ export class SalesforceEnrichmentService implements IEnrichmentService {
    * @param entity The entity to enrich.
    * @returns Enriched data or null.
    */
-  public async enrich(entity: EnrichableEntity): Promise<Partial<EnrichableEntity> | null> {
+  public async enrich(entity: EnrichableEntity): Promise<Record<string, any> | null> {
     // We only enrich entities that have been identified by a previous service (e.g., EDGAR)
     const externalId = (entity as any).metadata?.cik;
 

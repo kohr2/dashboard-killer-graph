@@ -13,7 +13,6 @@ container.register<ChatService>(ChatService, { useValue: mockChatService as any 
 import { app } from '../../src/api';
 
 describe('POST /api/chat/query', () => {
-
   beforeEach(() => {
     // Reset the mock before each test
     mockChatService.handleQuery.mockClear();

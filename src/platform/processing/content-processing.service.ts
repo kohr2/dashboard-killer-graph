@@ -21,6 +21,16 @@ export interface LlmGraphResponse {
   refinement_info: string;
 }
 
+interface IngestionEntity {
+  id: string;
+  name: string;
+  type: string;
+  label: string;
+  properties: Record<string, any>;
+  originalDocIndex: number;
+  embedding?: number[];
+}
+
 @singleton()
 export class ContentProcessingService {
   private nlpServiceUrl: string;
@@ -32,7 +42,7 @@ export class ContentProcessingService {
   public async processContentBatch(
     contents: string[],
   ): Promise<Array<{
-    entities: unknown[];
+    entities: IngestionEntity[];
     relationships: unknown[];
   }>> {
     try {
@@ -52,7 +62,7 @@ export class ContentProcessingService {
 
       logger.info(`      -> LLM extracted graphs for ${graphs?.length ?? 0} documents.`);
       
-      const allEntities: unknown[] = [];
+      const allEntities: IngestionEntity[] = [];
       const documentEntityMap: Map<number, any[]> = new Map();
 
       if (!Array.isArray(graphs)) {

@@ -5,9 +5,17 @@ import { ANALYST_ROLE, ADMIN_ROLE, GUEST_ROLE } from '../../../../../src/platfor
 
 describe('AccessControlService', () => {
   let accessControlService: AccessControlService;
+  const originalNodeEnv = process.env.NODE_ENV;
 
   beforeEach(() => {
+    // Set NODE_ENV to something other than 'test' to run the real logic
+    process.env.NODE_ENV = 'production'; 
     accessControlService = new AccessControlService();
+  });
+  
+  afterEach(() => {
+    // Restore the original NODE_ENV
+    process.env.NODE_ENV = originalNodeEnv;
   });
 
   const guestUser: User = { id: 'guest-1', username: 'guest', roles: [GUEST_ROLE] };

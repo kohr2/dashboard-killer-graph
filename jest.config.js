@@ -9,13 +9,14 @@ module.exports = {
   roots: ['<rootDir>/src', '<rootDir>/test'],
   
   moduleNameMapper: {
+    '^@src/(.*)$': '<rootDir>/src/$1',
     '^@platform/(.*)$': '<rootDir>/src/platform/$1',
     '^@crm/(.*)$': '<rootDir>/src/ontologies/crm/$1',
     '^@financial/(.*)$': '<rootDir>/src/ontologies/financial/$1',
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',
   },
 
-  moduleDirectories: ["node_modules", "src"],
+  moduleDirectories: ["node_modules", "src", "scripts", "scripts/database"],
 
   setupFilesAfterEnv: ['<rootDir>/test/setup-e2e.ts', 'jest-extended/all', './test/setup.ts'],
   testMatch: [

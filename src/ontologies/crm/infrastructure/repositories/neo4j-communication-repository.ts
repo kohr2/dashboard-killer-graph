@@ -1,14 +1,14 @@
-import { injectable, inject } from 'inversify';
+import { injectable, inject } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { Communication, CommunicationType, CommunicationStatus } from '../../domain/entities/communication';
 import { CommunicationRepository, PaginationOptions } from '../../domain/repositories/communication-repository';
 import { SpacyExtractedEntity, EntityType } from '../../application/services/spacy-entity-extraction.service';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { logger } from '@shared/utils/logger';
+import { v4 as uuidv4 } from 'uuid';
 
 @injectable()
 export class Neo4jCommunicationRepository implements CommunicationRepository {
-  private connection: Neo4jConnection;
   private ontologyService: OntologyService;
   private communicationLabels: string;
 
@@ -23,10 +23,13 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
     'PRODUCT': 'Product', // Assuming 'Product' is defined
   };
 
-  constructor(@inject(OntologyService) ontologyService: OntologyService) {
-    this.connection = Neo4jConnection.getInstance();
+  constructor(
+    @inject(Neo4jConnection) private connection: Neo4jConnection,
+    @inject(OntologyService) ontologyService: OntologyService,
+  ) {
     this.ontologyService = ontologyService;
-    this.communicationLabels = this.ontologyService.getLabelsForEntityType('Communication');
+    this.communicationLabels =
+      this.ontologyService.getLabelsForEntityType('Communication');
   }
 
   async linkEntitiesToCommunication(

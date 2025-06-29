@@ -1,16 +1,12 @@
-import { injectable } from 'inversify';
+import { injectable, inject } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
-import { OCreamContactEntity, ContactOntology } from '../../domain/entities/contact-ontology';
+import { ContactOntology, OCreamContactEntity } from '../../domain/entities/contact-ontology';
 import { ContactRepository } from '../../domain/repositories/contact-repository';
 import { Session, Record as Neo4jRecord } from 'neo4j-driver';
 
 @injectable()
 export class Neo4jContactRepository implements ContactRepository {
-  private connection: Neo4jConnection;
-
-  constructor() {
-    this.connection = Neo4jConnection.getInstance();
-  }
+  constructor(@inject(Neo4jConnection) private connection: Neo4jConnection) {}
 
   private nodeToContact(node: any): OCreamContactEntity {
     return ContactOntology.createOCreamContact({

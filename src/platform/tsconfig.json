@@ -4,6 +4,7 @@
     "composite": true,
     "outDir": "../../dist/platform",
     "rootDir": ".",
+    "rootDirs": [".", "../ontologies"],
     "baseUrl": "../..",
     "paths": {
       "@crm/*": ["src/ontologies/crm/*"],

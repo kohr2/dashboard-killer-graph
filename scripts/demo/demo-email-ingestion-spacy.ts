@@ -10,11 +10,11 @@ import { Session } from 'neo4j-driver';
 import axios from 'axios';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { registerAllOntologies } from '../src/register-ontologies';
+import { registerAllOntologies } from '@src/register-ontologies';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { FinancialToCrmBridge } from '@financial/application/ontology-bridges/financial-to-crm.bridge';
 import { ContentProcessingService } from '@platform/processing/content-processing.service';
-import { resetDatabase } from './reset-neo4j';
+import { resetDatabase } from '../database/reset-neo4j';
 
 const LABELS_TO_INDEX = ['Person', 'Organization', 'Location', 'Product', 'Event', 'Project', 'Deal', 'RegulatoryInformation', 'LegalDocument'];
 
@@ -237,7 +237,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
           if (!foundExistingNode) {
             const allLabels = [primaryLabel];
             // Apply CRM labels if the bridge defines them
-            if (primaryLabel && bridge) {
+            if (primaryLabel && bridge && 'getCrmLabelsForFinancialType' in bridge) {
               try {
                 const crmLabels = bridge.getCrmLabelsForFinancialType(primaryLabel);
                 if (crmLabels.length > 0) {

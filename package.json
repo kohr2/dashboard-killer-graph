@@ -132,6 +132,7 @@
     "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.11",
     "@types/jsonwebtoken": "^9.0.5",
+    "@types/lodash": "^4.17.19",
     "@types/mailparser": "^3.4.6",
     "@types/node": "^20.19.1",
     "@types/react": "^18.2.45",

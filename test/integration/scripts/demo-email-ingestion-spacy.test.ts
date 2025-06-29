@@ -1,4 +1,4 @@
-import { demonstrateSpacyEmailIngestionPipeline } from '../../../scripts/demo-email-ingestion-spacy';
+import { demonstrateSpacyEmailIngestionPipeline } from '../../../scripts/demo/demo-email-ingestion-spacy';
 import { Neo4jConnection } from '../../../src/platform/database/neo4j-connection';
 import axios from 'axios';
 import * as fs from 'fs';

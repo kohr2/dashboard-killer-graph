@@ -5,6 +5,7 @@ import * as glob from 'glob';
 import { singleton, injectable } from 'tsyringe';
 import { z } from 'zod';
 import { logger } from '@shared/utils/logger';
+import { EnrichableEntity } from '@platform/enrichment';
 
 // Zod Schemas for validation
 const OntologyPropertySchema = z.object({
@@ -18,6 +19,12 @@ const OntologyEntitySchema = z.object({
   parent: z.string().optional(),
   isProperty: z.boolean().optional(),
   properties: z.record(z.union([z.string(), OntologyPropertySchema])).optional(),
+  keyProperties: z.array(z.string()).optional(),
+  enrichment: z
+    .object({
+      service: z.string(),
+    })
+    .optional(),
 });
 
 const OntologyRelationshipSchema = z.object({
@@ -47,6 +54,7 @@ interface InternalOntologyEntity {
     description?: string;
     keyProperties?: string[];
     properties?: { [key: string]: { type: string; description: string; } };
+    enrichment?: { service: string };
 }
 
 interface InternalOntologyRelationship {
@@ -263,5 +271,16 @@ export class OntologyService {
     }
 
     return schemaText;
+  }
+
+  public getEnrichmentServiceName(entity: EnrichableEntity): string | undefined {
+    // We assume the entity has a 'label' getter that corresponds to its type name in the ontology.
+    const entityType = entity.label;
+    if (!entityType) {
+      return undefined;
+    }
+
+    const entityDefinition = this.schema.entities[entityType];
+    return entityDefinition?.enrichment?.service;
   }
 } 

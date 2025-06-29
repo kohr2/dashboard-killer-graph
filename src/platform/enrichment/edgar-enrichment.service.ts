@@ -4,6 +4,7 @@ import { join } from 'path';
 import { singleton, inject } from 'tsyringe';
 import { IEnrichmentService, EnrichableEntity } from './i-enrichment-service.interface';
 import { logger } from '@shared/utils/logger';
+import { Organization } from '@crm/domain/entities/organization';
 
 const CIK_LOOKUP_URL = 'https://www.sec.gov/files/company_tickers.json';
 const COMPANY_DATA_URL_BASE = 'https://data.sec.gov/submissions/';
@@ -27,24 +28,26 @@ export class EdgarEnrichmentService implements IEnrichmentService {
     this.cachePath = join(__dirname, '..', '..', 'cache', 'company_tickers.json');
   }
 
-  public async enrich(entity: EnrichableEntity): Promise<Partial<EnrichableEntity> | null> {
-    // This service only enriches Organizations
-    if (entity.label !== 'Organization') {
-      return null;
+  public async enrich(entity: EnrichableEntity): Promise<Record<string, any>> {
+    // This service only enriches Organizations, so we expect an Organization entity.
+    if (!(entity instanceof Organization)) {
+      return {};
     }
 
     try {
       await this.initializeCikMap();
     } catch (error) {
       logger.error('Failed to initialize EdgarEnrichmentService CIK map. Enrichment will be skipped.', error);
-      return null;
+      return {};
     }
 
-    const cleanedName = entity.name.replace(/[.,]$/, '').toUpperCase();
+    const organization = entity as Organization;
+
+    const cleanedName = organization.name.replace(/[.,]$/, '').toUpperCase();
     const cik = this.cikMap!.get(cleanedName);
 
     if (!cik) {
-      return null;
+      return {};
     }
 
     try {
@@ -55,17 +58,14 @@ export class EdgarEnrichmentService implements IEnrichmentService {
 
       return {
         legalName: data.name,
-        metadata: {
-          ...entity.metadata,
-          cik: data.cik,
-          sic: data.sic,
-          sicDescription: data.sicDescription,
-          address: data.addresses.business,
-        },
+        cik: data.cik,
+        sic: data.sic,
+        sicDescription: data.sicDescription,
+        address: data.addresses.business,
       };
     } catch (error) {
       logger.error(`Error fetching EDGAR data for CIK ${cik}:`, error);
-      return null;
+      return {};
     }
   }
 

@@ -23,6 +23,8 @@ export const OCreamContactEntitySchema = z.object({
     ontologyMetadata: z.object({
         validationStatus: z.enum(['valid', 'invalid', 'unchecked']),
     }),
+    metadata: z.record(z.string(), z.any()).optional(),
+    enrichedData: z.record(z.string(), z.any()).optional(),
     createdAt: z.date(),
     updatedAt: z.date(),
     category: z.nativeEnum(DOLCECategory),
@@ -40,6 +42,7 @@ export interface OCreamContactEntity extends DOLCEEntity, Omit<z.infer<typeof OC
     updatePreferences(prefs: Record<string, any>): void;
     updateStatus(status: unknown): void;
     markAsModified(): void;
+    get label(): string;
 }
 
 export const ContactOntology = {
@@ -82,6 +85,8 @@ export const ContactOntology = {
       ontologyMetadata: {
         validationStatus: 'unchecked',
       },
+      metadata: {},
+      enrichedData: {},
       preferences: validatedData.preferences,
       getId() {
         return this.id;
@@ -106,6 +111,9 @@ export const ContactOntology = {
       },
       markAsModified() {
         this.updatedAt = new Date();
+      },
+      get label() {
+        return 'Contact';
       },
     };
     return contact;

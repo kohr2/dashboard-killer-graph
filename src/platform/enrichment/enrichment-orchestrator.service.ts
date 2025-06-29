@@ -1,49 +1,82 @@
-import { singleton } from 'tsyringe';
+import 'reflect-metadata';
+import { singleton, inject } from 'tsyringe';
 import { IEnrichmentService, EnrichableEntity } from './i-enrichment-service.interface';
-import { merge } from 'lodash';
 import { logger } from '@shared/utils/logger';
+import { OntologyService } from '@platform/ontology/ontology.service';
+import { OCreamContactEntity } from '@crm/domain/entities/contact-ontology';
 
 @singleton()
 export class EnrichmentOrchestratorService {
-  private services: IEnrichmentService[] = [];
+  private services: Map<string, IEnrichmentService> = new Map();
+
+  constructor(
+    @inject(OntologyService) private ontologyService: OntologyService,
+  ) {}
 
   /**
-   * Registers an enrichment service to be used in the pipeline.
-   * @param service An instance of a class that implements IEnrichmentService.
+   * Registers a new enrichment service.
+   * @param service The enrichment service to register.
    */
   public register(service: IEnrichmentService): void {
-    this.services.push(service);
+    if (this.services.has(service.name)) {
+      logger.warn(
+        `Enrichment service '${service.name}' is already registered. Overwriting.`,
+      );
+    }
+    this.services.set(service.name, service);
     logger.info(`Enrichment service '${service.name}' registered.`);
   }
 
   /**
-   * Returns the list of registered enrichment services.
+   * Returns a list of all registered enrichment services.
+   * @returns An array of IEnrichmentService.
    */
   public getServices(): IEnrichmentService[] {
-    return this.services;
+    return Array.from(this.services.values());
   }
 
   /**
-   * Enriches an entity by running it through the pipeline of registered services.
-   * The services are executed in the order they were registered.
-   * @param entity The entity to enrich.
-   * @returns A promise that resolves to the enriched entity.
+   * Sequentially calls registered enrichment services for an entity.
    */
   public async enrich(entity: EnrichableEntity): Promise<EnrichableEntity> {
-    let enrichedEntity = { ...entity };
+    const serviceName = this.ontologyService.getEnrichmentServiceName(entity);
 
-    for (const service of this.services) {
-      try {
-        const result = await service.enrich(enrichedEntity);
-        if (result) {
-          // Deep merge the results. `merge` from lodash is good for this.
-          enrichedEntity = merge(enrichedEntity, result);
-        }
-      } catch (error) {
-        logger.error(`Error during enrichment with service '${service.name}':`, error);
-        // Continue with the next service even if one fails
-      }
+    if (!serviceName) {
+      logger.debug(
+        `No enrichment service found for entity of type '${entity.label}'.`,
+        { entityId: entity.id },
+      );
+      return entity;
     }
-    return enrichedEntity;
+
+    const service = this.services.get(serviceName);
+
+    if (!service) {
+      logger.warn(
+        `Service '${serviceName}' is configured for '${entity.label}' but not registered.`,
+        { entityId: entity.id },
+      );
+      return entity;
+    }
+
+    try {
+      const enrichmentData = await service.enrich(entity);
+      if (enrichmentData) {
+        // Merge the enrichment data back into the original entity
+        Object.assign(entity, enrichmentData);
+
+        logger.info(
+          `Successfully enriched entity '${entity.id}' with service '${service.name}'.`,
+        );
+        return entity;
+      }
+    } catch (error) {
+      logger.error(
+        `Error during enrichment with service '${service.name}':`,
+        error,
+      );
+    }
+
+    return entity;
   }
 } 
