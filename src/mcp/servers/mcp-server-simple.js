@@ -60,8 +60,8 @@ const { ChatService } = require('@platform/chat/application/services/chat.servic
 const { AccessControlService } = require('@platform/security/application/services/access-control.service');
 
 // --- Dependency Injection Setup ---
-const connection = Neo4jConnection.getInstance();
-container.register("Neo4jConnection", { useValue: connection });
+// We no longer get the instance manually. We let tsyringe manage the singleton.
+container.registerSingleton('Neo4jConnection', Neo4jConnection);
 container.register("OntologyService", { useClass: OntologyService });
 container.register("QueryTranslator", { useClass: QueryTranslator });
 container.register("AccessControlService", { useClass: AccessControlService });
@@ -83,8 +83,13 @@ const mcpUser = {
 
 // The Server implementation
 async function main() {
+  // 1. Get the singleton connection instance FROM THE CONTAINER.
+  const connection = container.resolve(Neo4jConnection);
+  // 2. Establish the database connection *before* resolving any other services.
   await connection.connect();
-  const chatService = container.resolve(ChatService);
+
+  // 3. Now that the connection is live, resolve other services.
+  const ontologyService = container.resolve(OntologyService);
   
   const mcpServer = new Server(
     {
@@ -98,12 +103,18 @@ async function main() {
     }
   );
 
+  // 4. Build the tool description with the live schema.
+  const schemaDescription = ontologyService.getSchemaRepresentation();
   const queryTool = {
     name: 'queryGraph',
-    description: `Processes a natural language query against the enterprise knowledge graph. 
-This tool can understand queries about CRM and financial data, including contacts, organizations, deals, and their relationships.
+    description: `Processes a natural language query against the enterprise knowledge graph.
+The query will be translated into a Cypher query and executed.
+The available graph schema is as follows, you can query for any of these entities and their relationships:
+---
+${schemaDescription}
+---
 Examples:
-- "Show me all deals"
+- "Show me all deals for the company 'BlueWave'"
 - "Find contacts related to the deal 'Project Alpha'"
 - "List companies in the technology sector"`,
     inputSchema: {
@@ -130,6 +141,9 @@ Examples:
       }
 
       try {
+        // No need to connect again, but we resolve the service just-in-time
+        // to be sure we get the latest state if other things change.
+        const chatService = container.resolve(ChatService);
         const responseText = await chatService.handleQuery(mcpUser, query);
         return {
           content: [{ type: 'text', text: responseText }],

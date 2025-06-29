@@ -11,7 +11,6 @@ config(); // Make sure environment variables are loaded
 
 @singleton()
 export class Neo4jConnection {
-  private static instance: Neo4jConnection;
   private driver: Driver | null = null;
   private readonly uri: string;
   private readonly user: string;
@@ -23,20 +22,21 @@ export class Neo4jConnection {
     this.pass = process.env.NEO4J_PASSWORD || 'password';
   }
 
-  public static getInstance(): Neo4jConnection {
-    if (!Neo4jConnection.instance) {
-      Neo4jConnection.instance = new Neo4jConnection();
-    }
-    return Neo4jConnection.instance;
-  }
-
   public async connect(): Promise<void> {
+    // Only create a new driver instance if one doesn't already exist or has been closed.
+    if (this.driver) {
+      // You might want to add a connectivity check here in a real app,
+      // but for now, just returning is fine if the driver exists.
+      return;
+    }
+
     try {
       this.driver = neo4j.driver(this.uri, neo4j.auth.basic(this.user, this.pass));
       await this.driver.verifyConnectivity();
       logger.info('✅ Successfully connected to Neo4j.');
     } catch (error) {
       logger.error('❌ Failed to connect to Neo4j:', error);
+      this.driver = null; // Ensure driver is null on failure
       throw new Error(`Neo4j connection failed: ${error}`);
     }
   }
