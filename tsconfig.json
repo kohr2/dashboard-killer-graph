@@ -15,13 +15,6 @@
     },
     "typeRoots": ["node_modules/@types", "src/types"]
   },
-  "files": [],
-  "references": [
-    { "path": "src/ontologies/crm" },
-    { "path": "src/ontologies/financial" },
-    { "path": "src/platform" },
-    { "path": "test" }
-  ],
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "test", "src/ontologies", "scripts"]
+  "exclude": ["node_modules", "dist", "test", "scripts"]
 }

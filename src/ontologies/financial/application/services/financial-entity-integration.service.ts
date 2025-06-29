@@ -14,7 +14,7 @@ import { EdgarEnrichmentService } from '@platform/enrichment';
 import axios from 'axios';
 import { singleton, inject } from 'tsyringe';
 import { SpacyEntityExtractionService } from '@crm/application/services/spacy-entity-extraction.service';
-import { logger } from '@shared/utils/logger';
+import { logger } from '../../../../shared/utils/logger';
 
 const ENTITY_ALIAS_MAP: Record<string, string> = {
   'GS': 'Goldman Sachs',
@@ -81,9 +81,21 @@ export interface FinancialInsights {
   };
 }
 
+export interface NlpEntity {
+  value: string;
+  type: string;
+  properties?: Record<string, any>;
+}
+
+export interface NlpRelationship {
+  source: string;
+  target: string;
+  type: string;
+}
+
 export interface LlmGraphResponse {
-  entities: unknown[];
-  relationships: unknown[];
+  entities: NlpEntity[];
+  relationships: NlpRelationship[];
   refinement_info: string;
 }
 
@@ -120,7 +132,7 @@ export class FinancialEntityIntegrationService {
 
       // The LLM now returns generic entities. We no longer need to map them to strict FIBO types here.
       // The `embedding` property will be added in the next step.
-      const fiboEntities = (graph.entities || []).map(entity => ({
+      const fiboEntities = (graph.entities || []).map((entity: NlpEntity) => ({
         id: entity.value.toLowerCase().replace(/ /g, '_').replace(/[^a-z0-9_]/g, ''),
         name: entity.value,
         type: entity.type, // Preserve the original type from the NLP service
@@ -156,7 +168,7 @@ export class FinancialEntityIntegrationService {
       // We just need to ensure the source/target IDs match our entity IDs.
       const entityMap = new Map(fiboEntities.map(e => [e.name, e.id]));
       const crmIntegration = {
-        relationships: (graph.relationships || []).map(rel => ({
+        relationships: (graph.relationships || []).map((rel: NlpRelationship) => ({
           source: entityMap.get(rel.source),
           target: entityMap.get(rel.target),
           type: rel.type

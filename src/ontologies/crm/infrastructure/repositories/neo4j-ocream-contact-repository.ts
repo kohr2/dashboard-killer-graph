@@ -111,7 +111,7 @@ export class Neo4jOCreamContactRepository implements ContactRepository {
     return Promise.resolve();
   }
   
-  private mapNodeToContact(node: unknown): OCreamContactEntity {
+  private mapNodeToContact(node: any): OCreamContactEntity {
     return ContactOntology.createOCreamContact({
         id: node.id,
         firstName: node.firstName,

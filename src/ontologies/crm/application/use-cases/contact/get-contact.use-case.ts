@@ -3,7 +3,7 @@
 
 import { ContactRepository } from '../../../domain/repositories/contact-repository';
 import { OCreamContactEntity } from '../../../domain/entities/contact-ontology';
-import { oCreamV2, KnowledgeType, ActivityType, RelationshipType } from '../../../domain/ontology/o-cream-v2';
+import { oCreamV2, KnowledgeType, ActivityType, RelationshipType, InformationElement, Activity } from '../../../domain/ontology/o-cream-v2';
 
 export interface GetContactRequest {
   id: string;
@@ -94,23 +94,23 @@ export class GetContactUseCase {
         
         const knowledgeElements = oCreamContact.knowledgeElements
           .map((keId: string) => oCreamV2.getEntity(keId))
-          .filter(Boolean);
+          .filter(Boolean) as InformationElement[];
         const activities = oCreamContact.activities
           .map((actId: string) => oCreamV2.getEntity(actId))
-          .filter(Boolean);
+          .filter(Boolean) as Activity[];
         const relationships: unknown[] = [];
 
         response.contact!.ontologyData = {
-          knowledgeElements: knowledgeElements.map((ke: unknown) => ({
+          knowledgeElements: knowledgeElements.map(ke => ({
             id: ke.id,
             type: ke.type,
             title: ke.title,
             reliability: ke.reliability,
             createdAt: ke.createdAt
           })),
-          activities: activities.map((act: unknown) => ({
+          activities: activities.map(act => ({
             id: act.id,
-            type: act.type,
+            type: (act as any).type,
             name: act.name,
             timestamp: act.startTime || act.createdAt,
             status: act.status
@@ -147,10 +147,10 @@ export class GetContactUseCase {
     // Knowledge elements (30 points)
     const knowledgeElements = contact.knowledgeElements
         .map((keId: string) => oCreamV2.getEntity(keId))
-        .filter(Boolean);
+        .filter(Boolean) as InformationElement[];
     if (knowledgeElements.length > 0) score += 15;
     if (knowledgeElements.length > 2) score += 10;
-    if (knowledgeElements.some((ke: unknown) => ke.type === KnowledgeType.CUSTOMERPREFERENCES)) score += 5;
+    if (knowledgeElements.some(ke => ke.type === KnowledgeType.CUSTOMERPREFERENCES)) score += 5;
 
     // Activities (10 points)
     if (contact.activities.length > 0) score += 5;

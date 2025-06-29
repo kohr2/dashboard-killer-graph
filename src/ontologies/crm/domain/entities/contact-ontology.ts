@@ -45,36 +45,44 @@ export interface OCreamContactEntity extends DOLCEEntity, Omit<z.infer<typeof OC
 export const ContactOntology = {
   OCreamContactEntitySchema,
   createOCreamContact(
-    data: Partial<PersonalInfo> & {
-      id?: string;
-      organizationId?: string;
-      preferences?: Record<string, any>;
-    },
+    data: unknown,
   ): OCreamContactEntity {
-    const contactId = data.id || uuidv4();
+
+    const validation = PersonalInfoSchema.partial().and(z.object({
+      id: z.string().uuid().optional(),
+      organizationId: z.string().optional(),
+      preferences: z.record(z.string(), z.any()).optional(),
+    })).safeParse(data);
+
+    if (!validation.success) {
+      throw new Error(`Invalid data for OCreamContactEntity: ${validation.error.message}`);
+    }
+    const validatedData = validation.data;
+
+    const contactId = validatedData.id || uuidv4();
     const now = new Date();
     const contact: OCreamContactEntity = {
       id: contactId,
       category: DOLCECategory.PhysicalObject,
-      name: `${data.firstName || ''} ${data.lastName || ''}`.trim(),
-      description: `Contact entity for ${data.email}`,
+      name: `${validatedData.firstName || ''} ${validatedData.lastName || ''}`.trim(),
+      description: `Contact entity for ${validatedData.email}`,
       createdAt: now,
       updatedAt: now,
       personalInfo: {
-        firstName: data.firstName || '',
-        lastName: data.lastName || '',
-        email: data.email || '',
-        phone: data.phone,
-        title: data.title,
-        address: data.address,
+        firstName: validatedData.firstName || '',
+        lastName: validatedData.lastName || '',
+        email: validatedData.email || '',
+        phone: validatedData.phone,
+        title: validatedData.title,
+        address: validatedData.address,
       },
-      organizationId: data.organizationId,
+      organizationId: validatedData.organizationId,
       activities: [],
       knowledgeElements: [],
       ontologyMetadata: {
         validationStatus: 'unchecked',
       },
-      preferences: data.preferences,
+      preferences: validatedData.preferences,
       getId() {
         return this.id;
       },

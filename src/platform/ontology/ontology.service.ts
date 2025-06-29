@@ -101,7 +101,7 @@ export class OntologyService {
         }
       } catch (error) {
         if (error instanceof z.ZodError) {
-          logger.error(`Validation failed for ontology object '${ontology.name}':`, error.errors);
+          logger.error(`Validation failed for ontology object '${ontology.name}':`, JSON.stringify(error.errors));
         } else {
           logger.error(`An unexpected error occurred while loading ontology object '${ontology.name}':`, error);
         }
@@ -131,8 +131,7 @@ export class OntologyService {
             }
         } catch (error) {
             if (error instanceof z.ZodError) {
-              logger.error(`[Ontology Validation Error] Failed to validate ${file}:`);
-              logger.error(error.errors);
+              logger.error(`[Ontology Validation Error] Failed to validate ${file}:`, JSON.stringify(error.errors));
             } else {
               logger.error(`Error loading or parsing ontology file ${file}:`, error);
             }

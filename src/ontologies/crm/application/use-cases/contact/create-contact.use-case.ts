@@ -11,6 +11,7 @@ import {
   ActivityType,
   DOLCECategory,
 } from '@crm/domain/ontology/o-cream-v2';
+import { logger } from '@shared/utils/logger';
 
 export interface CreateContactRequest {
   firstName: string;

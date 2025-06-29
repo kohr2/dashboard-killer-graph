@@ -12,7 +12,7 @@ export class Neo4jContactRepository implements ContactRepository {
     this.connection = Neo4jConnection.getInstance();
   }
 
-  private nodeToContact(node: unknown): OCreamContactEntity {
+  private nodeToContact(node: any): OCreamContactEntity {
     return ContactOntology.createOCreamContact({
       id: node.id,
       firstName: node.firstName,
@@ -116,7 +116,7 @@ export class Neo4jContactRepository implements ContactRepository {
         'MATCH (c:Contact) WHERE c.name CONTAINS $term OR c.email CONTAINS $term RETURN c',
         { term: query },
       );
-      return result.records.map((record: unknown) => {
+      return result.records.map((record: Neo4jRecord) => {
         const contactNode = record.get('c').properties;
         return this.nodeToContact(contactNode);
       });

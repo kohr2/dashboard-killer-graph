@@ -1,12 +1,13 @@
+import 'tsconfig-paths/register';
 import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
 import { container } from 'tsyringe';
-import { ChatService } from './platform/chat/application/services/chat.service';
+import { ChatService } from '@platform/chat/application/services/chat.service';
 import { registerAllOntologies } from './register-ontologies';
-import { User } from './platform/security/domain/user';
-import { Role } from './platform/security/domain/role';
-import { Neo4jConnection } from './platform/database/neo4j-connection';
+import { User } from '@platform/security/domain/user';
+import { Role } from '@platform/security/domain/role';
+import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import helmet from 'helmet';
 import compression from 'compression';
 import { chatRouter } from '@platform/chat/chat.router';
@@ -58,7 +59,7 @@ apiRouter.post('/chat', async (req, res) => {
         res.json({ response });
     } catch (error) {
         logger.error('Error handling chat query:', error);
-        res.status(500).json({ error: 'An internal server error occurred.' });
+        res.status(500).json({ error: 'An internal error occurred.' });
     }
 });
 

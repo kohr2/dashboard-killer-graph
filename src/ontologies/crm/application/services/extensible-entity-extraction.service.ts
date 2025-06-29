@@ -171,7 +171,7 @@ export class ExtensibleEntityExtractionService extends EntityExtractionService {
     logger.info(`📦 Registered extension: ${extension.extensionName} with ${extension.entityTypes.length} entity types`);
   }
 
-  public async extractEntities(text: string, options?: unknown): Promise<EntityExtractionResult> {
+  public async extractEntities(text: string, options?: { entityTypes?: EntityType[]; minConfidence?: number; includeContext?: boolean; model?: string; }): Promise<EntityExtractionResult> {
     const result = await this.coreExtractor.extractEntities(text, options);
     return {
         entities: result.entities,

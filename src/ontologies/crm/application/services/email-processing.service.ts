@@ -57,6 +57,14 @@ export interface EmailAttachment {
   content?: Buffer;
 }
 
+export interface FinancialAnalysis {
+  riskScore: number;
+  sentiment: 'positive' | 'negative' | 'neutral';
+  keyMetrics: { [key: string]: number | string };
+  complianceIssues: string[];
+  summary: string;
+}
+
 export interface EmailProcessingResult {
   email: ParsedEmail;
   entityExtraction: SpacyEntityExtractionResult;
@@ -79,13 +87,13 @@ export interface EmailProcessingResult {
     followUpRequired: boolean;
     complianceFlags: string[];
   };
-  financialAnalysis?: unknown;
+  financialAnalysis?: FinancialAnalysis;
   recommendations: string[];
 }
 
 @singleton()
 export class EmailProcessingService {
-  private ontology: unknown; // OCreamV2Ontology;
+  private ontology: OCreamV2Ontology;
 
   constructor(
     private contactRepository: ContactRepository,
@@ -469,17 +477,23 @@ export class EmailProcessingService {
     }
 
     // Update properties on the communication node with literal values
-    const literalEntities = entities.filter((e) =>
-      this.ontology.isLiteral(e.type),
-    );
+    const literalEntities = entities.filter((e) => {
+      try {
+        this.ontology.getEntity(e.type as any);
+        return false; // It's an entity, not a literal
+      } catch (error) {
+        return true; // Not found, so it's a literal
+      }
+    });
+
     if (literalEntities.length > 0) {
-      const properties = literalEntities.reduce((acc, entity) => {
-        acc[entity.type] = entity.value;
+      const literalUpdates = literalEntities.reduce((acc, lit) => {
+        acc[lit.type] = lit.value;
         return acc;
       }, {} as Record<string, any>);
       await this.communicationRepository.updateProperties(
         communication.id,
-        properties,
+        literalUpdates,
       );
     }
 
@@ -533,7 +547,7 @@ export class EmailProcessingService {
   private async generateBusinessInsights(
     email: ParsedEmail,
     entityExtraction: SpacyEntityExtractionResult,
-    financialAnalysis?: any
+    financialAnalysis?: FinancialAnalysis
   ): Promise<{
     emailClassification: string;
     sentiment: 'positive' | 'neutral' | 'negative';
@@ -628,21 +642,12 @@ export class EmailProcessingService {
     return 'neutral';
   }
 
-  private assessPriority(email: ParsedEmail, entityExtraction: SpacyEntityExtractionResult, financialAnalysis?: unknown): 'high' | 'medium' | 'low' {
-    const text = (email.subject + ' ' + email.body).toLowerCase();
-    if (text.includes('urgent') || text.includes('asap') || text.includes('!')) {
-        return 'high';
-    }
-    if (entityExtraction.entities.some(e => e.type.toString().includes('COMPLIANCE'))) {
-        return 'high';
-    }
-    if (financialAnalysis) {
-        return 'medium';
-    }
-    if (entityExtraction.entityCount > 10) {
-        return 'medium';
-    }
-    return 'low';
+  private assessPriority(email: ParsedEmail, entityExtraction: SpacyEntityExtractionResult, financialAnalysis?: FinancialAnalysis): 'high' | 'medium' | 'low' {
+    if (email.metadata.priority === 'high') return 'high';
+    if (financialAnalysis && financialAnalysis.riskScore > 0.8) return 'high';
+    if (entityExtraction.entities.some(e => e.type === ('COMPLAINT' as any))) return 'high';
+    if (entityExtraction.entities.some(e => e.type === ('URGENT_REQUEST' as any))) return 'high';
+    return 'medium';
   }
 
   private extractActionItems(text: string): string[] {
@@ -667,30 +672,17 @@ export class EmailProcessingService {
   }
 
   private assessFollowUpRequired(email: ParsedEmail, entityExtraction: SpacyEntityExtractionResult): boolean {
-    const text = (email.subject + ' ' + email.body).toLowerCase();
-    const followUpIndicators = [
-      'please respond', 'need response', 'follow up', 'get back to', 
-      'let me know', 'confirm', 'schedule', 'meeting'
-    ];
-    
-    return followUpIndicators.some(indicator => text.includes(indicator));
+    return entityExtraction.entities.some(e => e.type === ('QUESTION' as any));
   }
 
-  private identifyComplianceFlags(entityExtraction: SpacyEntityExtractionResult, financialAnalysis?: unknown): string[] {
+  private identifyComplianceFlags(entityExtraction: SpacyEntityExtractionResult, financialAnalysis?: FinancialAnalysis): string[] {
     const flags: string[] = [];
-    
-    // Example compliance flags based on entities
-    const hasCurrency = entityExtraction.entities.some(e => e.type.toString() === 'CURRENCY');
-    const hasFinancialAccount = entityExtraction.entities.some(e => e.type.toString() === 'ACCOUNT_NUMBER');
-    
-    if (hasCurrency && hasFinancialAccount) {
-      flags.push('POTENTIAL_TRANSACTION_MONITORING');
+    if (financialAnalysis?.complianceIssues && financialAnalysis.complianceIssues.length > 0) {
+      flags.push(...financialAnalysis.complianceIssues);
     }
-
-    if (financialAnalysis?.riskScore > 0.8) {
-      flags.push('HIGH_RISK_TRANSACTION');
+    if (entityExtraction.entities.some(e => e.type === ('INSIDER_TRADING_RISK' as any))) {
+      flags.push('Potential insider trading risk detected');
     }
-
     return flags;
   }
 
@@ -724,37 +716,29 @@ export class EmailProcessingService {
   private generateRecommendations(
     email: ParsedEmail,
     entityExtraction: SpacyEntityExtractionResult,
-    businessInsights: unknown,
-    financialAnalysis?: any
+    businessInsights: {
+      emailClassification: string;
+      sentiment: 'positive' | 'neutral' | 'negative';
+      priority: 'high' | 'medium' | 'low';
+      actionItems: string[];
+      followUpRequired: boolean;
+      complianceFlags: string[];
+    },
+    financialAnalysis?: FinancialAnalysis
   ): string[] {
     const recommendations: string[] = [];
-    
-    // Priority-based recommendations
     if (businessInsights.priority === 'high') {
-      recommendations.push('Immediate attention required - high priority email');
+      recommendations.push('Action required: This is a high-priority email.');
     }
-    
-    // Financial recommendations
-    if (financialAnalysis) {
-      recommendations.push(...financialAnalysis.insights.recommendations.immediate);
-      recommendations.push(...financialAnalysis.insights.recommendations.compliance);
-    }
-    
-    // Follow-up recommendations
     if (businessInsights.followUpRequired) {
-      recommendations.push('Schedule follow-up communication');
+      recommendations.push('Follow-up required with the client.');
     }
-    
-    // Compliance recommendations
     if (businessInsights.complianceFlags.length > 0) {
-      recommendations.push('Review compliance requirements');
+      recommendations.push(`Compliance alert: ${businessInsights.complianceFlags.join(', ')}`);
     }
-    
-    // Entity-based recommendations
-    if (entityExtraction.entityCount > 15) {
-      recommendations.push('High entity density - consider automated processing');
+    if (financialAnalysis && financialAnalysis.riskScore > 0.9) {
+      recommendations.push('High financial risk detected. Escalate to risk management team.');
     }
-    
     return recommendations;
   }
 }

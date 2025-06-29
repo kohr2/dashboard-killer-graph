@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import './App.css'
+import { useState, useEffect, type FormEvent } from 'react';
+import './App.css';
 
 interface Message {
   text: string;
@@ -7,42 +7,43 @@ interface Message {
 }
 
 function App() {
-  const [messages, setMessages] = useState<Message[]>([])
-  const [inputValue, setInputValue] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!inputValue.trim() || isLoading) return
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
 
-    const userMessage: Message = { text: inputValue, isUser: true }
-    setMessages(prev => [...prev, userMessage])
-    setInputValue('')
-    setIsLoading(true)
+    const userMessage: Message = { text: input, isUser: true };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch('http://localhost:3001/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: inputValue }),
-      })
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: input }),
+      });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok')
+        throw new Error('Network response was not ok');
       }
 
-      const data = await response.json()
-      const assistantMessage: Message = { text: data.response, isUser: false }
-      setMessages(prev => [...prev, assistantMessage])
-
+      const data = await response.json();
+      const assistantMessage: Message = { text: data.response, isUser: false };
+      setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
-      console.error('Error fetching chat response:', error)
-      const errorMessage: Message = { text: 'Sorry, I encountered an error. Please try again.', isUser: false }
-      setMessages(prev => [...prev, errorMessage])
+      console.error('Error fetching chat response:', error);
+      const errorMessage: Message = { text: 'Sorry, something went wrong.', isUser: false };
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="chat-container">
@@ -58,18 +59,18 @@ function App() {
           </div>
         )}
       </div>
-      <form onSubmit={handleSendMessage} className="chat-input-form">
+      <form onSubmit={handleSubmit} className="chat-input-form">
         <input
           type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
           placeholder="Ask me anything about the graph..."
           disabled={isLoading}
         />
         <button type="submit" disabled={isLoading}>Send</button>
       </form>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

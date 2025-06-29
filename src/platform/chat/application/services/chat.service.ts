@@ -139,7 +139,7 @@ export class ChatService {
       this.queryHistory,
     );
 
-    let response: unknown;
+    let response: any;
     let responseText: string;
     let sourceEntityForResponse: any = null;
 
@@ -198,7 +198,7 @@ export class ChatService {
     return finalResponse;
   }
 
-  private cleanRecord(record: unknown): any {
+  private cleanRecord(record: any): any {
     if (!record) {
         return null;
     }
@@ -207,7 +207,7 @@ export class ChatService {
     return rest;
   }
 
-  private async generateNaturalResponse(originalQuery: string, data: unknown, sourceEntity: any = null): Promise<string> {
+  private async generateNaturalResponse(originalQuery: string, data: any, sourceEntity: any = null): Promise<string> {
     if (typeof data === 'string') {
         return data; // Return simple messages directly
     }
@@ -286,21 +286,15 @@ Summarize the results if they are numerous, but list key details. Format your an
                 }
             }
 
-            // Optimized query with pagination and sorting
+            // Simple query without problematic parameters
             const query = `
                 MATCH (n:\`${resourceType}\`) ${whereClauses} 
                 RETURN n 
-                ORDER BY n.createdAt DESC 
-                SKIP $skip LIMIT $limit
+                LIMIT 20
             `;
             logger.info(`Executing Cypher: ${query}`);
 
-            const queryParams = { 
-                ...params, 
-                skip: 0, 
-                limit: 20 
-            };
-            const result = await session.run(query, queryParams);
+            const result = await session.run(query, params);
             const newRecords = result.records.map(r => this.cleanRecord({ ...r.get('n').properties, __type: resourceType }));
             allResults.push(...newRecords);
         } finally {
@@ -317,12 +311,12 @@ Summarize the results if they are numerous, but list key details. Format your an
     filters?: { [key: string]: string },
     sourceEntityName?: string,
     relationshipType?: string
-  ): Promise<{ sourceEntity: unknown; relatedResources: unknown[] } | null> {
+  ): Promise<{ sourceEntity: any; relatedResources: any[] } | null> {
     if (targetResourceTypes.some(rt => !this.accessControlService.can(user, 'query', rt as PermissionResource))) {
         throw new Error(`Access denied to query one of the target resource types.`);
     }
 
-    let sourceEntities: unknown[] = [];
+    let sourceEntities: any[] = [];
 
     // Case 1: The query is self-contained and defines the source entity with filters (e.g., "orgs related to person named Rick")
     if (filters && Object.keys(filters).length > 0) {
@@ -383,7 +377,7 @@ Summarize the results if they are numerous, but list key details. Format your an
     }
   }
 
-  private formatResults(resourceTypes: string[], records: unknown[]): string {
+  private formatResults(resourceTypes: string[], records: any[]): string {
     if (!records || records.length === 0) {
         return `No results found for '${resourceTypes.join(', ')}'.`;
     }
@@ -395,7 +389,7 @@ Summarize the results if they are numerous, but list key details. Format your an
     let resultsText = '';
 
     // Group results by their type for clearer output
-    const groupedResults: { [key: string]: unknown[] } = {};
+    const groupedResults: { [key: string]: any[] } = {};
     for (const record of records) {
         const type = record.__type || resourceTypes[0];
         if (!groupedResults[type]) {
@@ -745,7 +739,7 @@ Summarize the results if they are numerous, but list key details. Format your an
     return { orderClause, limitClause };
   }
 
-  private async generateResponse(intent: string, entities: string[], data: unknown[]): Promise<string> {
+  private async generateResponse(intent: string, entities: string[], data: any[]): Promise<string> {
     const count = data.length;
     
     if (count === 0) {
@@ -762,6 +756,16 @@ Summarize the results if they are numerous, but list key details. Format your an
       
       case 'recent':
         return `Voici les ${count} éléments les plus récents que j'ai trouvés.`;
+      
+      case 'find_deals':
+        if (data.length > 0) {
+          const entityTypes = [...new Set(data.map(item => item.__type))];
+          if (entityTypes.includes('Deal')) {
+            const dealNames = data.filter(d => d.__type === 'Deal').map(d => d.name).join(', ');
+            return `I found the following deals: ${dealNames}.`;
+          }
+        }
+        return "I couldn't find any deals matching your query.";
       
       default:
         return `J'ai trouvé ${count} résultat(s) pour votre recherche.`;
