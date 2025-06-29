@@ -1,8 +1,10 @@
 {
   "mcpServers": {
     "llm-orchestrator": {
-      "command": "npx",
-      "args": ["ts-node", "/Users/benoit/Documents/Code/dashboard-killer-graph/src/mcp/servers/mcp-server-simple.ts"],
+      "command": "node",
+      "args": [
+        "/Users/benoit/Documents/Code/dashboard-killer-graph/src/mcp/servers/mcp-server-simple.js"
+      ],
       "cwd": "/Users/benoit/Documents/Code/dashboard-killer-graph"
     }
   }
