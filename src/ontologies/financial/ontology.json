@@ -59,6 +59,9 @@
     "LegalDocument": {
       "parent": "Document",
       "description": "A document with legal significance within a financial context, such as a merger agreement, NDA, or credit agreement. Aligned with FIBO's 'Legal Document' concept."
+    },
+    "RegulatoryInformation": {
+      "description": "Information related to regulatory filings, such as SEC filings (e.g., 10-K, 8-K) or other disclosures to a regulatory authority. This entity can be linked to a company or a deal to provide context on compliance and regulatory events."
     }
   },
   "relationships": {

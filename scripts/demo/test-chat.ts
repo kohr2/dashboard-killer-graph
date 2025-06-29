@@ -1,15 +1,16 @@
 import 'reflect-metadata';
-import * as dotenv from 'dotenv';
-dotenv.config(); // Load environment variables from .env file
-
+import 'dotenv/config';
 import { container } from 'tsyringe';
 import readline from 'readline';
-import { ChatService } from '@platform/chat/application/services/chat.service';
+import { ChatService } from '@src/platform/chat/application/services/chat.service';
 import { User } from '@platform/security/domain/user';
 import { ADMIN_ROLE, ANALYST_ROLE } from '@platform/security/domain/role';
-import { registerAllOntologies } from '../src/register-ontologies';
-import { Neo4jConnection } from '@platform/database/neo4j-connection';
+import { registerAllOntologies } from '@src/register-ontologies';
+import { Neo4jConnection } from '@src/platform/database/neo4j-connection';
 import { ConversationTurn } from '@platform/chat/application/services/query-translator.service';
+import { ExtensionRegistry } from '@src/platform/extension-framework/extension-registry';
+import { OntologyService } from '@src/platform/ontology/ontology.service';
+import { Logger } from '@src/shared/utils/logger';
 
 // --- User Simulation ---
 const adminUser: User = { id: 'admin-cli', username: 'CLI Admin', roles: [ADMIN_ROLE] };
@@ -52,8 +53,12 @@ function displayPrompt() {
             // For simplicity, we'll let the service manage the history for now.
             // In a real client, you'd manage the state here.
 
-        } catch (error: unknown) {
-            console.error(`\n[ERROR] ${error.message}\n`);
+        } catch (error: any) {
+            if (error instanceof Error) {
+                console.error(`\n[ERROR] ${error.message}\n`);
+            } else {
+                console.error(`\n[ERROR] An unknown error occurred.\n`);
+            }
         }
 
         displayPrompt();
