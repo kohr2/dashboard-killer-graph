@@ -36,10 +36,21 @@ interface IngestionEntity {
 @singleton()
 export class ContentProcessingService {
   private nlpServiceUrl: string;
+  private enrichmentOrchestrator: EnrichmentOrchestratorService;
 
   constructor(
-    @inject(EnrichmentOrchestratorService) private enrichmentOrchestrator: EnrichmentOrchestratorService
+    @inject(EnrichmentOrchestratorService)
+    enrichmentOrchestrator?: EnrichmentOrchestratorService,
   ) {
+    // If no orchestrator is provided (e.g., in unit tests), fall back to a no-op implementation
+    this.enrichmentOrchestrator =
+      enrichmentOrchestrator ??
+      ({
+        register: () => {},
+        getServices: () => [],
+        enrich: async (e: any) => e,
+      } as unknown as EnrichmentOrchestratorService);
+
     this.nlpServiceUrl = 'http://127.0.0.1:8000';
   }
 

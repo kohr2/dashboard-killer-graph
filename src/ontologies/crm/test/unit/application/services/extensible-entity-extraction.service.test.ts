@@ -25,7 +25,7 @@ describe('ExtensibleEntityExtractionService', () => {
 
   describe('registerExtension', () => {
     it('should register a new extension and add it to the registry', () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = jest.spyOn(console, 'info').mockImplementation(() => {});
       const newExtension: ExtensionEntityRegistry = {
         extensionName: 'TestExtension',
         entityTypes: [{ type: 'TEST_ENTITY', category: 'CUSTOM', description: 'A test entity' }],

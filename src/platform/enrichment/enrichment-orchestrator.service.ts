@@ -39,44 +39,52 @@ export class EnrichmentOrchestratorService {
    * Sequentially calls registered enrichment services for an entity.
    */
   public async enrich(entity: EnrichableEntity): Promise<EnrichableEntity> {
-    const serviceName = this.ontologyService.getEnrichmentServiceName(entity);
+    for (const service of this.services.values()) {
+      try {
+        const enrichmentData = await service.enrich(entity);
 
-    if (!serviceName) {
-      logger.debug(
-        `No enrichment service found for entity of type '${entity.label}'.`,
-        { entityId: entity.id },
-      );
-      return entity;
-    }
+        // Skip if the service could not enrich the entity (null or empty object)
+        if (enrichmentData && Object.keys(enrichmentData).length > 0) {
+          if (!entity.enrichedData) {
+            entity.enrichedData = {};
+          }
 
-    const service = this.services.get(serviceName);
+          // Some services might already return a structure like { enrichedData: { SERVICE: {...} } }
+          const dataToMerge =
+            'enrichedData' in enrichmentData
+              ? (enrichmentData as any).enrichedData
+              : { [service.name]: enrichmentData };
 
-    if (!service) {
-      logger.warn(
-        `Service '${serviceName}' is configured for '${entity.label}' but not registered.`,
-        { entityId: entity.id },
-      );
-      return entity;
-    }
+          // Merge the new data while preserving existing entries
+          entity.enrichedData = {
+            ...entity.enrichedData,
+            ...dataToMerge,
+          };
 
-    try {
-      const enrichmentData = await service.enrich(entity);
-      if (enrichmentData) {
-        // Merge the enrichment data back into the original entity
-        Object.assign(entity, enrichmentData);
+          // If the enrichment returned top-level metadata, merge it into the entity's metadata as a convenience
+          const maybeMetadata =
+            (enrichmentData as any).metadata ??
+            (dataToMerge[service.name] as any)?.metadata;
 
-        logger.info(
-          `Successfully enriched entity '${entity.id}' with service '${service.name}'.`,
+          if (maybeMetadata && typeof maybeMetadata === 'object') {
+            entity.metadata = {
+              ...(entity.metadata ?? {}),
+              ...maybeMetadata,
+            };
+          }
+
+          logger.info(
+            `Successfully enriched entity '${entity.id}' with service '${service.name}'.`,
+          );
+        }
+      } catch (error) {
+        logger.error(
+          `Error during enrichment with service '${service.name}':`,
+          error,
         );
-        return entity;
       }
-    } catch (error) {
-      logger.error(
-        `Error during enrichment with service '${service.name}':`,
-        error,
-      );
     }
 
     return entity;
   }
-} 
+}

@@ -73,19 +73,19 @@ class Logger {
 
   warn(message: string, data?: unknown): void {
     if (this.shouldLog(LogLevel.WARN)) {
-      console.error(this.formatMessage('WARN', message, data));
+      console.warn(this.formatMessage('WARN', message, data));
     }
   }
 
   info(message: string, data?: unknown): void {
     if (this.shouldLog(LogLevel.INFO)) {
-      console.error(this.formatMessage('INFO', message, data));
+      console.info(this.formatMessage('INFO', message, data));
     }
   }
 
   debug(message: string, data?: unknown): void {
     if (this.shouldLog(LogLevel.DEBUG)) {
-      console.error(this.formatMessage('DEBUG', message, data));
+      console.debug(this.formatMessage('DEBUG', message, data));
     }
   }
 

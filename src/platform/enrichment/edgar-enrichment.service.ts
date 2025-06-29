@@ -28,7 +28,7 @@ export class EdgarEnrichmentService implements IEnrichmentService {
     this.cachePath = join(__dirname, '..', '..', 'cache', 'company_tickers.json');
   }
 
-  public async enrich(entity: EnrichableEntity): Promise<Record<string, any>> {
+  public async enrich(entity: EnrichableEntity): Promise<Record<string, any> | null> {
     // This service only enriches Organizations, so we expect an Organization entity.
     if (!(entity instanceof Organization)) {
       return {};
