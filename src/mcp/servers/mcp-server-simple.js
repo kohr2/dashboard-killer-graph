@@ -1,22 +1,49 @@
 #!/usr/bin/env node
 
+// CRITICAL: Capture and redirect all stdout pollution before any module loading
+// Store the original stdout.write
+const originalStdoutWrite = process.stdout.write;
+
+// Override stdout.write to redirect to stderr (except for JSON-RPC messages)
+process.stdout.write = function(chunk, encoding, callback) {
+  // Convert chunk to string if it's a buffer
+  const str = chunk.toString();
+  
+  // Only allow JSON-RPC messages through (they start with { and contain "jsonrpc")
+  if (str.trim().startsWith('{') && str.includes('"jsonrpc"')) {
+    return originalStdoutWrite.call(this, chunk, encoding, callback);
+  }
+  
+  // For everything else (like the dotenv message), silently ignore it
+  // instead of redirecting to stderr.
+  return true;
+};
+
 // Set environment variables to silence logs specifically for the MCP server context
 process.env.LOG_SILENT = 'true';
 process.env.DOTENV_CONFIG_DEBUG = 'false';
 
-require('ts-node').register();
-
-// Programmatically register tsconfig-paths
-const tsconfigPaths = require('tsconfig-paths');
+// --- Self-Contained Path Resolution ---
 const path = require('path');
-// __dirname is .../src/mcp/servers, so project root is 3 levels up
-const projectRoot = path.resolve(__dirname, '../../../'); 
-const tsconfig = require(path.join(projectRoot, 'tsconfig.json'));
+// Resolve the project root dynamically from the current script's location
+const projectRoot = path.resolve(__dirname, '../../../');
+process.chdir(projectRoot); // Set the current working directory to the project root
 
-tsconfigPaths.register({
+// Manually load and register ts-node and tsconfig-paths
+require('ts-node').register({
+  project: path.join(projectRoot, 'tsconfig.json'),
+  transpileOnly: true, // Faster startup
+});
+
+const tsconfig = require(path.join(projectRoot, 'tsconfig.json'));
+require('tsconfig-paths').register({
   baseUrl: path.join(projectRoot, '.'),
   paths: tsconfig.compilerOptions.paths,
 });
+// --- End Self-Contained Path Resolution ---
+
+require('reflect-metadata');
+const { container } = require('tsyringe');
 
 const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
 const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio.js');
@@ -24,8 +51,6 @@ const {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } = require('@modelcontextprotocol/sdk/types.js');
-require('reflect-metadata');
-const { container } = require('tsyringe');
 
 // Since we are in a pure JS file, we manually register dependencies
 const { Neo4jConnection } = require('@platform/database/neo4j-connection');
