@@ -8,13 +8,13 @@ import {
   EnrichmentOrchestratorService,
 } from './platform/enrichment';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { crmPlugin } from './ontologies/crm/crm.plugin';
-import { financialPlugin } from './ontologies/financial/financial.plugin';
-import { procurementPlugin } from './ontologies/procurement/procurement.plugin';
+import { getEnabledPlugins, getPluginSummary } from './config/ontology-plugins.config';
 
 /**
  * Registers all platform services, including ontologies and enrichment pipelines.
  * This function should be called at the application's entry point.
+ * 
+ * Plugins are configured in src/config/ontology-plugins.config.ts
  */
 export function registerAllOntologies() {
   logger.debug('Registering all ontologies...');
@@ -23,9 +23,17 @@ export function registerAllOntologies() {
   registerCrm();
   registerFinancial();
 
-  // NEW: plugin-based schema loading
+  // NEW: plugin-based schema loading using configuration
+  const enabledPlugins = getEnabledPlugins();
+  const pluginSummary = getPluginSummary();
+  
+  logger.info(`Loading ${enabledPlugins.length} enabled ontology plugins: ${pluginSummary.enabled.join(', ')}`);
+  if (pluginSummary.disabled.length > 0) {
+    logger.info(`Disabled plugins: ${pluginSummary.disabled.join(', ')}`);
+  }
+  
   const ontologyService = container.resolve(OntologyService);
-  ontologyService.loadFromPlugins([crmPlugin, financialPlugin, procurementPlugin]);
+  ontologyService.loadFromPlugins(enabledPlugins);
 
   // Define a default User-Agent for SEC EDGAR API
   const secApiUserAgent =
