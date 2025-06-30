@@ -10,6 +10,8 @@ This document describes the email attachment processing capabilities that have b
 
 - **PDF Documents** (`application/pdf`)
 - **Microsoft Word Documents** (`application/vnd.openxmlformats-officedocument.wordprocessingml.document`, `application/msword`)
+- **Microsoft Excel Spreadsheets** (`application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`, `application/vnd.ms-excel`) - XLSX and XLS formats
+- **Microsoft PowerPoint Presentations** (`application/vnd.openxmlformats-officedocument.presentationml.presentation`, `application/vnd.ms-powerpoint`) - PPTX and PPT formats
 - **Images** (`image/png`, `image/jpeg`, `image/jpg`, `image/gif`) - via OCR
 - **Plain Text** (`text/plain`)
 
@@ -31,6 +33,8 @@ This document describes the email attachment processing capabilities that have b
   - `processAttachments()`: Process multiple attachments
   - `extractTextFromPdf()`: Extract text from PDF files
   - `extractTextFromDocx()`: Extract text from Word documents
+  - `extractTextFromExcel()`: Extract text from Excel spreadsheets
+  - `extractTextFromPowerPoint()`: Extract text from PowerPoint presentations
   - `extractTextFromImage()`: Extract text from images using OCR
   - `isSupportedFileType()`: Check if file type is supported
 
@@ -112,8 +116,10 @@ npm test -- src/ingestion/sources/email/processors/__tests__/attachment-processo
 
 1. **PDF Processing**: Uses mock implementation (TODO: integrate pdf-parse library)
 2. **DOCX Processing**: Uses mock implementation (TODO: integrate mammoth library)
-3. **OCR Processing**: Uses mock implementation (TODO: integrate tesseract.js library)
-4. **Plain Text**: Direct UTF-8 decoding
+3. **Excel Processing**: Uses `node-xlsx` library for spreadsheet data extraction from all worksheets
+4. **PowerPoint Processing**: Uses `officeparser` library for presentation text extraction from all slides
+5. **OCR Processing**: Uses mock implementation (TODO: integrate tesseract.js library)
+6. **Plain Text**: Direct UTF-8 decoding
 
 ### Entity Extraction
 
@@ -144,10 +150,9 @@ npm test -- src/ingestion/sources/email/processors/__tests__/attachment-processo
    - Relationship extraction between entities
 
 3. **Additional File Formats**:
-   - Excel files (`.xlsx`, `.xls`)
-   - PowerPoint presentations (`.pptx`, `.ppt`)
    - CSV files
    - RTF documents
+   - OpenDocument formats (ODS, ODT, ODP)
 
 ### Technical Improvements
 

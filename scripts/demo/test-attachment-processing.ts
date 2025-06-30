@@ -7,6 +7,7 @@ import 'reflect-metadata';
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { EmailProcessor } from '../../src/ingestion/sources/email/processors/email-processor';
+import { AttachmentProcessor } from '../../src/ingestion/sources/email/processors/attachment-processor';
 import { logger } from '../../src/shared/utils/logger';
 
 async function testAttachmentProcessing() {
@@ -93,7 +94,6 @@ async function testOfficeFileSupport() {
   console.log('\n📊 Testing Excel and PowerPoint Support');
   console.log('======================================\n');
 
-  const { AttachmentProcessor } = await import('../../src/ingestion/sources/email/processors/attachment-processor.js');
   const attachmentProcessor = new AttachmentProcessor();
 
   // Create mock Excel data
@@ -227,6 +227,7 @@ JVBERi0xLjQKJcOkw7zDtsOmCjIgMCBvYmoKPDwKL0xlbmd0aCAzIDA
 async function main() {
   try {
     await testAttachmentProcessing();
+    await testOfficeFileSupport();
     await testSpecificCases();
   } catch (error) {
     console.error('Demo failed:', error);
