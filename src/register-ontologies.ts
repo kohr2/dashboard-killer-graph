@@ -7,6 +7,9 @@ import {
   EdgarEnrichmentService,
   EnrichmentOrchestratorService,
 } from './platform/enrichment';
+import { OntologyService } from '@platform/ontology/ontology.service';
+import { crmPlugin } from './ontologies/crm/crm.plugin';
+import { financialPlugin } from './ontologies/financial/financial.plugin';
 // import { registerSecurity } from './ontologies/security';
 // import { registerHealthcare } from './ontologies/healthcare';
 // import { registerLegal } from './ontologies/legal';
@@ -19,16 +22,14 @@ import {
 export function registerAllOntologies() {
   logger.info('Registering all ontologies...');
 
+  // Legacy registration of DI providers (will be replaced by plugin mechanism)
   registerCrm();
   registerFinancial();
-  // registerSecurity();
-  // registerHealthcare();
-  // registerLegal();
-  // registerRealEstate();
 
-  logger.info('All ontologies registered.');
+  // NEW: plugin-based schema loading
+  const ontologyService = container.resolve(OntologyService);
+  ontologyService.loadFromPlugins([crmPlugin, financialPlugin]);
 
-  logger.info('Registering enrichment services...');
   // Define a default User-Agent for SEC EDGAR API
   const secApiUserAgent =
     process.env.SEC_API_USER_AGENT || 'My Company My Product me@mycompany.com';
@@ -50,4 +51,6 @@ export function registerAllOntologies() {
   // Register Edgar service with the orchestrator
   enrichmentOrchestrator.register(edgarService);
   logger.info('Enrichment services registered.');
+
+  logger.info('All ontologies registered.');
 } 

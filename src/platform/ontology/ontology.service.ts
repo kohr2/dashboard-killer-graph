@@ -6,6 +6,7 @@ import { singleton, injectable } from 'tsyringe';
 import { z } from 'zod';
 import { logger } from '@shared/utils/logger';
 import { EnrichableEntity } from '@platform/enrichment';
+import { OntologyPlugin } from '@platform/ontology/ontology.plugin';
 
 // Zod Schemas for validation
 const OntologyPropertySchema = z.object({
@@ -282,5 +283,33 @@ export class OntologyService {
 
     const entityDefinition = this.schema.entities[entityType];
     return entityDefinition?.enrichment?.service;
+  }
+
+  /**
+   * Load ontology fragments from an array of plug-ins.
+   * Each plug-in may contribute additional entity schemas (and later providers).
+   *
+   * This is a lightweight wrapper so we can progressively migrate existing
+   * vertical ontologies (CRM, Financial, …) to the plugin architecture without
+   * changing the underlying file-based JSON loading.
+   */
+  public loadFromPlugins(plugins: OntologyPlugin[]): void {
+    for (const plugin of plugins) {
+      logger.info(`🔌 Loading ontology plugin [36m${plugin.name}[0m`);
+
+      for (const [entityName, schema] of Object.entries(plugin.entitySchemas)) {
+        if (this.schema.entities[entityName]) {
+          logger.warn(
+            `Entity type "${entityName}" is already defined. Overwriting with definition from plugin "${plugin.name}"`,
+          );
+        }
+
+        // Accept the raw schema fragment as-is (validated later on demand).
+        this.schema.entities[entityName] = schema as InternalOntologyEntity;
+        this.registeredEntityTypes.add(entityName);
+      }
+
+      // Placeholder: handle serviceProviders in future iterations
+    }
   }
 } 

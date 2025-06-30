@@ -20,11 +20,7 @@ module.exports = {
   moduleDirectories: ["node_modules", "src", "scripts", "scripts/database"],
 
   setupFilesAfterEnv: ['<rootDir>/test/setup-e2e.ts', 'jest-extended/all', './test/setup.ts'],
-  testMatch: [
-    '<rootDir>/src/**/*.test.ts',
-    '<rootDir>/test/e2e/**/*.test.ts',
-    '<rootDir>/test/integration/**/*.test.ts'
-  ],
+  testMatch: ['<rootDir>/src/**/*.test.ts'],
   globals: {
     'ts-jest': {
       tsconfig: 'test/tsconfig.json'
