@@ -13,6 +13,8 @@ describe('SpacyEntityExtractionService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Ensure the health-check succeeds instantly to avoid retries/timeouts
+    mockedAxios.get.mockResolvedValue({ status: 200 } as any);
     service = new SpacyEntityExtractionService();
   });
 
