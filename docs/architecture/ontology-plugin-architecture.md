@@ -61,7 +61,21 @@ ontologyService.loadFromPlugins([crmPlugin, financialPlugin]);
 3. Import the plug-in in `register-ontologies.ts` and add it to the array.
 4. (Optional) Provide DI registration via `serviceProviders.register()`.
 
-## Roadmap
+## How to create a new vertical
+
+1.  Create `src/ontologies/your-ontology-name/`
+2.  Add an `ontology.json` with your entity schemas.
+3.  Add a `your-ontology-name.plugin.ts` that imports the JSON and exports an `OntologyPlugin`.
+4.  Add a link to the new vertical in `docs/architecture/ontology-plugin-architecture.md` (this file).
+5.  Load the plugin in `register-ontologies.ts`.
+
+## Available Plug-ins
+
+*   [CRM](./ontologies/crm.md)
+*   [Financial](./ontologies/financial.md)
+*   [Procurement](./ontologies/procurement.md)
+
+## Next Steps / Roadmap
 * **Auto-registration** – next step is to scan a directory (or NPM workspace) for `*.plugin.ts` files automatically.
 * **ServiceProviders v2** – the DI container will consume `serviceProviders` directly, eliminating the legacy `registerX()` helpers.
 * **Marketplace** – remote plug-ins signed and loaded at runtime. 

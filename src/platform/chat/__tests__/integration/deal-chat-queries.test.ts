@@ -50,9 +50,9 @@ describe('ChatService Deal Queries Integration Test', () => {
   beforeEach(async () => {
     mockOpenAICreate.mockClear();
     const session = connection.getSession();
-    await session.run('MATCH (n) DETACH DELETE n');
+    // await session.run('MATCH (n) DETACH DELETE n'); // This was wiping the DB
     await session.run(
-      `CREATE (d:Deal {name: 'Apollo acquisition of TechCorp', amount: 500000000, stage: 'Closed'})`,
+      `MERGE (d:Deal {name: 'Apollo acquisition of TechCorp'}) SET d.amount = 500000000, d.stage = 'Closed'`,
     );
     await session.close();
   });

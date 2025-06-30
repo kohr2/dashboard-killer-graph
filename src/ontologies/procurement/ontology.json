@@ -1,0 +1,34 @@
+{
+  "name": "ProcurementOntology",
+  "source": "https://eprocurementontology.github.io/",
+  "entities": {
+    "Thing": {
+      "description": "The root of the ontology."
+    },
+    "Organization": {
+      "description": "A collection of people, a company, an institution, or other social, commercial or political structure.",
+      "parent": "Thing"
+    },
+    "ProcurementProcedure": {
+      "description": "A series of activities leading to the conclusion of a public contract. Based on ePO.",
+      "parent": "Thing"
+    },
+    "Contract": {
+      "description": "The awarded contract resulting from a procurement procedure. Based on ePO.",
+      "parent": "Thing"
+    },
+    "Tender": {
+      "description": "An offer submitted by an Economic Operator (tenderer) in a procurement procedure. Based on ePO.",
+      "parent": "Thing"
+    },
+    "ProcuringEntity": {
+      "description": "The organization conducting the procurement procedure. Based on ePO.",
+      "parent": "Organization"
+    },
+    "EconomicOperator": {
+      "description": "An organisation that can be a tenderer or sub-contractor. Based on ePO.",
+      "parent": "Organization"
+    }
+  },
+  "relationships": {}
+} 
