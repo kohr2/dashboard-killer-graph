@@ -19,7 +19,6 @@
       }
     },
     "ContactPoint": {
-      "parent": "Thing",
       "description": "A means of contacting an entity, like an email address or phone number."
     },
     "Email": {

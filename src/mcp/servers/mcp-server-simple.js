@@ -83,12 +83,11 @@ const mcpUser = {
 
 // The Server implementation
 async function main() {
-  // 1. Get the singleton connection instance FROM THE CONTAINER.
+  // Re-enable Neo4j connection
   const connection = container.resolve(Neo4jConnection);
-  // 2. Establish the database connection *before* resolving any other services.
   await connection.connect();
 
-  // 3. Now that the connection is live, resolve other services.
+  // Now that the connection is live, resolve other services
   const ontologyService = container.resolve(OntologyService);
   
   const mcpServer = new Server(
@@ -103,7 +102,7 @@ async function main() {
     }
   );
 
-  // 4. Build the tool description with the live schema.
+  // Build the tool description with the live schema
   const schemaDescription = ontologyService.getSchemaRepresentation();
   const queryTool = {
     name: 'queryGraph',
@@ -141,15 +140,13 @@ Examples:
       }
 
       try {
-        // No need to connect again, but we resolve the service just-in-time
-        // to be sure we get the latest state if other things change.
+        // Use the full chat service to process queries
         const chatService = container.resolve(ChatService);
         const responseText = await chatService.handleQuery(mcpUser, query);
         return {
           content: [{ type: 'text', text: responseText }],
         };
       } catch (error) {
-        // In a real app, use a structured logger writing to stderr
         process.stderr.write(`Error handling query: ${error.stack}\n`);
         return {
           content: [{ type: 'text', text: `An error occurred: ${error.message}` }],

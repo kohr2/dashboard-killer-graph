@@ -3,11 +3,9 @@
     "llm-orchestrator": {
       "command": "node",
       "args": [
-        "-r",
-        "tsconfig-paths/register",
-        "/Users/benoit/Documents/Code/dashboard-killer-graph/src/mcp/servers/mcp-server-simple.js"
+        "/Users/benoit/Documents/Code/dashboard-killer-graph-new/src/mcp/servers/mcp-server-simple.js"
       ],
-      "cwd": "/Users/benoit/Documents/Code/dashboard-killer-graph"
+      "cwd": "/Users/benoit/Documents/Code/dashboard-killer-graph-new"
     }
   }
 } 
