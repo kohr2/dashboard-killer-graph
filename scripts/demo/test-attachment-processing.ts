@@ -88,6 +88,97 @@ async function testAttachmentProcessing() {
   console.log('\n✅ Attachment processing test completed!');
 }
 
+// Test Excel and PowerPoint support
+async function testOfficeFileSupport() {
+  console.log('\n📊 Testing Excel and PowerPoint Support');
+  console.log('======================================\n');
+
+  const { AttachmentProcessor } = await import('../../src/ingestion/sources/email/processors/attachment-processor.js');
+  const attachmentProcessor = new AttachmentProcessor();
+
+  // Create mock Excel data
+  const mockExcelData = Buffer.from('Mock Excel spreadsheet with financial data');
+  const mockPowerPointData = Buffer.from('Mock PowerPoint presentation with investment slides');
+
+  const testAttachments = [
+    {
+      filename: 'financial-data.xlsx',
+      contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      size: mockExcelData.length,
+      content: mockExcelData,
+    },
+    {
+      filename: 'investment-presentation.pptx',
+      contentType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      size: mockPowerPointData.length,
+      content: mockPowerPointData,
+    },
+    {
+      filename: 'legacy-data.xls',
+      contentType: 'application/vnd.ms-excel',
+      size: 1000,
+      content: Buffer.from('Mock legacy Excel file'),
+    },
+    {
+      filename: 'legacy-presentation.ppt',
+      contentType: 'application/vnd.ms-powerpoint',
+      size: 2000,
+      content: Buffer.from('Mock legacy PowerPoint file'),
+    },
+  ];
+
+  console.log('Processing office file attachments...\n');
+
+  try {
+    const result = await attachmentProcessor.processAttachments(testAttachments);
+    
+    console.log(`✅ Processing completed successfully`);
+    console.log(`📈 Results Summary:`);
+    console.log(`   Total processed: ${result.totalProcessed}`);
+    console.log(`   Supported formats: ${result.supportedFormats}`);
+    console.log(`   Unsupported formats: ${result.unsupportedFormats}`);
+    console.log(`   Processing time: ${result.totalProcessingTime}ms`);
+    console.log(`   Entities extracted: ${result.extractedEntities.length}`);
+    
+    console.log('\n📋 Individual File Results:');
+    result.processedAttachments.forEach((attachment, index) => {
+      console.log(`\n${index + 1}. ${attachment.filename}`);
+      console.log(`   Content Type: ${attachment.contentType}`);
+      console.log(`   Supported: ${attachment.supportedFormat ? '✅' : '❌'}`);
+      console.log(`   Processing Method: ${attachment.processingMethod || 'N/A'}`);
+      console.log(`   Processing Duration: ${attachment.processingDuration}ms`);
+      
+      if (attachment.extractedText) {
+        const preview = attachment.extractedText.length > 150 
+          ? attachment.extractedText.substring(0, 150) + '...' 
+          : attachment.extractedText;
+        console.log(`   Extracted Text: "${preview}"`);
+      }
+      
+      if (attachment.entities && attachment.entities.length > 0) {
+        console.log(`   Entities Found: ${attachment.entities.length}`);
+        attachment.entities.slice(0, 2).forEach(entity => {
+          console.log(`     - "${entity.text}" (${entity.type})`);
+        });
+      }
+      
+      if (attachment.error) {
+        console.log(`   Error: ${attachment.error}`);
+      }
+    });
+
+    if (result.errors.length > 0) {
+      console.log('\n⚠️  Processing Errors:');
+      result.errors.forEach(error => {
+        console.log(`   - ${error.filename}: ${error.error}`);
+      });
+    }
+
+  } catch (error) {
+    console.error('❌ Error testing office file support:', error);
+  }
+}
+
 // Test with different types of content
 async function testSpecificCases() {
   console.log('\n🧪 Testing Specific Attachment Cases');

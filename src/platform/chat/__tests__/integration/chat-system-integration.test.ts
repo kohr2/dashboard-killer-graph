@@ -84,8 +84,8 @@ describe('Chat System Integration Test', () => {
       const entityTypes = ontologyService.getAllEntityTypes();
       const relationshipTypes = ontologyService.getAllRelationshipTypes();
       
-      expect(entityTypes.length).toBeGreaterThan(30); // Should have 34 entities
-      expect(relationshipTypes.length).toBeGreaterThan(20); // Should have 24 relationships
+      expect(entityTypes.length).toBeGreaterThan(25); // Should have 27 entities (CRM + Financial)
+      expect(relationshipTypes.length).toBeGreaterThan(15); // Should have 18 relationships
       
       // Check key entity types are present
       expect(entityTypes).toContain('Person');

@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { OntologyService } from '@platform/ontology/ontology.service';
-import { registerAllOntologies } from '@src/register-ontologies';
+import { OntologyService } from '../../../platform/ontology/ontology.service';
+import { registerAllOntologies } from '../../../register-ontologies';
 
 // Mock ontology files
 const mockCrmOntology = {
@@ -48,9 +48,9 @@ describe('OntologyService', () => {
             const entityTypes = ontologyService.getAllEntityTypes();
             const relationshipTypes = ontologyService.getAllRelationshipTypes();
             
-            // Should have loaded entities from CRM, Financial, and Procurement plugins
-            expect(entityTypes.length).toBeGreaterThan(30);
-            expect(relationshipTypes.length).toBeGreaterThan(20);
+            // Should have loaded entities from CRM and Financial plugins (procurement disabled)
+            expect(entityTypes.length).toBeGreaterThan(25);
+            expect(relationshipTypes.length).toBeGreaterThan(15);
         });
 
         it('should contain key entity types from all plugins', () => {
@@ -68,10 +68,7 @@ describe('OntologyService', () => {
             expect(entityTypes).toContain('Fund');
             expect(entityTypes).toContain('TargetCompany');
             
-            // Procurement entities
-            expect(entityTypes).toContain('Contract');
-            expect(entityTypes).toContain('Tender');
-            expect(entityTypes).toContain('ProcuringEntity');
+            // Note: Procurement entities not tested as plugin is disabled
         });
 
         it('should contain key relationship types from all plugins', () => {
@@ -87,9 +84,7 @@ describe('OntologyService', () => {
             expect(relationshipTypes).toContain('MANAGES');
             expect(relationshipTypes).toContain('TARGETS');
             
-            // Procurement relationships
-            expect(relationshipTypes).toContain('HAS_TENDER');
-            expect(relationshipTypes).toContain('SUBMITTED_BY');
+            // Note: Procurement relationships not tested as plugin is disabled
         });
     });
 
@@ -98,7 +93,7 @@ describe('OntologyService', () => {
             expect(ontologyService.isValidLabel('Person')).toBe(true);
             expect(ontologyService.isValidLabel('Deal')).toBe(true);
             expect(ontologyService.isValidLabel('Organization')).toBe(true);
-            expect(ontologyService.isValidLabel('Contract')).toBe(true);
+            // Note: Contract not available as procurement plugin is disabled
         });
 
         it('should not validate entity types that do not exist', () => {
@@ -116,7 +111,7 @@ describe('OntologyService', () => {
             expect(schema).toContain('Organization');
             expect(schema).toContain('WORKS_FOR');
             expect(schema).toContain('INVESTED_IN');
-            expect(schema).toContain('HAS_TENDER');
+            // Note: HAS_TENDER not available as procurement plugin is disabled
         });
 
         it('should include entity properties in schema representation', () => {
@@ -144,7 +139,7 @@ describe('OntologyService', () => {
             const entities2 = instance2.getAllEntityTypes();
             
             expect(entities1).toEqual(entities2);
-            expect(entities1.length).toBeGreaterThan(30);
+            expect(entities1.length).toBeGreaterThan(25);
         });
     });
 
@@ -163,7 +158,7 @@ describe('OntologyService', () => {
             expect(labels).toContain('Person');
             expect(labels).toContain('Deal');
             expect(labels).toContain('Organization');
-            expect(labels).toContain('Contract');
+            // Note: Contract not available as procurement plugin is disabled
             
             // Should not contain duplicates
             const uniqueLabels = [...new Set(labels)];

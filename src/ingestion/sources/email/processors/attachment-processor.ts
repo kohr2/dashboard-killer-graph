@@ -5,6 +5,8 @@
 
 import { singleton } from 'tsyringe';
 import { logger } from '@shared/utils/logger';
+import xlsx from 'node-xlsx';
+import * as officeParser from 'officeparser';
 import {
   EmailAttachment,
   ProcessedAttachment,
@@ -19,6 +21,10 @@ export class AttachmentProcessor {
     'application/pdf',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/msword',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // Excel XLSX
+    'application/vnd.ms-excel', // Excel XLS
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation', // PowerPoint PPTX
+    'application/vnd.ms-powerpoint', // PowerPoint PPT
     'text/plain',
     'image/png',
     'image/jpeg',
@@ -155,6 +161,18 @@ export class AttachmentProcessor {
       ) {
         extractedText = await this.extractTextFromDocx(attachment.content);
         processingMethod = 'DOCX_TEXT_EXTRACTION';
+      } else if (
+        attachment.contentType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+        attachment.contentType === 'application/vnd.ms-excel'
+      ) {
+        extractedText = await this.extractTextFromExcel(attachment.content);
+        processingMethod = 'Excel';
+      } else if (
+        attachment.contentType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation' ||
+        attachment.contentType === 'application/vnd.ms-powerpoint'
+      ) {
+        extractedText = await this.extractTextFromPowerPoint(attachment.content);
+        processingMethod = 'PowerPoint';
       } else if (attachment.contentType.startsWith('image/')) {
         extractedText = await this.extractTextFromImage(attachment.content);
         processingMethod = 'OCR';
@@ -217,6 +235,82 @@ export class AttachmentProcessor {
     // Mock implementation for now - replace with actual OCR
     logger.debug('Extracting text from image attachment using OCR (mock implementation)');
     return `OCR extracted text from image (${imageBuffer.length} bytes)`;
+  }
+
+  /**
+   * Extract text from Excel spreadsheet files (XLSX/XLS)
+   */
+  async extractTextFromExcel(excelBuffer: Buffer): Promise<string> {
+    try {
+      logger.debug('Extracting text from Excel attachment');
+      
+      // Parse Excel file using node-xlsx
+      const workbook = xlsx.parse(excelBuffer);
+      const extractedTexts: string[] = [];
+
+      // Process each worksheet
+      workbook.forEach((worksheet, sheetIndex) => {
+        const sheetName = worksheet.name || `Sheet${sheetIndex + 1}`;
+        extractedTexts.push(`=== ${sheetName} ===`);
+        
+        // Process each row
+        worksheet.data.forEach((row, rowIndex) => {
+          if (Array.isArray(row) && row.length > 0) {
+            // Convert row values to strings and filter out empty values
+            const rowText = row
+              .map(cell => {
+                if (cell === null || cell === undefined) return '';
+                if (typeof cell === 'object' && cell instanceof Date) {
+                  return cell.toISOString().split('T')[0]; // Format dates as YYYY-MM-DD
+                }
+                return String(cell);
+              })
+              .filter(text => text.trim() !== '')
+              .join(' | ');
+            
+            if (rowText.trim()) {
+              extractedTexts.push(`Row ${rowIndex + 1}: ${rowText}`);
+            }
+          }
+        });
+        
+        extractedTexts.push(''); // Add empty line between sheets
+      });
+
+      const extractedText = extractedTexts.join('\n');
+      logger.debug(`Successfully extracted ${extractedText.length} characters from Excel file`);
+      return extractedText;
+      
+    } catch (error) {
+      logger.error('Error extracting text from Excel file:', error);
+      // Fallback to basic file info
+      return `Excel file (${excelBuffer.length} bytes) - text extraction failed`;
+    }
+  }
+
+  /**
+   * Extract text from PowerPoint presentation files (PPTX/PPT)
+   */
+  async extractTextFromPowerPoint(pptBuffer: Buffer): Promise<string> {
+    try {
+      logger.debug('Extracting text from PowerPoint attachment');
+      
+      // Use officeparser to extract text from PowerPoint files
+      const extractedText = await officeParser.parseOfficeAsync(pptBuffer);
+      
+      if (extractedText && extractedText.trim()) {
+        logger.debug(`Successfully extracted ${extractedText.length} characters from PowerPoint file`);
+        return extractedText;
+      } else {
+        logger.warn('No text content found in PowerPoint file');
+        return `PowerPoint presentation (${pptBuffer.length} bytes) - no text content found`;
+      }
+      
+    } catch (error) {
+      logger.error('Error extracting text from PowerPoint file:', error);
+      // Fallback to basic file info
+      return `PowerPoint presentation (${pptBuffer.length} bytes) - text extraction failed`;
+    }
   }
 
   /**

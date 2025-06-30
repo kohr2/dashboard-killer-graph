@@ -14,7 +14,7 @@ export interface ProcessedAttachment {
   contentType: string;
   size: number;
   supportedFormat: boolean;
-  processingMethod?: 'PDF_TEXT_EXTRACTION' | 'DOCX_TEXT_EXTRACTION' | 'OCR' | 'SKIP';
+  processingMethod?: 'PDF_TEXT_EXTRACTION' | 'DOCX_TEXT_EXTRACTION' | 'Excel' | 'PowerPoint' | 'OCR' | 'SKIP';
   extractedText?: string;
   entities?: ExtractedEntity[];
   error?: string;
