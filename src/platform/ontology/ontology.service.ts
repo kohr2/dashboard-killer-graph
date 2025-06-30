@@ -295,6 +295,29 @@ export class OntologyService {
    */
   public loadFromPlugins(plugins: OntologyPlugin[]): void {
     for (const plugin of plugins) {
+      // ** Start: Plugin Validation **
+      for (const [entityName, entityDef] of Object.entries(
+        plugin.entitySchemas,
+      )) {
+        if (entityName.toLowerCase() === 'thing') {
+          throw new Error(
+            `Error in plugin '${plugin.name}': Redefining the root 'Thing' entity is not allowed. 'Thing' is a global root provided by the core ontology.`,
+          );
+        }
+
+        const parent = (entityDef as { parent?: string }).parent;
+        if (parent && parent.toLowerCase() === 'thing') {
+          throw new Error(
+            `Error in plugin '${plugin.name}' for entity '${entityName}': Explicitly parenting to 'Thing' is not allowed. It is the implicit default parent.`,
+          );
+        }
+      }
+      // ** End: Plugin Validation **
+
+      const existing = Object.keys(plugin.entitySchemas).filter(e =>
+        this.registeredEntityTypes.has(e),
+      );
+
       logger.info(`🔌 Loading ontology plugin [36m${plugin.name}[0m`);
 
       for (const [entityName, schema] of Object.entries(plugin.entitySchemas)) {
