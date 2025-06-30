@@ -8,7 +8,7 @@ import {
   EnrichmentOrchestratorService,
 } from './platform/enrichment';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { getEnabledPlugins, getPluginSummary } from './config/ontology-plugins.config';
+import { getEnabledPlugins, getPluginSummary } from '../config/ontology/plugins.config';
 
 /**
  * Registers all platform services, including ontologies and enrichment pipelines.

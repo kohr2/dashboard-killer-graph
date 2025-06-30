@@ -86,6 +86,90 @@ describe('AttachmentProcessor', () => {
       expect(result.processedAttachments[0].processingMethod).toBe('OCR');
     });
 
+    it('should process Excel spreadsheet attachments and extract data', async () => {
+      // Arrange
+      const excelAttachment: EmailAttachment = {
+        filename: 'financial-data.xlsx',
+        contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        size: 35678,
+        content: Buffer.from('Mock XLSX content'),
+      };
+
+      // Act
+      const result = await attachmentProcessor.processAttachments([excelAttachment]);
+
+      // Assert
+      expect(result.success).toBe(true);
+      expect(result.processedAttachments).toHaveLength(1);
+      expect(result.processedAttachments[0].filename).toBe('financial-data.xlsx');
+      expect(result.processedAttachments[0].contentType).toBe('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      expect(result.processedAttachments[0].supportedFormat).toBe(true);
+      expect(result.processedAttachments[0].processingMethod).toBe('Excel');
+      expect(result.processedAttachments[0].extractedText).toBeDefined();
+    });
+
+    it('should process PowerPoint presentation attachments and extract content', async () => {
+      // Arrange
+      const pptAttachment: EmailAttachment = {
+        filename: 'investment-presentation.pptx',
+        contentType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        size: 67890,
+        content: Buffer.from('Mock PPTX content'),
+      };
+
+      // Act
+      const result = await attachmentProcessor.processAttachments([pptAttachment]);
+
+      // Assert
+      expect(result.success).toBe(true);
+      expect(result.processedAttachments).toHaveLength(1);
+      expect(result.processedAttachments[0].filename).toBe('investment-presentation.pptx');
+      expect(result.processedAttachments[0].contentType).toBe('application/vnd.openxmlformats-officedocument.presentationml.presentation');
+      expect(result.processedAttachments[0].supportedFormat).toBe(true);
+      expect(result.processedAttachments[0].processingMethod).toBe('PowerPoint');
+      expect(result.processedAttachments[0].extractedText).toBeDefined();
+    });
+
+    it('should process legacy Excel files (XLS format)', async () => {
+      // Arrange
+      const xlsAttachment: EmailAttachment = {
+        filename: 'legacy-data.xls',
+        contentType: 'application/vnd.ms-excel',
+        size: 28456,
+        content: Buffer.from('Mock XLS content'),
+      };
+
+      // Act
+      const result = await attachmentProcessor.processAttachments([xlsAttachment]);
+
+      // Assert
+      expect(result.success).toBe(true);
+      expect(result.processedAttachments).toHaveLength(1);
+      expect(result.processedAttachments[0].filename).toBe('legacy-data.xls');
+      expect(result.processedAttachments[0].supportedFormat).toBe(true);
+      expect(result.processedAttachments[0].processingMethod).toBe('Excel');
+    });
+
+    it('should process legacy PowerPoint files (PPT format)', async () => {
+      // Arrange
+      const pptAttachment: EmailAttachment = {
+        filename: 'legacy-presentation.ppt',
+        contentType: 'application/vnd.ms-powerpoint',
+        size: 45123,
+        content: Buffer.from('Mock PPT content'),
+      };
+
+      // Act
+      const result = await attachmentProcessor.processAttachments([pptAttachment]);
+
+      // Assert
+      expect(result.success).toBe(true);
+      expect(result.processedAttachments).toHaveLength(1);
+      expect(result.processedAttachments[0].filename).toBe('legacy-presentation.ppt');
+      expect(result.processedAttachments[0].supportedFormat).toBe(true);
+      expect(result.processedAttachments[0].processingMethod).toBe('PowerPoint');
+    });
+
     it('should skip unsupported file types gracefully', async () => {
       // Arrange
       const unsupportedAttachment: EmailAttachment = {
@@ -217,6 +301,73 @@ describe('AttachmentProcessor', () => {
     });
   });
 
+  describe('extractTextFromExcel', () => {
+    it('should extract text from Excel XLSX buffer', async () => {
+      // Arrange
+      const excelBuffer = Buffer.from('Mock XLSX content');
+
+      // Act
+      const extractedText = await attachmentProcessor.extractTextFromExcel(excelBuffer);
+
+      // Assert
+      expect(extractedText).toBeDefined();
+      expect(typeof extractedText).toBe('string');
+    });
+
+    it('should handle Excel files with multiple sheets', async () => {
+      // Arrange
+      const excelBuffer = Buffer.from('Mock multi-sheet XLSX content');
+
+      // Act
+      const extractedText = await attachmentProcessor.extractTextFromExcel(excelBuffer);
+
+      // Assert
+      expect(extractedText).toBeDefined();
+      expect(typeof extractedText).toBe('string');
+      // Text should contain content from multiple sheets
+      expect(extractedText.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('extractTextFromPowerPoint', () => {
+    it('should extract text from PowerPoint PPTX buffer', async () => {
+      // Arrange
+      const pptBuffer = Buffer.from('Mock PPTX content');
+
+      // Act
+      const extractedText = await attachmentProcessor.extractTextFromPowerPoint(pptBuffer);
+
+      // Assert
+      expect(extractedText).toBeDefined();
+      expect(typeof extractedText).toBe('string');
+    });
+
+    it('should handle PowerPoint files with multiple slides', async () => {
+      // Arrange
+      const pptBuffer = Buffer.from('Mock multi-slide PPTX content');
+
+      // Act
+      const extractedText = await attachmentProcessor.extractTextFromPowerPoint(pptBuffer);
+
+      // Assert
+      expect(extractedText).toBeDefined();
+      expect(typeof extractedText).toBe('string');
+      expect(extractedText.length).toBeGreaterThan(0);
+    });
+
+    it('should handle legacy PPT format', async () => {
+      // Arrange
+      const pptBuffer = Buffer.from('Mock PPT content');
+
+      // Act
+      const extractedText = await attachmentProcessor.extractTextFromPowerPoint(pptBuffer);
+
+      // Assert
+      expect(extractedText).toBeDefined();
+      expect(typeof extractedText).toBe('string');
+    });
+  });
+
   describe('isSupportedFileType', () => {
     it('should return true for supported PDF files', () => {
       expect(attachmentProcessor.isSupportedFileType('application/pdf')).toBe(true);
@@ -224,6 +375,16 @@ describe('AttachmentProcessor', () => {
 
     it('should return true for supported Word documents', () => {
       expect(attachmentProcessor.isSupportedFileType('application/vnd.openxmlformats-officedocument.wordprocessingml.document')).toBe(true);
+    });
+
+    it('should return true for supported Excel spreadsheets', () => {
+      expect(attachmentProcessor.isSupportedFileType('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')).toBe(true);
+      expect(attachmentProcessor.isSupportedFileType('application/vnd.ms-excel')).toBe(true);
+    });
+
+    it('should return true for supported PowerPoint presentations', () => {
+      expect(attachmentProcessor.isSupportedFileType('application/vnd.openxmlformats-officedocument.presentationml.presentation')).toBe(true);
+      expect(attachmentProcessor.isSupportedFileType('application/vnd.ms-powerpoint')).toBe(true);
     });
 
     it('should return true for supported image formats', () => {
