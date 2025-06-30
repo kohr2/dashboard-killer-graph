@@ -3,6 +3,11 @@ import { Neo4jConnection } from '../../../src/platform/database/neo4j-connection
 import axios from 'axios';
 import * as fs from 'fs';
 import { simpleParser } from 'mailparser';
+import { translateQueryBasic } from '@mcp/servers/query-translator-basic';
+import { ContentProcessingService } from '@platform/processing/content-processing.service';
+import { AccessControlService } from '@platform/security/application/services/access-control.service';
+import { User } from '@platform/security/domain/user';
+import { SalesforceEnrichmentService } from '@platform/enrichment/salesforce-enrichment.service';
 
 jest.mock('axios');
 jest.mock('mailparser');

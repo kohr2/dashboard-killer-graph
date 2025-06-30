@@ -11,7 +11,8 @@
       "@platform/*": ["src/platform/*"],
       "@crm/*": ["src/ontologies/crm/*"],
       "@financial/*": ["src/ontologies/financial/*"],
-      "@shared/*": ["src/shared/*"]
+      "@shared/*": ["src/shared/*"],
+      "@src/*": ["src/*"]
     },
     "typeRoots": ["node_modules/@types", "src/types"]
   },
