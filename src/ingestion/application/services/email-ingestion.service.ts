@@ -2,13 +2,12 @@ import { singleton, inject } from 'tsyringe';
 import { ContentProcessingService } from '@platform/processing/content-processing.service';
 
 /**
- * Thin service wrapper that orchestrates email batch ingestion by delegating
- * heavy-lifting to {@link ContentProcessingService}. This avoids putting
- * business logic directly in the demo script layer so it stays testable and
- * reusable.
+ * Service wrapper that orchestrates email batch ingestion by delegating
+ * heavy-lifting to {@link ContentProcessingService}. This keeps operational
+ * logic in the service layer and allows demo/CLI scripts to remain thin.
  */
 @singleton()
-export class EmailIngestionDemoService {
+export class EmailIngestionService {
   constructor(
     @inject(ContentProcessingService)
     private readonly contentProcessingService: ContentProcessingService,

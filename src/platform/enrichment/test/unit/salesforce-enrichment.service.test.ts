@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { SalesforceEnrichmentService } from '../../../../src/platform/enrichment/salesforce-enrichment.service';
+import { SalesforceEnrichmentService } from '../../salesforce-enrichment.service';
 import { Organization } from '@crm/domain/entities/organization';
 import { IEnrichmentService, EnrichableEntity } from '@platform/enrichment';
 

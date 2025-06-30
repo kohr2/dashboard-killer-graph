@@ -1,7 +1,7 @@
 import 'reflect-metadata';
-import { AccessControlService } from '../../../../../src/platform/security/application/services/access-control.service';
-import { User } from '../../../../../src/platform/security/domain/user';
-import { ANALYST_ROLE, ADMIN_ROLE, GUEST_ROLE } from '../../../../../src/platform/security/domain/role';
+import { AccessControlService } from '../../../../application/services/access-control.service';
+import { User } from '../../../../domain/user';
+import { ANALYST_ROLE, ADMIN_ROLE, GUEST_ROLE } from '../../../../domain/role';
 
 describe('AccessControlService', () => {
   let accessControlService: AccessControlService;

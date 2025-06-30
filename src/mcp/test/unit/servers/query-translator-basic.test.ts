@@ -1,4 +1,4 @@
-import { translateQueryBasic, TranslatedQuery } from '../../../../src/mcp/servers/query-translator-basic';
+import { translateQueryBasic, TranslatedQuery } from '../../../servers/query-translator-basic';
 
 describe('translateQueryBasic', () => {
   describe('Input validation', () => {
