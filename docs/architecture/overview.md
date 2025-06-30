@@ -278,6 +278,15 @@ This ensures that a simple query for all organizations (`MATCH (o:Organization)`
 - **Resource Usage**: Efficient memory and CPU utilization
 - **Scalability**: Linear scaling with load
 
+### 📦 Ontology Plug-ins
+
+Since v1.3 the domain ontologies (CRM, Financial, …) are delivered as **plug-ins** rather than full blown packages.  Each plug-in provides:
+
+* `entitySchemas`: JSON fragments merged into the global ontology.
+* **Optional** `serviceProviders`: a small DI set-up helper (repositories, use-cases, etc.).
+
+Plug-ins are loaded at startup via `OntologyService.loadFromPlugins()` – see `docs/architecture/ontology-plugin-architecture.md` for full details.
+
 ---
 
 **Next**: [Extension System Details](extensions.md) | [Data Flow Details](data-flow.md) 
