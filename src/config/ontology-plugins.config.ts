@@ -19,9 +19,21 @@ export interface PluginConfig {
  * To enable/disable a plugin, simply change the 'enabled' property.
  */
 export const ONTOLOGY_PLUGINS_CONFIG = {
-  crm: { enabled: true },        // CRM plugin active
-  financial: { enabled: false }, // Financial plugin disabled  
-  procurement: { enabled: false } // Procurement plugin active
+  crm: { 
+    enabled: true, 
+    plugin: crmPlugin,
+    description: 'Customer Relationship Management ontology with contacts, organizations, and communications'
+  },
+  financial: { 
+    enabled: true, 
+    plugin: financialPlugin,
+    description: 'Financial ontology with instruments, institutions, and market data'
+  },
+  procurement: { 
+    enabled: false, 
+    plugin: procurementPlugin,
+    description: 'Procurement ontology with suppliers, contracts, and purchase orders'
+  }
 };
 
 /**
@@ -52,8 +64,8 @@ export function getPluginSummary(): { enabled: string[]; disabled: string[] } {
  * Check if a specific plugin is enabled.
  */
 export function isPluginEnabled(pluginName: string): boolean {
-  const config = Object.entries(ONTOLOGY_PLUGINS_CONFIG).find(([name, config]) => name.toLowerCase() === pluginName.toLowerCase());
-  return config?.[1].enabled ?? false;
+  const config = ONTOLOGY_PLUGINS_CONFIG[pluginName.toLowerCase() as keyof typeof ONTOLOGY_PLUGINS_CONFIG];
+  return config?.enabled ?? false;
 }
 
 /**
@@ -65,8 +77,6 @@ export function getPluginDetails(): PluginConfig[] {
       name,
       enabled: config.enabled,
       plugin: config.plugin,
-      description: '',
-      entityCount: Object.keys(config.plugin.entitySchemas || {}).length,
-      relationshipCount: Object.keys(config.plugin.relationshipSchemas || {}).length
-    })) as any;
+      description: config.description
+    }));
 } 
