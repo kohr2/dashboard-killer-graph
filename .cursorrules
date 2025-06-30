@@ -12,9 +12,10 @@ test-driven-development:
 # Test Conventions
 # How tests should be structured in this project.
 testing-conventions:
+  - rule: "Place tests near the source file they test in a `__tests__` directory."
   - rule: "Use Jest's `describe`, `it`, or `test` syntax."
   - rule: "Test files must be named `[file-name].test.ts`."
-  - rule: "Place unit tests in `test/unit/`, respecting the `src/` directory structure."
+  - rule: "Place unit tests next to the source file in `src/**/__tests__/` directories (no longer `test/unit/`)."
   - rule: "Systematically mock external dependencies (like API calls with `axios` or database drivers) using `jest.fn()` or `jest.spyOn()`."
   - rule: "Each `describe` block should focus on a single method or component."
   - rule: "Each test (`it`) should verify a single behavior."
