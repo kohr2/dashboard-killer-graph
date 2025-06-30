@@ -1,19 +1,22 @@
 {
   "extends": "../../../config/tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
     "outDir": "../../../dist/extensions/financial",
-    "rootDir": "./",
+    "rootDir": ".",
     "baseUrl": "../../..",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
     "paths": {
       "@crm/*": ["src/ontologies/crm/*"],
+      "@financial/*": ["src/ontologies/financial/*"],
       "@platform/*": ["src/platform/*"],
       "@shared/*": ["src/shared/*"]
-    },
-    "emitDecoratorMetadata": true,
-    "resolveJsonModule": true
+    }
   },
   "include": ["**/*.ts", "**/*.json"],
-  "exclude": ["node_modules", "dist"],
-  "references": [{ "path": "../../platform" }, { "path": "../crm" }]
+  "exclude": ["**/*.test.ts"],
+  "references": [
+    { "path": "../../platform" }
+  ]
 } 

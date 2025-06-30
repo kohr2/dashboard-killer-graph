@@ -2,6 +2,8 @@ import 'reflect-metadata';
 import { registerAllOntologies } from './register-ontologies';
 import { container } from 'tsyringe';
 import { AccessControlService } from './platform/security/application/services/access-control.service';
+import { OntologyService } from '@platform/ontology/ontology.service';
+import { logger } from '@shared/utils/logger';
 
 /**
  * Centralized bootstrap for scripts, tests and the API.  
@@ -9,11 +11,21 @@ import { AccessControlService } from './platform/security/application/services/a
  * bindings are registered consistently.
  */
 export function registerDependencies(): void {
-  // Register singletons or tokens here
+  // Register the OntologyService singleton FIRST before any other services
+  logger.info('Registering OntologyService singleton...');
+  container.registerSingleton(OntologyService);
+  
+  // Immediately load ontology data into the singleton
+  logger.info('Loading ontology data into singleton...');
+  registerAllOntologies();
+  
+  // Register other singletons after ontology is loaded
   container.registerSingleton(AccessControlService);
 }
 
 export function bootstrap(): void {
+  logger.info('🚀 Bootstrap starting...');
   registerDependencies();
-  registerAllOntologies();
+  logger.info('✅ Dependencies registered');
+  logger.info('✅ Bootstrap completed');
 } 

@@ -1,4 +1,4 @@
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 import { v4 as uuidv4 } from 'uuid';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
 import { User } from '@platform/security/domain/user';
@@ -32,7 +32,7 @@ export interface ChatResponse {
   };
 }
 
-@singleton()
+@injectable()
 export class ChatService {
   // In-memory store for conversations, for now. Replace with a real repository.
   private conversations: Map<string, Conversation> = new Map();
@@ -134,10 +134,14 @@ export class ChatService {
   }
 
   public async handleQuery(user: User, query: string): Promise<string> {
+    logger.info(`[ChatService] Handling query: "${query}"`);
+    
     const structuredQuery = await this.queryTranslator.translate(
       query,
       this.queryHistory,
     );
+
+    logger.info(`[ChatService] Structured query result:`, JSON.stringify(structuredQuery, null, 2));
 
     let response: any;
     let responseText: string;

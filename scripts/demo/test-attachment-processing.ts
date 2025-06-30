@@ -1,0 +1,148 @@
+/**
+ * Demo script to test email attachment processing
+ * Tests the new attachment processing capabilities with real email files
+ */
+
+import 'reflect-metadata';
+import { readFileSync, readdirSync } from 'fs';
+import { join } from 'path';
+import { EmailProcessor } from '../../src/ingestion/sources/email/processors/email-processor';
+import { logger } from '../../src/shared/utils/logger';
+
+async function testAttachmentProcessing() {
+  console.log('🔧 Testing Email Attachment Processing');
+  console.log('====================================\n');
+
+  const emailProcessor = new EmailProcessor();
+  const testEmailsDir = join(__dirname, '../../test-emails');
+  
+  // Get all .eml files
+  const emlFiles = readdirSync(testEmailsDir)
+    .filter(file => file.endsWith('.eml'))
+    .slice(0, 3); // Test with first 3 files only
+
+  console.log(`📂 Found ${emlFiles.length} test email files\n`);
+
+  for (const [index, fileName] of emlFiles.entries()) {
+    console.log(`\n📧 [${index + 1}/${emlFiles.length}] Processing: ${fileName}`);
+    console.log('─'.repeat(50));
+    
+    const filePath = join(testEmailsDir, fileName);
+    
+    try {
+      // Test with attachment processing
+      const result = await emailProcessor.processEmlFileWithAttachments(filePath);
+      
+      console.log(`✅ Processing successful: ${result.success}`);
+      
+      if (result.email) {
+        console.log(`📨 Email Details:`);
+        console.log(`   From: ${result.email.from}`);
+        console.log(`   To: ${result.email.to.join(', ')}`);
+        console.log(`   Subject: ${result.email.subject}`);
+        console.log(`   Body length: ${result.email.body.length} characters`);
+        console.log(`   Attachments: ${result.email.attachments.length}`);
+      }
+
+      if (result.attachmentProcessing) {
+        console.log(`📎 Attachment Processing:`);
+        console.log(`   Total processed: ${result.attachmentProcessing.totalProcessed}`);
+        console.log(`   Supported formats: ${result.attachmentProcessing.supportedFormats}`);
+        console.log(`   Unsupported formats: ${result.attachmentProcessing.unsupportedFormats}`);
+        console.log(`   Processing time: ${result.attachmentProcessing.totalProcessingTime}ms`);
+        
+        if (result.attachmentProcessing.processedAttachments.length > 0) {
+          console.log(`   Attachment details:`);
+          result.attachmentProcessing.processedAttachments.forEach((att, i) => {
+            console.log(`     ${i + 1}. ${att.filename} (${att.contentType})`);
+            console.log(`        Supported: ${att.supportedFormat}`);
+            if (att.extractedText) {
+              console.log(`        Extracted text: ${att.extractedText.substring(0, 100)}...`);
+            }
+            if (att.entities && att.entities.length > 0) {
+              console.log(`        Entities found: ${att.entities.length}`);
+            }
+          });
+        }
+      }
+
+      console.log(`🔍 Entities extracted: ${result.entities.length}`);
+      if (result.entities.length > 0) {
+        result.entities.slice(0, 3).forEach((entity, i) => {
+          console.log(`   ${i + 1}. "${entity.text}" (${entity.type}) - confidence: ${entity.confidence}`);
+        });
+        if (result.entities.length > 3) {
+          console.log(`   ... and ${result.entities.length - 3} more`);
+        }
+      }
+
+      if (result.errors.length > 0) {
+        console.log(`⚠️  Errors: ${result.errors.join(', ')}`);
+      }
+
+    } catch (error) {
+      console.error(`❌ Error processing ${fileName}:`, error);
+    }
+  }
+
+  console.log('\n✅ Attachment processing test completed!');
+}
+
+// Test with different types of content
+async function testSpecificCases() {
+  console.log('\n🧪 Testing Specific Attachment Cases');
+  console.log('===================================\n');
+
+  const emailProcessor = new EmailProcessor();
+
+  // Test case 1: Email with mock PDF attachment
+  console.log('1. Testing email with mock PDF attachment');
+  const mockEmlWithPdf = `Message-ID: <test-pdf@example.com>
+From: "Sender" <sender@example.com>
+To: "Recipient" <recipient@example.com>
+Subject: Document with PDF attachment
+Date: Mon, 01 Jan 2024 12:00:00 +0000
+Content-Type: multipart/mixed; boundary="boundary123"
+
+--boundary123
+Content-Type: text/plain
+
+Please find the attached financial report.
+
+--boundary123
+Content-Type: application/pdf; name="financial-report.pdf"
+Content-Disposition: attachment; filename="financial-report.pdf"
+Content-Transfer-Encoding: base64
+
+JVBERi0xLjQKJcOkw7zDtsOmCjIgMCBvYmoKPDwKL0xlbmd0aCAzIDA
+--boundary123--`;
+
+  // Write mock email to temporary file
+  require('fs').writeFileSync('/tmp/test-email-with-pdf.eml', mockEmlWithPdf);
+  
+  try {
+    const result = await emailProcessor.processEmlFileWithAttachments('/tmp/test-email-with-pdf.eml');
+    console.log(`   Success: ${result.success}`);
+    console.log(`   Attachments processed: ${result.attachmentProcessing?.totalProcessed || 0}`);
+    
+    // Clean up
+    require('fs').unlinkSync('/tmp/test-email-with-pdf.eml');
+  } catch (error) {
+    console.error('   Error:', error);
+  }
+}
+
+// Run the tests
+async function main() {
+  try {
+    await testAttachmentProcessing();
+    await testSpecificCases();
+  } catch (error) {
+    console.error('Demo failed:', error);
+    process.exit(1);
+  }
+}
+
+if (require.main === module) {
+  main();
+} 

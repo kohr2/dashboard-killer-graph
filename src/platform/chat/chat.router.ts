@@ -20,20 +20,20 @@ chatRouter.use((req, res, next) => {
   next();
 });
 
-chatRouter.post('/query', async (req: Request, res: Response) => {
+// Main chat endpoint
+chatRouter.post('/', async (req: Request, res: Response) => {
   try {
     const { query } = req.body;
-    const user = (req as any).user as User;
-
     if (!query) {
       return res.status(400).json({ error: 'Query is required' });
     }
 
+    const user = (req as any).user as User;
     const response = await chatService.handleQuery(user, query);
     res.json({ response });
   } catch (error) {
     const err = error as Error;
-    logger.error('Error handling query:', err.message);
+    logger.error('Error handling chat query:', err.message);
     res.status(500).json({ error: 'An internal error occurred', details: err.message });
   }
 });

@@ -71,7 +71,8 @@
     "debt:before-after": "echo '📊 Technical Debt Before/After Analysis' && npm run debt:analyze",
     "cleanup:dead-code": "npx ts-node scripts/maintenance/cleanup-dead-code.ts",
     "cleanup:configs": "npx ts-node scripts/maintenance/cleanup-configs.ts",
-    "cleanup:complete": "npm run cleanup:dead-code && npm run cleanup:configs && npm run debt:quick-fix"
+    "cleanup:complete": "npm run cleanup:dead-code && npm run cleanup:configs && npm run debt:quick-fix",
+    "demo:attachment-processing": "ts-node -r tsconfig-paths/register -P scripts/tsconfig.json scripts/demo/test-attachment-processing.ts"
   },
   "keywords": [
     "knowledge-graph",

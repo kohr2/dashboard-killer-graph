@@ -1,10 +1,14 @@
+import { config } from 'dotenv';
+// Load environment variables first
+config();
+
 import 'tsconfig-paths/register';
 import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
 import { container } from 'tsyringe';
 import { ChatService } from '@platform/chat/application/services/chat.service';
-import { registerAllOntologies } from './register-ontologies';
+import { bootstrap } from './bootstrap';
 import { User } from '@platform/security/domain/user';
 import { Role } from '@platform/security/domain/role';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
@@ -13,8 +17,9 @@ import compression from 'compression';
 import { chatRouter } from '@platform/chat/chat.router';
 import { logger } from '@shared/utils/logger';
 
-// Initialize services
-registerAllOntologies();
+// Initialize services FIRST
+bootstrap();
+
 const chatService = container.resolve(ChatService);
 const neo4jConnection = container.resolve(Neo4jConnection);
 

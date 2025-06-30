@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as glob from 'glob';
-import { singleton, injectable } from 'tsyringe';
+import { injectable } from 'tsyringe';
 import { z } from 'zod';
 import { logger } from '@shared/utils/logger';
 import { EnrichableEntity } from '@platform/enrichment';
@@ -71,6 +71,8 @@ interface InternalOntologySchema {
 
 @injectable()
 export class OntologyService {
+  private static instanceCounter = 0;
+  private instanceId: number;
   private ontologies: Ontology[] = [];
   private entityFactories = new Map<string, EntityFactory<any>>();
   private labelCache = new Map<string, string>();
@@ -79,10 +81,14 @@ export class OntologyService {
   private schema: InternalOntologySchema = { entities: {}, relationships: {} };
 
   public constructor() {
-    // We can leave the file-based loading for the real application
-    // but provide a way to load mocks for testing.
-    this.loadOntologies();
-    logger.info('OntologyService initialized');
+    // DISABLED: File-based loading is now handled by the plugin system to prevent duplicates
+    // this.loadOntologies();
+    this.instanceId = ++OntologyService.instanceCounter;
+    logger.debug(`OntologyService constructor called - Instance #${this.instanceId}`);
+  }
+
+  public getInstanceId(): number {
+    return this.instanceId;
   }
 
   /**
@@ -92,6 +98,7 @@ export class OntologyService {
    * @param ontologyObjects An array of ontology objects to load.
    */
   public loadFromObjects(ontologyObjects: Ontology[]) {
+    logger.debug(`Loading ${ontologyObjects.length} ontology objects...`);
     this.ontologies = [];
     this.registeredEntityTypes.clear();
     this.schema = { entities: {}, relationships: {} };
@@ -99,14 +106,17 @@ export class OntologyService {
     for (const ontology of ontologyObjects) {
       try {
         // Validate each object against the schema
-        OntologySchemaValidator.parse(ontology);
-        this.ontologies.push(ontology);
-        if (ontology.entities) {
-            Object.assign(this.schema.entities, ontology.entities);
-            Object.keys(ontology.entities).forEach(name => this.registeredEntityTypes.add(name));
+        const validatedOntology = OntologySchemaValidator.parse(ontology);
+        
+        this.ontologies.push(validatedOntology);
+        if (validatedOntology.entities) {
+            Object.assign(this.schema.entities, validatedOntology.entities);
+            Object.keys(validatedOntology.entities).forEach(name => {
+              this.registeredEntityTypes.add(name);
+            });
         }
-        if (ontology.relationships) {
-            Object.assign(this.schema.relationships, ontology.relationships);
+        if (validatedOntology.relationships) {
+            Object.assign(this.schema.relationships, validatedOntology.relationships);
         }
       } catch (error) {
         if (error instanceof z.ZodError) {
@@ -116,6 +126,8 @@ export class OntologyService {
         }
       }
     }
+    
+    logger.info(`Loaded ${Object.keys(this.schema.entities).length} entities and ${Object.keys(this.schema.relationships).length} relationships from ${ontologyObjects.length} ontology plugins`);
   }
 
   private loadOntologies() {
@@ -238,6 +250,8 @@ export class OntologyService {
   }
 
   public getSchemaRepresentation(): string {
+    logger.debug(`Generating schema representation - Entities: ${Object.keys(this.schema.entities).length}, Relationships: ${Object.keys(this.schema.relationships).length}`);
+    
     let schemaText = 'The graph schema is as follows:\n\n';
 
     schemaText += '## Entities:\n';
@@ -286,53 +300,22 @@ export class OntologyService {
   }
 
   /**
-   * Load ontology fragments from an array of plug-ins.
-   * Each plug-in may contribute additional entity schemas (and later providers).
-   *
-   * This is a lightweight wrapper so we can progressively migrate existing
-   * vertical ontologies (CRM, Financial, …) to the plugin architecture without
-   * changing the underlying file-based JSON loading.
+   * Loads ontologies from a list of plugins.
+   * This is the new, preferred method for registering schemas.
+   * @param plugins An array of OntologyPlugin instances.
    */
   public loadFromPlugins(plugins: OntologyPlugin[]): void {
-    for (const plugin of plugins) {
-      // ** Start: Plugin Validation **
-      for (const [entityName, entityDef] of Object.entries(
-        plugin.entitySchemas,
-      )) {
-        if (entityName.toLowerCase() === 'thing') {
-          throw new Error(
-            `Error in plugin '${plugin.name}': Redefining the root 'Thing' entity is not allowed. 'Thing' is a global root provided by the core ontology.`,
-          );
-        }
+    logger.debug(`Loading ontology from ${plugins.length} plugins...`);
 
-        const parent = (entityDef as { parent?: string }).parent;
-        if (parent && parent.toLowerCase() === 'thing') {
-          throw new Error(
-            `Error in plugin '${plugin.name}' for entity '${entityName}': Explicitly parenting to 'Thing' is not allowed. It is the implicit default parent.`,
-          );
-        }
-      }
-      // ** End: Plugin Validation **
+    const allOntologies: Ontology[] = plugins.map(p => {
+      return {
+        name: p.name,
+        entities: p.entitySchemas as Ontology['entities'],
+        relationships: p.relationshipSchemas as Ontology['relationships'] || {}
+      };
+    });
 
-      const existing = Object.keys(plugin.entitySchemas).filter(e =>
-        this.registeredEntityTypes.has(e),
-      );
-
-      logger.info(`🔌 Loading ontology plugin [36m${plugin.name}[0m`);
-
-      for (const [entityName, schema] of Object.entries(plugin.entitySchemas)) {
-        if (this.schema.entities[entityName]) {
-          logger.warn(
-            `Entity type "${entityName}" is already defined. Overwriting with definition from plugin "${plugin.name}"`,
-          );
-        }
-
-        // Accept the raw schema fragment as-is (validated later on demand).
-        this.schema.entities[entityName] = schema as InternalOntologyEntity;
-        this.registeredEntityTypes.add(entityName);
-      }
-
-      // Placeholder: handle serviceProviders in future iterations
-    }
+    this.loadFromObjects(allOntologies);
+    logger.info(`✅ All plugin ontologies loaded and validated.`);
   }
 } 

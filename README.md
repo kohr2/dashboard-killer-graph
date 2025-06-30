@@ -16,24 +16,29 @@ git clone https://github.com/your-org/dashboard-killer-graph.git
 cd dashboard-killer-graph
 npm install
 
-# 2. Start Core Infrastructure
-# This starts Neo4j.
+# 2. Set up environment variables
+cp .env.example .env
+# Edit .env and add your OPENAI_API_KEY
+
+# 3. Start Neo4j Database
 docker-compose -f docker-compose.neo4j.yml up -d
 
-# 3. Start AI Service (in a separate terminal)
-# For entity extraction, the Python NLP service must be running.
-# First time setup:
-npm run setup:nlp
-# Start the service:
-npm run start:nlp
+# 4. Start the main API server
+npm run dev
 
-# 4. Run the demo ingestion script
-# This script processes sample emails and builds the knowledge graph.
-npm run demo:ingest
+# 5. Start the Chat UI (in a separate terminal)
+cd chat-ui && npm run dev
 
-# 5. Run tests
-npm test
+# 6. Start the MCP Server for Claude Desktop (optional, in a separate terminal)
+npm run dev:mcp
 ```
+
+## 🎯 Access Points
+
+- **Chat UI**: http://localhost:5173/ (or 5174 if 5173 is busy)
+- **API Server**: http://localhost:3001
+- **Neo4j Browser**: http://localhost:7474 (username: neo4j, password: password)
+- **MCP Server**: Connects to Claude Desktop for AI-powered queries
 
 ## 🏛️ Architecture: Platform + Extensions
 
@@ -58,9 +63,30 @@ The system is composed of a central **Platform** and multiple **Extensions**.
 
 This modular design allows new capabilities to be added without modifying the core platform.
 
+## 💬 Chat Interface Features
+
+The system includes a fully functional conversational interface that:
+
+- ✅ **Natural Language Processing**: Understands queries like "show me all deals" or "list all people"
+- ✅ **Multi-language Support**: Works in English, French, and other languages
+- ✅ **Entity Recognition**: Recognizes synonyms (people/persons, deals/projects)
+- ✅ **Relationship Queries**: Can find related entities ("show organizations related to Rick")
+- ✅ **Rich Responses**: Uses OpenAI to format results in natural language
+- ✅ **Real-time Data**: Queries live data from Neo4j knowledge graph
+
+### Example Queries
+```
+"show all deals"
+"list all people"
+"show me organizations"
+"find contacts related to Thoma Bravo"
+"show me all persons"
+```
+
 ## 📚 Documentation
 
 -   [**Architecture Overview**](./docs/architecture/overview.md) - High-level system design.
+-   [**Chat Interface Guide**](./docs/features/chat-interface.md) - How to use the conversational interface.
 -   [**Extension & Ontology Architecture**](./docs/architecture/ontologies.md) - A guide on how to create and manage extensions.
 -   [**API Reference**](./docs/development/api-reference.md) - A guide to the available API endpoints.
 -   [**Entity Extraction Guide**](./docs/architecture/entity-extraction-guide.md) - How the NLP pipeline works.
@@ -71,14 +97,19 @@ This modular design allows new capabilities to be added without modifying the co
 ### ✅ Completed
 -   [x] **Platform Core**: Modular framework for extension loading and orchestration.
 -   [x] **Ontology-Driven Design**: Extensions are built around a central `ontology.json` file.
--   [x] **High-Performance Ingestion**: A batch pipeline for processing documents in parallel.
+-   [x] **Chat Interface**: Fully functional conversational UI with natural language processing.
+-   [x] **Query Translation**: OpenAI-powered translation from natural language to structured queries.
+-   [x] **Knowledge Graph Integration**: Real-time queries to Neo4j database.
+-   [x] **Multi-language Support**: Works in English, French, and other languages.
+-   [x] **MCP Server**: Integration with Claude Desktop for AI-powered assistance.
 -   [x] **CRM & Financial Extensions**: Foundational extensions for CRM and Finance domains.
 -   [x] **TDD Foundation**: Comprehensive test structure with Jest.
 
 ### 📋 Next Steps
--   **API Development**: Build a generic API layer to expose extension services.
--   **Conversational UI**: Create the chat interface for interacting with the knowledge graph.
+-   **Advanced Query Types**: Support for complex aggregations and analytics.
+-   **User Authentication**: Multi-user support with role-based access control.
 -   **Agentic Workflows**: Develop AI agents that can reason across different ontologies.
+-   **Email Processing**: Automated entity extraction from email attachments.
 
 See the [Development Roadmap](./docs/development/roadmap.md) for more details.
 
@@ -91,15 +122,19 @@ npm test
 # Run tests for a specific ontology extension
 npm run lint:ontology:crm
 npm run lint:ontology:financial
+
+# Test chat functionality
+npm run chat:test
 ```
 
 ## 🛠️ Tech Stack
 
 | Layer                | Technologies                               |
 | -------------------- | ------------------------------------------ |
-| **Application Logic**| Node.js, TypeScript, tsyringe (DI)         |
+| **Frontend**         | React, TypeScript, Vite                   |
+| **Backend**          | Node.js, TypeScript, Express, tsyringe    |
 | **Database**         | Neo4j (Graph Database)                     |
-| **AI / NLP**         | Python (FastAPI), spaCy, OpenAI            |
+| **AI / NLP**         | OpenAI GPT-4o-mini, Python (FastAPI)      |
 | **Testing**          | Jest                                       |
 | **DevOps**           | Docker, GitHub Actions                     |
 

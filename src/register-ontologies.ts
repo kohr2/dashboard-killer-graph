@@ -10,17 +10,14 @@ import {
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { crmPlugin } from './ontologies/crm/crm.plugin';
 import { financialPlugin } from './ontologies/financial/financial.plugin';
-// import { registerSecurity } from './ontologies/security';
-// import { registerHealthcare } from './ontologies/healthcare';
-// import { registerLegal } from './ontologies/legal';
-// import { registerRealEstate } from './ontologies/real-estate';
+import { procurementPlugin } from './ontologies/procurement/procurement.plugin';
 
 /**
  * Registers all platform services, including ontologies and enrichment pipelines.
  * This function should be called at the application's entry point.
  */
 export function registerAllOntologies() {
-  logger.info('Registering all ontologies...');
+  logger.debug('Registering all ontologies...');
 
   // Legacy registration of DI providers (will be replaced by plugin mechanism)
   registerCrm();
@@ -28,7 +25,7 @@ export function registerAllOntologies() {
 
   // NEW: plugin-based schema loading
   const ontologyService = container.resolve(OntologyService);
-  ontologyService.loadFromPlugins([crmPlugin, financialPlugin]);
+  ontologyService.loadFromPlugins([crmPlugin, financialPlugin, procurementPlugin]);
 
   // Define a default User-Agent for SEC EDGAR API
   const secApiUserAgent =

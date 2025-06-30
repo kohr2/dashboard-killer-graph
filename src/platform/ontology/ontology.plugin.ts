@@ -10,6 +10,12 @@ export interface OntologyPlugin {
   entitySchemas: Record<string, unknown>;
 
   /**
+   * A record of relationship schema definitions keyed by relationship name.
+   * Each value defines domain, range, and description for the relationship.
+   */
+  relationshipSchemas?: Record<string, unknown>;
+
+  /**
    * Optional set of provider tokens that the plugin wants to expose to the
    * application's dependency-injection container.
    * (Not leveraged in the minimal implementation to satisfy current tests.)

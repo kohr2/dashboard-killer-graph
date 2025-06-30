@@ -1,4 +1,4 @@
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 import OpenAI from 'openai';
 import { OntologyService } from '../../../ontology/ontology.service';
 import { logger } from '@shared/utils/logger';
@@ -17,7 +17,7 @@ export interface ConversationTurn {
     assistantResponse: unknown; // Could be a string or a list of entities
 }
 
-@singleton()
+@injectable()
 export class QueryTranslator {
   private openai: OpenAI;
 
@@ -125,7 +125,9 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
     try {
       logger.info('--- Sending to OpenAI ---');
       logger.info('User Query:', rawQuery);
-      logger.info('System Prompt:', systemPrompt);
+      logger.info('Valid entity types:', validEntityTypes);
+      logger.info('Schema description length:', schemaDescription.length);
+      logger.info('System Prompt length:', systemPrompt.length);
       logger.info('-------------------------');
 
       const completion = await this.openai.chat.completions.create({
@@ -148,9 +150,11 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
       }
 
       const parsedResult: StructuredQuery = JSON.parse(result);
+      logger.info('Parsed result:', JSON.stringify(parsedResult, null, 2));
 
       // Basic validation
       if (parsedResult.command === 'show' && (!parsedResult.resourceTypes || parsedResult.resourceTypes.some(rt => !validEntityTypes.includes(rt)))) {
+        logger.warn('Invalid resource types in result, returning unknown');
         return { command: 'unknown', resourceTypes: [] };
       }
       

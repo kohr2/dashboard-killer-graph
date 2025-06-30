@@ -112,15 +112,30 @@ export class EmailProcessingService {
     // 1. Parse .eml file
     const parsedEmail = await this.parseEmlFile(emlFilePath);
 
-    // 2. Resolve/create contacts
+    // 2. Process attachments (placeholder for future integration)
+    // TODO: Integrate AttachmentProcessor once the unified pipeline is complete
+    let attachmentEntities: any[] = [];
+    if (parsedEmail.attachments && parsedEmail.attachments.length > 0) {
+      logger.info(`📎 Found ${parsedEmail.attachments.length} attachments - processing not yet integrated`);
+      // Attachment processing will be integrated in the unified pipeline
+    }
+
+    // 3. Resolve/create contacts
     const contactResolution = await this.resolveContacts(parsedEmail);
 
-    // 3. Extract entities from email content using spaCy
+    // 4. Extract entities from email content using spaCy
     const entityExtraction = await this.entityExtractor.extractEmailEntities(
       parsedEmail.subject,
       parsedEmail.body,
       parsedEmail.headers,
     );
+
+    // Merge entities from attachments with email entities
+    if (attachmentEntities.length > 0) {
+      entityExtraction.entities.push(...attachmentEntities);
+      entityExtraction.entityCount += attachmentEntities.length;
+      logger.info(`🔗 Merged ${attachmentEntities.length} entities from attachments`);
+    }
 
     // Enrich entities with metadata before sending to the knowledge graph
     entityExtraction.entities.forEach(entity => {
@@ -131,55 +146,24 @@ export class EmailProcessingService {
       };
     });
 
-    // 4. Financial analysis (if financial entities detected)
-    /*
-    let financialAnalysis;
-    const hasFinancialEntities = entityExtraction.entities.some(entity => 
-      entity.type.toString().includes('FINANCIAL') || entity.type.toString().includes('MONETARY') || entity.type.toString().includes('STOCK')
-    );
-    
-    if (hasFinancialEntities) {
-      const emailContent = `${parsedEmail.subject}\n\n${parsedEmail.body}`;
-      const financialContext: any = { //FinancialEntityContext
-        contactId: contactResolution.sender?.getId(),
-        emailId: parsedEmail.messageId,
-        documentType: 'EMAIL',
-        businessContext: this.inferBusinessContext(parsedEmail, entityExtraction),
-        clientSegment: this.inferClientSegment(contactResolution.sender),
-        riskTolerance: 'MEDIUM' // Default, could be inferred from contact history
-      };
-
-      try {
-        // financialAnalysis = await this.financialService.processFinancialContent(
-        //   emailContent,
-        //   financialContext
-        // );
-        logger.info(`   💰 Financial analysis would be completed here.`);
-      } catch (error) {
-        logger.warn(`   ⚠️ Financial analysis failed:`, error);
-      }
-    }
-    */
-    // 5. Insert into knowledge graph
+    // 6. Insert into knowledge graph
     const knowledgeGraphInsertions = await this.insertIntoKnowledgeGraph(
       parsedEmail,
       entityExtraction,
       contactResolution
     );
 
-    // 6. Generate business insights
+    // 7. Generate business insights
     const businessInsights = await this.generateBusinessInsights(
       parsedEmail,
       entityExtraction,
-      // financialAnalysis
     );
 
-    // 7. Generate recommendations
+    // 8. Generate recommendations
     const recommendations = this.generateRecommendations(
       parsedEmail,
       entityExtraction,
       businessInsights,
-      // financialAnalysis
     );
 
     return {
@@ -188,7 +172,6 @@ export class EmailProcessingService {
       contactResolution,
       knowledgeGraphInsertions,
       businessInsights,
-      // financialAnalysis,
       recommendations
     };
   }
