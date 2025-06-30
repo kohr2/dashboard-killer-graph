@@ -1,4 +1,4 @@
-import { demonstrateSpacyEmailIngestionPipeline } from '../../../scripts/demo/demo-email-ingestion-spacy';
+import { demonstrateSpacyEmailIngestionPipeline } from '../../../scripts/pipeline/email-ingestion';
 import { Neo4jConnection } from '../../../src/platform/database/neo4j-connection';
 import axios from 'axios';
 import * as fs from 'fs';
@@ -18,7 +18,7 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 const mockedSimpleParser = simpleParser as jest.Mock;
 const mockedFsPromises = fs.promises as jest.Mocked<typeof fs.promises>;
 
-describe('demonstrateSpacyEmailIngestionPipeline', () => {
+describe('EmailIngestionPipeline', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
