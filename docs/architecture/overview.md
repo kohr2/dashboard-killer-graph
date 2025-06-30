@@ -287,6 +287,44 @@ Since v1.3 the domain ontologies (CRM, Financial, …) are delivered as **plug-i
 
 Plug-ins are loaded at startup via `OntologyService.loadFromPlugins()` – see `docs/architecture/ontology-plugin-architecture.md` for full details.
 
+## 🧠 Ingestion Pipeline: The "How" vs. The "What"
+
+A key design pattern in the ingestion system is the strict separation between the **process** of ingestion and the **logic** of interpretation. This is embodied by the `src/ingestion/core` and `src/ingestion/intelligence` directories.
+
+### `ingestion/core` — The Framework (The "How")
+
+This directory provides the generic, reusable framework for processing data from any source. Think of it as the **engine and chassis** of the ingestion system.
+
+-   **`IngestionPipeline`**: This is the central orchestrator. It defines a fixed sequence of steps: fetch, normalize, extract, and store.
+-   **Agnostic Logic**: The pipeline itself is "dumb." It doesn't know *how* to extract entities; it only knows it must invoke a component that fulfills the `EntityExtractor` interface contract.
+
+### `ingestion/intelligence` — The Brain (The "What")
+
+This directory provides the specialized, "smart" modules that plug into the core framework. Think of these as the **specialized robotic arms** on an assembly line.
+
+-   **`EntityExtractor.interface.ts`**: This is the crucial **contract** (or "plug socket") that defines what an extractor must look like.
+-   **`nlp/entity-extractor.ts`**: This is a concrete implementation of that contract. Its job is to call an external Python NLP service to find entities in a given text.
+
+This separation allows the system to be highly modular. We can swap in different "brains" (e.g., a simple regex-based extractor or a different AI model) without altering the core ingestion flow.
+
+```mermaid
+graph TD;
+    subgraph "src/ingestion/core (The Framework)"
+        A[IngestionPipeline] -- "defines steps" --> B(1. Fetch)
+        B --> C(2. Normalize)
+        C -- "needs an extractor" --> D{EntityExtractor Interface};
+        D --> E(4. Store);
+    end
+
+    subgraph "src/ingestion/intelligence (The Brains)"
+        F[NLP_EntityExtractor] -- "implements" --> D;
+        G[Regex_EntityExtractor] -- "implements" --> D;
+        H[...AnotherExtractor] -- "implements" --> D;
+    end
+
+    style F fill:#cde,stroke:#333,stroke-width:2px
+```
+
 ---
 
 **Next**: [Extension System Details](extensions.md) | [Data Flow Details](data-flow.md) 

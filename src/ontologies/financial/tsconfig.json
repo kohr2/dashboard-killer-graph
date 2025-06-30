@@ -7,11 +7,13 @@
     "baseUrl": "../../..",
     "paths": {
       "@crm/*": ["src/ontologies/crm/*"],
-      "@platform/*": ["src/platform/*"]
+      "@platform/*": ["src/platform/*"],
+      "@shared/*": ["src/shared/*"]
     },
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "**/*.json"],
   "exclude": ["node_modules", "dist"],
   "references": [{ "path": "../../platform" }, { "path": "../crm" }]
 } 

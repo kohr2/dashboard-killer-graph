@@ -5,7 +5,7 @@
 
 import { singleton, inject } from 'tsyringe';
 import { DataSource, SourceType } from '../types/data-source.interface';
-import { IngestionPipeline as IPipeline, ProcessingResult, PipelineMetrics } from '../types/pipeline.interface';
+import { IngestionPipeline as IPipeline, ProcessingResult, PipelineMetrics, ProcessingError } from '../types/pipeline.interface';
 import { NormalizedData } from '../types/normalized-data.interface';
 import { logger } from '@shared/utils/logger';
 import type { EntityExtractor, EntityExtraction } from '../../intelligence/entity-extractor.interface';
@@ -47,7 +47,7 @@ export class IngestionPipeline implements IPipeline {
       let itemsFailed = 0;
       let entitiesCreated = 0;
       let relationshipsCreated = 0;
-      const errors: unknown[] = [];
+      const errors: ProcessingError[] = [];
 
       // Process each item from the source
       try {
@@ -153,7 +153,7 @@ export class IngestionPipeline implements IPipeline {
       sourceType,
       sourceId: 'temp',
       content: {
-        body: rawData.toString(),
+        body: String(rawData),
       },
       metadata: {
         timestamp: new Date(),

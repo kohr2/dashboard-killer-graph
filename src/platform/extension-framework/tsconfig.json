@@ -1,8 +1,9 @@
 {
-  "extends": "../../../../config/tsconfig.base.json",
+  "extends": "../../../config/tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../../../dist/platform/extension-framework",
-    "rootDir": "."
+    "outDir": "../../dist/platform/extension-framework",
+    "rootDir": ".",
+    "baseUrl": "../../"
   },
   "include": ["**/*.ts"],
   "exclude": ["**/*.test.ts"]
