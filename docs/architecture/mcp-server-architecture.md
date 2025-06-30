@@ -6,7 +6,7 @@ This document outlines the architecture of the Model-Context-Protocol (MCP) serv
 
 The MCP server is a Node.js process responsible for exposing a set of "tools" to a client. In our case, it exposes a single powerful `query` tool. The client, typically a user-facing application, can call this tool with a natural language question. The server then translates this question into a structured command, executes it against the knowledge graph, and returns a result.
 
-The entire implementation is self-contained within `src/mcp-server.ts`.
+The reference implementation now lives in `src/mcp/servers/mcp-server-simple.js` (additional variants are available in the same directory).
 
 ## Core Components & Flow
 
@@ -31,13 +31,13 @@ Our implementation uses the low-level API provided by the `@modelcontextprotocol
 
 ## Startup Process
 
-1.  The `scripts/test-llm-orchestrator.ts` script initiates a `StdioClientTransport`, which starts the `src/mcp-server.ts` process using `ts-node`.
-2.  `src/mcp-server.ts` runs:
-    - It imports and runs `reflect-metadata` and `./register-ontologies` to set up the dependency injection container.
+-1.  The `scripts/test-llm-orchestrator.ts` script initiates a `StdioClientTransport`, which starts the `src/mcp-server.ts` process using `ts-node`.
+
+2.  `src/mcp/servers/mcp-server-simple.js` runs:
+    - It imports and runs `reflect-metadata` and `./register-ontologies` to set up the dependency-injection container.
     - It creates an `McpServer` instance.
     - It attaches the `ListTools` and `CallTool` request handlers.
     - It creates a `StdioServerTransport` and connects the server to it.
     - It logs to `stderr` that it is ready.
-3.  The client connects, calls the `query` tool, receives the response, and closes the connection.
 
-This explicit, handler-based architecture is robust and avoids the complexities and potential race conditions of higher-level configuration objects, especially in a project with a complex TypeScript setup. 
+3.  The client connects, calls the `query` tool, receives the response, and closes the connection.

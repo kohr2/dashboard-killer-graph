@@ -1,6 +1,8 @@
 // Platform Extension Registry Tests
 // These tests drive the development of the extension framework
 
+import { ExtensionRegistry } from '@platform/extension-framework/extension-registry';
+
 describe('ExtensionRegistry', () => {
   describe('Extension Registration', () => {
     it('should register an extension successfully', () => {
@@ -19,7 +21,7 @@ describe('ExtensionRegistry', () => {
         getEventHandlers: jest.fn(() => []),
         getHealthStatus: jest.fn(() => ({ status: 'healthy' })),
         getMetrics: jest.fn(() => ({}))
-      };
+      } as any;
 
       // Act
       registry.register('financial', mockExtension);
@@ -33,13 +35,13 @@ describe('ExtensionRegistry', () => {
     it('should throw error when registering extension with duplicate name', () => {
       // Arrange
       const registry = new ExtensionRegistry();
-      const extension1 = { name: 'test', version: '1.0.0' };
-      const extension2 = { name: 'test', version: '2.0.0' };
+      const extension1 = { name: 'test', version: '1.0.0' } as any;
+      const extension2 = { name: 'test', version: '2.0.0' } as any;
 
       // Act & Assert
-      registry.register('test', extension1 as any);
+      registry.register('test', extension1);
       expect(() => {
-        registry.register('test', extension2 as any);
+        registry.register('test', extension2);
       }).toThrow('Extension with name "test" is already registered');
     });
   });
@@ -67,7 +69,4 @@ describe('ExtensionRegistry', () => {
       expect(extension).toBeNull();
     });
   });
-});
-
-// Import statements (these will fail initially)
-import { ExtensionRegistry } from '@platform/extension-framework/extension-registry'; 
+}); 

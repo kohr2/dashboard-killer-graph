@@ -1,6 +1,8 @@
 // Platform Event Bus Tests
 // These tests drive the development of cross-extension communication
 
+import { EventBus } from '@platform/extension-framework/event-bus';
+
 describe('EventBus', () => {
   describe('Event Subscription', () => {
     it('should subscribe to events successfully', () => {
@@ -153,7 +155,4 @@ describe('EventBus', () => {
       });
     });
   });
-});
-
-// Import statements (these will fail initially)
-import { EventBus } from '@platform/extension-framework/event-bus'; 
+}); 

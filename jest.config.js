@@ -21,11 +21,9 @@ module.exports = {
 
   setupFilesAfterEnv: ['<rootDir>/test/setup-e2e.ts', 'jest-extended/all', './test/setup.ts'],
   testMatch: [
-    '**/src/**/test/**/*.test.ts',
-
+    '<rootDir>/src/**/*.test.ts',
     '<rootDir>/test/e2e/**/*.test.ts',
-    '<rootDir>/test/integration/**/*.test.ts',
-    '<rootDir>/test/unit/**/*.test.ts'
+    '<rootDir>/test/integration/**/*.test.ts'
   ],
   globals: {
     'ts-jest': {

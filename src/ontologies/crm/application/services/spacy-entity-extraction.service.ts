@@ -4,6 +4,7 @@
 import { singleton } from 'tsyringe';
 import axios from 'axios';
 import { logger } from '@shared/utils/logger';
+import { waitForService } from '@shared/utils/wait-for-service';
 
 export interface SpacyExtractedEntity {
   type: EntityType;
@@ -123,6 +124,7 @@ interface NlpGraphResponse {
 @singleton()
 export class SpacyEntityExtractionService {
   private nlpServiceUrl: string;
+  private static nlpServiceReady = false;
 
   constructor() {
     this.nlpServiceUrl = process.env.NLP_SERVICE_URL || 'http://127.0.0.1:8000';
@@ -273,6 +275,17 @@ export class SpacyEntityExtractionService {
    * Make a POST request to the spaCy graph extraction microservice
    */
   private async callSpacyGraphExtractor(text: string): Promise<NlpGraphResponse> {
+    if (!SpacyEntityExtractionService.nlpServiceReady) {
+      try {
+        // Perform a lightweight health-check with retries (up to 5 seconds total)
+        await waitForService(`${this.nlpServiceUrl}/health`, 5, 1000);
+        SpacyEntityExtractionService.nlpServiceReady = true;
+      } catch (healthErr) {
+        logger.error(`NLP service health check failed:`, healthErr);
+        throw healthErr;
+      }
+    }
+
     try {
       const response = await axios.post<NlpGraphResponse>(`${this.nlpServiceUrl}/extract-graph`, { text });
       

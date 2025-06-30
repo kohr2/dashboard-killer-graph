@@ -3,11 +3,12 @@
  * Central orchestrator for all data source processing
  */
 
-import { singleton } from 'tsyringe';
+import { singleton, inject } from 'tsyringe';
 import { DataSource, SourceType } from '../types/data-source.interface';
 import { IngestionPipeline as IPipeline, ProcessingResult, PipelineMetrics } from '../types/pipeline.interface';
 import { NormalizedData } from '../types/normalized-data.interface';
 import { logger } from '@shared/utils/logger';
+import type { EntityExtractor, EntityExtraction } from '../../intelligence/entity-extractor.interface';
 
 @singleton()
 export class IngestionPipeline implements IPipeline {
@@ -15,11 +16,20 @@ export class IngestionPipeline implements IPipeline {
   readonly type: string;
   private static counter = 0;
 
-  constructor() {
+  constructor(
+    @inject('EntityExtractor') private extractor?: EntityExtractor,
+  ) {
     // Generate unique ID using counter + timestamp for uniqueness
     IngestionPipeline.counter++;
     this.id = `pipeline-${Date.now()}-${IngestionPipeline.counter}`;
     this.type = 'unified';
+
+    // fallback extractor if none provided
+    if (!this.extractor) {
+      this.extractor = {
+        extract: async () => ({ entities: [], relationships: [] }),
+      };
+    }
   }
 
   /**
@@ -155,18 +165,20 @@ export class IngestionPipeline implements IPipeline {
   /**
    * Extract entities from normalized data
    */
-  private async extractEntities(data: NormalizedData): Promise<any> {
-    // TODO: Use unified entity extractor
-    return {
-      entities: [],
-      relationships: []
-    };
+  private async extractEntities(data: NormalizedData): Promise<EntityExtraction> {
+    try {
+      const text = data.content.body?.toString() || '';
+      return await this.extractor!.extract(text);
+    } catch (err) {
+      logger.error('Entity extraction error:', err);
+      return { entities: [], relationships: [] };
+    }
   }
 
   /**
    * Store data in knowledge graph
    */
-  private async storeData(data: NormalizedData, extraction: unknown): Promise<void> {
+  private async storeData(data: NormalizedData, extraction: EntityExtraction): Promise<void> {
     // TODO: Use unified storage manager
     logger.info(`💾 Storing data for ${data.id}`);
   }

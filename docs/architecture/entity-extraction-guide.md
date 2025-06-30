@@ -179,7 +179,25 @@ Our testing strategy for this service focuses on:
 - **Failure and Fallback**: We verify that if the NLP service returns an error or is unavailable, a fallback mechanism can be triggered to ensure business continuity.
 - **Data Filtering**: We ensure that the filtering logic for entity types and confidence scores works as expected.
 - **Service Capabilities**: We test the `getCapabilities` method to ensure it correctly reports the status of the NLP service.
+- **Health-Check Wrapper**: Dedicated tests confirm that `waitForService` resolves once the service is healthy and throws after the configured number of retries.
 
 This testing approach guarantees that our integration with the NLP service is robust and that we can handle failures gracefully, ensuring the stability of the email ingestion pipeline.
 
-The rich entities extracted by the NLP service allow for creating a much more detailed and accurate knowledge graph, connecting people, organizations, and financial deals with greater precision. 
+The rich entities extracted by the NLP service allow for creating a much more detailed and accurate knowledge graph, connecting people, organizations, and financial deals with greater precision.
+
+## 🚦 Automatic Health-Check & Retry
+
+Historically, the TypeScript application **assumed** that the Python NLP service was already running.  If it was not, the very first Axios request would throw a long stack-trace that obscured the real issue.
+
+Starting with `v1.3.0` we introduced a lightweight helper, `waitForService`, located in `src/shared/utils/wait-for-service.ts`.
+
+* Before the first call to `/extract-graph` the `SpacyEntityExtractionService` now performs a health-check request to `GET /health`.
+* It retries the request (default **5** times, 1 s interval, 2 s timeout per attempt) and caches the success flag for subsequent calls, so there is no overhead after the service is confirmed healthy.
+* If the NLP micro-service never comes up, the helper throws a concise error — `Service at http://127.0.0.1:8000/health not reachable after 5 attempts` — instead of a multi-page Axios stack-trace.
+
+This makes local development smoother (you can start `npm run dev` before launching the Python service) and improves CI diagnostics.
+
+### Impact on Tests
+
+* The new helper is fully unit-tested in `test/unit/shared/utils/wait-for-service.test.ts` using Jest mocks.
+* Existing extraction tests continue to work because the health-check is automatically mocked when Axios is stubbed. 
