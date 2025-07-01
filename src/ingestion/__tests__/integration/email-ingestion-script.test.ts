@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+jest.mock('@platform/ontology/ontology.service', () => jest.requireActual('@platform/ontology/ontology.service'));
 import { demonstrateSpacyEmailIngestionPipeline } from '../../../../scripts/pipeline/email-ingestion';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import axios from 'axios';
@@ -8,6 +10,10 @@ import { ContentProcessingService } from '@platform/processing/content-processin
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
 import { User } from '@platform/security/domain/user';
 import { SalesforceEnrichmentService } from '@platform/enrichment/salesforce-enrichment.service';
+import * as fsExtra from 'fs-extra';
+import { bootstrap } from '@src/bootstrap';
+import { container } from 'tsyringe';
+import { OntologyService } from '@platform/ontology/ontology.service';
 
 jest.mock('axios');
 jest.mock('mailparser');
@@ -24,6 +30,16 @@ const mockedSimpleParser = simpleParser as jest.Mock;
 const mockedFsPromises = fs.promises as jest.Mocked<typeof fs.promises>;
 
 describe('EmailIngestionPipeline (script)', () => {
+  let connection: Neo4jConnection;
+
+  beforeAll(async () => {
+    bootstrap();
+    connection = container.resolve(Neo4jConnection);
+    await connection.connect();
+    // Clean up the database before tests
+    jest.clearAllMocks();
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -37,6 +53,24 @@ describe('EmailIngestionPipeline (script)', () => {
       subject: 'Test Subject',
       headers: new Map(),
     } as any);
+
+    // Ensure OntologyService returns at least one indexable label
+    jest.spyOn(OntologyService.prototype, 'getIndexableEntityTypes').mockReturnValue(['Email']);
+
+    // Mock ContentProcessingService to return a minimal result that triggers cypher ingestion
+    jest.spyOn(ContentProcessingService.prototype, 'processContentBatch').mockResolvedValue([
+      {
+        entities: [
+          {
+            id: 'e1',
+            name: 'Test Entity',
+            type: 'Email',
+            label: 'Email',
+          },
+        ],
+        relationships: [],
+      } as any,
+    ]);
 
     const mockSession = {
       run: jest.fn().mockResolvedValue({ records: [] }),

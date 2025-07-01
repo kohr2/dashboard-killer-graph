@@ -6,6 +6,8 @@ import { singleton } from 'tsyringe';
 import neo4j, { Driver, Session } from 'neo4j-driver';
 import { config } from 'dotenv';
 import { logger } from '@shared/utils/logger';
+import { container } from 'tsyringe';
+import { OntologyService } from '@platform/ontology/ontology.service';
 
 config(); // Make sure environment variables are loaded
 
@@ -17,9 +19,9 @@ export class Neo4jConnection {
   private readonly pass: string;
 
   constructor() {
-    this.uri = process.env.NEO4J_URI || 'bolt://localhost:7687';
-    this.user = process.env.NEO4J_USERNAME || 'neo4j';
-    this.pass = process.env.NEO4J_PASSWORD || 'password';
+    this.uri = process.env.NEO4J_URI!;
+    this.user = process.env.NEO4J_USERNAME!;
+    this.pass = process.env.NEO4J_PASSWORD!;
   }
 
   public async connect(): Promise<void> {
@@ -62,61 +64,24 @@ export class Neo4jConnection {
 
   async initializeSchema(): Promise<void> {
     const session = this.getSession();
-    
     try {
-      // Create constraints and indexes for optimal performance
-      await session.run(`
-        CREATE CONSTRAINT person_id_unique IF NOT EXISTS
-        FOR (p:Person) REQUIRE p.id IS UNIQUE
-      `);
+      const ontologyService = container.resolve(OntologyService);
+      const entityTypes: string[] = ontologyService.getAllEntityTypes();
+      const vectorTypes: string[] = ontologyService.getIndexableEntityTypes();
 
-      await session.run(`
-        CREATE CONSTRAINT organization_id_unique IF NOT EXISTS
-        FOR (o:Organization) REQUIRE o.id IS UNIQUE
-      `);
+      // Create uniqueness constraints on id for every entity type
+      for (const label of entityTypes) {
+        const constraintQuery = `CREATE CONSTRAINT ${label.toLowerCase()}_id_unique IF NOT EXISTS FOR (n:\`${label}\`) REQUIRE n.id IS UNIQUE`;
+        await session.run(constraintQuery);
+      }
 
-      await session.run(`
-        CREATE CONSTRAINT communication_id_unique IF NOT EXISTS
-        FOR (comm:Communication) REQUIRE comm.id IS UNIQUE
-      `);
+      // Create vector index on embedding for indexable entity types
+      for (const label of vectorTypes) {
+        const vectorQuery = `CREATE VECTOR INDEX \`${label.toLowerCase()}_embeddings\` IF NOT EXISTS FOR (n:\`${label}\`) ON (n.embedding) OPTIONS { indexConfig: { \`vector.dimensions\`: 384, \`vector.similarity_function\`: 'cosine' }}`;
+        await session.run(vectorQuery);
+      }
 
-      await session.run(`
-        CREATE CONSTRAINT task_id_unique IF NOT EXISTS
-        FOR (t:Task) REQUIRE t.id IS UNIQUE
-      `);
-
-      // Create indexes for frequently queried properties
-      await session.run(`
-        CREATE INDEX person_email_index IF NOT EXISTS
-        FOR (p:Person) ON (p.email)
-      `);
-
-      await session.run(`
-        CREATE INDEX organization_name_index IF NOT EXISTS
-        FOR (o:Organization) ON (o.name)
-      `);
-
-      await session.run(`
-        CREATE INDEX task_status_index IF NOT EXISTS
-        FOR (t:Task) ON (t.status)
-      `);
-
-      await session.run(`
-        CREATE INDEX task_priority_index IF NOT EXISTS
-        FOR (t:Task) ON (t.priority)
-      `);
-
-      // Create vector index for email embeddings
-      await session.run(`
-        CREATE VECTOR INDEX \`communication-embeddings\` IF NOT EXISTS
-        FOR (c:Communication) ON (c.embedding)
-        OPTIONS { indexConfig: {
-          \`vector.dimensions\`: 384,
-          \`vector.similarity_function\`: 'cosine'
-        }}
-      `);
-
-      logger.info('🏗️ Neo4j schema initialized with constraints and indexes');
+      logger.info(`🏗️ Neo4j schema initialized dynamically for ${entityTypes.length} entity types`);
     } catch (error) {
       logger.error('❌ Schema initialization failed:', error);
       throw error;

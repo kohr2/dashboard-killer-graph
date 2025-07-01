@@ -1,16 +1,8 @@
-import { injectable } from 'tsyringe';
+import { injectable, inject } from 'tsyringe';
 import OpenAI from 'openai';
-import { OntologyService } from '../../../ontology/ontology.service';
+import { OntologyService } from '@platform/ontology/ontology.service';
 import { logger } from '@shared/utils/logger';
-
-interface StructuredQuery {
-  command: 'show' | 'unknown' | 'show_related';
-  resourceTypes: string[];
-  filters?: { [key: string]: string };
-  relatedTo?: string[]; // The resource types from the previous context
-  sourceEntityName?: string; // The specific entity name from the user's query
-  relationshipType?: string; // The specific relationship to look for
-}
+import { StructuredQuery } from './query.types';
 
 export interface ConversationTurn {
     userQuery: string;
@@ -21,13 +13,20 @@ export interface ConversationTurn {
 export class QueryTranslator {
   private openai: OpenAI;
 
-  constructor(private readonly ontologyService: OntologyService) {
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY environment variable is not set.');
+  constructor(
+    @inject(OntologyService) private readonly ontologyService: OntologyService,
+    @inject('OpenAI') openai?: OpenAI,
+  ) {
+    if (openai) {
+      this.openai = openai;
+    } else {
+      if (!process.env.OPENAI_API_KEY) {
+        throw new Error('OPENAI_API_KEY environment variable is not set.');
+      }
+      this.openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
     }
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
   }
 
   public async translate(
@@ -158,6 +157,12 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
         return { command: 'unknown', resourceTypes: [] };
       }
       
+      // Limit to valid resource types that are known in the ontology
+      const validResourceTypes =
+        parsedResult.resourceTypes?.filter((rt: string) =>
+          this.ontologyService.isValidLabel(rt),
+        ) ?? [];
+
       return parsedResult;
 
     } catch (error) {

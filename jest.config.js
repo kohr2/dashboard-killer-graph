@@ -6,7 +6,7 @@ module.exports = {
   testEnvironment: 'node',
   clearMocks: true,
   coverageDirectory: 'coverage',
-  roots: ['<rootDir>/src', '<rootDir>/test'],
+  roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/scripts'],
   
   moduleNameMapper: {
     '^@src/(.*)$': '<rootDir>/src/$1',
@@ -19,8 +19,9 @@ module.exports = {
 
   moduleDirectories: ["node_modules", "src", "scripts", "scripts/database"],
 
-  setupFilesAfterEnv: ['<rootDir>/test/setup-e2e.ts', 'jest-extended/all', './test/setup.ts'],
-  testMatch: ['<rootDir>/src/**/*.test.ts'],
+  globalSetup: '<rootDir>/test/global-setup.ts',
+  setupFilesAfterEnv: ['jest-extended/all', './test/setup.ts'],
+  testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/scripts/**/*.test.ts'],
   globals: {
     'ts-jest': {
       tsconfig: 'test/tsconfig.json'

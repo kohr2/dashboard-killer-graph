@@ -1,9 +1,11 @@
-import { logger } from '../logger';
-
-// Apply the patch that re-maps console methods to the structured logger
+import 'reflect-metadata';
+import { logger } from '@shared/logger';
 import '../console-to-logger';
 
-describe.skip('console-to-logger redirect', () => {
+describe('console-to-logger redirect', () => {
+  const originalConsoleLog = console.log;
+  const originalConsoleWarn = console.warn;
+
   it('should call logger.info when console.log is used', () => {
     const spy = jest.spyOn(logger, 'info');
 

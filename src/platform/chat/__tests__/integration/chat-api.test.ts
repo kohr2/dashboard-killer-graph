@@ -1,60 +1,36 @@
 import 'reflect-metadata';
+jest.mock('@platform/ontology/ontology.service', () => jest.requireActual('@platform/ontology/ontology.service'));
 import request from 'supertest';
-import { container } from 'tsyringe';
+import { createApp } from '../../../../api';
+import { User } from '@platform/security/domain/user';
+import { ANALYST_ROLE } from '@platform/security/domain/role';
+import { OntologyService } from '@platform/ontology/ontology.service';
 
-// Mock Neo4jConnection to avoid real DB interaction in route initialization
-jest.mock('@platform/database/neo4j-connection', () => {
-  class MockConnection {
-    connect = jest.fn();
-    getDriver = jest.fn(() => {
-      const sessionMock = { run: jest.fn(() => ({ records: [] })), close: jest.fn() };
-      return {
-        session: jest.fn(() => sessionMock),
-        close: jest.fn(),
+// Provide minimal schema representation to avoid LLM errors in integration environment
+// If not already defined, define a stub implementation
+(OntologyService.prototype as any).getSchemaRepresentation = () => 'Entities:\nDeal\n';
+
+const app = createApp();
+
+describe('Chat API', () => {
+  describe('POST /api/chat', () => {
+    it('should return a 200 OK for a valid query', async () => {
+      // This is a high-level test to ensure the endpoint is responsive.
+      // It doesn't validate the content of the response, which can be variable.
+      const user: User = {
+        id: 'test-user',
+        username: 'test-user',
+        roles: [ANALYST_ROLE],
       };
+
+      const response = await request(app)
+        .post('/api/chat')
+        .send({ query: 'What is the status of the Helix deal?', user })
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(response.body).toHaveProperty('response');
+      expect(typeof response.body.response).toBe('string');
     });
-    getSession = jest.fn(() => ({ run: jest.fn(() => ({ records: [] })), close: jest.fn() }));
-    close = jest.fn();
-  }
-  return { Neo4jConnection: MockConnection };
-});
-
-import { ChatService } from '@platform/chat/application/services/chat.service';
-// Import the Express app AFTER mocks are in place
-import { app } from '@src/api';
-
-// Mock the ChatService *before* the app uses it
-const mockChatService = {
-  handleQuery: jest.fn(),
-};
-container.register<ChatService>(ChatService, { useValue: mockChatService as any });
-
-describe.skip('POST /api/chat/query', () => {
-  beforeEach(() => {
-    mockChatService.handleQuery.mockClear();
-  });
-
-  it('should return a 200 OK with the chat response for a valid query', async () => {
-    const mockResponse = 'Here are the deals you asked for.';
-    mockChatService.handleQuery.mockResolvedValue(mockResponse);
-
-    const response = await request(app)
-      .post('/api/chat/query')
-      .send({ query: 'show me all deals' });
-
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({ response: mockResponse });
-    expect(mockChatService.handleQuery).toHaveBeenCalledTimes(1);
-    expect(mockChatService.handleQuery).toHaveBeenCalledWith(expect.any(Object), 'show me all deals');
-  });
-
-  it('should return a 400 Bad Request if the query is missing', async () => {
-    const response = await request(app)
-      .post('/api/chat/query')
-      .send({});
-
-    expect(response.status).toBe(400);
-    expect(response.body).toEqual({ error: 'Query is required' });
-    expect(mockChatService.handleQuery).not.toHaveBeenCalled();
   });
 }); 

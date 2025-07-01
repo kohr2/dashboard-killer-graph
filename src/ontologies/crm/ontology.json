@@ -7,11 +7,13 @@
     },
     "Person": {
       "parent": "Party",
+      "vectorIndex": true,
       "keyProperties": ["email", "title"],
       "description": "Represents a legal entity or a formal group of people with a particular purpose, such as a company, institution, or association. In the CRM context, it is typically the entity managing customer relationships or a business customer itself. Based on the O-CREAM concept of an enterprise or actor involved in business activities."
     },
     "Organization": {
       "parent": "Party",
+      "vectorIndex": true,
       "keyProperties": ["legalName", "industry"],
       "description": "Represents a legal entity or a formal group of people with a particular purpose, such as a company, institution, or association. In the CRM context, it is typically the entity managing customer relationships or a business customer itself. Based on the O-CREAM concept of an enterprise or actor involved in business activities.",
       "enrichment": {
@@ -55,6 +57,10 @@
           "description": "The job title or role of the contact (e.g., 'CEO', 'Investment Analyst')."
         }
       }
+    },
+    "Location": {
+      "vectorIndex": true,
+      "description": "A physical or geographical location."
     }
   },
   "relationships": {
@@ -62,6 +68,20 @@
     "HAS_EMAIL": { "domain": "Person", "range": "Email", "description": "Links a person to their email." },
     "HAS_PHONE": { "domain": "Person", "range": "PhoneNumber", "description": "Links a person to their phone number." },
     "CONTACTED": { "domain": "Person", "range": "Person", "description": "Indicates one person contacted another." },
-    "PART_OF": { "domain": "Communication", "range": ["Person", "Organization"], "description": "An entity mentioned in or part of a communication." }
+    "PART_OF": { "domain": "Communication", "range": ["Person", "Organization"], "description": "An entity mentioned in or part of a communication." },
+    "HAS_ADDRESS": {
+      "domain": ["Person", "Organization"],
+      "range": "Location"
+    },
+    "WORKS_FOR": {
+      "domain": "Person",
+      "range": "Organization",
+      "description": "Indicates that a person is employed by or works for an organization."
+    },
+    "HAS_PARENT_ORGANIZATION": {
+      "domain": "Organization",
+      "range": "Organization",
+      "description": "Indicates that an organization is a subsidiary or division of another."
+    }
   }
 } 

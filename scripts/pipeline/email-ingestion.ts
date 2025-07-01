@@ -86,22 +86,6 @@ export function separatePropertyEntities(
   return { propertyEntities, nonPropertyEntities };
 }
 
-// 🔧 Utility to strip nested objects from property maps because Neo4j only accepts primitive values.
-function extractPrimitiveProps(props: Record<string, any>): Record<string, any> {
-  const safe: Record<string, any> = {};
-  for (const [k, v] of Object.entries(props || {})) {
-    if (
-      v === null ||
-      typeof v !== 'object' ||
-      Array.isArray(v) ||
-      v instanceof Date
-    ) {
-      safe[k] = v;
-    }
-  }
-  return safe;
-}
-
 export async function demonstrateSpacyEmailIngestionPipeline() {
   // --- Check for reset flag ---
   if (process.argv.includes('--reset-db')) {
@@ -226,7 +210,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
         const propertyRelationshipTypes = new Set(
           propertyEntityTypes.map(type => `HAS_${type.toUpperCase()}`),
         );
-
+        
         // Create a map of property relationships for later property assignment
         const propertyRelationships = new Map<string, Map<string, string[]>>();
         relationships.forEach(rel => {
@@ -381,7 +365,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
                   category: entity.category || 'Generic',
                   createdAt: (entity.createdAt || new Date()).toISOString(),
                   embedding: entity.embedding,
-                  ...extractPrimitiveProps(entity.properties || {}),
+                  ...(entity.properties || {}),
                   ...additionalProperties, // Add all property values here
                 }
               }
@@ -391,6 +375,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
             console.log(`      -> ${action} '${primaryLabel}' node for '${entity.name}' with ID: ${newNode.properties.id}`);
             entityMap.set(entity.name, { ...newNode.properties, labels: newNode.labels });
             nodeId = newNode.properties.id;
+            entity.resolvedId = nodeId;
           } else {
             // Existing node matched – we still need to update its properties (emails, percentages, EDGAR, etc.)
 
@@ -445,7 +430,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
                 `MATCH (e {id: $id}) SET e += $props`,
                 {
                   id: nodeId,
-                  props: extractPrimitiveProps(additionalProps),
+                  props: additionalProps,
                 },
               );
               console.log(`      -> Updated existing node '${entity.name}' with new properties.`);

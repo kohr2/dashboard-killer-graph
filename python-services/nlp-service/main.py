@@ -142,15 +142,18 @@ async def extract_graph_with_llm_async(text: str) -> Dict[str, Any]:
     3.  **Relationships:**
         -   Relationships can ONLY exist between **Core Entities**.
         -   Allowed Relationship Types: `({', '.join(VALID_RELATIONSHIP_TYPES)})`.
+        -   If one organization appears to be a subsidiary or division of another (e.g., 'Morgan Stanley Technology Group' and 'Morgan Stanley'), create a `HAS_PARENT_ORGANIZATION` relationship pointing from the subsidiary to the parent.
 
     **Example Scenario:**
-    -   **Text:** "David Chen (david.chen@ms.com) from Morgan Stanley mentioned the $350M Project Helix deal."
+    -   **Text:** "David Chen (david.chen@ms.com) from Morgan Stanley Technology Group mentioned the $350M Project Helix deal. We spoke with Morgan Stanley proper about it."
     -   **Your Logic:**
         1.  "David Chen" is a `Person` (Core Entity).
         2.  "david.chen@ms.com" is an `Email` (Property-like). I must attach it to "David Chen".
-        3.  "Morgan Stanley" is an `Organization` (Core Entity).
-        4.  "$350M" is a `MonetaryAmount` (Property-like). I must attach it to "Project Helix".
-        5.  "Project Helix" is a `Deal` (Core Entity).
+        3.  "Morgan Stanley Technology Group" is an `Organization` (Core Entity).
+        4.  "Morgan Stanley" is also an `Organization` (Core Entity).
+        5.  "Morgan Stanley Technology Group" is a part of "Morgan Stanley". I must create a `HAS_PARENT_ORGANIZATION` relationship.
+        6.  "$350M" is a `MonetaryAmount` (Property-like). I must attach it to "Project Helix".
+        7.  "Project Helix" is a `Deal` (Core Entity).
     -   **Correct JSON Output:**
         ```json
         {{
@@ -159,6 +162,7 @@ async def extract_graph_with_llm_async(text: str) -> Dict[str, Any]:
               "type": "Person", "value": "David Chen",
               "properties": {{"email": "david.chen@ms.com"}}
             }},
+            {{"type": "Organization", "value": "Morgan Stanley Technology Group"}},
             {{"type": "Organization", "value": "Morgan Stanley"}},
             {{
               "type": "Deal", "value": "Project Helix",
@@ -166,7 +170,8 @@ async def extract_graph_with_llm_async(text: str) -> Dict[str, Any]:
             }}
           ],
           "relationships": [
-            {{"source": "David Chen", "target": "Morgan Stanley", "type": "WORKS_FOR"}},
+            {{"source": "David Chen", "target": "Morgan Stanley Technology Group", "type": "WORKS_FOR"}},
+            {{"source": "Morgan Stanley Technology Group", "target": "Morgan Stanley", "type": "HAS_PARENT_ORGANIZATION"}},
             {{"source": "David Chen", "target": "Project Helix", "type": "PARTICIPATES_IN"}}
           ]
         }}
@@ -242,15 +247,18 @@ def extract_graph_with_llm(text: str) -> Dict[str, Any]:
     3.  **Relationships:**
         -   Relationships can ONLY exist between **Core Entities**.
         -   Allowed Relationship Types: `({', '.join(VALID_RELATIONSHIP_TYPES)})`.
+        -   If one organization appears to be a subsidiary or division of another (e.g., 'Morgan Stanley Technology Group' and 'Morgan Stanley'), create a `HAS_PARENT_ORGANIZATION` relationship pointing from the subsidiary to the parent.
 
     **Example Scenario:**
-    -   **Text:** "David Chen (david.chen@ms.com) from Morgan Stanley mentioned the $350M Project Helix deal."
+    -   **Text:** "David Chen (david.chen@ms.com) from Morgan Stanley Technology Group mentioned the $350M Project Helix deal. We spoke with Morgan Stanley proper about it."
     -   **Your Logic:**
         1.  "David Chen" is a `Person` (Core Entity).
         2.  "david.chen@ms.com" is an `Email` (Property-like). I must attach it to "David Chen".
-        3.  "Morgan Stanley" is an `Organization` (Core Entity).
-        4.  "$350M" is a `MonetaryAmount` (Property-like). I must attach it to "Project Helix".
-        5.  "Project Helix" is a `Deal` (Core Entity).
+        3.  "Morgan Stanley Technology Group" is an `Organization` (Core Entity).
+        4.  "Morgan Stanley" is also an `Organization` (Core Entity).
+        5.  "Morgan Stanley Technology Group" is a part of "Morgan Stanley". I must create a `HAS_PARENT_ORGANIZATION` relationship.
+        6.  "$350M" is a `MonetaryAmount` (Property-like). I must attach it to "Project Helix".
+        7.  "Project Helix" is a `Deal` (Core Entity).
     -   **Correct JSON Output:**
         ```json
         {{
@@ -259,6 +267,7 @@ def extract_graph_with_llm(text: str) -> Dict[str, Any]:
               "type": "Person", "value": "David Chen",
               "properties": {{"email": "david.chen@ms.com"}}
             }},
+            {{"type": "Organization", "value": "Morgan Stanley Technology Group"}},
             {{"type": "Organization", "value": "Morgan Stanley"}},
             {{
               "type": "Deal", "value": "Project Helix",
@@ -266,7 +275,8 @@ def extract_graph_with_llm(text: str) -> Dict[str, Any]:
             }}
           ],
           "relationships": [
-            {{"source": "David Chen", "target": "Morgan Stanley", "type": "WORKS_FOR"}},
+            {{"source": "David Chen", "target": "Morgan Stanley Technology Group", "type": "WORKS_FOR"}},
+            {{"source": "Morgan Stanley Technology Group", "target": "Morgan Stanley", "type": "HAS_PARENT_ORGANIZATION"}},
             {{"source": "David Chen", "target": "Project Helix", "type": "PARTICIPATES_IN"}}
           ]
         }}

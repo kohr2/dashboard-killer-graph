@@ -10,16 +10,20 @@
     },
     "Deal": {
       "keyProperties": ["dealType", "sector", "purpose"],
+      "vectorIndex": true,
       "description": "A specific business or financial transaction that is proposed, under negotiation, or completed. It represents an opportunity for investment, acquisition, or partnership between parties, aligned with the FIBO concept of a financial transaction."
     },
     "TargetCompany": {
       "keyProperties": ["industry", "website"],
+      "vectorIndex": true,
       "description": "The legal entity (e.g., corporation, partnership) that is the subject of a deal, such as an acquisition, merger, or investment. It is the company being acquired, invested in, or partnered with. Aligned with FIBO's concept of a 'Contractually Capable Entity'."
     },
     "Sector": {
+      "vectorIndex": true,
       "description": "An industry sector or sub-sector used to classify a company based on its primary business activities. Aligned with FIBO's 'Industry Sector Classifier' and typically based on a standard like GICS (Global Industry Classification Standard)."
     },
     "GeographicRegion": {
+      "keyProperties": ["country"],
       "description": "A geographic or geopolitical area, such as a country, state, or city, relevant to a deal or an entity's operations. Aligned with FIBO's 'Geographic Region' and 'Geopolitical Entity' concepts from its Locations ontology."
     },
     "Mandate": {

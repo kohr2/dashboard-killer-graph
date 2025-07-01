@@ -13,7 +13,7 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 describe('Gotham Entity Linking - Integration Test', () => {
   let financialService: FinancialEntityIntegrationService;
   let neo4jConnection: Neo4jConnection;
-  let transaction: Transaction;
+  let session: any;
 
   beforeAll(async () => {
     financialService = container.resolve(FinancialEntityIntegrationService);
@@ -26,14 +26,12 @@ describe('Gotham Entity Linking - Integration Test', () => {
   });
 
   beforeEach(async () => {
-    const session = neo4jConnection.getDriver().session();
-    transaction = session.beginTransaction();
+    session = neo4jConnection.getDriver().session();
   });
 
   afterEach(async () => {
-    if (transaction) {
-      await transaction.rollback();
-      await transaction.close();
+    if (session) {
+      await session.close();
     }
   });
 
@@ -54,20 +52,20 @@ describe('Gotham Entity Linking - Integration Test', () => {
 
     const { fiboEntities, crmIntegration } = await financialService.processFinancialContent(emailContent);
 
-    for (const entity of fiboEntities) {
-      await transaction.run(
-        `MERGE (n:${entity.type} {name: $name}) SET n += $props`,
-        { name: entity.name, props: { ...entity.properties, id: entity.id, name: entity.name } },
+    for (const entity of fiboEntities as any[]) {
+      await session.run(
+        `MERGE (n:${entity.type} {id: $id}) SET n += $props`,
+        { id: entity.id, props: { ...entity.properties, id: entity.id, name: entity.name } },
       );
     }
-    for (const rel of crmIntegration.relationships) {
-      await transaction.run(
+    for (const rel of crmIntegration.relationships as any[]) {
+      await session.run(
         `MATCH (a {id: $sourceId}), (b {id: $targetId}) MERGE (a)-[r:${rel.type}]->(b)`,
         { sourceId: rel.source, targetId: rel.target },
       );
     }
 
-    const result = await transaction.run(
+    const result = await session.run(
       `MATCH (p:Person {name: 'Rick'})-[:WORKS_ON]->(d:Deal {name: 'Project Gotham'}) RETURN p, d`,
     );
 
