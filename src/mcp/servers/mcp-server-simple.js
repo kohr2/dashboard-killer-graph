@@ -63,8 +63,19 @@ const { AccessControlService } = require('@platform/security/application/service
 // We no longer get the instance manually. We let tsyringe manage the singleton.
 container.registerSingleton('Neo4jConnection', Neo4jConnection);
 container.register("OntologyService", { useClass: OntologyService });
-container.register("QueryTranslator", { useClass: QueryTranslator });
 container.register("AccessControlService", { useClass: AccessControlService });
+
+// Register OpenAI with the API key
+const openAIKey = process.env.OPENAI_API_KEY;
+if (!openAIKey) {
+  process.stderr.write('⚠️ WARNING: OPENAI_API_KEY is not set. Chat functionality will be limited.\n');
+}
+const OpenAI = require('openai');
+container.register('OpenAI', {
+  useValue: new OpenAI({ apiKey: openAIKey }),
+});
+
+container.register("QueryTranslator", { useClass: QueryTranslator });
 container.register("ChatService", { useClass: ChatService });
 // ---------------------------------
 
@@ -86,6 +97,10 @@ async function main() {
   // Re-enable Neo4j connection
   const connection = container.resolve(Neo4jConnection);
   await connection.connect();
+
+  // Load ontologies
+  const { registerAllOntologies } = require('../../register-ontologies');
+  registerAllOntologies();
 
   // Now that the connection is live, resolve other services
   const ontologyService = container.resolve(OntologyService);
