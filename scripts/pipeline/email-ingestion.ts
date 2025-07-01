@@ -15,8 +15,9 @@ import { OntologyService } from '@platform/ontology/ontology.service';
 import { FinancialToCrmBridge } from '@financial/application/ontology-bridges/financial-to-crm.bridge';
 import { ContentProcessingService } from '@platform/processing/content-processing.service';
 import { resetDatabase } from '../database/reset-neo4j';
+import { flattenEnrichmentData } from './enrichment.utils';
 
-const LABELS_TO_INDEX = ['Person', 'Organization', 'Location', 'Product', 'Event', 'Project', 'Deal', 'RegulatoryInformation', 'LegalDocument'];
+let INDEXABLE_LABELS: string[] = []; // will be populated after ontologies are loaded
 
 // --- Type Definitions for Clarity ---
 interface IngestionEntity {
@@ -30,6 +31,7 @@ interface IngestionEntity {
   createdAt?: Date;
   properties?: { [key: string]: any };
   getOntologicalType?: () => string;
+  enrichedData?: any;
 }
 
 interface Relationship {
@@ -58,9 +60,46 @@ function getLabelInfo(entity: IngestionEntity, validOntologyTypes: string[]): { 
     // The type is valid. Use it as the primary label.
     // Candidate labels for vector search are only those explicitly marked for indexing.
     const candidateLabels = [primaryLabel]
-        .filter(l => LABELS_TO_INDEX.includes(l));
+        .filter(l => INDEXABLE_LABELS.includes(l));
 
     return { primary: primaryLabel, candidates: [...new Set(candidateLabels)] };
+}
+
+/**
+ * Splits the provided entities into two groups: property entities (those that should become
+ * properties on their parent node) and non-property entities. The list of property entity
+ * types comes from the ontology service so we avoid hard-coding domain knowledge here.
+ */
+export function separatePropertyEntities(
+  entities: IngestionEntity[],
+  propertyEntityTypes: string[],
+): {
+  propertyEntities: IngestionEntity[];
+  nonPropertyEntities: IngestionEntity[];
+} {
+  const propertyEntities = entities.filter(entity =>
+    propertyEntityTypes.includes(entity.type),
+  );
+  const nonPropertyEntities = entities.filter(
+    entity => !propertyEntityTypes.includes(entity.type),
+  );
+  return { propertyEntities, nonPropertyEntities };
+}
+
+// 🔧 Utility to strip nested objects from property maps because Neo4j only accepts primitive values.
+function extractPrimitiveProps(props: Record<string, any>): Record<string, any> {
+  const safe: Record<string, any> = {};
+  for (const [k, v] of Object.entries(props || {})) {
+    if (
+      v === null ||
+      typeof v !== 'object' ||
+      Array.isArray(v) ||
+      v instanceof Date
+    ) {
+      safe[k] = v;
+    }
+  }
+  return safe;
 }
 
 export async function demonstrateSpacyEmailIngestionPipeline() {
@@ -78,9 +117,13 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
   const validEntityTypes = ontologyService.getAllEntityTypes();
   const propertyEntityTypes = ontologyService.getPropertyEntityTypes();
   const validRelationshipTypes = ontologyService.getAllRelationshipTypes();
-  console.log('🏛️ Registered Ontology Types:', validEntityTypes);
-  console.log('🏠 Registered Property Types:', propertyEntityTypes);
-  console.log('🔗 Registered Relationship Types:', validRelationshipTypes);
+
+  // Populate dynamic indexable labels from ontology
+  INDEXABLE_LABELS = ontologyService.getIndexableEntityTypes();
+
+  console.log('🏛️ Registered Ontology Types:', validEntityTypes.length);
+  console.log('🏠 Registered Property Types:', propertyEntityTypes.length);
+  console.log('🔗 Registered Relationship Types:', validRelationshipTypes.length);
 
   // --- NEW: Sync ontology with Python NLP Service ---
   try {
@@ -117,7 +160,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
 
     // --- NEW: Create Vector Index for all relevant labels ---
     console.log('   ⚡ Ensuring vector indexes exist...');
-    for (const label of LABELS_TO_INDEX) {
+    for (const label of INDEXABLE_LABELS) {
         const indexName = `${label.toLowerCase()}_embeddings`;
         // Drop the index first to ensure clean state (optional, good for dev)
         await session.run(`DROP INDEX ${indexName} IF EXISTS`);
@@ -173,15 +216,21 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
         console.log('   [3] Starting Neo4j ingestion with vector search...');
         const entityMap = new Map<string, any>();
 
-        // NEW: Separate property entities (Email, Percent, Date, MonetaryAmount, Time) from other entities
-        const propertyEntityTypes = ['Email', 'Percent', 'Date', 'MonetaryAmount', 'Time'];
-        const propertyEntities = entities.filter(entity => propertyEntityTypes.includes(entity.type));
-        const nonPropertyEntities = entities.filter(entity => !propertyEntityTypes.includes(entity.type));
-        
+        // Separate property and non-property entities dynamically using the ontology-derived list
+        const { propertyEntities, nonPropertyEntities } = separatePropertyEntities(
+          entities,
+          propertyEntityTypes,
+        );
+
+        // Prepare a set of relationship types that map to property entities, e.g. "Email" -> "HAS_EMAIL"
+        const propertyRelationshipTypes = new Set(
+          propertyEntityTypes.map(type => `HAS_${type.toUpperCase()}`),
+        );
+
         // Create a map of property relationships for later property assignment
         const propertyRelationships = new Map<string, Map<string, string[]>>();
         relationships.forEach(rel => {
-          if (['HAS_EMAIL', 'HAS_PERCENT', 'HAS_DATE', 'HAS_MONETARY_AMOUNT', 'HAS_TIME'].includes(rel.type)) {
+          if (propertyRelationshipTypes.has(rel.type)) {
             const sourceId = rel.source;
             const targetEntity = entities.find(e => e.id === rel.target);
             if (targetEntity && propertyEntityTypes.includes(targetEntity.type)) {
@@ -198,7 +247,9 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
           }
         });
 
-        console.log(`      -> Found ${propertyEntities.length} property entities (${propertyEntityTypes.join(', ')}) to be converted to properties`);
+        console.log(
+          `      -> Found ${propertyEntities.length} property entities (${propertyEntityTypes.join(", ")}) to be converted to properties`,
+        );
         console.log(`      -> Processing ${nonPropertyEntities.length} non-property entities`);
 
         // 1. Find or Create Entity Nodes using Vector Search (excluding property entities)
@@ -211,7 +262,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
             console.log(`      -> Skipping unrecognized entity '${entity.name}'.`);
             continue;
           }
-          if (!entity.embedding && !LABELS_TO_INDEX.includes(primaryLabel)) {
+          if (!entity.embedding && !INDEXABLE_LABELS.includes(primaryLabel)) {
             console.log(`      -> Skipping entity '${entity.name}' (type: ${primaryLabel}) because it has no embedding and is not an indexed type.`);
             continue;
           }
@@ -299,6 +350,12 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
               console.log(`      -> Adding time properties to ${entity.name}: ${times.join(', ')}`);
             }
 
+            // Merge enriched data using utility to flatten nested structures (e.g., EDGAR address)
+            if (entity.enrichedData) {
+              const flattened = flattenEnrichmentData(entity.enrichedData);
+              Object.assign(additionalProperties, flattened);
+            }
+
             const mergeQuery = entity.embedding
               ? `
                 MERGE (e {id: $id})
@@ -324,7 +381,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
                   category: entity.category || 'Generic',
                   createdAt: (entity.createdAt || new Date()).toISOString(),
                   embedding: entity.embedding,
-                  ...(entity.properties || {}),
+                  ...extractPrimitiveProps(entity.properties || {}),
                   ...additionalProperties, // Add all property values here
                 }
               }
@@ -334,8 +391,68 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
             console.log(`      -> ${action} '${primaryLabel}' node for '${entity.name}' with ID: ${newNode.properties.id}`);
             entityMap.set(entity.name, { ...newNode.properties, labels: newNode.labels });
             nodeId = newNode.properties.id;
+          } else {
+            // Existing node matched – we still need to update its properties (emails, percentages, EDGAR, etc.)
+
+            const entityProperties = propertyRelationships.get(entity.id) || new Map();
+            const additionalProps: any = {};
+
+            if (entityProperties.has('email')) {
+              const emails = entityProperties.get('email')!;
+              additionalProps.email = emails[0];
+              if (emails.length > 1) {
+                additionalProps.additionalEmails = emails.slice(1);
+              }
+            }
+            if (entityProperties.has('percent')) {
+              const percents = entityProperties.get('percent')!;
+              additionalProps.percentage = percents[0];
+              if (percents.length > 1) {
+                additionalProps.additionalPercentages = percents.slice(1);
+              }
+            }
+            if (entityProperties.has('date')) {
+              const dates = entityProperties.get('date')!;
+              additionalProps.date = dates[0];
+              if (dates.length > 1) {
+                additionalProps.additionalDates = dates.slice(1);
+              }
+            }
+            if (entityProperties.has('monetaryamount')) {
+              const amounts = entityProperties.get('monetaryamount')!;
+              additionalProps.amount = amounts[0];
+              if (amounts.length > 1) {
+                additionalProps.additionalAmounts = amounts.slice(1);
+              }
+            }
+            if (entityProperties.has('time')) {
+              const times = entityProperties.get('time')!;
+              additionalProps.time = times[0];
+              if (times.length > 1) {
+                additionalProps.additionalTimes = times.slice(1);
+              }
+            }
+
+            // Flatten enriched data if present
+            if (entity.enrichedData) {
+              const flattened = flattenEnrichmentData(entity.enrichedData);
+              Object.assign(additionalProps, flattened);
+            }
+
+            // Only run update if we have at least one property to set (avoid empty SET clause)
+            if (Object.keys(additionalProps).length > 0) {
+              await session.run(
+                `MATCH (e {id: $id}) SET e += $props`,
+                {
+                  id: nodeId,
+                  props: extractPrimitiveProps(additionalProps),
+                },
+              );
+              console.log(`      -> Updated existing node '${entity.name}' with new properties.`);
+            }
+
+            entity.resolvedId = nodeId;
           }
-          entity.resolvedId = nodeId;
         }
         
         // 2. Create Communication Node and link entities
