@@ -304,14 +304,7 @@ export class SpacyEntityExtractionService {
     }
   }
 
-  /**
-   * @deprecated Use callSpacyGraphExtractor for richer output including relationships and embeddings.
-   */
-  private async callSpacyExtractor(text: string): Promise<SpacyRawEntity[]> {
-    // This method now only fetches basic entities and does not provide the full graph.
-    const response = await axios.post<SpacyRawEntity[]>(`${this.nlpServiceUrl}/extract-entities`, { text });
-    return response.data;
-  }
+
 
   /**
    * Convert spaCy raw entities to our typed format

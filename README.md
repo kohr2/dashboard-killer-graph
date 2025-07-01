@@ -85,12 +85,14 @@ The system includes a fully functional conversational interface that:
 
 ## 📚 Documentation
 
--   [**Architecture Overview**](./docs/architecture/overview.md) - High-level system design.
--   [**Chat Interface Guide**](./docs/features/chat-interface.md) - How to use the conversational interface.
--   [**Extension & Ontology Architecture**](./docs/architecture/ontologies.md) - A guide on how to create and manage extensions.
--   [**API Reference**](./docs/development/api-reference.md) - A guide to the available API endpoints.
--   [**Entity Extraction Guide**](./docs/architecture/entity-extraction-guide.md) - How the NLP pipeline works.
--   [**Development Roadmap**](./docs/development/roadmap.md) - See what's next.
+-   [**Complete Documentation Hub**](./docs/README.md) - Start here for all documentation
+-   [**Architecture Overview**](./docs/architecture/overview.md) - High-level system design
+-   [**Chat Interface Guide**](./docs/features/chat-interface.md) - How to use the conversational interface
+-   [**Extension & Ontology Architecture**](./docs/architecture/ontologies.md) - Guide to create and manage extensions
+-   [**API Reference**](./docs/development/api-reference.md) - Available API endpoints
+-   [**Entity Extraction Guide**](./docs/architecture/entity-extraction-guide.md) - How the NLP pipeline works
+-   [**Development Roadmap**](./docs/development/roadmap.md) - What's next
+-   [**TDD Approach**](./docs/development/tdd-approach.md) - Test-driven development guidelines
 
 ## 🎯 Project Status
 
