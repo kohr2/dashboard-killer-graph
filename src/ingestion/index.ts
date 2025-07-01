@@ -15,5 +15,4 @@ export * from './sources/email/email-source';
 
 // Intelligence
 export * from './intelligence/nlp/entity-extractor';
-
-// TODO: Export other components as they are implemented
+export type { EntityExtractor as IEntityExtractor, EntityExtraction } from './intelligence/entity-extractor.interface';
