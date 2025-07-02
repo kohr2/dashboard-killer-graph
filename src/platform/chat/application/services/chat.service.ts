@@ -1,4 +1,4 @@
-import { injectable } from 'tsyringe';
+// Removed tsyringe dependency
 import { v4 as uuidv4 } from 'uuid';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
 import { User } from '@platform/security/domain/user';
@@ -7,7 +7,8 @@ import { Message } from '@platform/chat/domain/message';
 import { PermissionResource } from '@platform/security/domain/role';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
-import { QueryTranslator, ConversationTurn } from './query-translator.service';
+import { QueryTranslator } from './query-translator.service';
+import type { ConversationTurn } from './query-translator.types';
 import OpenAI from 'openai';
 import { logger } from '@shared/utils/logger';
 
@@ -32,7 +33,6 @@ export interface ChatResponse {
   };
 }
 
-@injectable()
 export class ChatService {
   // In-memory store for conversations, for now. Replace with a real repository.
   private conversations: Map<string, Conversation> = new Map();

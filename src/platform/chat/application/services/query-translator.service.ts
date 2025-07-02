@@ -1,21 +1,15 @@
-import { injectable, inject } from 'tsyringe';
 import OpenAI from 'openai';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { logger } from '@shared/utils/logger';
-import { StructuredQuery } from './query.types';
+import type { StructuredQuery, ConversationTurn } from './query-translator.types';
 
-export interface ConversationTurn {
-    userQuery: string;
-    assistantResponse: unknown; // Could be a string or a list of entities
-}
-
-@injectable()
+// Removed tsyringe dependency
 export class QueryTranslator {
   private openai: OpenAI;
 
   constructor(
-    @inject(OntologyService) private readonly ontologyService: OntologyService,
-    @inject('OpenAI') openai?: OpenAI,
+    private readonly ontologyService: OntologyService = OntologyService.getInstance(),
+    openai?: OpenAI,
   ) {
     if (openai) {
       this.openai = openai;
