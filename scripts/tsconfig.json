@@ -7,13 +7,13 @@
     "paths": {
       "@src/*": ["src/*"],
       "@platform/*": ["src/platform/*"],
-      "@crm/*": ["src/ontologies/crm/*"],
-      "@financial/*": ["src/ontologies/financial/*"],
+      "@crm/*": ["ontologies/crm/*"],
+      "@financial/*": ["ontologies/financial/*"],
       "@shared/*": ["src/shared/*"]
     },
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["./**/*.ts", "../src/**/*.ts"],
+  "include": ["./**/*.ts", "../src/**/*.ts", "../ontologies/**/*.ts"],
   "exclude": ["../node_modules", "../dist"]
 } 

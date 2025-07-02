@@ -1,5 +1,5 @@
-import { OCreamContactEntity } from '../../ontologies/crm/domain/entities/contact-ontology';
-import { Organization } from '../../ontologies/crm/domain/entities/organization';
+import { OCreamContactEntity } from '@crm/domain/entities/contact-ontology';
+import { Organization } from '@crm/domain/entities/organization';
 
 /**
  * Represents a generic entity that can be enriched.
