@@ -113,3 +113,6 @@ ontologies/**/build/
 
 # Ontology seed fixture archives
 ontologies/**/seed/*.gz
+
+# Exclude src/platform/cache
+!src/platform/cache/**

@@ -1,3 +1,5 @@
+import type { SourceType } from './data-source.interface';
+
 /**
  * Structure de données normalisée commune
  * Toutes les sources sont converties vers ce format

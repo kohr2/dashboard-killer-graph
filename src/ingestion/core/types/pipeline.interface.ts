@@ -2,6 +2,8 @@
  * Interface pour les pipelines d'ingestion
  * Définit le contrat pour le traitement unifié des données
  */
+import type { DataSource } from './data-source.interface';
+
 export interface IngestionPipeline {
   readonly id: string;
   readonly type: string;

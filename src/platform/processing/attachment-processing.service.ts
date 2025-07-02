@@ -1,4 +1,3 @@
-import { singleton } from 'tsyringe';
 import { logger } from '@shared/utils/logger';
 import xlsx from 'node-xlsx';
 import * as officeParser from 'officeparser';
@@ -16,15 +15,6 @@ export interface ProcessedAttachment {
   error?: string;
   skipReason?: string;
   processingDuration: number;
-}
-
-export interface ExtractedEntity {
-  id: string;
-  name: string;
-  type: string;
-  confidence: number;
-  source: string;
-  properties?: Record<string, any>;
 }
 
 export interface AttachmentProcessingResult {
@@ -45,7 +35,6 @@ export interface AttachmentProcessingError {
   recoverable: boolean;
 }
 
-@singleton()
 export class AttachmentProcessingService {
   private readonly supportedTypes = new Set([
     'application/pdf',
@@ -249,7 +238,7 @@ export class AttachmentProcessingService {
    */
   async extractTextFromPdf(pdfBuffer: Buffer): Promise<string> {
     try {
-      const result = await officeParser.parseOfficeAsync(pdfBuffer);
+      const result: any = await officeParser.parseOfficeAsync(pdfBuffer);
       return result.text || '';
     } catch (error) {
       logger.error('Error extracting text from PDF:', error);
@@ -262,7 +251,7 @@ export class AttachmentProcessingService {
    */
   async extractTextFromDocx(docxBuffer: Buffer): Promise<string> {
     try {
-      const result = await officeParser.parseOfficeAsync(docxBuffer);
+      const result: any = await officeParser.parseOfficeAsync(docxBuffer);
       return result.text || '';
     } catch (error) {
       logger.error('Error extracting text from DOCX:', error);
@@ -315,7 +304,7 @@ export class AttachmentProcessingService {
    */
   async extractTextFromPowerPoint(pptBuffer: Buffer): Promise<string> {
     try {
-      const result = await officeParser.parseOfficeAsync(pptBuffer);
+      const result: any = await officeParser.parseOfficeAsync(pptBuffer);
       return result.text || '';
     } catch (error) {
       logger.error('Error extracting text from PowerPoint:', error);
