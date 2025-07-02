@@ -175,50 +175,12 @@ describe('enrichment.utils', () => {
         }
       };
 
-      console.log('DEBUG - Input:', JSON.stringify(input, null, 2));
       const result = flattenEnrichmentData(input);
-      console.log('DEBUG - Result:', JSON.stringify(result, null, 2));
 
       expect(result).toEqual({
         organization_name: 'Test Corp',
         organization_address: '123 Business Ave, Business City, BC 12345',
         organization_contact: 'Phone: +1-555-123-4567 | Email: info@testcorp.com',
-        organization_locations_0: '40.7128, -74.0060 - HQ'
-      });
-    });
-
-    it('should debug simple nested object', () => {
-      const input = {
-        organization: {
-          name: 'Test Corp'
-        }
-      };
-
-      const result = flattenEnrichmentData(input);
-      console.log('DEBUG - Simple test result:', JSON.stringify(result, null, 2));
-
-      expect(result).toEqual({
-        organization_name: 'Test Corp'
-      });
-    });
-
-    it('should debug locations array', () => {
-      const input = {
-        organization: {
-          locations: [
-            {
-              latitude: 40.7128,
-              longitude: -74.0060,
-              name: 'HQ'
-            }
-          ]
-        }
-      };
-
-      const result = flattenEnrichmentData(input);
-      console.log('DEBUG - Locations array test result:', JSON.stringify(result, null, 2));
-
-      expect(result).toEqual({
         organization_locations_0: '40.7128, -74.0060 - HQ'
       });
     });

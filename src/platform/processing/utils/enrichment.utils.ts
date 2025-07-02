@@ -144,6 +144,7 @@ function isAddressLikeObject(key: string, value: any): boolean {
         objectKeys.includes('street1') ||
         (objectKeys.includes('city') &&
           (objectKeys.includes('state') || objectKeys.includes('province') || objectKeys.includes('region'))))
+    )
   );
 }
 
@@ -220,15 +221,30 @@ function flattenLocationObject(loc: Record<string, any>): string {
  */
 function isContactLikeObject(key: string, value: any): boolean {
   if (!value || typeof value !== 'object') return false;
-  
-  const contactKeys = ['contact', 'phone', 'email', 'fax', 'website', 'url'];
-  const objectKeys = Object.keys(value);
-  
-  return (
-    contactKeys.includes(key.toLowerCase()) ||
-    objectKeys.some(k => contactKeys.includes(k.toLowerCase())) ||
-    (objectKeys.includes('phone') || objectKeys.includes('email'))
-  );
+
+  const explicitContactKeys = ['contact', 'contactinfo', 'contact_info', 'contactinformation'];
+
+  const contactFieldKeys = [
+    'phone',
+    'telephone',
+    'mobile',
+    'email',
+    'emailaddress',
+    'fax',
+    'website',
+    'url',
+    'web',
+  ];
+
+  const objectKeysLower = Object.keys(value).map(k => k.toLowerCase());
+
+  const hasDirectContactField = objectKeysLower.some(k => contactFieldKeys.includes(k));
+
+  if (explicitContactKeys.includes(key.toLowerCase()) && hasDirectContactField) {
+    return true;
+  }
+
+  return hasDirectContactField;
 }
 
 /**

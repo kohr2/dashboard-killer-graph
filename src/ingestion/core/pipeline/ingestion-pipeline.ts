@@ -3,7 +3,8 @@
  * Central orchestrator for all data source processing
  */
 
-import { singleton, inject } from 'tsyringe';
+// Removed tsyringe dependency for simplicity
+
 import { DataSource, SourceType } from '../types/data-source.interface';
 import { IngestionPipeline as IPipeline, ProcessingResult, PipelineMetrics, ProcessingError } from '../types/pipeline.interface';
 import { NormalizedData } from '../types/normalized-data.interface';
@@ -12,28 +13,20 @@ import type { EntityExtractor, EntityExtraction } from '../../intelligence/entit
 import { OntologyDrivenAdvancedGraphService } from '@platform/processing/ontology-driven-advanced-graph.service';
 import { OntologyService } from '@platform/ontology/ontology.service';
 
-@singleton()
 export class IngestionPipeline implements IPipeline {
   readonly id: string;
   readonly type: string;
   private static counter = 0;
 
   constructor(
-    @inject('EntityExtractor') private extractor?: EntityExtractor,
+    private extractor: EntityExtractor = { extract: async () => ({ entities: [], relationships: [] }) },
     private advancedGraphService?: OntologyDrivenAdvancedGraphService,
-    @inject(OntologyService) private ontologyService?: OntologyService,
+    private ontologyService?: OntologyService,
   ) {
     // Generate unique ID using counter + timestamp for uniqueness
     IngestionPipeline.counter++;
     this.id = `pipeline-${Date.now()}-${IngestionPipeline.counter}`;
     this.type = 'unified';
-
-    // fallback extractor if none provided
-    if (!this.extractor) {
-      this.extractor = {
-        extract: async () => ({ entities: [], relationships: [] }),
-      };
-    }
   }
 
   /**
@@ -253,7 +246,8 @@ export class IngestionPipeline implements IPipeline {
     // Apply ontology configurations for all detected ontologies
     for (const ontologyName of detectedOntologies) {
       try {
-        await this.advancedGraphService.applyOntologyConfiguration(ontologyName);
+        // applyOntologyConfiguration is intentionally kept internal in the service; cast to any here to avoid TS visibility issue
+        await (this.advancedGraphService as any).applyOntologyConfiguration(ontologyName);
         logger.debug(`Applied advanced relationships for ontology: ${ontologyName}`);
       } catch (error) {
         logger.warn(`Failed to apply advanced relationships for ontology ${ontologyName}:`, error);

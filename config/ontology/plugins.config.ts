@@ -1,8 +1,8 @@
 import { OntologyPlugin } from '@platform/ontology/ontology.plugin';
 import { corePlugin } from '../../src/platform/ontology/core.plugin';
-import { crmPlugin } from '../../src/ontologies/crm/crm.plugin';
-import { financialPlugin } from '../../src/ontologies/financial/financial.plugin';
-import { procurementPlugin } from '../../src/ontologies/procurement/procurement.plugin';
+import { crmPlugin } from '../../ontologies/crm/crm.plugin';
+import { financialPlugin } from '../../ontologies/financial/financial.plugin';
+import { procurementPlugin } from '../../ontologies/procurement/procurement.plugin';
 
 /**
  * Configuration for ontology plugins.

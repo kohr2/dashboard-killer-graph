@@ -10,13 +10,14 @@
     "resolveJsonModule": true,
     "paths": {
       "@platform/*": ["src/platform/*"],
-      "@crm/*": ["src/ontologies/crm/*"],
-      "@financial/*": ["src/ontologies/financial/*"],
+      "@crm/*": ["ontologies/crm/*"],
+      "@financial/*": ["ontologies/financial/*"],
+      "@procurement/*": ["ontologies/procurement/*"],
       "@shared/*": ["src/shared/*"],
       "@src/*": ["src/*"]
     },
     "typeRoots": ["node_modules/@types", "src/types"]
   },
-  "include": ["src/**/*.ts", "src/**/*.json", "config/**/*.ts", "test/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.json", "ontologies/**/*.ts", "config/**/*.ts", "test/**/*.ts"],
   "exclude": ["node_modules", "dist", "scripts"]
 }
