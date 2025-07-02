@@ -6,10 +6,11 @@ yarn-error.log*
 
 # Build outputs
 !build/
+build/*
 dist/
-build/
 *.tsbuildinfo
 !build/.gitkeep
+!build/.gitkeep.placeholder
 
 # Environment files
 .env
