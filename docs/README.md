@@ -81,6 +81,15 @@ In Claude Desktop, you can now ask questions like:
 - **Connection errors**: Check the file paths in Claude Desktop configuration
 - **No response**: Verify Neo4j is running and accessible
 
+#### Common Troubleshooting
+
+| Symptom | Likely Cause | Quick Fix |
+|---------|--------------|-----------|
+| `TypeInfo not known for "ChatService"` during bootstrap | `ChatService` (or its constructor deps) not decorated with `@injectable()` **or** not imported anywhere before `container.resolve()` is called | 1. Ensure each class has `@injectable()` decorator.<br/>2. Import the module once in `bootstrap.ts` or `api.ts` before resolving it. |
+| `listen EADDRINUSE :::3001` | Another process already listening on port 3001 | `lsof -ti:3001 | xargs kill -9` or export a different `PORT` value before running `npm run dev`. |
+| Warnings about nested maps "Property values can only be of primitive types" in Neo4j | Enrichment data still contains nested objects that weren't flattened | Extend `flattenEnrichmentData` or drop non-primitive properties before writing to Neo4j. |
+| Import errors for `@platform/extension-framework/*` | The obsolete **extension-framework** module was removed in 5e462df | Delete leftover imports (usually in old tests) and run `npm test` again. |
+
 ### Quick Demo
 
 ```bash
