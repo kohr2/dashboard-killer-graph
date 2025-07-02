@@ -20,8 +20,9 @@
     "paths": {
       "@src/*": ["src/*"],
       "@platform/*": ["src/platform/*"],
-      "@crm/*": ["ontologies/crm/*"],
-      "@financial/*": ["ontologies/financial/*"],
+      "@crm/*": ["build/ontologies/crm/generated/*"],
+      "@financial/*": ["build/ontologies/financial/generated/*"],
+      "@procurement/*": ["build/ontologies/procurement/generated/*"],
       "@shared/*": ["src/shared/*"],
       "@generated/*": ["build/ontologies/*"]
     }

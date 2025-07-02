@@ -6,7 +6,7 @@
   },
   "include": [
     "../src/**/*.ts",
-    "../ontologies/**/*.ts",
+    "../build/ontologies/**/*.ts",
     "../ontologies/**/*.json",
     "../build/**/*.ts",
     "../config/ontology/**/*.ts",
