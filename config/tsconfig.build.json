@@ -1,1 +1,23 @@
- 
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../dist",
+    "rootDir": "../"
+  },
+  "include": [
+    "../src/**/*.ts",
+    "../ontologies/**/*.plugin.ts",
+    "../ontologies/**/index.ts",
+    "../ontologies/**/*.json",
+    "../build/**/*.ts",
+    "../src/register-ontologies.ts"
+  ],
+  "exclude": [
+    "../**/__tests__/**",
+    "../test/**",
+    "../scripts/**",
+    "../docs/**",
+    "../node_modules",
+    "../dist"
+  ]
+} 
