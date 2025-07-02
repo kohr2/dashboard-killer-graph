@@ -44,7 +44,16 @@ async function generateForDomain(domain: string) {
 
   const raw = await fs.readFile(schemaPath, 'utf-8');
   const schema = JSON.parse(raw);
-  const entities: EntitySchema[] = schema.entities || [];
+  let entities: EntitySchema[] = [];
+  if (Array.isArray(schema.entities)) {
+    entities = schema.entities;
+  } else if (schema.entities && typeof schema.entities === 'object') {
+    // Convert object map to array with properties if provided
+    entities = Object.entries<any>(schema.entities).map(([name, def]) => ({
+      name,
+      properties: def?.properties || def?.props || [],
+    }));
+  }
   if (!entities.length) {
     console.warn(`⚠️  No entities declared in ${schemaPath}`);
     return;

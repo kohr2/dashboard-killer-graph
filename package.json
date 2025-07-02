@@ -11,7 +11,7 @@
     "dev:all": "concurrently -n \"API,NLP\" -c \"blue,magenta\" \"npm:dev\" \"npm:dev:nlp\"",
     "dev:mcp": "node src/mcp/servers/mcp-server-simple.js",
     "ts": "TS_NODE_PROJECT=scripts/tsconfig.json ts-node -r tsconfig-paths/register",
-    "build": "npm run ontologies:generate && tsc",
+    "build": "npm run ontologies:generate && tsc -p config/tsconfig.build.json",
     "start": "node dist/src/api.js",
     "clean": "rimraf dist coverage",
     "type-check": "tsc --noEmit",
