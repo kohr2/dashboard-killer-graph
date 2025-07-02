@@ -2,204 +2,170 @@
 
 A comprehensive knowledge graph platform for processing and analyzing business communications, documents, and data.
 
-## Overview
+## Quick Overview
 
 The Knowledge Graph Dashboard ingests, processes, and analyzes data from various sources to build a rich knowledge graph. Supports email processing, document analysis, entity extraction, and ontology-driven reasoning.
 
-## Architecture
-
-### Core Platform
-
-```
-src/platform/
-├── processing/           # Centralized processing services
-├── ontology/            # Ontology management
-├── reasoning/           # Ontology-driven reasoning
-├── chat/               # Chat interface
-├── database/           # Database connections
-├── enrichment/         # Data enrichment services
-└── security/           # Security and authentication
-```
-
-### Domain Ontologies
-
-```
-src/ontologies/
-├── crm/                # Customer Relationship Management
-├── financial/          # Financial domain
-├── procurement/        # Procurement domain
-└── security/           # Security domain
-```
-
-### Ingestion Pipeline
-
-```
-src/ingestion/
-├── sources/            # Data sources (email, documents, APIs)
-├── core/               # Core ingestion logic
-└── intelligence/       # AI and NLP services
-```
-
 ## Key Features
 
-### 1. Email Processing
-- **Email Parsing**: Extract structured data from .eml files
-- **Attachment Processing**: Support for PDF, Word, Excel, PowerPoint, images
-- **Entity Extraction**: Identify entities in content and attachments
-- **Relationship Mapping**: Connect entities through communication events
-
-### 2. Ontology-Driven Reasoning
-- **Dynamic Reasoning**: Execute algorithms defined in ontologies
-- **Multi-Domain Support**: Financial, CRM, and procurement reasoning
-- **API Integration**: RESTful endpoints for reasoning execution
-
-### 3. Knowledge Graph Management
-- **Neo4j Integration**: Graph database for relationship storage
-- **Vector Search**: Similarity search capabilities
-- **Data Enrichment**: External data integration
-
-### 4. Chat Interface
-- **Natural Language Queries**: Conversational interface
-- **Context Awareness**: Maintain conversation context
+- **Email Processing**: Parse .eml files with attachment support
+- **Entity Extraction**: AI-powered entity recognition
+- **Ontology-Driven Reasoning**: Multi-domain reasoning algorithms
+- **Knowledge Graph**: Neo4j-based graph database
+- **Chat Interface**: Natural language querying
+- **Vector Search**: Similarity-based entity matching
 
 ## Quick Start
 
 ### Prerequisites
 - Node.js 18+
-- Neo4j Database
+- Docker & Docker Compose
 - Python 3.8+ (for NLP services)
 
 ### Installation
 
 ```bash
-# Clone and install
+# Install and setup
 git clone <repository-url>
 cd dashboard-killer-graph-new
 npm install
-
-# Configure environment
 cp config/environment.example.js config/environment.js
-# Edit config/environment.js
 
-# Start Neo4j
+# Start services
 docker-compose -f docker-compose.neo4j.yml up -d
+
+# Start Python NLP services
+cd python-services/nlp-service
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python main.py &
+
+cd ../analysis-service
+pip install -r requirements.txt
+python main.py &
 
 # Start application
 npm run dev
 ```
 
-### Quick Start Commands
+### Quick Demo
 
 ```bash
-# Initialize database
+# Initialize database schema
 npm run db:init
 
 # Process test emails
 npm run demo:email-ingestion
 
-# Test reasoning
+# Test reasoning algorithms
 npm run demo:reasoning
 
 # Start chat interface
 npm run chat:dev
 ```
 
-## Development
+## Architecture
+
+### System Overview
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Data Sources  │    │  Processing     │    │   Knowledge     │
+│                 │    │   Pipeline      │    │     Graph       │
+├─────────────────┤    ├─────────────────┤    ├─────────────────┤
+│ • Email (.eml)  │───▶│ • Entity        │───▶│ • Neo4j         │
+│ • Documents     │    │   Extraction    │    │   Database      │
+│ • APIs          │    │ • Ontology      │    │ • Vector Search │
+│ • Databases     │    │   Mapping       │    │ • Relationships │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │   Reasoning     │
+                       │   Engine        │
+                       ├─────────────────┤
+                       │ • Multi-domain  │
+                       │ • Algorithms    │
+                       │ • API Endpoints │
+                       └─────────────────┘
+```
 
 ### Project Structure
 
 ```
-├── src/                    # Source code
-│   ├── platform/           # Core platform services
-│   ├── ontologies/         # Domain ontologies
-│   ├── ingestion/          # Data ingestion
-│   ├── shared/             # Shared utilities
-│   └── types/              # TypeScript types
-├── scripts/                # Utility scripts
-├── test-emails/            # Test data
-├── docs/                   # Documentation
-└── config/                 # Configuration files
+src/
+├── platform/           # Core services (processing, ontology, reasoning)
+├── ontologies/         # Domain ontologies (crm, financial, procurement)
+├── ingestion/          # Data ingestion pipeline
+├── shared/             # Shared utilities
+└── types/              # TypeScript types
 ```
 
-### Testing
+### Core Components
 
-```bash
-# Run all tests
-npm test
+1. **Platform Services** (`src/platform/`)
+   - **Processing**: Content processing and entity extraction
+   - **Ontology**: Ontology management and validation
+   - **Reasoning**: Ontology-driven reasoning algorithms
+   - **Chat**: Natural language interface
+   - **Database**: Neo4j connection management
 
-# Run specific tests
-npm test -- --testPathPattern=email
-npm test -- --testPathPattern=reasoning
+2. **Domain Ontologies** (`src/ontologies/`)
+   - **CRM**: Customer relationship management
+   - **Financial**: Financial domain entities and relationships
+   - **Procurement**: Procurement and supply chain
 
-# Run with coverage
-npm run test:coverage
-```
-
-### Code Standards
-- **TypeScript**: Strict type checking
-- **ESLint**: Code quality
-- **Prettier**: Code formatting
-- **Conventional Commits**: Standardized commits
+3. **Ingestion Pipeline** (`src/ingestion/`)
+   - **Sources**: Data source adapters (email, documents, APIs)
+   - **Core**: Pipeline orchestration
+   - **Intelligence**: AI and NLP services
 
 ## API Reference
 
-### Email Processing
+### Base URL
+```
+http://localhost:3000/api
+```
 
-```typescript
-POST /api/email/process
+### Core Endpoints
+
+#### Email Processing
+```http
+POST /email/process
 {
   "filePath": "/path/to/email.eml"
 }
-
-// Response
-{
-  "success": true,
-  "email": { /* parsed email data */ },
-  "entities": [ /* extracted entities */ ],
-  "attachmentProcessing": { /* attachment results */ }
-}
 ```
 
-### Reasoning
-
-```typescript
-POST /api/reasoning/execute
+#### Reasoning
+```http
+POST /reasoning/execute
 {
   "ontology": "financial",
   "algorithm": "identify_investment_opportunities"
 }
 ```
 
-### Chat Interface
-
-```typescript
-POST /api/chat/message
+#### Chat Interface
+```http
+POST /chat/message
 {
   "message": "Show me all investment opportunities",
-  "context": { /* conversation context */ }
+  "context": { "sessionId": "uuid" }
 }
 ```
 
-## Configuration
-
-### Environment Variables
-
-```bash
-# Database
-NEO4J_URI=bolt://localhost:7687
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=password
-
-# Services
-NLP_SERVICE_URL=http://localhost:8000
-ANALYSIS_SERVICE_URL=http://localhost:8001
-
-# Logging
-LOG_LEVEL=info
+#### Health Check
+```http
+GET /health
 ```
 
-### Ontology Configuration
+## Ontologies
 
+Domain-specific ontologies define entities, relationships, and reasoning algorithms.
+
+### Ontology Structure
 ```json
 {
   "name": "financial",
@@ -207,81 +173,156 @@ LOG_LEVEL=info
     {
       "name": "Company",
       "properties": ["name", "ticker", "industry"],
+      "indexable": true,
       "relationships": ["INVESTS_IN", "COMPETES_WITH"]
     }
   ],
-  "reasoning": {
-    "algorithms": [
-      {
-        "name": "identify_investment_opportunities",
-        "cypher": "MATCH (c:Company) WHERE c.valuation < c.peers RETURN c"
-      }
-    ]
-  }
+  "reasoning": [
+    {
+      "name": "identify_investment_opportunities",
+      "cypher": "MATCH (c:Company) WHERE c.valuation < c.peers RETURN c"
+    }
+  ]
 }
 ```
 
-## Deployment
+### Domain Ontologies
+- **CRM**: Contact, Organization, Communication, Task
+- **Financial**: Company, Deal, Investment, Market
+- **Procurement**: Supplier, Contract, Purchase, Category
 
-### Docker Deployment
+## Processing Pipeline
 
-```bash
-# Build and run
-docker build -t knowledge-graph-dashboard .
-docker-compose up -d
-```
+### Email Processing
+1. **Parsing**: Extract email content and metadata
+2. **Attachment Processing**: Process PDF, Word, Excel, images
+3. **Entity Extraction**: AI-powered entity recognition
+4. **Ontology Mapping**: Map entities to domain ontologies
+5. **Graph Storage**: Store in Neo4j with vector embeddings
 
-### Production Considerations
-- **Database**: Use Neo4j Enterprise
-- **Caching**: Implement Redis
-- **Monitoring**: Add application monitoring
-- **Security**: Configure authentication
-- **Backup**: Set up database backups
+### Entity Types
+- **Company**: Business organizations
+- **Person**: Individual people
+- **Location**: Geographic locations
+- **Date**: Temporal information
+- **Amount**: Monetary values
 
-## Contributing
+## Reasoning Engine
 
-### Development Workflow
+### Algorithm Types
+- **Pattern Recognition**: Find investment patterns
+- **Anomaly Detection**: Identify unusual data
+- **Recommendation Engine**: Suggest similar entities
 
-1. **Create Feature Branch**: `git checkout -b feature/new-feature`
-2. **Write Tests First**: Follow TDD principles
-3. **Implement Feature**: Write production code
-4. **Run Tests**: Ensure all tests pass
-5. **Update Documentation**: Keep docs current
-6. **Submit Pull Request**: Include tests and documentation
-
-### Code Standards
-- **TypeScript**: Use strict typing
-- **Testing**: 100% test coverage for new features
-- **Documentation**: Update relevant docs
-- **Commits**: Use conventional commit format
+### Domain-Specific Reasoning
+- **Financial**: Investment opportunities, market analysis
+- **CRM**: Lead scoring, relationship analysis
+- **Procurement**: Supplier analysis, cost optimization
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Neo4j Connection**: Check database is running
-2. **Python Services**: Ensure NLP services are running
-3. **File Permissions**: Check file access for email processing
-4. **Memory Issues**: Monitor memory usage for large files
+#### Neo4j Connection
+```bash
+# Check if Neo4j is running
+docker ps | grep neo4j
+
+# Restart Neo4j
+docker-compose -f docker-compose.neo4j.yml restart
+```
+
+#### Python NLP Service
+```bash
+# Check if Python services are running
+ps aux | grep python
+
+# Restart NLP service
+cd python-services/nlp-service
+python main.py &
+```
+
+#### Email Processing
+```bash
+# Test with known working email
+npm run demo:email-ingestion
+
+# Check email file format
+file test-emails/your-email.eml
+```
 
 ### Debug Mode
-
 ```bash
+# Enable debug logging
 LOG_LEVEL=debug npm run dev
+
+# Check service health
+curl http://localhost:3000/api/health
+curl http://localhost:8000/health
 ```
+
+## Development
+
+### Testing
+```bash
+# Run all tests
+npm test
+
+# Run specific tests
+npm test -- --testPathPattern=email
+```
+
+### Code Standards
+- **TypeScript**: Strict type checking
+- **ESLint**: Code quality
+- **Prettier**: Code formatting
+- **Conventional Commits**: Standardized commits
+- **TDD**: Test-driven development
+
+### Architecture Principles
+- **Modularity**: Domain-specific ontologies
+- **Extensibility**: Plugin-based architecture
+- **Scalability**: Microservice approach for NLP
+- **Testability**: TDD with comprehensive test coverage
+
+## Technology Stack
+
+- **Backend**: Node.js, TypeScript
+- **Database**: Neo4j (graph database)
+- **NLP**: Python spaCy microservice
+- **Vector Search**: Neo4j vector indexes
+- **Architecture**: Domain-driven design, hexagonal architecture
 
 ## Roadmap
 
-### Planned Features
-- **Advanced NLP**: Better entity extraction
-- **Real-time Processing**: Stream processing
-- **Advanced Reasoning**: More sophisticated algorithms
-- **Visualization**: Interactive graph visualization
-- **Mobile Support**: Mobile-optimized interface
+### Current Version (v1.0)
+- ✅ Email processing with attachments
+- ✅ Entity extraction and ontology mapping
+- ✅ Knowledge graph with vector search
+- ✅ Reasoning engine with algorithms
+- ✅ Chat interface for queries
+
+### Short Term (v1.1)
+- 🔄 Real-time processing
+- 🔄 Advanced NLP improvements
+- 📋 Document processing (PDF, Word, Excel)
+- 📋 API integrations
+
+### Medium Term (v1.2)
+- 🎯 Interactive graph visualization
+- 🎯 Business intelligence dashboards
+- 🎯 Mobile support
+- 🎯 Multi-tenant architecture
+
+### Long Term (v2.0)
+- 🚀 Advanced AI assistant
+- 🚀 Predictive analytics
+- 🚀 Enterprise features
+- 🚀 Cloud deployment
 
 ## Support
 
-- **Documentation**: Check this documentation first
+- **Documentation**: This README contains all essential information
 - **Issues**: Create GitHub issues for bugs
-- **Discussions**: Use GitHub discussions for questions
-- **Contributing**: See CONTRIBUTING.md for guidelines 
+- **Development**: Follow TDD principles and code standards
+- **Architecture**: Domain-driven design with hexagonal architecture 
