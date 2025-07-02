@@ -7,6 +7,26 @@ import { AttachmentProcessingService, AttachmentProcessingResult } from '@platfo
 import { EmailAttachment } from '@platform/processing/email-parsing.service';
 import { logger } from '@shared/utils/logger';
 
+// Mock external dependencies
+jest.mock('officeparser', () => ({
+  parseOfficeAsync: jest.fn().mockResolvedValue({
+    text: 'Mock extracted text from office document',
+  }),
+}));
+
+jest.mock('node-xlsx', () => ({
+  parse: jest.fn().mockReturnValue([
+    {
+      name: 'Sheet1',
+      data: [
+        ['Header1', 'Header2', 'Header3'],
+        ['Value1', 'Value2', 'Value3'],
+        ['Value4', 'Value5', 'Value6'],
+      ],
+    },
+  ]),
+}));
+
 // Mock the logger
 jest.mock('@shared/utils/logger', () => ({
   logger: {

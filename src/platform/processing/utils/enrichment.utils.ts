@@ -41,12 +41,8 @@ export function flattenEnrichmentData(enrichedData: any): Record<string, any> {
     }
   };
 
-  // Start recursion only on nested objects – skip root-level primitive properties like `source`.
-  for (const value of Object.values(enrichedData)) {
-    if (value && typeof value === 'object' && !Array.isArray(value)) {
-      walk(value as Record<string, any>);
-    }
-  }
+  // Process the root object directly
+  walk(enrichedData);
 
   return flattened;
 }
