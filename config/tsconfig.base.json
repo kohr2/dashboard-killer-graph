@@ -16,7 +16,7 @@
     "composite": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "baseUrl": "./",
+    "baseUrl": "../",
     "paths": {
       "@src/*": ["src/*"],
       "@platform/*": ["src/platform/*"],
