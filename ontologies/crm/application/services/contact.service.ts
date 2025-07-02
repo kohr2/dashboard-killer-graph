@@ -31,8 +31,8 @@ import {
   KnowledgeType,
 } from '../../domain/ontology/o-cream-v2';
 import { v4 as uuidv4 } from 'uuid';
-import { AccessControlService } from '../../../../platform/security/application/services/access-control.service';
-import { User } from '../../../../platform/security/domain/user';
+import { AccessControlService } from '@platform/security/application/services/access-control.service';
+import { User } from '@platform/security/domain/user';
 import { injectable, inject } from 'tsyringe';
 
 @injectable()

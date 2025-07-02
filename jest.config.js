@@ -16,6 +16,7 @@ module.exports = {
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',
     '^@mcp/(.*)$': '<rootDir>/src/mcp/$1',
     '^@procurement/(.*)$': '<rootDir>/ontologies/procurement/$1',
+    '^ontologies/(.*)$': '<rootDir>/ontologies/$1',
   },
 
   moduleDirectories: ["node_modules", "src", "scripts", "scripts/database"],

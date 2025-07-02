@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 import { join } from 'path';
 import { promises as fs } from 'fs';
 import { EdgarEnrichmentService } from '../../edgar-enrichment.service';
-import { Organization } from '../../../../ontologies/crm/domain/entities/organization';
+import { Organization } from '@crm/domain/entities/organization';
 import { container } from 'tsyringe';
 
 // Load environment variables from .env file

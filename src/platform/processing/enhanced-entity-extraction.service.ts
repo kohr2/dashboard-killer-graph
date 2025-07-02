@@ -111,13 +111,46 @@ export class EnhancedEntityExtractionService {
 
     // Fallback to default config if no extraction configs found
     if (Object.keys(aggregatedConfig.models).length === 0) {
-      logger.warn('No entityExtraction configs found in ontologies, using default config');
-      return {
-        models: {},
-        patterns: {},
-        contextRules: {},
+      logger.warn('No entityExtraction configs found in ontologies, using built-in defaults');
+
+      const defaultConfig: EntityExtractionConfig = {
+        models: {
+          'spacy-en_core_web_lg': {
+            type: 'spacy',
+            model: 'en_core_web_lg',
+            endpoint: '/extract-entities',
+            confidence: 0.8,
+            priority: 1
+          }
+        },
+        patterns: {
+          MonetaryAmount: {
+            regex: '\\$\\d+(?:[,\\d]*)(?:\\.\\d+)?[kKmMbB]?',
+            confidence: 0.9,
+            priority: 1
+          },
+          Email: {
+            regex: '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}',
+            confidence: 0.95,
+            priority: 1
+          }
+        },
+        contextRules: {
+          email: {
+            priority: ['Email', 'Organization', 'MonetaryAmount'],
+            requiredModels: ['spacy-en_core_web_lg'],
+            confidenceThreshold: 0.5
+          },
+          'financial-report': {
+            priority: ['MonetaryAmount', 'Organization'],
+            requiredModels: ['spacy-en_core_web_lg'],
+            confidenceThreshold: 0.5
+          }
+        },
         enrichment: {}
       };
+
+      return defaultConfig;
     }
 
     logger.info(`Aggregated extraction config from ${allOntologies.length} ontologies: ${Object.keys(aggregatedConfig.models).length} models, ${Object.keys(aggregatedConfig.patterns).length} patterns, ${Object.keys(aggregatedConfig.contextRules).length} context rules`);

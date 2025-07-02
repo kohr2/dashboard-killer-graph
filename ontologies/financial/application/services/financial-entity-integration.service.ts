@@ -14,7 +14,7 @@ import { EdgarEnrichmentService } from '@platform/enrichment';
 import axios from 'axios';
 import { singleton, inject } from 'tsyringe';
 import { SpacyEntityExtractionService } from '@crm/application/services/spacy-entity-extraction.service';
-import { logger } from '../../../../shared/utils/logger';
+import { logger } from '@shared/utils/logger';
 
 const ENTITY_ALIAS_MAP: Record<string, string> = {
   'GS': 'Goldman Sachs',

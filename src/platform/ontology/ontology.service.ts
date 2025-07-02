@@ -249,4 +249,25 @@ export class OntologyService {
   public getAllOntologies(): Ontology[] {
     return this.ontologies;
   }
+
+  // ------------------------------------------------------------------
+  // ⚠️  Legacy API for tests that expect OntologyService.getInstance().
+  // Keeps backward-compat during the ongoing DI cleanup.
+  // ------------------------------------------------------------------
+  private static instance: OntologyService;
+
+  public static getInstance(): OntologyService {
+    if (!this.instance) {
+      try {
+        // Try to reuse any container‐managed singleton first
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const { container } = require('tsyringe');
+        this.instance = container.resolve(OntologyService);
+      } catch {
+        // Fallback: create a standalone instance (sufficient for unit tests)
+        this.instance = new OntologyService();
+      }
+    }
+    return this.instance;
+  }
 } 

@@ -29,10 +29,7 @@ class SingleItemSource implements DataSource {
 
 describe('IngestionPipeline entity extraction decoupling', () => {
   it('should delegate entity extraction to an injected extractor implementation', async () => {
-    // Register stub extractor in DI container
-    container.register('EntityExtractor', { useClass: StubEntityExtractor });
-
-    const pipeline = container.resolve(IngestionPipeline);
+    const pipeline = new IngestionPipeline(new StubEntityExtractor() as any);
     const source = new SingleItemSource();
 
     const result = await pipeline.process(source);

@@ -139,23 +139,23 @@ export class IngestionPipeline implements IPipeline {
    * Detect relevant ontologies based on extracted entities and content
    */
   private detectOntologies(entities: any[], normalizedData: NormalizedData): string[] {
-    if (!this.ontologyService) {
-      return this.getFallbackOntologies(normalizedData.sourceType);
+    const detectedOntologies = new Set<string>();
+
+    let allOntologies: any[] = [];
+    if (this.ontologyService) {
+      allOntologies = this.ontologyService.getAllOntologies();
     }
 
     try {
-      const allOntologies = this.ontologyService.getAllOntologies();
-      const detectedOntologies = new Set<string>();
-      
-      // Analyze entities to determine relevant ontologies
-      for (const entity of entities) {
-        const entityType = entity.type || entity.entityType;
-        if (!entityType) continue;
+      if (allOntologies.length) {
+        for (const entity of entities) {
+          const entityType = entity.type || entity.entityType;
+          if (!entityType) continue;
 
-        // Find ontologies that contain this entity type
-        for (const ontology of allOntologies) {
-          if (ontology.entities && ontology.entities[entityType]) {
-            detectedOntologies.add(ontology.name);
+          for (const ontology of allOntologies) {
+            if (ontology.entities && ontology.entities[entityType]) {
+              detectedOntologies.add(ontology.name);
+            }
           }
         }
       }
