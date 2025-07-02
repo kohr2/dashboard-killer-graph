@@ -116,3 +116,7 @@ ontologies/**/seed/*.gz
 
 # Exclude src/platform/cache
 !src/platform/cache/**
+
+# Ignore legacy compiled JS duplicates in ontologies and platform
+ontologies/**/*.js
+src/platform/ontology/**/*.js
