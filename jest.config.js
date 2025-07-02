@@ -11,10 +11,11 @@ module.exports = {
   moduleNameMapper: {
     '^@src/(.*)$': '<rootDir>/src/$1',
     '^@platform/(.*)$': '<rootDir>/src/platform/$1',
-    '^@crm/(.*)$': '<rootDir>/src/ontologies/crm/$1',
-    '^@financial/(.*)$': '<rootDir>/src/ontologies/financial/$1',
+    '^@crm/(.*)$': '<rootDir>/ontologies/crm/$1',
+    '^@financial/(.*)$': '<rootDir>/ontologies/financial/$1',
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',
     '^@mcp/(.*)$': '<rootDir>/src/mcp/$1',
+    '^@procurement/(.*)$': '<rootDir>/ontologies/procurement/$1',
   },
 
   moduleDirectories: ["node_modules", "src", "scripts", "scripts/database"],

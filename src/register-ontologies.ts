@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { registerCrm } from './ontologies/crm';
-import { registerFinancial } from './ontologies/financial';
+import { registerCrm } from '../ontologies/crm';
+import { registerFinancial } from '../ontologies/financial';
 import { logger } from '@shared/utils/logger';
 import {
   EdgarEnrichmentService,

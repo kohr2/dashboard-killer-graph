@@ -53,8 +53,14 @@ export class EnhancedEntityExtractionService {
   private extractionConfig: EntityExtractionConfig;
 
   constructor(
-    @inject(OntologyService) private ontologyService: OntologyService
+    @inject(OntologyService) private ontologyService?: OntologyService
   ) {
+    // Provide a graceful fallback if OntologyService is not injected (e.g. in unit tests)
+    if (!this.ontologyService) {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      this.ontologyService = { getAllOntologies: () => [] } as unknown as OntologyService;
+    }
+
     this.extractionConfig = this.loadExtractionConfig();
   }
 
