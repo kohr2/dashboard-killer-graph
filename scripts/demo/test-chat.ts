@@ -8,7 +8,6 @@ import { ADMIN_ROLE, ANALYST_ROLE } from '@platform/security/domain/role';
 import { registerAllOntologies } from '@src/register-ontologies';
 import { Neo4jConnection } from '@src/platform/database/neo4j-connection';
 import { ConversationTurn } from '@platform/chat/application/services/query-translator.service';
-import { ExtensionRegistry } from '@src/platform/extension-framework/extension-registry';
 import { OntologyService } from '@src/platform/ontology/ontology.service';
 import { Logger } from '@src/shared/utils/logger';
 
