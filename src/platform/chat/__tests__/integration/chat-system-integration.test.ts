@@ -1,12 +1,13 @@
 import 'reflect-metadata';
 jest.mock('@platform/ontology/ontology.service', () => jest.requireActual('@platform/ontology/ontology.service'));
-import { container } from 'tsyringe';
 import { ChatService } from '@platform/chat/application/services/chat.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { User } from '@platform/security/domain/user';
 import { ADMIN_ROLE } from '@platform/security/domain/role';
 import { bootstrap } from '@src/bootstrap';
 import { OntologyService } from '@platform/ontology/ontology.service';
+import { AccessControlService } from '@platform/security/application/services/access-control.service';
+import { QueryTranslator } from '@platform/chat/application/services/query-translator.service';
 
 describe('Chat System Integration Test', () => {
   let chatService: ChatService;
@@ -19,8 +20,19 @@ describe('Chat System Integration Test', () => {
     const mockDriver = { session: jest.fn(() => mockSession), close: jest.fn() } as any;
     jest.spyOn(Neo4jConnection.prototype, 'getDriver').mockReturnValue(mockDriver);
 
-    chatService = container.resolve(ChatService);
-    connection = container.resolve(Neo4jConnection);
+    connection = new Neo4jConnection();
+
+    // Instantiate dependencies directly
+    const ontologyService = OntologyService.getInstance();
+    const accessControlService = new AccessControlService();
+    const queryTranslator = new QueryTranslator(ontologyService);
+
+    chatService = new ChatService(
+      connection,
+      ontologyService,
+      accessControlService,
+      queryTranslator,
+    );
 
     // Ensure schema representation method exists
     (OntologyService.prototype as any).getSchemaRepresentation = () => 'Entities:\nDeal\n';
@@ -31,8 +43,7 @@ describe('Chat System Integration Test', () => {
     if (connection) {
       await connection.close();
     }
-    // It's good practice to clear the container after tests
-    container.clearInstances();
+    // No container used, nothing to clear
   });
 
   it('should process a query about deals and return a natural language response', async () => {

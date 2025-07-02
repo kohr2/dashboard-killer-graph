@@ -4,8 +4,6 @@ import { container } from 'tsyringe';
 import OpenAI from 'openai';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { ChatService } from '@platform/chat/application/services/chat.service';
-import { QueryTranslator } from '@platform/chat/application/services/query-translator.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { logger } from '@shared/utils/logger';
 
@@ -31,9 +29,7 @@ export function bootstrap(): void {
 
   // Register other singletons
   container.registerSingleton(Neo4jConnection);
-  container.registerSingleton(QueryTranslator);
   container.registerSingleton(AccessControlService);
-  container.registerSingleton(ChatService);
 
   // Immediately load ontology data into the singleton
   logger.info('Loading ontology data into singleton...');
