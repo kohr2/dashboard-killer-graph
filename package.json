@@ -11,7 +11,7 @@
     "dev:all": "concurrently -n \"API,NLP\" -c \"blue,magenta\" \"npm:dev\" \"npm:dev:nlp\"",
     "dev:mcp": "node src/mcp/servers/mcp-server-simple.js",
     "ts": "TS_NODE_PROJECT=scripts/tsconfig.json ts-node -r tsconfig-paths/register",
-    "build": "tsc",
+    "build": "npm run ontologies:generate && tsc",
     "start": "node dist/src/api.js",
     "clean": "rimraf dist coverage",
     "type-check": "tsc --noEmit",
@@ -76,7 +76,8 @@
     "demo:advanced-graph": "ts-node -r tsconfig-paths/register -P scripts/tsconfig.json scripts/demo/advanced-graph-demo.ts",
     "demo:ontology-advanced-graph": "ts-node -r tsconfig-paths/register -P scripts/tsconfig.json scripts/demo/ontology-advanced-graph-demo.ts",
     "ontologies:minimize": "ts-node -r tsconfig-paths/register scripts/maintenance/minimize-ontologies.ts",
-    "ontologies:check-size": "ts-node -r tsconfig-paths/register scripts/maintenance/check-ontology-size.ts"
+    "ontologies:check-size": "ts-node -r tsconfig-paths/register scripts/maintenance/check-ontology-size.ts",
+    "ontologies:generate": "ts-node -r tsconfig-paths/register scripts/codegen/generate-ontologies.ts"
   },
   "keywords": [
     "knowledge-graph",

@@ -22,7 +22,8 @@
       "@platform/*": ["src/platform/*"],
       "@crm/*": ["src/ontologies/crm/*"],
       "@financial/*": ["src/ontologies/financial/*"],
-      "@shared/*": ["src/shared/*"]
+      "@shared/*": ["src/shared/*"],
+      "@generated/*": ["build/ontologies/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

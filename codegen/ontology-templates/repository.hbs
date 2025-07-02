@@ -1,0 +1,12 @@
+/**
+ * I{{name}}Repository - generated from ontology.json
+ * DO NOT EDIT MANUALLY. Changes will be overwritten.
+ */
+
+import type { {{name}}DTO } from './{{name}}DTO';
+
+export interface I{{name}}Repository {
+  save(dto: {{name}}DTO): Promise<void>;
+  findById(id: string): Promise<{{name}}DTO | null>;
+  delete(id: string): Promise<void>;
+} 
