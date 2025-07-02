@@ -1,22 +1,51 @@
-/**
- * Attachment Processor
- * Handles processing of email attachments, text extraction, and entity extraction
- */
-
 import { singleton } from 'tsyringe';
 import { logger } from '@shared/utils/logger';
 import xlsx from 'node-xlsx';
 import * as officeParser from 'officeparser';
-import {
-  EmailAttachment,
-  ProcessedAttachment,
-  AttachmentProcessingResult,
-  AttachmentProcessingError,
-  ExtractedEntity,
-} from '../types/email.interface';
+import { EmailAttachment } from './email-parsing.service';
+
+export interface ProcessedAttachment {
+  filename: string;
+  contentType: string;
+  size: number;
+  supportedFormat: boolean;
+  processingMethod?: 'PDF_TEXT_EXTRACTION' | 'DOCX_TEXT_EXTRACTION' | 'Excel' | 'PowerPoint' | 'OCR' | 'SKIP';
+  extractedText?: string;
+  entities?: ExtractedEntity[];
+  error?: string;
+  skipReason?: string;
+  processingDuration: number;
+}
+
+export interface ExtractedEntity {
+  id: string;
+  name: string;
+  type: string;
+  confidence: number;
+  source: string;
+  properties?: Record<string, any>;
+}
+
+export interface AttachmentProcessingResult {
+  success: boolean;
+  totalProcessed: number;
+  supportedFormats: number;
+  unsupportedFormats: number;
+  processedAttachments: ProcessedAttachment[];
+  extractedEntities: ExtractedEntity[];
+  errors: AttachmentProcessingError[];
+  totalProcessingTime: number;
+}
+
+export interface AttachmentProcessingError {
+  filename: string;
+  error: string;
+  timestamp: Date;
+  recoverable: boolean;
+}
 
 @singleton()
-export class AttachmentProcessor {
+export class AttachmentProcessingService {
   private readonly supportedTypes = new Set([
     'application/pdf',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -90,6 +119,7 @@ export class AttachmentProcessor {
           size: attachment.size,
           supportedFormat: false,
           error: errorMessage,
+          processingDuration: 0,
         });
 
         errors.push({
@@ -208,156 +238,98 @@ export class AttachmentProcessor {
   }
 
   /**
-   * Extract text from PDF buffer
-   * TODO: Implement actual PDF text extraction using pdf-parse or similar
+   * Extract text from PDF using officeparser
    */
   async extractTextFromPdf(pdfBuffer: Buffer): Promise<string> {
-    // Mock implementation for now - replace with actual PDF parsing
-    logger.debug('Extracting text from PDF attachment (mock implementation)');
-    return `Extracted text from PDF (${pdfBuffer.length} bytes)`;
+    try {
+      const result = await officeParser.parseOfficeAsync(pdfBuffer);
+      return result.text || '';
+    } catch (error) {
+      logger.error('Error extracting text from PDF:', error);
+      return '';
+    }
   }
 
   /**
-   * Extract text from DOCX buffer
-   * TODO: Implement actual DOCX text extraction using mammoth or similar
+   * Extract text from DOCX using officeparser
    */
   async extractTextFromDocx(docxBuffer: Buffer): Promise<string> {
-    // Mock implementation for now - replace with actual DOCX parsing
-    logger.debug('Extracting text from DOCX attachment (mock implementation)');
-    return `Extracted text from DOCX (${docxBuffer.length} bytes)`;
+    try {
+      const result = await officeParser.parseOfficeAsync(docxBuffer);
+      return result.text || '';
+    } catch (error) {
+      logger.error('Error extracting text from DOCX:', error);
+      return '';
+    }
   }
 
   /**
-   * Extract text from image using OCR
-   * TODO: Implement actual OCR using tesseract.js or similar
+   * Extract text from image using OCR (placeholder implementation)
    */
   async extractTextFromImage(imageBuffer: Buffer): Promise<string> {
-    // Mock implementation for now - replace with actual OCR
-    logger.debug('Extracting text from image attachment using OCR (mock implementation)');
-    return `OCR extracted text from image (${imageBuffer.length} bytes)`;
+    // TODO: Implement actual OCR using Tesseract or similar
+    logger.warn('OCR not implemented yet, returning empty string');
+    return '';
   }
 
   /**
-   * Extract text from Excel spreadsheet files (XLSX/XLS)
+   * Extract text from Excel files
    */
   async extractTextFromExcel(excelBuffer: Buffer): Promise<string> {
     try {
-      logger.debug('Extracting text from Excel attachment');
-      
-      // Parse Excel file using node-xlsx
-      const workbook = xlsx.parse(excelBuffer);
-      const extractedTexts: string[] = [];
+      const sheets = xlsx.parse(excelBuffer);
+      const textParts: string[] = [];
 
-      // Process each worksheet
-      workbook.forEach((worksheet, sheetIndex) => {
-        const sheetName = worksheet.name || `Sheet${sheetIndex + 1}`;
-        extractedTexts.push(`=== ${sheetName} ===`);
-        
-        // Process each row
-        worksheet.data.forEach((row, rowIndex) => {
-          if (Array.isArray(row) && row.length > 0) {
-            // Convert row values to strings and filter out empty values
-            const rowText = row
-              .map(cell => {
-                if (cell === null || cell === undefined) return '';
-                if (typeof cell === 'object' && cell instanceof Date) {
-                  return cell.toISOString().split('T')[0]; // Format dates as YYYY-MM-DD
-                }
-                return String(cell);
-              })
-              .filter(text => text.trim() !== '')
-              .join(' | ');
-            
-            if (rowText.trim()) {
-              extractedTexts.push(`Row ${rowIndex + 1}: ${rowText}`);
+      for (const sheet of sheets) {
+        if (sheet.data && Array.isArray(sheet.data)) {
+          for (const row of sheet.data) {
+            if (Array.isArray(row)) {
+              const rowText = row
+                .map(cell => (cell !== null && cell !== undefined ? String(cell) : ''))
+                .filter(cell => cell.trim().length > 0)
+                .join(' ');
+              if (rowText.trim()) {
+                textParts.push(rowText);
+              }
             }
           }
-        });
-        
-        extractedTexts.push(''); // Add empty line between sheets
-      });
+        }
+      }
 
-      const extractedText = extractedTexts.join('\n');
-      logger.debug(`Successfully extracted ${extractedText.length} characters from Excel file`);
-      return extractedText;
-      
+      return textParts.join('\n');
     } catch (error) {
-      logger.error('Error extracting text from Excel file:', error);
-      // Fallback to basic file info
-      return `Excel file (${excelBuffer.length} bytes) - text extraction failed`;
+      logger.error('Error extracting text from Excel:', error);
+      return '';
     }
   }
 
   /**
-   * Extract text from PowerPoint presentation files (PPTX/PPT)
+   * Extract text from PowerPoint files
    */
   async extractTextFromPowerPoint(pptBuffer: Buffer): Promise<string> {
     try {
-      logger.debug('Extracting text from PowerPoint attachment');
-      
-      // Use officeparser to extract text from PowerPoint files
-      const extractedText = await officeParser.parseOfficeAsync(pptBuffer);
-      
-      if (extractedText && extractedText.trim()) {
-        logger.debug(`Successfully extracted ${extractedText.length} characters from PowerPoint file`);
-        return extractedText;
-      } else {
-        logger.warn('No text content found in PowerPoint file');
-        return `PowerPoint presentation (${pptBuffer.length} bytes) - no text content found`;
-      }
-      
+      const result = await officeParser.parseOfficeAsync(pptBuffer);
+      return result.text || '';
     } catch (error) {
-      logger.error('Error extracting text from PowerPoint file:', error);
-      // Fallback to basic file info
-      return `PowerPoint presentation (${pptBuffer.length} bytes) - text extraction failed`;
+      logger.error('Error extracting text from PowerPoint:', error);
+      return '';
     }
   }
 
   /**
-   * Extract entities from text
-   * TODO: Integrate with existing entity extraction service
+   * Extract entities from text (placeholder implementation)
    */
   private async extractEntitiesFromText(text: string, source: string): Promise<ExtractedEntity[]> {
-    // Mock implementation - integrate with SpacyEntityExtractionService later
-    const mockEntities: ExtractedEntity[] = [];
-    
-    // Simple pattern matching for demonstration
-    const patterns = [
-      { regex: /\$[\d,]+/g, type: 'MONETARY' },
-      { regex: /\b[A-Z][a-z]+ [A-Z][a-z]+\b/g, type: 'PERSON' },
-      { regex: /\b[A-Z][a-zA-Z\s]+Inc\.|LLC|Corp\./g, type: 'ORGANIZATION' },
-    ];
-
-    patterns.forEach(pattern => {
-      const matches = text.matchAll(pattern.regex);
-      for (const match of matches) {
-        if (match.index !== undefined) {
-          mockEntities.push({
-            text: match[0],
-            type: pattern.type,
-            confidence: 0.8,
-            position: {
-              start: match.index,
-              end: match.index + match[0].length,
-            },
-            metadata: {
-              source: source,
-              extraction_method: 'pattern_matching',
-            },
-          });
-        }
-      }
-    });
-
-    return mockEntities;
+    // TODO: Implement actual entity extraction using NLP service
+    // For now, return empty array
+    logger.debug(`Entity extraction from text not implemented yet for ${source}`);
+    return [];
   }
 
   /**
-   * Check if file type is supported for processing
+   * Check if file type is supported
    */
   isSupportedFileType(contentType: string): boolean {
     return this.supportedTypes.has(contentType);
   }
-}
-
-export type { AttachmentProcessingResult }; 
+} 

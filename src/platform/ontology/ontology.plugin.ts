@@ -16,6 +16,24 @@ export interface OntologyPlugin {
   relationshipSchemas?: Record<string, unknown>;
 
   /**
+   * Optional reasoning algorithms defined for this ontology.
+   * Contains algorithms that can be executed by the reasoning service.
+   */
+  reasoning?: {
+    algorithms: Record<string, {
+      name: string;
+      description: string;
+      entityType: string;
+      factors?: string[];
+      weights?: number[];
+      threshold?: number;
+      relationshipType?: string;
+      pattern?: string;
+      patternName?: string;
+    }>;
+  };
+
+  /**
    * Optional set of provider tokens that the plugin wants to expose to the
    * application's dependency-injection container.
    * (Not leveraged in the minimal implementation to satisfy current tests.)

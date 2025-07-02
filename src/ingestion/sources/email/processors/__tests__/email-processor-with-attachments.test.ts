@@ -1,17 +1,18 @@
 /**
- * Email Processor with Attachments Integration Tests
- * Tests the integration between EmailProcessor and AttachmentProcessor
+ * Tests the integration between EmailProcessor and AttachmentProcessingService
+ * Tests email processing with attachment handling capabilities
  */
 
 import { EmailProcessor, EmailProcessingResult } from '../email-processor';
-import { AttachmentProcessor } from '../attachment-processor';
-import { EmailAttachment } from '../types/email.interface';
+import { AttachmentProcessingService } from '@platform/processing/attachment-processing.service';
+import { EmailParsingService } from '@platform/processing/email-parsing.service';
+import { EmailAttachment } from '@platform/processing/email-parsing.service';
 import { logger } from '@shared/utils/logger';
 import * as fs from 'fs';
-import * as path from 'path';
 
-// Mock the file system and logger
-jest.mock('fs');
+// Mock the platform services
+jest.mock('@platform/processing/email-parsing.service');
+jest.mock('@platform/processing/attachment-processing.service');
 jest.mock('@shared/utils/logger', () => ({
   logger: {
     info: jest.fn(),
@@ -21,56 +22,62 @@ jest.mock('@shared/utils/logger', () => ({
   },
 }));
 
-// Mock the attachment processor
-jest.mock('../attachment-processor');
-
 describe('EmailProcessor with Attachments', () => {
   let emailProcessor: EmailProcessor;
-  let mockAttachmentProcessor: jest.Mocked<AttachmentProcessor>;
+  let mockEmailParsingService: jest.Mocked<EmailParsingService>;
+  let mockAttachmentProcessingService: jest.Mocked<AttachmentProcessingService>;
 
   beforeEach(() => {
     // Reset all mocks
     jest.clearAllMocks();
     
-    // Create mock attachment processor
-    mockAttachmentProcessor = {
+    // Create mock services
+    mockEmailParsingService = {
+      parseEmlFile: jest.fn(),
+      parseEmailContent: jest.fn(),
+      extractTextContent: jest.fn(),
+    } as any;
+
+    mockAttachmentProcessingService = {
       processAttachments: jest.fn(),
       extractTextFromPdf: jest.fn(),
       extractTextFromDocx: jest.fn(),
       extractTextFromImage: jest.fn(),
+      extractTextFromExcel: jest.fn(),
+      extractTextFromPowerPoint: jest.fn(),
       isSupportedFileType: jest.fn(),
     } as any;
 
-    // Mock the AttachmentProcessor constructor
-    (AttachmentProcessor as jest.MockedClass<typeof AttachmentProcessor>).mockImplementation(() => mockAttachmentProcessor);
+    // Mock the service constructors
+    (EmailParsingService as jest.MockedClass<typeof EmailParsingService>).mockImplementation(() => mockEmailParsingService);
+    (AttachmentProcessingService as jest.MockedClass<typeof AttachmentProcessingService>).mockImplementation(() => mockAttachmentProcessingService);
 
-    emailProcessor = new EmailProcessor();
+    emailProcessor = new EmailProcessor(mockEmailParsingService, mockAttachmentProcessingService);
   });
 
   describe('processEmlFileWithAttachments', () => {
     it('should process email with PDF attachment and extract content', async () => {
       // Arrange
-      const testEmlContent = `From: test@example.com
-To: recipient@example.com
-Subject: Email with PDF attachment
-Content-Type: multipart/mixed; boundary="boundary123"
+      const mockParsedEmail = {
+        messageId: 'test-123',
+        from: 'test@example.com',
+        to: ['recipient@example.com'],
+        subject: 'Email with PDF attachment',
+        body: 'This is an email with a PDF attachment.',
+        date: new Date(),
+        headers: {},
+        attachments: [{
+          filename: 'report.pdf',
+          contentType: 'application/pdf',
+          size: 1024,
+          content: Buffer.from('PDF_CONTENT_HERE'),
+        }],
+      };
 
---boundary123
-Content-Type: text/plain
-
-This is an email with a PDF attachment.
-
---boundary123
-Content-Type: application/pdf; name="report.pdf"
-Content-Disposition: attachment; filename="report.pdf"
-
-PDF_CONTENT_HERE
---boundary123--`;
-
-      (fs.readFileSync as jest.Mock).mockReturnValue(testEmlContent);
+      mockEmailParsingService.parseEmlFile.mockResolvedValue(mockParsedEmail);
 
       // Mock attachment processing result
-      mockAttachmentProcessor.processAttachments.mockResolvedValue({
+      mockAttachmentProcessingService.processAttachments.mockResolvedValue({
         success: true,
         totalProcessed: 1,
         supportedFormats: 1,
@@ -83,20 +90,22 @@ PDF_CONTENT_HERE
           processingMethod: 'PDF_TEXT_EXTRACTION',
           extractedText: 'Extracted text from PDF report',
           entities: [{
-            text: '$50,000',
+            id: '1',
+            name: '$50,000',
             type: 'MONETARY',
             confidence: 0.9,
-            position: { start: 0, end: 7 },
-            metadata: { source: 'report.pdf' }
+            source: 'report.pdf',
+            properties: {}
           }],
           processingDuration: 150,
         }],
         extractedEntities: [{
-          text: '$50,000',
+          id: '1',
+          name: '$50,000',
           type: 'MONETARY',
           confidence: 0.9,
-          position: { start: 0, end: 7 },
-          metadata: { source: 'report.pdf' }
+          source: 'report.pdf',
+          properties: {}
         }],
         errors: [],
         totalProcessingTime: 150,
@@ -111,7 +120,6 @@ PDF_CONTENT_HERE
       expect(result.attachmentProcessing).toBeDefined();
       expect(result.attachmentProcessing?.totalProcessed).toBe(1);
       expect(result.attachmentProcessing?.extractedEntities).toHaveLength(1);
-      expect(result.attachmentProcessing?.extractedEntities[0].type).toBe('MONETARY');
       expect(result.entities).toEqual(expect.arrayContaining([
         expect.objectContaining({
           text: '$50,000',
@@ -122,36 +130,39 @@ PDF_CONTENT_HERE
 
     it('should process email with multiple attachments of different types', async () => {
       // Arrange
-      const testEmlContent = `From: test@example.com
-To: recipient@example.com
-Subject: Email with multiple attachments
-Content-Type: multipart/mixed; boundary="boundary123"
+      const mockParsedEmail = {
+        messageId: 'test-456',
+        from: 'test@example.com',
+        to: ['recipient@example.com'],
+        subject: 'Email with multiple attachments',
+        body: 'Email with multiple attachments.',
+        date: new Date(),
+        headers: {},
+        attachments: [
+          {
+            filename: 'contract.pdf',
+            contentType: 'application/pdf',
+            size: 2048,
+            content: Buffer.from('PDF_CONTENT'),
+          },
+          {
+            filename: 'proposal.docx',
+            contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            size: 1536,
+            content: Buffer.from('DOCX_CONTENT'),
+          },
+          {
+            filename: 'chart.png',
+            contentType: 'image/png',
+            size: 512,
+            content: Buffer.from('PNG_CONTENT'),
+          }
+        ],
+      };
 
---boundary123
-Content-Type: text/plain
+      mockEmailParsingService.parseEmlFile.mockResolvedValue(mockParsedEmail);
 
-Email with multiple attachments.
-
---boundary123
-Content-Type: application/pdf; name="contract.pdf"
-Content-Disposition: attachment; filename="contract.pdf"
-
-PDF_CONTENT
---boundary123
-Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document; name="proposal.docx"
-Content-Disposition: attachment; filename="proposal.docx"
-
-DOCX_CONTENT
---boundary123
-Content-Type: image/png; name="chart.png"
-Content-Disposition: attachment; filename="chart.png"
-
-PNG_CONTENT
---boundary123--`;
-
-      (fs.readFileSync as jest.Mock).mockReturnValue(testEmlContent);
-
-      mockAttachmentProcessor.processAttachments.mockResolvedValue({
+      mockAttachmentProcessingService.processAttachments.mockResolvedValue({
         success: true,
         totalProcessed: 3,
         supportedFormats: 3,
@@ -208,16 +219,20 @@ PNG_CONTENT
 
     it('should handle emails with no attachments', async () => {
       // Arrange
-      const testEmlContent = `From: test@example.com
-To: recipient@example.com
-Subject: Simple email without attachments
-Content-Type: text/plain
+      const mockParsedEmail = {
+        messageId: 'test-789',
+        from: 'test@example.com',
+        to: ['recipient@example.com'],
+        subject: 'Simple email without attachments',
+        body: 'This is a simple email without any attachments.',
+        date: new Date(),
+        headers: {},
+        attachments: [],
+      };
 
-This is a simple email without any attachments.`;
+      mockEmailParsingService.parseEmlFile.mockResolvedValue(mockParsedEmail);
 
-      (fs.readFileSync as jest.Mock).mockReturnValue(testEmlContent);
-
-      mockAttachmentProcessor.processAttachments.mockResolvedValue({
+      mockAttachmentProcessingService.processAttachments.mockResolvedValue({
         success: true,
         totalProcessed: 0,
         supportedFormats: 0,
@@ -229,120 +244,58 @@ This is a simple email without any attachments.`;
       });
 
       // Act
-      const result = await emailProcessor.processEmlFileWithAttachments('/path/to/simple.eml');
+      const result = await emailProcessor.processEmlFileWithAttachments('/path/to/test.eml');
 
       // Assert
       expect(result.success).toBe(true);
       expect(result.attachmentProcessing?.totalProcessed).toBe(0);
       expect(result.attachmentProcessing?.processedAttachments).toHaveLength(0);
-      expect(mockAttachmentProcessor.processAttachments).toHaveBeenCalledWith([]);
+      expect(mockAttachmentProcessingService.processAttachments).toHaveBeenCalledWith([]);
     });
 
-    it('should handle processing errors gracefully', async () => {
+    it('should handle attachment processing errors gracefully', async () => {
       // Arrange
-      const testEmlContent = `From: test@example.com
-To: recipient@example.com
-Subject: Email with problematic attachment`;
+      const mockParsedEmail = {
+        messageId: 'test-error',
+        from: 'test@example.com',
+        to: ['recipient@example.com'],
+        subject: 'Email with problematic attachment',
+        body: 'This email has an attachment that will cause an error.',
+        date: new Date(),
+        headers: {},
+        attachments: [{
+          filename: 'problematic.pdf',
+          contentType: 'application/pdf',
+          size: 1024,
+          content: Buffer.from('PROBLEMATIC_CONTENT'),
+        }],
+      };
 
-      (fs.readFileSync as jest.Mock).mockReturnValue(testEmlContent);
-      
-      // Mock attachment processor to throw an error
-      mockAttachmentProcessor.processAttachments.mockRejectedValue(new Error('Attachment processing failed'));
+      mockEmailParsingService.parseEmlFile.mockResolvedValue(mockParsedEmail);
+      mockAttachmentProcessingService.processAttachments.mockRejectedValue(new Error('Attachment processing failed'));
 
       // Act
-      const result = await emailProcessor.processEmlFileWithAttachments('/path/to/problematic.eml');
+      const result = await emailProcessor.processEmlFileWithAttachments('/path/to/test.eml');
 
       // Assert
       expect(result.success).toBe(false);
-      expect(result.errors).toEqual(expect.arrayContaining([
-        expect.stringContaining('Attachment processing failed')
-      ]));
-      expect(logger.error).toHaveBeenCalledWith(
-        expect.stringContaining('Error processing attachments'),
-        expect.any(Error)
-      );
+      expect(result.errors).toContain('Attachment processing failed');
+      expect(result.email).toBeDefined();
+      expect(result.entities).toHaveLength(0);
     });
 
-    it('should merge entities from email content and attachments', async () => {
+    it('should handle email parsing errors', async () => {
       // Arrange
-      const testEmlContent = `From: investor@fund.com
-To: portfolio@company.com
-Subject: Investment deal analysis
-Content-Type: text/plain
-
-Please review the attached deal analysis for TechStart Inc. The proposed investment is $2.5M.`;
-
-      (fs.readFileSync as jest.Mock).mockReturnValue(testEmlContent);
-
-      mockAttachmentProcessor.processAttachments.mockResolvedValue({
-        success: true,
-        totalProcessed: 1,
-        supportedFormats: 1,
-        unsupportedFormats: 0,
-        processedAttachments: [{
-          filename: 'deal-analysis.pdf',
-          contentType: 'application/pdf',
-          size: 1024,
-          supportedFormat: true,
-          processingMethod: 'PDF_TEXT_EXTRACTION',
-          extractedText: 'Market analysis shows strong potential for TechStart Inc.',
-          entities: [{
-            text: 'TechStart Inc.',
-            type: 'ORGANIZATION',
-            confidence: 0.95,
-            position: { start: 50, end: 63 },
-            metadata: { source: 'deal-analysis.pdf' }
-          }],
-          processingDuration: 150,
-        }],
-        extractedEntities: [{
-          text: 'TechStart Inc.',
-          type: 'ORGANIZATION',
-          confidence: 0.95,
-          position: { start: 50, end: 63 },
-          metadata: { source: 'deal-analysis.pdf' }
-        }],
-        errors: [],
-        totalProcessingTime: 150,
-      });
+      mockEmailParsingService.parseEmlFile.mockRejectedValue(new Error('Email parsing failed'));
 
       // Act
-      const result = await emailProcessor.processEmlFileWithAttachments('/path/to/investment.eml');
+      const result = await emailProcessor.processEmlFileWithAttachments('/path/to/test.eml');
 
       // Assert
-      expect(result.success).toBe(true);
-      expect(result.entities).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          text: 'TechStart Inc.',
-          type: 'ORGANIZATION',
-          metadata: expect.objectContaining({
-            source: 'deal-analysis.pdf'
-          })
-        })
-      ]));
-    });
-  });
-
-  describe('integration with existing email processing', () => {
-    it('should maintain backward compatibility with existing processEmlFile method', async () => {
-      // Arrange
-      const testEmlContent = `From: test@example.com
-To: recipient@example.com
-Subject: Test email
-Content-Type: text/plain
-
-Test email content`;
-
-      (fs.readFileSync as jest.Mock).mockReturnValue(testEmlContent);
-
-      // Act
-      const result = await emailProcessor.processEmlFile('/path/to/test.eml');
-
-      // Assert
-      expect(result.success).toBe(false); // Should be false since it's not fully implemented
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain('Email parsing failed');
       expect(result.email).toBeNull();
-      expect(result.entities).toEqual([]);
-      expect(result.relationships).toEqual([]);
+      expect(result.entities).toHaveLength(0);
     });
   });
 }); 

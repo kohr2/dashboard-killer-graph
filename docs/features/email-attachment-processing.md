@@ -1,227 +1,186 @@
 # Email Attachment Processing
 
+Extracts and analyzes content from email attachments to build knowledge graph relationships.
+
 ## Overview
 
-This document describes the email attachment processing capabilities that have been added to the email-ingestion pipeline. The feature enables the system to process email attachments and extract text content and entities from various file formats.
-
-## Features
-
-### Supported File Types
-
-- **PDF Documents** (`application/pdf`)
-- **Microsoft Word Documents** (`application/vnd.openxmlformats-officedocument.wordprocessingml.document`, `application/msword`)
-- **Microsoft Excel Spreadsheets** (`application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`, `application/vnd.ms-excel`) - XLSX and XLS formats
-- **Microsoft PowerPoint Presentations** (`application/vnd.openxmlformats-officedocument.presentationml.presentation`, `application/vnd.ms-powerpoint`) - PPTX and PPT formats
-- **Images** (`image/png`, `image/jpeg`, `image/jpg`, `image/gif`) - via OCR
-- **Plain Text** (`text/plain`)
-
-### Capabilities
-
-1. **Text Extraction**: Extracts readable text from supported attachment formats
-2. **Entity Recognition**: Identifies and extracts entities (monetary amounts, names, organizations, dates) from attachment content
-3. **Error Handling**: Gracefully handles unsupported formats and processing errors
-4. **Integration**: Seamlessly integrates with the existing email processing pipeline
+Processes various file types from email attachments and extracts structured data for knowledge graph integration.
 
 ## Architecture
 
-### Core Components
+### Core Services
 
-#### `AttachmentProcessor`
-- **Location**: `src/ingestion/sources/email/processors/attachment-processor.ts`
-- **Purpose**: Main processor for handling email attachments
-- **Key Methods**:
-  - `processAttachments()`: Process multiple attachments
-  - `extractTextFromPdf()`: Extract text from PDF files
-  - `extractTextFromDocx()`: Extract text from Word documents
-  - `extractTextFromExcel()`: Extract text from Excel spreadsheets
-  - `extractTextFromPowerPoint()`: Extract text from PowerPoint presentations
-  - `extractTextFromImage()`: Extract text from images using OCR
-  - `isSupportedFileType()`: Check if file type is supported
+```
+src/platform/processing/
+├── email-parsing.service.ts          # Email parsing and content extraction
+├── attachment-processing.service.ts   # Attachment processing and text extraction
+├── neo4j-ingestion.service.ts        # Neo4j database operations
+├── content-processing.service.ts      # Content analysis and enrichment
+└── utils/
+    └── enrichment.utils.ts           # Data enrichment utilities
+```
 
-#### `EmailProcessor`
-- **Location**: `src/ingestion/sources/email/processors/email-processor.ts`
-- **Purpose**: Unified email processor with attachment support
-- **Key Method**: `processEmlFileWithAttachments()`: Process emails with attachment processing
+## Supported File Types
 
-#### Interface Types
-- **Location**: `src/ingestion/sources/email/types/email.interface.ts`
-- **Defines**:
-  - `EmailAttachment`: Attachment data structure
-  - `ProcessedAttachment`: Processing result for each attachment
-  - `AttachmentProcessingResult`: Overall processing result
-  - `ExtractedEntity`: Entity data structure
+| Format | Extensions | Processing Method |
+|--------|------------|-------------------|
+| **PDF** | `.pdf` | Text extraction |
+| **Word** | `.docx`, `.doc` | Document parsing |
+| **Excel** | `.xlsx`, `.xls` | Spreadsheet data |
+| **PowerPoint** | `.pptx`, `.ppt` | Presentation content |
+| **Images** | `.jpg`, `.png`, `.gif` | OCR processing |
+| **Text** | `.txt` | Direct reading |
 
-## Usage
+## Core Services
 
-### Basic Usage
+### EmailParsingService
+
+Parses .eml files and extracts structured data.
+
+**Key Methods:**
+- `parseEmlFile(emlFilePath: string)`: Parse .eml file
+- `parseEmailContent(emlContent: string)`: Parse email content
+- `extractTextContent(parsedEmail: ParsedEmailData)`: Extract text
+
+### AttachmentProcessingService
+
+Processes attachments to extract text and identify entities.
+
+**Processing Methods:**
+- **PDF_TEXT_EXTRACTION**: PDF text extraction
+- **DOCX_TEXT_EXTRACTION**: Word document extraction
+- **Excel**: Spreadsheet data extraction
+- **PowerPoint**: Presentation content extraction
+- **OCR**: Image text extraction (placeholder)
+- **SKIP**: Unsupported file types
+
+**Main Methods:**
+- `processAttachments(attachments: EmailAttachment[])`: Process multiple attachments
+- `extractTextFromPdf(pdfBuffer: Buffer)`: Extract PDF text
+- `extractTextFromDocx(docxBuffer: Buffer)`: Extract Word text
+- `extractTextFromExcel(excelBuffer: Buffer)`: Extract Excel data
+- `extractTextFromPowerPoint(pptBuffer: Buffer)`: Extract PowerPoint content
+
+### Neo4jIngestionService
+
+Handles Neo4j database operations.
+
+**Features:**
+- Create nodes with properties and labels
+- Create relationships between nodes
+- Handle vector embeddings for similarity search
+- Manage transaction rollbacks
+
+### ContentProcessingService
+
+Provides content analysis and enrichment.
+
+**Features:**
+- Content normalization
+- Entity extraction coordination
+- Content enrichment processing
+
+## Usage Examples
+
+### Basic Attachment Processing
 
 ```typescript
-import { EmailProcessor } from './src/ingestion/sources/email/processors/email-processor';
+import { AttachmentProcessingService } from '@platform/processing/attachment-processing.service';
 
-const emailProcessor = new EmailProcessor();
+const attachmentProcessor = new AttachmentProcessingService();
+
+const attachments = [
+  {
+    filename: 'document.pdf',
+    contentType: 'application/pdf',
+    size: 1024,
+    content: Buffer.from('PDF content...'),
+  }
+];
+
+const result = await attachmentProcessor.processAttachments(attachments);
+console.log(`Processed ${result.totalProcessed} attachments`);
+```
+
+### Email Processing with Attachments
+
+```typescript
+import { EmailProcessor } from '@ingestion/sources/email/processors/email-processor';
+import { EmailParsingService } from '@platform/processing/email-parsing.service';
+import { AttachmentProcessingService } from '@platform/processing/attachment-processing.service';
+
+const emailProcessor = new EmailProcessor(
+  new EmailParsingService(),
+  new AttachmentProcessingService()
+);
+
 const result = await emailProcessor.processEmlFileWithAttachments('/path/to/email.eml');
 
-console.log(`Processed ${result.attachmentProcessing?.totalProcessed} attachments`);
-console.log(`Extracted ${result.entities.length} entities`);
+if (result.success) {
+  console.log(`Email: ${result.email?.subject}`);
+  console.log(`Attachments processed: ${result.attachmentProcessing?.totalProcessed}`);
+  console.log(`Entities found: ${result.entities.length}`);
+}
 ```
 
-### Testing the Feature
-
-Run the demo script to test attachment processing with sample emails:
-
-```bash
-npm run demo:attachment-processing
-```
-
-This will:
-1. Process sample .eml files from the `test-emails` directory
-2. Demonstrate attachment processing capabilities
-3. Show entity extraction from both email content and attachments
-
-## Test Coverage
+## Testing
 
 ### Unit Tests
 
-#### `AttachmentProcessor` Tests
-- **Location**: `src/ingestion/sources/email/processors/__tests__/attachment-processor.test.ts`
-- **Coverage**:
-  - PDF attachment processing
-  - Word document processing
-  - Image OCR processing
-  - Unsupported file type handling
-  - Error handling
-  - Multiple attachment processing
+Tests are located near their corresponding source files:
 
-#### `EmailProcessor` Integration Tests
-- **Location**: `src/ingestion/sources/email/processors/__tests__/email-processor-with-attachments.test.ts`
-- **Coverage**:
-  - Email processing with attachments
-  - Entity merging from attachments and email content
-  - Error handling in integration scenarios
-  - Backward compatibility
+- `src/platform/processing/utils/__tests__/enrichment.utils.test.ts`
+- `src/ingestion/sources/email/processors/__tests__/attachment-processor.test.ts`
+- `src/ingestion/sources/email/processors/__tests__/email-processor-with-attachments.test.ts`
 
-### Running Tests
+### Demo Scripts
 
-```bash
-# Run all attachment-related tests
-npm test -- --testPathPattern="attachment.*test.ts"
+- `scripts/demo/test-attachment-processing.ts`: Comprehensive attachment processing demo
 
-# Run specific attachment processor tests
-npm test -- src/ingestion/sources/email/processors/__tests__/attachment-processor.test.ts
-```
+## Error Handling
 
-## Implementation Details
+The system provides comprehensive error handling:
 
-### Text Extraction Methods
+- **Unsupported file types**: Gracefully skipped with reason provided
+- **Processing errors**: Captured and reported with details
+- **Empty content**: Handled with appropriate error messages
+- **Corrupted files**: Error details captured for debugging
 
-1. **PDF Processing**: Uses mock implementation (TODO: integrate pdf-parse library)
-2. **DOCX Processing**: Uses mock implementation (TODO: integrate mammoth library)
-3. **Excel Processing**: Uses `node-xlsx` library for spreadsheet data extraction from all worksheets
-4. **PowerPoint Processing**: Uses `officeparser` library for presentation text extraction from all slides
-5. **OCR Processing**: Uses mock implementation (TODO: integrate tesseract.js library)
-6. **Plain Text**: Direct UTF-8 decoding
+## Performance Considerations
 
-### Entity Extraction
-
-- Uses pattern matching for demonstration
-- Extracts monetary amounts, person names, organizations, and dates
-- Each entity includes confidence score and position information
-- Metadata tracks extraction source and method
-
-### Error Handling
-
-- Gracefully handles unsupported file types
-- Logs errors for debugging
-- Continues processing other attachments if one fails
-- Returns detailed error information in results
+- **Processing time tracking**: Each attachment processing includes duration metrics
+- **Batch processing**: Multiple attachments processed efficiently
+- **Memory management**: Large files handled with streaming where possible
+- **Error recovery**: Individual attachment failures don't stop batch processing
 
 ## Future Enhancements
 
-### Priority Improvements
+- **OCR Implementation**: Add actual OCR capabilities for image processing
+- **Entity Extraction**: Integrate with NLP services for better entity recognition
+- **Content Classification**: Add automatic content type classification
+- **Compression Support**: Add support for compressed file formats
+- **Streaming Processing**: Implement streaming for very large files
 
-1. **Real Text Extraction Libraries**:
-   - Integrate `pdf-parse` for PDF text extraction
-   - Integrate `mammoth` for DOCX text extraction
-   - Integrate `tesseract.js` for OCR capabilities
+## Configuration
 
-2. **Advanced Entity Extraction**:
-   - Integration with existing SpaCy entity extraction service
-   - Support for financial document specific entities
-   - Relationship extraction between entities
+The processing services use dependency injection and can be configured through the DI container:
 
-3. **Additional File Formats**:
-   - CSV files
-   - RTF documents
-   - OpenDocument formats (ODS, ODT, ODP)
-
-### Technical Improvements
-
-1. **Performance Optimization**:
-   - Parallel processing of multiple attachments
-   - Caching of extracted content
-   - Streaming for large files
-
-2. **Security Enhancements**:
-   - File size limits
-   - Virus scanning integration
-   - Content sanitization
-
-3. **Configuration**:
-   - Configurable supported file types
-   - Adjustable processing timeouts
-   - OCR language settings
-
-## Integration with Existing Pipeline
-
-The attachment processing feature is designed to integrate seamlessly with the existing email processing pipeline:
-
-1. **Email Processing Service**: Updated to include attachment processing placeholder
-2. **Entity Merging**: Entities from attachments are merged with email content entities
-3. **Knowledge Graph**: Extracted entities can be inserted into the knowledge graph
-4. **Unified Pipeline**: Ready for integration with the unified ingestion pipeline
-
-## TDD Approach
-
-This feature was developed following Test-Driven Development (TDD) principles:
-
-1. **Red Phase**: Written failing tests first
-2. **Green Phase**: Implemented minimal code to make tests pass
-3. **Refactor Phase**: Improved code quality and added integration
-
-All tests pass and provide comprehensive coverage of the attachment processing functionality.
-
-## Demo and Examples
-
-### Running the Demo
-
-```bash
-npm run demo:attachment-processing
+```typescript
+// Register services in DI container
+container.registerSingleton(EmailParsingService);
+container.registerSingleton(AttachmentProcessingService);
+container.registerSingleton(Neo4jIngestionService);
+container.registerSingleton(ContentProcessingService);
 ```
 
-### Example Output
+## Monitoring and Logging
 
-```
-🔧 Testing Email Attachment Processing
-====================================
+All services include comprehensive logging:
 
-📂 Found 3 test email files
+- Processing start/completion events
+- File type detection and support status
+- Processing duration metrics
+- Error details and recovery attempts
+- Entity extraction results
 
-📧 [1/3] Processing: 01-helix-sourcing.eml
-──────────────────────────────────────────
-✅ Processing successful: true
-📨 Email Details:
-   From: unknown@unknown.com
-   Subject: Growth Equity Opportunity: Project Helix - B2B SaaS Leader
-   Body length: 719 characters
-   Attachments: 0
-📎 Attachment Processing:
-   Total processed: 0
-   Supported formats: 0
-   Unsupported formats: 0
-🔍 Entities extracted: 11
-   1. "$40M" (MONETARY) - confidence: 0.7
-   2. "Growth Equity" (PERSON) - confidence: 0.7
-   3. "Project Helix" (PERSON) - confidence: 0.7
-```
-
-This demonstrates successful processing of emails and extraction of entities from email content, with attachment processing ready for emails that contain attachments. 
+The system uses structured logging with appropriate log levels for different types of information. 

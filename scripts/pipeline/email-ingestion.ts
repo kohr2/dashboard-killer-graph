@@ -15,7 +15,8 @@ import { OntologyService } from '@platform/ontology/ontology.service';
 import { FinancialToCrmBridge } from '@financial/application/ontology-bridges/financial-to-crm.bridge';
 import { ContentProcessingService } from '@platform/processing/content-processing.service';
 import { resetDatabase } from '../database/reset-neo4j';
-import { flattenEnrichmentData } from './enrichment.utils';
+import { flattenEnrichmentData } from '../../src/platform/processing/utils/enrichment.utils';
+import { OntologyDrivenReasoningService } from '@platform/reasoning/ontology-driven-reasoning.service';
 
 let INDEXABLE_LABELS: string[] = []; // will be populated after ontologies are loaded
 
@@ -525,6 +526,17 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
       await session.close();
       console.log('\n   ✅ Neo4j session closed.');
     }
+    
+    // Execute reasoning algorithms after all data is ingested
+    try {
+      console.log('\n🔍 Executing reasoning algorithms...');
+      const reasoningService = container.resolve(OntologyDrivenReasoningService);
+      await reasoningService.executeAllReasoning();
+      console.log('✅ Reasoning algorithms completed successfully');
+    } catch (reasoningError) {
+      console.error('❌ Error during reasoning execution:', reasoningError);
+    }
+    
     await connection.close();
     console.log('   ✅ Neo4j connection closed.');
   }

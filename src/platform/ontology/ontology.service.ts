@@ -35,10 +35,25 @@ const OntologyRelationshipSchema = z.object({
   description: z.string().optional(),
 });
 
+const OntologyReasoningSchema = z.object({
+  algorithms: z.record(z.object({
+    name: z.string(),
+    description: z.string(),
+    entityType: z.string(),
+    factors: z.array(z.string()).optional(),
+    weights: z.array(z.number()).optional(),
+    threshold: z.number().optional(),
+    relationshipType: z.string().optional(),
+    pattern: z.string().optional(),
+    patternName: z.string().optional(),
+  })).optional(),
+});
+
 const OntologySchemaValidator = z.object({
   name: z.string(),
   entities: z.record(OntologyEntitySchema),
   relationships: z.record(OntologyRelationshipSchema).optional(),
+  reasoning: OntologyReasoningSchema.optional(),
 });
 
 // TypeScript types inferred from Zod schemas
@@ -100,7 +115,8 @@ export class OntologyService {
         return {
             name: p.name,
             entities: p.entitySchemas as Ontology['entities'],
-            relationships: p.relationshipSchemas as Ontology['relationships'] || {}
+            relationships: p.relationshipSchemas as Ontology['relationships'] || {},
+            reasoning: p.reasoning
         };
     });
     this.loadFromObjects(allOntologies);
@@ -225,5 +241,12 @@ export class OntologyService {
   public registerRelationshipType(name: string, definition: any): void {
     logger.warn(`[OntologyService] registerRelationshipType is a placeholder. "Registering" relationship: ${name}`);
     this.schema.relationships[name] = definition;
+  }
+
+  /**
+   * Returns all loaded ontologies as raw objects (for reasoning, etc.)
+   */
+  public getAllOntologies(): Ontology[] {
+    return this.ontologies;
   }
 } 

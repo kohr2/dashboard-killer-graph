@@ -3,7 +3,12 @@
   "source": "https://spec.edmcouncil.org/fibo/",
   "entities": {
     "Investor": {
-      "description": "A party that owns some stake in an organization by way of investment. This is regardless of whether the investor is also a constitutional owner (e.g., shareholder) in the entity. Based on FIBO definition."
+      "description": "A party that owns some stake in an organization by way of investment. This is regardless of whether the investor is also a constitutional owner (e.g., shareholder) in the entity. Based on FIBO definition.",
+      "properties": {
+        "name": { "type": "string", "description": "Investor name" },
+        "type": { "type": "string", "description": "Type of investor (PE, VC, etc.)" },
+        "aum": { "type": "number", "description": "Assets under management" }
+      }
     },
     "Fund": {
       "description": "A collective investment vehicle (CIV) consisting of a pool of funds from multiple investors, managed by a professional firm. Examples include private equity funds, hedge funds, or mutual funds. Based on FIBO's concept of an Investment Fund."
@@ -11,7 +16,14 @@
     "Deal": {
       "keyProperties": ["dealType", "sector", "purpose"],
       "vectorIndex": true,
-      "description": "A specific business or financial transaction that is proposed, under negotiation, or completed. It represents an opportunity for investment, acquisition, or partnership between parties, aligned with the FIBO concept of a financial transaction."
+      "description": "A specific business or financial transaction that is proposed, under negotiation, or completed. It represents an opportunity for investment, acquisition, or partnership between parties, aligned with the FIBO concept of a financial transaction.",
+      "properties": {
+        "dealSize": { "type": "number", "description": "The size of the deal in currency units" },
+        "sector": { "type": "string", "description": "The industry sector of the target company" },
+        "dealType": { "type": "string", "description": "Type of deal (M&A, LBO, Growth, etc.)" },
+        "purpose": { "type": "string", "description": "Purpose of the investment" },
+        "status": { "type": "string", "description": "Current status of the deal" }
+      }
     },
     "TargetCompany": {
       "keyProperties": ["industry", "website"],
@@ -66,6 +78,14 @@
     },
     "RegulatoryInformation": {
       "description": "Information related to regulatory filings, such as SEC filings (e.g., 10-K, 8-K) or other disclosures to a regulatory authority. This entity can be linked to a company or a deal to provide context on compliance and regulatory events."
+    },
+    "Organization": {
+      "description": "A company or institution",
+      "properties": {
+        "name": { "type": "string", "description": "Organization name" },
+        "industry": { "type": "string", "description": "Primary industry" },
+        "size": { "type": "string", "description": "Company size category" }
+      }
     }
   },
   "relationships": {
@@ -81,6 +101,45 @@
     "EXITED": { "domain": "Investor", "range": "Deal", "description": "Indicates past divestment" },
     "HAS_INTEREST_IN": { "domain": "Investor", "range": "Sector", "description": "Indicates an investor's interest in a specific market sector." },
     "HAS_DOCUMENT": { "domain": "Deal", "range": "Document", "description": "Associates a deal with a related document, such as an NDA or CIM." },
-    "FOLLOWS_PROCESS": { "domain": "Deal", "range": "Process", "description": "Describes the process a deal is following, such as an auction or a proprietary sourcing method." }
+    "FOLLOWS_PROCESS": { "domain": "Deal", "range": "Process", "description": "Describes the process a deal is following, such as an auction or a proprietary sourcing method." },
+    "INVESTS_IN": {
+      "domain": "Investor",
+      "range": "Deal",
+      "description": "Investment relationship"
+    },
+    "TARGETS": {
+      "domain": "Deal",
+      "range": "Organization",
+      "description": "Target company relationship"
+    }
+  },
+  "reasoning": {
+    "algorithms": {
+      "similarity_scoring": {
+        "name": "similarity_scoring",
+        "description": "Calculate similarity between deals based on sector, dealType, and purpose",
+        "entityType": "Deal",
+        "factors": ["sector", "dealType", "purpose"],
+        "weights": [0.5, 0.3, 0.2],
+        "threshold": 0.5,
+        "relationshipType": "SIMILAR_TO"
+      },
+      "risk_assessment": {
+        "name": "risk_assessment",
+        "description": "Assess risk based on investor failure rate and sector volatility",
+        "entityType": "Deal",
+        "factors": ["investor_failure_rate", "sector_volatility"],
+        "weights": [0.6, 0.4],
+        "threshold": 0.7
+      },
+      "pattern_detection": {
+        "name": "pattern_detection",
+        "description": "Detect successful deal patterns",
+        "entityType": "Deal",
+        "pattern": "e.status = 'CLOSED' AND e.dealSize > 1000000",
+        "patternName": "large_successful_deal",
+        "relationshipType": "FOLLOWS_PATTERN"
+      }
+    }
   }
 } 

@@ -1,199 +1,329 @@
-# 🚀 Quick Start Guide
+# Getting Started Guide
 
-Get your Conversational Knowledge Platform up and running in **5 minutes**!
+Quick setup guide for the Knowledge Graph Dashboard platform.
 
-## ⚡ Prerequisites
+## Quick Start
 
-- **Node.js** 18+ ([Download](https://nodejs.org/))
-- **Docker** ([Download](https://www.docker.com/get-started))
-- **Git** ([Download](https://git-scm.com/))
-- **OpenAI API Key** ([Get one here](https://platform.openai.com/api-keys))
+### Prerequisites
+- Node.js 18+
+- Python 3.8+
+- Neo4j Desktop (or Docker)
+- Git
 
-## 🏃‍♂️ Quick Setup
+### Installation
 
-### 1. Clone & Install
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/dashboard-killer-graph.git
-
-# Navigate to the project directory
-cd dashboard-killer-graph
-
-# Install dependencies
+# Clone and install
+git clone <repository-url>
+cd dashboard-killer-graph-new
 npm install
 
-# Install chat UI dependencies
-cd chat-ui && npm install && cd ..
+# Install Python dependencies
+cd python-services/nlp-service && pip install -r requirements.txt
+cd ../analysis-service && pip install -r requirements.txt
+cd ../..
+
+# Configure environment
+cp config/environment.example.js config/environment.js
+# Edit config/environment.js
 ```
 
-### 2. Configure Environment
-```bash
-# Copy environment template
-cp .env.example .env
+### Start Services
 
-# Edit .env file and add your OpenAI API key
-# OPENAI_API_KEY=your_openai_api_key_here
+```bash
+# Start all services (in separate terminals)
+npm run dev              # Node.js API server (port 3001)
+npm run dev:nlp          # Python NLP service (port 8000)
+npm run dev:analysis     # Python analysis service (port 8001)
+npm run dev:chat         # Chat UI (port 3000)
+npm run dev:mcp          # MCP server (port 3002)
 ```
 
-### 3. Start Infrastructure
-```bash
-# Start Neo4j database
-docker-compose -f docker-compose.neo4j.yml up -d
+### Verify Setup
 
-# Verify Neo4j is running
-docker-compose -f docker-compose.neo4j.yml ps
+```bash
+# Test email processing with attachments
+npm run demo:attachment-processing
+
+# Test chat interface
+npm run demo:chat
+
+# Test reasoning capabilities
+npm run demo:reasoning
 ```
 
-### 4. Start the Application Services
+## Architecture Overview
+
+### Core Components
+
+1. **Core Ontology** (`config/ontology/core.ontology.json`)
+   - Domain-agnostic entities like `Communication`, `Thing`, `UnrecognizedEntity`
+   - Foundation for all domain extensions
+
+2. **Domain Plugins**
+   - **CRM**: Customer relationship management
+   - **Financial**: Financial instruments and market data
+   - **Procurement**: Supply chain management (disabled by default)
+
+3. **Microservices**
+   - **Node.js API**: Main application server (port 3001)
+   - **Python NLP**: Entity extraction (port 8000)
+   - **Python Analysis**: Content analysis (port 8001)
+   - **Chat UI**: React interface (port 3000)
+   - **MCP Server**: Claude Desktop integration (port 3002)
+
+### Communication Entity
+
+The `Communication` entity is part of the core ontology, making it reusable across all domains:
+
+```json
+{
+  "Communication": {
+    "parent": "Thing",
+    "description": "Generic communication entity for emails, calls, meetings, etc.",
+    "properties": {
+      "id": "string",
+      "type": "string",
+      "status": "string", 
+      "subject": "string",
+      "body": "string",
+      "sender": "string",
+      "recipients": "array",
+      "timestamp": "datetime",
+      "metadata": "object"
+    },
+    "keyProperties": ["id", "type", "sender", "timestamp"],
+    "vectorIndex": true
+  }
+}
+```
+
+## Development Workflow
+
+### Test-Driven Development (TDD)
+
+This project follows strict TDD principles:
+
 ```bash
-# Terminal 1: Start the main API server
+# 1. Write failing test first
+npm test -- --testNamePattern="should extract entities"
+
+# 2. Implement minimal code to make test pass
+# 3. Refactor while keeping tests green
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run specific test suites
+npm test -- src/ontologies/crm/__tests__/plugin-loading.test.ts
+npm test -- src/ingestion/__tests__/integration/email-pipeline.test.ts
+
+# Run with coverage
+npm run test:coverage
+
+# Watch mode for development
+npm run test:watch
+```
+
+### Code Quality
+
+```bash
+# Lint code
+npm run lint
+
+# Fix linting issues
+npm run lint:fix
+
+# Type checking
+npm run type-check
+```
+
+## Email Processing
+
+### Supported File Types
+
+- **PDF** (`.pdf`) - Text extraction
+- **Microsoft Word** (`.docx`, `.doc`) - Document parsing
+- **Excel** (`.xlsx`, `.xls`) - Spreadsheet data
+- **PowerPoint** (`.pptx`, `.ppt`) - Presentation content
+- **Images** (`.jpg`, `.png`, `.gif`) - OCR processing
+- **Plain Text** (`.txt`) - Direct reading
+
+### Processing Pipeline
+
+```
+Email with Attachments
+         ↓
+   EmailProcessor
+         ↓
+   AttachmentProcessor (for each attachment)
+         ↓
+   Text Extraction (PDF/Word/Excel/PowerPoint/Images)
+         ↓
+   Entity Extraction (NLP Service)
+         ↓
+   Knowledge Graph Storage
+         ↓
+   Communication Entity + Extracted Entities
+```
+
+### Demo Commands
+
+```bash
+# Process test emails
+npm run demo:attachment-processing
+
+# Test specific email file
+npm run ts-node scripts/demo/test-attachment-processing.ts test-emails/01-helix-sourcing.eml
+```
+
+## Chat Interface
+
+### Features
+
+- **Natural Language Queries**: Ask questions in plain English
+- **Entity Exploration**: Browse and search entities
+- **Relationship Visualization**: See connections between entities
+- **Reasoning Capabilities**: AI-powered insights
+
+### Usage
+
+1. Start the chat UI: `npm run dev:chat`
+2. Open browser to `http://localhost:3000`
+3. Ask questions like:
+   - "Show me all contacts from Acme Corp"
+   - "What deals are in the pipeline?"
+   - "Find communications mentioning financial data"
+
+## MCP Integration (Claude Desktop)
+
+### Setup
+
+1. Start MCP server: `npm run dev:mcp`
+2. Configure Claude Desktop with MCP server
+3. Use natural language to interact with the knowledge graph
+
+### Configuration
+
+```json
+{
+  "mcpServers": {
+    "dashboard-killer-graph": {
+      "command": "node",
+      "args": ["src/mcp/servers/mcp-server-simple.js"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  }
+}
+```
+
+## Monitoring and Debugging
+
+### Logs
+
+```bash
+# View API server logs
 npm run dev
 
-# Terminal 2: Start the Chat UI
-cd chat-ui && npm run dev
+# View specific service logs
+LOG_LEVEL=debug npm run dev:nlp
 
-# Terminal 3 (Optional): Start MCP Server for Claude Desktop
-npm run dev:mcp
+# Debug mode for tests
+DEBUG=* npm test
 ```
 
-### 5. Access the Application
-- **Chat Interface**: http://localhost:5173/ (or 5174 if port is busy)
-- **API Server**: http://localhost:3001
-- **Neo4j Browser**: http://localhost:7474 (username: neo4j, password: password)
+### Health Checks
 
-## 🎯 What You Get
-
-### ✅ Working Features
-- **💬 Chat Interface**: Natural language queries with real-time responses
-- **🧠 AI-Powered**: OpenAI GPT-4o-mini for query translation and response generation
-- **📊 Knowledge Graph**: Neo4j database with CRM, Financial, and Procurement ontologies
-- **🔌 Extensible**: Plugin architecture for adding new domains
-- **🌐 Multi-language**: Works in English, French, and other languages
-- **🤖 MCP Integration**: Claude Desktop integration for AI assistance
-
-### 🎮 Try These Queries
-Open the chat interface and try:
-```
-"show me all deals"
-"list all people"
-"show me organizations"
-"find persons named Rick"
-"show all contacts"
-```
-
-### 🔧 Development Tools
-- **Hot Reload**: Automatic code reloading for both API and UI
-- **Debug Endpoints**: `/debug/schema` and `/debug/translate` for troubleshooting
-- **Test Suite**: Comprehensive TDD setup
-- **Type Safety**: Full TypeScript support
-
-## 🧪 Verify Installation
-
-### Test Chat Functionality
 ```bash
-# Test via curl
-curl -X POST http://localhost:3001/api/chat \
-  -H "Content-Type: application/json" \
-  -d '{"query": "show all deals"}'
+# Check API server
+curl http://localhost:3001/health
 
-# Expected: JSON response with deal information
+# Check NLP service
+curl http://localhost:8000/health
+
+# Check analysis service
+curl http://localhost:8001/health
 ```
 
-### Check Ontology Loading
+### Database Queries
+
 ```bash
-# Check loaded schema
-curl http://localhost:3001/api/chat/debug/schema
+# Connect to Neo4j browser
+open http://localhost:7474
 
-# Expected: 34 entities, 24 relationships
+# Run test queries
+npm run ts-node scripts/demo/test-chat.ts
 ```
 
-### Database Connection
-```bash
-# Check Neo4j status
-docker-compose -f docker-compose.neo4j.yml logs neo4j
-
-# Access Neo4j browser at http://localhost:7474
-# Username: neo4j, Password: password
-```
-
-## 📊 Project Structure Overview
-
-```
-dashboard-killer-graph/
-├── 💬 chat-ui/              # React chat interface
-├── 🏛️ src/platform/        # Core platform services
-├── 🧠 src/ontologies/       # Domain-specific extensions
-│   ├── crm/                 # CRM ontology (contacts, orgs)
-│   ├── financial/           # Financial ontology (deals, investors)
-│   └── procurement/         # Procurement ontology
-├── 🔌 src/mcp/              # MCP server for Claude Desktop
-├── 🧪 test/                 # Comprehensive test suite
-├── 📁 config/               # Configuration files
-└── 📚 docs/                 # Documentation
-```
-
-## 🎯 Next Steps
-
-### For Users
-1. **[Chat Interface Guide](../features/chat-interface.md)** - Learn advanced query techniques
-2. **[API Reference](../development/api-reference.md)** - Integrate with external systems
-3. **[Troubleshooting](../operations/troubleshooting.md)** - Common issues and solutions
-
-### For Developers
-1. **[Development Setup](development.md)** - Detailed dev environment
-2. **[Architecture Overview](../architecture/overview.md)** - System design
-3. **[TDD Approach](../development/tdd-approach.md)** - Testing methodology
-4. **[Extension Development](../development/extension-guide.md)** - Build new ontologies
-
-### For Contributors
-1. **[Contributing Guide](../development/contributing.md)** - How to contribute
-2. **[Code Standards](../development/code-standards.md)** - Coding guidelines
-3. **[Testing Guide](../development/testing.md)** - Test writing best practices
-
-## 🆘 Need Help?
-
-### Quick Fixes
-```bash
-# Reset everything
-docker-compose -f docker-compose.neo4j.yml down -v
-docker-compose -f docker-compose.neo4j.yml up -d
-npm run dev
-
-# Clear node modules
-rm -rf node_modules chat-ui/node_modules
-npm install
-cd chat-ui && npm install && cd ..
-
-# Check service status
-curl http://localhost:3001/api/health
-curl http://localhost:3001/api/chat/debug/schema
-```
+## Troubleshooting
 
 ### Common Issues
 
-**Chat returns "I'm sorry, I can only show resources"**
-- Check that your OpenAI API key is set in `.env`
-- Verify the API server is running on port 3001
-- Check debug endpoint: `curl http://localhost:3001/api/chat/debug/schema`
+1. **Port already in use**
+   ```bash
+   # Find process using port
+   lsof -i :3001
+   # Kill process
+   kill -9 <PID>
+   ```
 
-**Neo4j connection failed**
-- Ensure Docker is running
-- Check Neo4j container: `docker-compose -f docker-compose.neo4j.yml ps`
-- Restart Neo4j: `docker-compose -f docker-compose.neo4j.yml restart`
+2. **Neo4j connection failed**
+   - Verify Neo4j is running
+   - Check credentials in `config/environment.js`
+   - Ensure firewall allows port 7687
 
-**Chat UI won't start**
-- Check if port 5173 is available
-- Try: `cd chat-ui && npm install && npm run dev`
-- UI will automatically use port 5174 if 5173 is busy
+3. **Python services not starting**
+   - Verify Python 3.8+ is installed
+   - Check dependencies: `pip list`
+   - Reinstall: `pip install -r requirements.txt`
 
-### Get Support
-- **📖 Documentation**: Browse [docs/](../)
-- **🐛 Report Issues**: [GitHub Issues](https://github.com/your-org/dashboard-killer-graph/issues)
-- **💬 Ask Questions**: [GitHub Discussions](https://github.com/your-org/dashboard-killer-graph/discussions)
-- **📜 Review History**: See the [project history](../project-history.md)
+4. **Tests failing**
+   - Check test database connection
+   - Verify all services are running
+   - Run with debug: `DEBUG=* npm test`
 
----
+### Getting Help
 
-**🎉 You're ready to chat with your knowledge graph!**
+- Check the [troubleshooting guide](troubleshooting.md)
+- Review [API documentation](../development/api-reference.md)
+- Open an issue with detailed error information
 
-**Next**: [Chat Interface Guide](../features/chat-interface.md) | [Development Setup](development.md) 
+## Next Steps
+
+### Learning Path
+
+1. **Start with demos**: Run the demo scripts to see the system in action
+2. **Explore the chat interface**: Try different queries and see how entities are connected
+3. **Review the codebase**: Understand the plugin-based architecture
+4. **Add a new feature**: Follow TDD approach to extend functionality
+
+### Key Documentation
+
+- [Ontology Architecture](../architecture/ontologies.md) - Understanding the plugin system
+- [TDD Approach](../development/tdd-approach.md) - Development methodology
+- [Email Processing](../features/email-attachment-processing.md) - Document processing
+- [API Reference](../development/api-reference.md) - Technical documentation
+
+### Contributing
+
+- Follow TDD principles: write tests first
+- Use conventional commits: `feat: add new feature`
+- Add comprehensive documentation
+- Ensure all tests pass before submitting
+
+## Success Metrics
+
+You'll know the setup is working when:
+
+- ✅ All services start without errors
+- ✅ Email processing demo completes successfully
+- ✅ Chat interface responds to queries
+- ✅ All tests pass with >80% coverage
+- ✅ MCP server connects to Claude Desktop
+- ✅ Neo4j contains processed entities and relationships 

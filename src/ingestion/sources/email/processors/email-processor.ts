@@ -6,11 +6,10 @@
  * src/ontologies/crm/application/services/email-processing.service.ts
  */
 
-import { readFileSync } from 'fs';
-import { simpleParser, ParsedMail, AddressObject } from 'mailparser';
 import { singleton } from 'tsyringe';
 import { logger } from '@shared/utils/logger';
-import { AttachmentProcessor, AttachmentProcessingResult } from './attachment-processor';
+import { EmailParsingService, ParsedEmailData } from '@platform/processing/email-parsing.service';
+import { AttachmentProcessingService, AttachmentProcessingResult } from '@platform/processing/attachment-processing.service';
 import { EmailAttachment, ExtractedEntity } from '../types/email.interface';
 
 // Imports will be updated during architecture refactoring
@@ -27,31 +26,15 @@ export interface EmailProcessingResult {
   errors: string[];
 }
 
-export interface ParsedEmailData {
-  messageId: string;
-  from: string;
-  to: string[];
-  cc?: string[];
-  bcc?: string[];
-  subject: string;
-  body: string;
-  htmlBody?: string;
-  date: Date;
-  headers: Record<string, string>;
-  attachments: EmailAttachment[];
-}
-
 @singleton()
 export class EmailProcessor {
-  private attachmentProcessor: AttachmentProcessor;
-
   constructor(
+    private emailParsingService: EmailParsingService,
+    private attachmentProcessingService: AttachmentProcessingService,
     // TODO: Inject unified services
     // private entityExtractor: EntityExtractor,
     // private storageManager: StorageManager
-  ) {
-    this.attachmentProcessor = new AttachmentProcessor();
-  }
+  ) {}
 
   /**
    * Process a single .eml file through the unified pipeline
@@ -83,19 +66,29 @@ export class EmailProcessor {
     logger.info(`📧 Processing EML file with attachments: ${emlFilePath}`);
     
     try {
-      // 1. Parse email
-      const parsedEmail = await this.parseEmlFile(emlFilePath);
+      // 1. Parse email using platform service
+      const parsedEmail = await this.emailParsingService.parseEmlFile(emlFilePath);
       
-      // 2. Process attachments
+      // 2. Process attachments using platform service
       let attachmentProcessing: AttachmentProcessingResult | undefined;
       const allEntities: ExtractedEntity[] = [];
       
       try {
-        attachmentProcessing = await this.attachmentProcessor.processAttachments(parsedEmail.attachments);
+        attachmentProcessing = await this.attachmentProcessingService.processAttachments(parsedEmail.attachments);
         
-        // Merge entities from attachments
+        // Merge entities from attachments (convert platform entities to local format)
         if (attachmentProcessing.extractedEntities) {
-          allEntities.push(...attachmentProcessing.extractedEntities);
+          const convertedEntities = attachmentProcessing.extractedEntities.map(entity => ({
+            id: entity.id,
+            name: entity.name,
+            type: entity.type,
+            confidence: entity.confidence,
+            source: entity.source,
+            text: entity.name, // Use name as text for compatibility
+            position: { start: 0, end: entity.name.length }, // Mock position
+            properties: entity.properties || {}
+          }));
+          allEntities.push(...convertedEntities);
         }
         
         logger.info(`✅ Processed ${attachmentProcessing.totalProcessed} attachments`);
@@ -144,62 +137,6 @@ export class EmailProcessor {
         errors: [errorMessage]
       };
     }
-  }
-
-  /**
-   * Parse .eml file using mailparser
-   */
-  private async parseEmlFile(emlFilePath: string): Promise<ParsedEmailData> {
-    const emlContent = readFileSync(emlFilePath, 'utf-8');
-    const parsed = await simpleParser(emlContent);
-
-    // Convert parsed attachments to our format
-    const attachments: EmailAttachment[] = parsed.attachments?.map(att => ({
-      filename: att.filename || 'attachment',
-      contentType: att.contentType || 'application/octet-stream',
-      size: att.size || 0,
-      content: att.content,
-    })) || [];
-
-    // Extract email addresses
-    const fromAddresses = this.convertAddressObject(parsed.from);
-    const toAddresses = this.convertAddressObject(parsed.to);
-    const ccAddresses = this.convertAddressObject(parsed.cc);
-    const bccAddresses = this.convertAddressObject(parsed.bcc);
-
-    // Convert headers to record
-    const headersRecord: Record<string, string> = {};
-    if (parsed.headers) {
-      for (const [key, value] of parsed.headers) {
-        headersRecord[key] = Array.isArray(value) ? value.join(', ') : String(value);
-      }
-    }
-
-    return {
-      messageId: parsed.messageId || `generated_${Date.now()}`,
-      from: fromAddresses[0] || 'unknown@unknown.com',
-      to: toAddresses,
-      cc: ccAddresses.length > 0 ? ccAddresses : undefined,
-      bcc: bccAddresses.length > 0 ? bccAddresses : undefined,
-      subject: parsed.subject || '(No Subject)',
-      body: parsed.text || '',
-      htmlBody: parsed.html || undefined,
-      date: parsed.date || new Date(),
-      headers: headersRecord,
-      attachments,
-    };
-  }
-
-  /**
-   * Convert AddressObject to string array
-   */
-  private convertAddressObject(address: AddressObject | AddressObject[] | undefined): string[] {
-    if (!address) return [];
-    
-    const addresses = Array.isArray(address) ? address : [address];
-    return addresses.flatMap(addr => 
-      addr.value?.map(val => val.address || '') || []
-    ).filter(Boolean);
   }
 
   /**

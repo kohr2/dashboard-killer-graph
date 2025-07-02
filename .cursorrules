@@ -51,3 +51,16 @@ code-generation-rules:
   - rule: "Do not generate code that does not comply with the project's development rules."
   - rule: "Do not generate code that does not comply with the project's test-driven development (TDD) rules."
  
+
+ documentation:
+  - rule: "Keep the doc short and concise."
+  - rule: "Always add documentation to the code you generate."
+  - rule: "Keep the documentation up to date."
+  - rule: "Use the same documentation style as the rest of the project."
+  - rule: "Use the same documentation format as the rest of the project."
+  - rule: "Use the same documentation structure as the rest of the project."
+  - rule: "Use the same documentation language as the rest of the project."
+  - rule: "Use the same documentation tone as the rest of the project."
+  - rule: "Use the same documentation level as the rest of the project."
+  - rule: "Use the same documentation format as the rest of the project."
+  - rule: "Use the same documentation structure as the rest of the project."

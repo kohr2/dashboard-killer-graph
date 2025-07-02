@@ -7,7 +7,7 @@ import 'reflect-metadata';
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { EmailProcessor } from '../../src/ingestion/sources/email/processors/email-processor';
-import { AttachmentProcessor } from '../../src/ingestion/sources/email/processors/attachment-processor';
+import { AttachmentProcessingService } from '../../src/platform/processing/attachment-processing.service';
 import { logger } from '../../src/shared/utils/logger';
 
 async function testAttachmentProcessing() {
@@ -70,7 +70,7 @@ async function testAttachmentProcessing() {
       console.log(`🔍 Entities extracted: ${result.entities.length}`);
       if (result.entities.length > 0) {
         result.entities.slice(0, 3).forEach((entity, i) => {
-          console.log(`   ${i + 1}. "${entity.text}" (${entity.type}) - confidence: ${entity.confidence}`);
+          console.log(`   ${i + 1}. "${entity.name}" (${entity.type}) - confidence: ${entity.confidence}`);
         });
         if (result.entities.length > 3) {
           console.log(`   ... and ${result.entities.length - 3} more`);
@@ -94,7 +94,7 @@ async function testOfficeFileSupport() {
   console.log('\n📊 Testing Excel and PowerPoint Support');
   console.log('======================================\n');
 
-  const attachmentProcessor = new AttachmentProcessor();
+  const attachmentProcessor = new AttachmentProcessingService();
 
   // Create mock Excel data
   const mockExcelData = Buffer.from('Mock Excel spreadsheet with financial data');
@@ -158,7 +158,7 @@ async function testOfficeFileSupport() {
       if (attachment.entities && attachment.entities.length > 0) {
         console.log(`   Entities Found: ${attachment.entities.length}`);
         attachment.entities.slice(0, 2).forEach(entity => {
-          console.log(`     - "${entity.text}" (${entity.type})`);
+          console.log(`     - "${entity.name}" (${entity.type})`);
         });
       }
       

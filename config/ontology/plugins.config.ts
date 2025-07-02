@@ -1,4 +1,5 @@
 import { OntologyPlugin } from '@platform/ontology/ontology.plugin';
+import { corePlugin } from '../../src/platform/ontology/core.plugin';
 import { crmPlugin } from '../../src/ontologies/crm/crm.plugin';
 import { financialPlugin } from '../../src/ontologies/financial/financial.plugin';
 import { procurementPlugin } from '../../src/ontologies/procurement/procurement.plugin';
@@ -19,6 +20,11 @@ export interface PluginConfig {
  * To enable/disable a plugin, simply change the 'enabled' property.
  */
 export const ONTOLOGY_PLUGINS_CONFIG = {
+  core: { 
+    enabled: true, 
+    plugin: corePlugin,
+    description: 'Core ontology with fundamental domain-agnostic entities like Communication'
+  },
   crm: { 
     enabled: true, 
     plugin: crmPlugin,

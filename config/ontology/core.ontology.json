@@ -9,6 +9,71 @@
       "parent": "Thing",
       "description": "A placeholder for an entity that was detected but could not be classified into a more specific type."
     },
+    "Communication": {
+      "parent": "Thing",
+      "description": "A generic communication entity that can represent emails, calls, meetings, or any other form of communication.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the communication"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of communication (email, call, meeting, etc.)"
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the communication (received, processed, archived, failed)"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject or title of the communication"
+        },
+        "body": {
+          "type": "string",
+          "description": "Content or body of the communication"
+        },
+        "sender": {
+          "type": "string",
+          "description": "Identifier of the sender"
+        },
+        "recipients": {
+          "type": "array",
+          "description": "List of recipient identifiers"
+        },
+        "timestamp": {
+          "type": "datetime",
+          "description": "When the communication occurred"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional metadata about the communication"
+        }
+      },
+      "keyProperties": ["id", "type", "sender", "timestamp"],
+      "vectorIndex": true
+    }
+  },
   "relationships": {
+    "CONTAINS_ENTITY": {
+      "domain": "Communication",
+      "range": "Thing",
+      "description": "Links a communication to entities mentioned or involved in it"
+    },
+    "PARTICIPANT_IN": {
+      "domain": "Thing",
+      "range": "Communication",
+      "description": "Links an entity (person, organization) to communications they participated in"
+    },
+    "SENDER_OF": {
+      "domain": "Thing",
+      "range": "Communication",
+      "description": "Links a sender entity to communications they sent"
+    },
+    "RECIPIENT_OF": {
+      "domain": "Thing",
+      "range": "Communication",
+      "description": "Links a recipient entity to communications they received"
+    }
   }
 } 

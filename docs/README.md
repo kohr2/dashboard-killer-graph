@@ -1,196 +1,287 @@
-# 📚 Documentation Hub
+# Knowledge Graph Dashboard
 
-Welcome to the **Extensible CRM Platform** documentation! This is your complete guide to understanding, developing, and operating the platform.
+A comprehensive knowledge graph platform for processing and analyzing business communications, documents, and data.
 
-## 🎯 Quick Navigation
+## Overview
 
-### 🚀 New to the Platform?
-- **[Quick Start Guide](getting-started/README.md)** - Get running in 5 minutes
-- **[Architecture Overview](architecture/overview.md)** - Understand the system design
-- **[Installation Guide](getting-started/installation.md)** - Detailed setup instructions
+The Knowledge Graph Dashboard ingests, processes, and analyzes data from various sources to build a rich knowledge graph. Supports email processing, document analysis, entity extraction, and ontology-driven reasoning.
 
-### 👩‍💻 For Developers
-- **[TDD Approach](development/tdd-approach.md)** - Test-driven development methodology
-- **[API Reference](development/api-reference.md)** - REST API documentation
-- **[Extension Development](development/extension-guide.md)** - Build domain extensions
-- **[Contributing Guide](development/contributing.md)** - How to contribute code
+## Architecture
 
-### 🏗️ For Architects
-- **[System Architecture](architecture/overview.md)** - Complete architectural guide
-- **[Extension System](architecture/extensions.md)** - Plugin architecture details
-- **[Data Flow](architecture/data-flow.md)** - Request/response lifecycle
-- **[Design Decisions](architecture/decisions.md)** - ADRs and technical choices
+### Core Platform
 
-### 🚀 For DevOps
-- **[Production Deployment](deployment/production.md)** - Production setup guide
-- **[Docker Guide](deployment/docker.md)** - Containerization instructions
-- **[Monitoring](deployment/monitoring.md)** - Observability and metrics
-- **[Troubleshooting](operations/troubleshooting.md)** - Common issues and solutions
+```
+src/platform/
+├── processing/           # Centralized processing services
+├── ontology/            # Ontology management
+├── reasoning/           # Ontology-driven reasoning
+├── chat/               # Chat interface
+├── database/           # Database connections
+├── enrichment/         # Data enrichment services
+└── security/           # Security and authentication
+```
 
-### 👥 For Business Users
-- **[User Guide](user-guide/README.md)** - How to use the CRM
-- **[Financial Features](user-guide/financial-extension.md)** - Deal tracking guide
-- **[Integrations](user-guide/integrations.md)** - External system connections
+### Domain Ontologies
 
-## 📖 Documentation Categories
+```
+src/ontologies/
+├── crm/                # Customer Relationship Management
+├── financial/          # Financial domain
+├── procurement/        # Procurement domain
+└── security/           # Security domain
+```
 
-### 🎯 Getting Started
-| Document | Description | Audience |
-|----------|-------------|----------|
-| [Quick Start](getting-started/README.md) | 5-minute setup guide | All |
-| [Installation](getting-started/installation.md) | Detailed installation | Developers |
-| [Development Setup](getting-started/development.md) | Dev environment | Developers |
-| [First Steps](getting-started/first-steps.md) | Platform walkthrough | All |
+### Ingestion Pipeline
 
-### 🏗️ Architecture
-| Document | Description | Audience |
-|----------|-------------|----------|
-| [Overview](architecture/overview.md) | System architecture | Architects |
-| [Extension System](architecture/extensions.md) | Plugin architecture | Developers |
-| [Data Flow](architecture/data-flow.md) | Request lifecycle | Architects |
-| [Security](architecture/security.md) | Security design | Architects |
-| [Decisions](architecture/decisions.md) | ADRs | Architects |
+```
+src/ingestion/
+├── sources/            # Data sources (email, documents, APIs)
+├── core/               # Core ingestion logic
+└── intelligence/       # AI and NLP services
+```
 
-### 💻 Development
-| Document | Description | Audience |
-|----------|-------------|----------|
-| [TDD Approach](development/tdd-approach.md) | Testing methodology | Developers |
-| [API Reference](development/api-reference.md) | REST API docs | Developers |
-| [Extension Guide](development/extension-guide.md) | Build extensions | Developers |
-| [Contributing](development/contributing.md) | Contribution guide | Contributors |
-| [Coding Standards](development/coding-standards.md) | Code conventions | Developers |
+## Key Features
 
-### 🚀 Deployment
-| Document | Description | Audience |
-|----------|-------------|----------|
-| [Production](deployment/production.md) | Production setup | DevOps |
-| [Docker](deployment/docker.md) | Containerization | DevOps |
-| [Kubernetes](deployment/kubernetes.md) | K8s deployment | DevOps |
-| [Monitoring](deployment/monitoring.md) | Observability | DevOps |
-| [Scaling](deployment/scaling.md) | Performance scaling | DevOps |
+### 1. Email Processing
+- **Email Parsing**: Extract structured data from .eml files
+- **Attachment Processing**: Support for PDF, Word, Excel, PowerPoint, images
+- **Entity Extraction**: Identify entities in content and attachments
+- **Relationship Mapping**: Connect entities through communication events
 
-### 🔧 Operations
-| Document | Description | Audience |
-|----------|-------------|----------|
-| [Troubleshooting](operations/troubleshooting.md) | Common issues | All |
-| [Performance](operations/performance.md) | Optimization | DevOps |
-| [Backup & Recovery](operations/backup.md) | Data protection | DevOps |
-| [Monitoring](operations/monitoring.md) | Health checks | DevOps |
-| [Maintenance](operations/maintenance.md) | System maintenance | DevOps |
+### 2. Ontology-Driven Reasoning
+- **Dynamic Reasoning**: Execute algorithms defined in ontologies
+- **Multi-Domain Support**: Financial, CRM, and procurement reasoning
+- **API Integration**: RESTful endpoints for reasoning execution
 
-### 👥 User Guides
-| Document | Description | Audience |
-|----------|-------------|----------|
-| [User Guide](user-guide/README.md) | Platform usage | Business Users |
-| [Financial Extension](user-guide/financial-extension.md) | Deal tracking | Financial Teams |
-| [Integrations](user-guide/integrations.md) | External systems | Business Users |
-| [Admin Guide](user-guide/admin-guide.md) | Administration | Administrators |
+### 3. Knowledge Graph Management
+- **Neo4j Integration**: Graph database for relationship storage
+- **Vector Search**: Similarity search capabilities
+- **Data Enrichment**: External data integration
 
-## 🎯 By Role Documentation Paths
+### 4. Chat Interface
+- **Natural Language Queries**: Conversational interface
+- **Context Awareness**: Maintain conversation context
 
-### 🚀 New Developer Onboarding
-1. **[Quick Start](getting-started/README.md)** - Get the platform running
-2. **[Architecture Overview](architecture/overview.md)** - Understand the design
-3. **[TDD Approach](development/tdd-approach.md)** - Learn testing methodology
-4. **[Contributing Guide](development/contributing.md)** - Start contributing
-5. **[Extension Development](development/extension-guide.md)** - Build extensions
+## Quick Start
 
-### 🏗️ Solution Architect Journey
-1. **[System Architecture](architecture/overview.md)** - Complete system design
-2. **[Extension System](architecture/extensions.md)** - Plugin architecture
-3. **[Security Architecture](architecture/security.md)** - Security design
-4. **[Scaling Strategy](deployment/scaling.md)** - Performance scaling
-5. **[Design Decisions](architecture/decisions.md)** - Technical choices
+### Prerequisites
+- Node.js 18+
+- Neo4j Database
+- Python 3.8+ (for NLP services)
 
-### 🚀 DevOps Engineer Path
-1. **[Production Deployment](deployment/production.md)** - Deploy to production
-2. **[Docker Guide](deployment/docker.md)** - Containerization
-3. **[Monitoring Setup](deployment/monitoring.md)** - Observability
-4. **[Performance Tuning](operations/performance.md)** - Optimization
-5. **[Troubleshooting](operations/troubleshooting.md)** - Issue resolution
+### Installation
 
-### 👥 Business User Journey
-1. **[User Guide](user-guide/README.md)** - Platform basics
-2. **[Financial Features](user-guide/financial-extension.md)** - Deal tracking
-3. **[Integration Setup](user-guide/integrations.md)** - External systems
-4. **[Admin Functions](user-guide/admin-guide.md)** - Administration
+```bash
+# Clone and install
+git clone <repository-url>
+cd dashboard-killer-graph-new
+npm install
 
-## 📊 Visual Documentation
+# Configure environment
+cp config/environment.example.js config/environment.js
+# Edit config/environment.js
 
-### Architecture Diagrams
-- **[System Overview](diagrams/system-overview.md)** - High-level architecture
-- **[Module Dependencies](diagrams/module-dependencies.md)** - Component relationships
-- **[Data Flow](diagrams/data-flow.md)** - Request/response flow
-- **[Extension Architecture](diagrams/extension-architecture.md)** - Plugin system
+# Start Neo4j
+docker-compose -f docker-compose.neo4j.yml up -d
 
-### Process Flows
-- **[Development Workflow](diagrams/development-workflow.md)** - TDD process
-- **[Deployment Pipeline](diagrams/deployment-pipeline.md)** - CI/CD flow
-- **[Extension Loading](diagrams/extension-loading.md)** - Plugin lifecycle
-- **[User Journeys](diagrams/user-journeys.md)** - User workflows
+# Start application
+npm run dev
+```
 
-## 🔍 Search & Discovery
+### Quick Start Commands
 
-### By Technology
-- **Neo4j**: [Database Guide](architecture/database.md), [Troubleshooting](operations/troubleshooting.md#database-issues)
-- **TypeScript**: [Coding Standards](development/coding-standards.md), [Type Definitions](development/types.md)
-- **React**: [UI Components](development/ui-components.md), [Extension UI](development/extension-guide.md#ui-development)
-- **Docker**: [Docker Guide](deployment/docker.md), [Development Setup](getting-started/development.md)
-- **Jest**: [TDD Approach](development/tdd-approach.md), [Testing Utilities](development/testing-utilities.md)
+```bash
+# Initialize database
+npm run db:init
 
-### By Feature
-- **Contact Management**: [CRM Core](architecture/overview.md#crm), [User Guide](user-guide/README.md)
-- **Deal Tracking**: [Financial Extension](architecture/extensions.md), [User Guide](user-guide/financial-extension.md)
-- **Extension System**: [Extension Architecture](architecture/extensions.md), [Development Guide](development/extension-guide.md)
-- **API Integration**: [API Reference](development/api-reference.md), [Integration Guide](user-guide/integrations.md)
+# Process test emails
+npm run demo:email-ingestion
 
-### By Problem
-- **Performance Issues**: [Performance Guide](operations/performance.md), [Troubleshooting](operations/troubleshooting.md#performance-issues)
-- **Deployment Problems**: [Deployment Guide](deployment/production.md), [Docker Troubleshooting](operations/troubleshooting.md#docker-issues)
-- **Test Failures**: [TDD Guide](development/tdd-approach.md), [Testing Troubleshooting](operations/troubleshooting.md#testing-issues)
-- **Extension Development**: [Extension Guide](development/extension-guide.md), [Architecture](architecture/extensions.md)
+# Test reasoning
+npm run demo:reasoning
 
-## 📈 Documentation Health
+# Start chat interface
+npm run chat:dev
+```
 
-### Coverage Status
-- ✅ **Architecture**: Complete (100%)
-- ✅ **Getting Started**: Complete (100%)
-- 🔄 **Development**: In Progress (80%)
-- 🔄 **Operations**: In Progress (70%)
-- 📋 **User Guides**: Planned (40%)
+## Development
 
-### Recent Updates
-- **2024-01-16**: **ROOT CLEANUP COMPLETE** - Moved all complex markdown files to organized docs structure
-- **2024-01-15**: Added comprehensive troubleshooting guide and role-based navigation
-- **2024-01-14**: Created professional README.md and complete documentation structure
-- **2024-01-13**: Consolidated project history and development roadmap
+### Project Structure
 
-📋 **Cleanup Details**: [Root Directory Cleanup Summary](cleanup-summary.md)
+```
+├── src/                    # Source code
+│   ├── platform/           # Core platform services
+│   ├── ontologies/         # Domain ontologies
+│   ├── ingestion/          # Data ingestion
+│   ├── shared/             # Shared utilities
+│   └── types/              # TypeScript types
+├── scripts/                # Utility scripts
+├── test-emails/            # Test data
+├── docs/                   # Documentation
+└── config/                 # Configuration files
+```
 
-## 🤝 Contributing to Documentation
+### Testing
 
-### How to Help
-1. **Report Issues**: Found outdated or incorrect information? [Create an issue](https://github.com/your-org/dashboard-killer-graph/issues)
-2. **Suggest Improvements**: Have ideas for better documentation? [Start a discussion](https://github.com/your-org/dashboard-killer-graph/discussions)
-3. **Submit Pull Requests**: Follow the [contribution guide](development/contributing.md) to submit changes.
+```bash
+# Run all tests
+npm test
 
-### Documentation Standards
-- **Clarity**: Write for your audience's skill level
-- **Completeness**: Include all necessary information
-- **Currency**: Keep documentation up-to-date with code changes
-- **Consistency**: Follow our [style guide](development/documentation-style-guide.md)
+# Run specific tests
+npm test -- --testPathPattern=email
+npm test -- --testPathPattern=reasoning
 
-## 📞 Support
+# Run with coverage
+npm run test:coverage
+```
 
-### Need Help?
-- **📖 Browse Documentation**: Use the navigation above
-- **🔍 Search**: Use Ctrl+F to find specific topics
-- **🐛 Report Issues**: [GitHub Issues](https://github.com/your-org/dashboard-killer-graph/issues)
-- **💬 Ask Questions**: [GitHub Discussions](https://github.com/your-org/dashboard-killer-graph/discussions)
+### Code Standards
+- **TypeScript**: Strict type checking
+- **ESLint**: Code quality
+- **Prettier**: Code formatting
+- **Conventional Commits**: Standardized commits
 
-### Documentation Feedback
-Help us improve! Please rate our documentation and suggest improvements through our [feedback form](https://github.com/your-org/dashboard-killer-graph/discussions/new?category=documentation).
+## API Reference
 
----
+### Email Processing
 
-**🎉 Happy Building with the Extensible CRM Platform!** 
+```typescript
+POST /api/email/process
+{
+  "filePath": "/path/to/email.eml"
+}
+
+// Response
+{
+  "success": true,
+  "email": { /* parsed email data */ },
+  "entities": [ /* extracted entities */ ],
+  "attachmentProcessing": { /* attachment results */ }
+}
+```
+
+### Reasoning
+
+```typescript
+POST /api/reasoning/execute
+{
+  "ontology": "financial",
+  "algorithm": "identify_investment_opportunities"
+}
+```
+
+### Chat Interface
+
+```typescript
+POST /api/chat/message
+{
+  "message": "Show me all investment opportunities",
+  "context": { /* conversation context */ }
+}
+```
+
+## Configuration
+
+### Environment Variables
+
+```bash
+# Database
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=password
+
+# Services
+NLP_SERVICE_URL=http://localhost:8000
+ANALYSIS_SERVICE_URL=http://localhost:8001
+
+# Logging
+LOG_LEVEL=info
+```
+
+### Ontology Configuration
+
+```json
+{
+  "name": "financial",
+  "entities": [
+    {
+      "name": "Company",
+      "properties": ["name", "ticker", "industry"],
+      "relationships": ["INVESTS_IN", "COMPETES_WITH"]
+    }
+  ],
+  "reasoning": {
+    "algorithms": [
+      {
+        "name": "identify_investment_opportunities",
+        "cypher": "MATCH (c:Company) WHERE c.valuation < c.peers RETURN c"
+      }
+    ]
+  }
+}
+```
+
+## Deployment
+
+### Docker Deployment
+
+```bash
+# Build and run
+docker build -t knowledge-graph-dashboard .
+docker-compose up -d
+```
+
+### Production Considerations
+- **Database**: Use Neo4j Enterprise
+- **Caching**: Implement Redis
+- **Monitoring**: Add application monitoring
+- **Security**: Configure authentication
+- **Backup**: Set up database backups
+
+## Contributing
+
+### Development Workflow
+
+1. **Create Feature Branch**: `git checkout -b feature/new-feature`
+2. **Write Tests First**: Follow TDD principles
+3. **Implement Feature**: Write production code
+4. **Run Tests**: Ensure all tests pass
+5. **Update Documentation**: Keep docs current
+6. **Submit Pull Request**: Include tests and documentation
+
+### Code Standards
+- **TypeScript**: Use strict typing
+- **Testing**: 100% test coverage for new features
+- **Documentation**: Update relevant docs
+- **Commits**: Use conventional commit format
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Neo4j Connection**: Check database is running
+2. **Python Services**: Ensure NLP services are running
+3. **File Permissions**: Check file access for email processing
+4. **Memory Issues**: Monitor memory usage for large files
+
+### Debug Mode
+
+```bash
+LOG_LEVEL=debug npm run dev
+```
+
+## Roadmap
+
+### Planned Features
+- **Advanced NLP**: Better entity extraction
+- **Real-time Processing**: Stream processing
+- **Advanced Reasoning**: More sophisticated algorithms
+- **Visualization**: Interactive graph visualization
+- **Mobile Support**: Mobile-optimized interface
+
+## Support
+
+- **Documentation**: Check this documentation first
+- **Issues**: Create GitHub issues for bugs
+- **Discussions**: Use GitHub discussions for questions
+- **Contributing**: See CONTRIBUTING.md for guidelines 

@@ -12,7 +12,13 @@
       "description": "The awarded contract resulting from a procurement procedure. Based on ePO."
     },
     "Tender": {
-      "description": "An offer submitted by an Economic Operator (tenderer) in a procurement procedure. Based on ePO."
+      "description": "A formal invitation to bid for a contract",
+      "properties": {
+        "title": { "type": "string", "description": "Tender title" },
+        "value": { "type": "number", "description": "Estimated contract value" },
+        "deadline": { "type": "date", "description": "Submission deadline" },
+        "category": { "type": "string", "description": "Procurement category" }
+      }
     },
     "ProcuringEntity": {
       "description": "The organization conducting the procurement procedure. Based on ePO.",
@@ -23,12 +29,12 @@
       "parent": "Organization"
     },
     "Lot": {
-      "description": "One of the parts into which a procurement procedure is divided.",
+      "description": "A subdivision of a tender",
       "properties": {
-        "id": { "type": "string", "isId": true, "description": "Unique identifier for the lot." },
-        "title": { "type": "string", "description": "Official title of the lot." },
-        "description": { "type": "string", "description": "A summary of the lot." },
-        "status": { "type": "string", "description": "Current status of the lot (e.g., open, awarded)." }
+        "name": { "type": "string", "description": "Lot name" },
+        "description": { "type": "string", "description": "Lot description" },
+        "value": { "type": "number", "description": "Lot value" },
+        "category": { "type": "string", "description": "Lot category" }
       }
     },
     "Criterion": {
@@ -39,6 +45,14 @@
         "description": { "type": "string", "description": "A detailed description of the criterion." },
         "type": { "type": "string", "description": "The type of criterion (e.g., Award, Selection, Exclusion)." },
         "weight": { "type": "number", "description": "The weight of the criterion in the evaluation process, if applicable." }
+      }
+    },
+    "Supplier": {
+      "description": "A company that can bid on tenders",
+      "properties": {
+        "name": { "type": "string", "description": "Supplier name" },
+        "specialization": { "type": "string", "description": "Main specialization" },
+        "size": { "type": "string", "description": "Company size" }
       }
     }
   },
@@ -72,6 +86,45 @@
       "domain": ["ProcurementProcedure", "Lot"],
       "range": "Criterion",
       "description": "Links a procurement procedure or a lot to its evaluation criteria."
+    },
+    "CONTAINS": {
+      "domain": "Tender",
+      "range": "Lot",
+      "description": "Tender contains lots"
+    },
+    "BIDS_ON": {
+      "domain": "Supplier",
+      "range": "Lot",
+      "description": "Supplier bids on lot"
+    }
+  },
+  "reasoning": {
+    "algorithms": {
+      "lot_similarity": {
+        "name": "lot_similarity",
+        "description": "Calculate similarity between lots based on category and value",
+        "entityType": "Lot",
+        "factors": ["category", "value"],
+        "weights": [0.6, 0.4],
+        "threshold": 0.6,
+        "relationshipType": "LOT_SIMILARITY"
+      },
+      "supplier_matching": {
+        "name": "supplier_matching",
+        "description": "Match suppliers to lots based on specialization",
+        "entityType": "Supplier",
+        "pattern": "e.specialization = lot.category",
+        "patternName": "specialization_match",
+        "relationshipType": "MATCHES_SPECIALIZATION"
+      },
+      "tender_risk": {
+        "name": "risk_assessment",
+        "description": "Assess tender risk based on deadline and value",
+        "entityType": "Tender",
+        "factors": ["deadline_proximity", "value_complexity"],
+        "weights": [0.4, 0.6],
+        "threshold": 0.5
+      }
     }
   }
 } 

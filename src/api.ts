@@ -8,6 +8,7 @@ import express from 'express';
 import cors from 'cors';
 import { container } from 'tsyringe';
 import { ChatService } from '@platform/chat/application/services/chat.service';
+import { ReasoningController } from '@platform/reasoning/reasoning.controller';
 import { bootstrap } from './bootstrap';
 import { User } from '@platform/security/domain/user';
 import { Role } from '@platform/security/domain/role';
@@ -29,10 +30,48 @@ export function createApp(): express.Express {
   bootstrap();
 
   const chatService = container.resolve(ChatService);
+  const reasoningController = container.resolve(ReasoningController);
   const apiRouter = express.Router();
 
   // Mount the chat router
   apiRouter.use('/chat', createChatRouter(chatService));
+
+  // Reasoning endpoints
+  apiRouter.post('/reasoning/execute-all', async (req, res) => {
+    try {
+      const result = await reasoningController.executeAllReasoning();
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: `Error executing reasoning: ${error instanceof Error ? error.message : 'Unknown error'}` 
+      });
+    }
+  });
+
+  apiRouter.get('/reasoning/algorithms', async (req, res) => {
+    try {
+      const result = await reasoningController.getReasoningAlgorithms();
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: `Error getting algorithms: ${error instanceof Error ? error.message : 'Unknown error'}` 
+      });
+    }
+  });
+
+  apiRouter.post('/reasoning/execute/:ontology', async (req, res) => {
+    try {
+      const result = await reasoningController.executeOntologyReasoning(req.params.ontology);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: `Error executing ontology reasoning: ${error instanceof Error ? error.message : 'Unknown error'}` 
+      });
+    }
+  });
 
   // Example: Health check endpoint
   apiRouter.get('/health', (req, res) => {

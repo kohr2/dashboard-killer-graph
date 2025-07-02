@@ -52,32 +52,8 @@ const {
   ListToolsRequestSchema,
 } = require('@modelcontextprotocol/sdk/types.js');
 
-// Since we are in a pure JS file, we manually register dependencies
-const { Neo4jConnection } = require('@platform/database/neo4j-connection');
-const { OntologyService } = require('@platform/ontology/ontology.service');
-const { QueryTranslator } = require('@platform/chat/application/services/query-translator.service');
-const { ChatService } = require('@platform/chat/application/services/chat.service');
-const { AccessControlService } = require('@platform/security/application/services/access-control.service');
-
-// --- Dependency Injection Setup ---
-// We no longer get the instance manually. We let tsyringe manage the singleton.
-container.registerSingleton('Neo4jConnection', Neo4jConnection);
-container.register("OntologyService", { useClass: OntologyService });
-container.register("AccessControlService", { useClass: AccessControlService });
-
-// Register OpenAI with the API key
-const openAIKey = process.env.OPENAI_API_KEY;
-if (!openAIKey) {
-  process.stderr.write('⚠️ WARNING: OPENAI_API_KEY is not set. Chat functionality will be limited.\n');
-}
-const OpenAI = require('openai');
-container.register('OpenAI', {
-  useValue: new OpenAI({ apiKey: openAIKey }),
-});
-
-container.register("QueryTranslator", { useClass: QueryTranslator });
-container.register("ChatService", { useClass: ChatService });
-// ---------------------------------
+// Import the bootstrap function to initialize all services properly
+const { bootstrap } = require('../../bootstrap');
 
 // A mock user for the MCP server context, conforming to the User and Role interfaces.
 const mcpUser = {
@@ -91,37 +67,39 @@ const mcpUser = {
   ],
 };
 
-
 // The Server implementation
 async function main() {
-  // Re-enable Neo4j connection
-  const connection = container.resolve(Neo4jConnection);
-  await connection.connect();
-
-  // Load ontologies
-  const { registerAllOntologies } = require('../../register-ontologies');
-  registerAllOntologies();
-
-  // Now that the connection is live, resolve other services
-  const ontologyService = container.resolve(OntologyService);
-  
-  const mcpServer = new Server(
-    {
-      name: 'llm-orchestrator-platform',
-      version: '1.1.0',
-    },
-    {
-      capabilities: {
-        tools: {},
+  try {
+    // Initialize all services using the existing bootstrap system
+    bootstrap();
+    
+    // Get the services we need from the container
+    const { OntologyService } = require('@platform/ontology/ontology.service');
+    const { ChatService } = require('@platform/chat/application/services/chat.service');
+    const { Neo4jConnection } = require('@platform/database/neo4j-connection');
+    
+    const ontologyService = container.resolve(OntologyService);
+    const chatService = container.resolve(ChatService);
+    const neo4jConnection = container.resolve(Neo4jConnection);
+    await neo4jConnection.connect();
+    
+    const mcpServer = new Server(
+      {
+        name: 'llm-orchestrator-platform',
+        version: '1.1.0',
       },
-    }
-  );
+      {
+        capabilities: {
+          tools: {},
+        },
+      }
+    );
 
-  // Build the tool description with the live schema
-  const schemaDescription = ontologyService.getSchemaRepresentation();
-  const queryTool = {
-    name: 'queryGraph',
-    description: `Processes a natural language query against the enterprise knowledge graph.
+    // Build the tool description with the live schema
+    const schemaDescription = ontologyService.getSchemaRepresentation();
+    const queryTool = {
+      name: 'queryGraph',
+      description: `Processes a natural language query against the enterprise knowledge graph.
 The query will be translated into a Cypher query and executed.
 The available graph schema is as follows, you can query for any of these entities and their relationships:
 ---
@@ -131,49 +109,52 @@ Examples:
 - "Show me all deals for the company 'BlueWave'"
 - "Find contacts related to the deal 'Project Alpha'"
 - "List companies in the technology sector"`,
-    inputSchema: {
-      type: 'object',
-      properties: {
-        query: {
-          type: 'string',
-          description: 'The natural language query to execute.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          query: {
+            type: 'string',
+            description: 'The natural language query to execute.',
+          },
         },
+        required: ['query'],
       },
-      required: ['query'],
-    },
-  };
+    };
 
-  mcpServer.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools: [queryTool],
-  }));
+    mcpServer.setRequestHandler(ListToolsRequestSchema, async () => ({
+      tools: [queryTool],
+    }));
 
-  mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
-    if (request.params.name === 'queryGraph') {
-      const query = request.params.arguments?.query;
-      if (typeof query !== 'string') {
-        throw new Error("The 'query' parameter must be a string.");
+    mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
+      if (request.params.name === 'queryGraph') {
+        const query = request.params.arguments?.query;
+        if (typeof query !== 'string') {
+          throw new Error("The 'query' parameter must be a string.");
+        }
+
+        try {
+          // Use the chat service to process queries (reuses all existing logic)
+          const responseText = await chatService.handleQuery(mcpUser, query);
+          return {
+            content: [{ type: 'text', text: responseText }],
+          };
+        } catch (error) {
+          process.stderr.write(`Error handling query: ${error.stack}\n`);
+          return {
+            content: [{ type: 'text', text: `An error occurred: ${error.message}` }],
+          };
+        }
       }
 
-      try {
-        // Use the full chat service to process queries
-        const chatService = container.resolve(ChatService);
-        const responseText = await chatService.handleQuery(mcpUser, query);
-        return {
-          content: [{ type: 'text', text: responseText }],
-        };
-      } catch (error) {
-        process.stderr.write(`Error handling query: ${error.stack}\n`);
-        return {
-          content: [{ type: 'text', text: `An error occurred: ${error.message}` }],
-        };
-      }
-    }
+      throw new Error(`Unknown tool: ${request.params.name}`);
+    });
 
-    throw new Error(`Unknown tool: ${request.params.name}`);
-  });
-
-  const transport = new StdioServerTransport();
-  await mcpServer.connect(transport);
+    const transport = new StdioServerTransport();
+    await mcpServer.connect(transport);
+  } catch (error) {
+    process.stderr.write(`Failed to start server: ${error.stack}\n`);
+    process.exit(1);
+  }
 }
 
 main().catch((error) => {

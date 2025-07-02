@@ -1,13 +1,13 @@
 /**
- * Attachment Processor Tests
- * Tests for processing email attachments and extracting content/entities
+ * Tests for AttachmentProcessingService
+ * Tests attachment processing functionality including text extraction and entity recognition
  */
 
-import { AttachmentProcessor, AttachmentProcessingResult } from '../attachment-processor';
-import { EmailAttachment } from '../../../types/email.interface';
+import { AttachmentProcessingService, AttachmentProcessingResult } from '@platform/processing/attachment-processing.service';
+import { EmailAttachment } from '@platform/processing/email-parsing.service';
 import { logger } from '@shared/utils/logger';
 
-// Mock the logger to avoid console output during tests
+// Mock the logger
 jest.mock('@shared/utils/logger', () => ({
   logger: {
     info: jest.fn(),
@@ -17,11 +17,11 @@ jest.mock('@shared/utils/logger', () => ({
   },
 }));
 
-describe('AttachmentProcessor', () => {
-  let attachmentProcessor: AttachmentProcessor;
+describe('AttachmentProcessingService', () => {
+  let attachmentProcessor: AttachmentProcessingService;
 
   beforeEach(() => {
-    attachmentProcessor = new AttachmentProcessor();
+    attachmentProcessor = new AttachmentProcessingService();
     jest.clearAllMocks();
   });
 
