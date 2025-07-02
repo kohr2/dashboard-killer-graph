@@ -1,83 +1,15 @@
 import { OntologyPlugin } from '@platform/ontology/ontology.plugin';
+import * as fs from 'fs';
+import * as path from 'path';
 
-const procurementEntities = {
-  "Organization": {
-    "description": "A collection of people, a company, an institution, or other social, commercial or political structure."
-  },
-  "ProcurementProcedure": {
-    "description": "A series of activities leading to the conclusion of a public contract. Based on ePO."
-  },
-  "Contract": {
-    "description": "The awarded contract resulting from a procurement procedure. Based on ePO."
-  },
-  "Tender": {
-    "description": "An offer submitted by an Economic Operator (tenderer) in a procurement procedure. Based on ePO."
-  },
-  "ProcuringEntity": {
-    "description": "The organization conducting the procurement procedure. Based on ePO.",
-    "parent": "Organization"
-  },
-  "EconomicOperator": {
-    "description": "An organisation that can be a tenderer or sub-contractor. Based on ePO.",
-    "parent": "Organization"
-  },
-  "Lot": {
-    "description": "One of the parts into which a procurement procedure is divided.",
-    "properties": {
-      "id": { "type": "string", "isId": true, "description": "Unique identifier for the lot." },
-      "title": { "type": "string", "description": "Official title of the lot." },
-      "description": { "type": "string", "description": "A summary of the lot." },
-      "status": { "type": "string", "description": "Current status of the lot (e.g., open, awarded)." }
-    }
-  },
-  "Criterion": {
-    "description": "A condition used for evaluation in a procurement procedure (e.g., award, selection, exclusion).",
-    "properties": {
-      "id": { "type": "string", "isId": true, "description": "Unique identifier for the criterion." },
-      "name": { "type": "string", "description": "The name or title of the criterion." },
-      "description": { "type": "string", "description": "A detailed description of the criterion." },
-      "type": { "type": "string", "description": "The type of criterion (e.g., Award, Selection, Exclusion)." },
-      "weight": { "type": "number", "description": "The weight of the criterion in the evaluation process, if applicable." }
-    }
-  }
-};
-
-const procurementRelationships = {
-  "HAS_TENDER": {
-    "domain": "ProcurementProcedure",
-    "range": "Tender",
-    "description": "Links a procurement procedure to the tenders submitted for it."
-  },
-  "SUBMITTED_BY": {
-    "domain": "Tender",
-    "range": "EconomicOperator",
-    "description": "Links a tender to the economic operator that submitted it."
-  },
-  "MANAGED_BY": {
-    "domain": "ProcurementProcedure",
-    "range": "ProcuringEntity",
-    "description": "Links a procurement procedure to the entity managing it."
-  },
-  "HAS_LOT": {
-    "domain": "ProcurementProcedure",
-    "range": "Lot",
-    "description": "Links a procurement procedure to its constituent lots."
-  },
-  "APPLIES_TO_LOT": {
-    "domain": "Tender",
-    "range": "Lot",
-    "description": "Links a tender to a specific lot it applies to."
-  },
-  "HAS_CRITERION": {
-    "domain": ["ProcurementProcedure", "Lot"],
-    "range": "Criterion",
-    "description": "Links a procurement procedure or a lot to its evaluation criteria."
-  }
-};
+// Load ontology data from JSON file
+const ontologyPath = path.join(__dirname, 'ontology.json');
+const ontologyData = JSON.parse(fs.readFileSync(ontologyPath, 'utf8'));
 
 export const procurementPlugin: OntologyPlugin = {
   name: 'procurement',
-  entitySchemas: procurementEntities,
-  relationshipSchemas: procurementRelationships,
+  entitySchemas: ontologyData.entities,
+  relationshipSchemas: ontologyData.relationships,
+  reasoning: ontologyData.reasoning,
   // No service providers for now
 }; 
