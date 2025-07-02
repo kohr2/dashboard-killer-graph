@@ -8,6 +8,12 @@
     "../src/**/*.ts",
     "../ontologies/**/*.plugin.ts",
     "../ontologies/**/index.ts",
+    "../ontologies/**/application/**/*.ts",
+    "../ontologies/**/domain/**/*.ts",
+    "../ontologies/**/infrastructure/**/*.ts",
+    "../ontologies/**/interface/**/*.ts",
+    "../ontologies/**/repositories/**/*.ts",
+    "../ontologies/**/services/**/*.ts",
     "../ontologies/**/*.json",
     "../build/**/*.ts",
     "../src/register-ontologies.ts"
