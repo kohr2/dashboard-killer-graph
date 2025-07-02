@@ -101,4 +101,12 @@ config/*.local.js
 .venv/
 
 # Local cache
-cache/ 
+cache/
+
+# Ontology generated artefacts
+ontologies/**/generated/
+ontologies/**/dist/
+ontologies/**/build/
+
+# Ontology seed fixture archives
+ontologies/**/seed/*.gz
