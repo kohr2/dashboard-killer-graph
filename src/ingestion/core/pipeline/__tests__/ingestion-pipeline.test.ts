@@ -6,6 +6,37 @@
 import { IngestionPipeline } from '../../../../../src/ingestion/core/pipeline/ingestion-pipeline';
 import { DataSource, SourceType } from '../../../../../src/ingestion/core/types/data-source.interface';
 import { ProcessingResult } from '../../../../../src/ingestion/core/types/pipeline.interface';
+import 'reflect-metadata';
+import { container } from 'tsyringe';
+import { OntologyService } from '@platform/ontology/ontology.service';
+import { OntologyDrivenAdvancedGraphService } from '@platform/processing/ontology-driven-advanced-graph.service';
+import { EntityExtractor } from '../../../intelligence/nlp/entity-extractor';
+
+// Mock dependencies
+jest.mock('@platform/ontology/ontology.service');
+jest.mock('@platform/processing/ontology-driven-advanced-graph.service');
+jest.mock('../../../intelligence/nlp/entity-extractor');
+
+const mockOntologyService = {
+  getAllOntologies: jest.fn(),
+  getEntitySchema: jest.fn()
+};
+
+const mockAdvancedGraphService = {
+  applyOntologyConfiguration: jest.fn()
+};
+
+const mockEntityExtractor = {
+  extract: jest.fn()
+};
+
+// Mock container resolution
+jest.spyOn(container, 'resolve').mockImplementation((token: any) => {
+  if (token === OntologyService) return mockOntologyService;
+  if (token === OntologyDrivenAdvancedGraphService) return mockAdvancedGraphService;
+  if (token === 'EntityExtractor') return mockEntityExtractor;
+  return {};
+});
 
 // Mock data source for testing
 class MockDataSource implements DataSource {
@@ -55,7 +86,43 @@ describe('IngestionPipeline', () => {
   let mockSource: MockDataSource;
 
   beforeEach(() => {
-    pipeline = new IngestionPipeline();
+    jest.clearAllMocks();
+    
+    // Reset entity extraction mock to return empty results by default
+    mockEntityExtractor.extract.mockResolvedValue({
+      entities: [],
+      relationships: []
+    });
+    
+    // Mock ontologies with different entity types
+    mockOntologyService.getAllOntologies.mockReturnValue([
+      {
+        name: 'crm',
+        entities: {
+          Contact: { description: 'A person contact' },
+          Organization: { description: 'A company or organization' },
+          Email: { description: 'Email communication' }
+        }
+      },
+      {
+        name: 'financial',
+        entities: {
+          Deal: { description: 'A financial transaction' },
+          Investor: { description: 'An investment entity' },
+          MonetaryAmount: { description: 'A monetary value' }
+        }
+      },
+      {
+        name: 'procurement',
+        entities: {
+          Tender: { description: 'A procurement tender' },
+          Lot: { description: 'A tender lot' },
+          Bid: { description: 'A bid submission' }
+        }
+      }
+    ]);
+
+    pipeline = new IngestionPipeline(mockEntityExtractor, mockAdvancedGraphService, mockOntologyService);
     mockSource = new MockDataSource();
   });
 
@@ -205,6 +272,201 @@ describe('IngestionPipeline', () => {
       
       // If processing succeeded, storage should have been attempted
       expect(result.itemsSucceeded).toBeGreaterThan(0);
+    });
+  });
+
+  describe('advanced relationships integration', () => {
+    it('should call OntologyDrivenAdvancedGraphService after ingestion', async () => {
+      // Arrange: mock the advanced relationship service
+      const mockApplyOntologyConfiguration = jest.fn().mockResolvedValue(undefined);
+      const mockOntologyService = {
+        applyOntologyConfiguration: mockApplyOntologyConfiguration
+      };
+      // Inject the mock into the pipeline
+      const pipelineWithAdvanced = new IngestionPipeline(mockEntityExtractor, mockOntologyService);
+      const source = new MockDataSource();
+
+      // Act
+      await pipelineWithAdvanced.process(source);
+
+      // Assert: should have called the advanced relationship service
+      expect(mockApplyOntologyConfiguration).toHaveBeenCalled();
+    });
+  });
+
+  describe('ontology-agnostic processing', () => {
+    it('should detect CRM ontology when Contact and Organization entities are found', async () => {
+      // Mock entity extraction to return CRM entities
+      mockEntityExtractor.extract.mockResolvedValue({
+        entities: [
+          { type: 'Contact', name: 'John Doe', confidence: 0.9 },
+          { type: 'Organization', name: 'Acme Corp', confidence: 0.8 }
+        ],
+        relationships: []
+      });
+
+      const result = await pipeline.process(mockSource);
+
+      expect(result.success).toBe(true);
+      expect(mockAdvancedGraphService.applyOntologyConfiguration).toHaveBeenCalledWith('crm');
+    });
+
+    it('should detect Financial ontology when Deal and Investor entities are found', async () => {
+      // Mock entity extraction to return Financial entities
+      mockEntityExtractor.extract.mockResolvedValue({
+        entities: [
+          { type: 'Deal', name: 'Series A Round', confidence: 0.9 },
+          { type: 'Investor', name: 'VC Fund', confidence: 0.8 },
+          { type: 'MonetaryAmount', name: '$5M', confidence: 0.95 }
+        ],
+        relationships: []
+      });
+
+      const result = await pipeline.process(mockSource);
+
+      expect(result.success).toBe(true);
+      expect(mockAdvancedGraphService.applyOntologyConfiguration).toHaveBeenCalledWith('financial');
+    });
+
+    it('should detect multiple ontologies when entities from different domains are found', async () => {
+      // Mock entity extraction to return mixed entities
+      mockEntityExtractor.extract.mockResolvedValue({
+        entities: [
+          { type: 'Contact', name: 'John Doe', confidence: 0.9 },
+          { type: 'Deal', name: 'Series A Round', confidence: 0.8 },
+          { type: 'Tender', name: 'IT Services Tender', confidence: 0.7 }
+        ],
+        relationships: []
+      });
+
+      const result = await pipeline.process(mockSource);
+
+      expect(result.success).toBe(true);
+      // Should apply multiple ontologies
+      expect(mockAdvancedGraphService.applyOntologyConfiguration).toHaveBeenCalledWith('crm');
+      expect(mockAdvancedGraphService.applyOntologyConfiguration).toHaveBeenCalledWith('financial');
+      expect(mockAdvancedGraphService.applyOntologyConfiguration).toHaveBeenCalledWith('procurement');
+    });
+
+    it('should use fallback ontology when no specific entities are detected', async () => {
+      // Mock entity extraction to return generic entities
+      mockEntityExtractor.extract.mockResolvedValue({
+        entities: [
+          { type: 'Unknown', name: 'Generic Entity', confidence: 0.5 }
+        ],
+        relationships: []
+      });
+
+      const result = await pipeline.process(mockSource);
+
+      expect(result.success).toBe(true);
+      // Should use default ontology (crm)
+      expect(mockAdvancedGraphService.applyOntologyConfiguration).toHaveBeenCalledWith('crm');
+    });
+
+    it('should prioritize ontologies based on entity confidence and frequency', async () => {
+      // Mock entity extraction with varying confidence levels
+      mockEntityExtractor.extract.mockResolvedValue({
+        entities: [
+          { type: 'Contact', name: 'John Doe', confidence: 0.9 },
+          { type: 'Deal', name: 'Series A', confidence: 0.95 },
+          { type: 'Deal', name: 'Series B', confidence: 0.92 },
+          { type: 'Investor', name: 'VC Fund', confidence: 0.88 }
+        ],
+        relationships: []
+      });
+
+      const result = await pipeline.process(mockSource);
+
+      expect(result.success).toBe(true);
+      // Financial should be prioritized due to higher confidence and frequency
+      expect(mockAdvancedGraphService.applyOntologyConfiguration).toHaveBeenCalledWith('financial');
+      expect(mockAdvancedGraphService.applyOntologyConfiguration).toHaveBeenCalledWith('crm');
+    });
+  });
+
+  describe('content-based ontology selection', () => {
+    it('should analyze content keywords to determine relevant ontologies', async () => {
+      // Mock entity extraction with minimal entities but content analysis
+      mockEntityExtractor.extract.mockResolvedValue({
+        entities: [
+          { type: 'Organization', name: 'Company', confidence: 0.7 }
+        ],
+        relationships: []
+      });
+
+      const mockDataSource = {
+        id: 'test-keywords',
+        type: 'document',
+        connect: jest.fn(),
+        disconnect: jest.fn(),
+        fetch: jest.fn().mockReturnValue([{ 
+          body: 'Investment memorandum for Series A funding round with financial projections and deal terms' 
+        }])
+      };
+
+      const result = await pipeline.process(mockDataSource);
+
+      expect(result.success).toBe(true);
+      // Should detect financial keywords and apply financial ontology
+      expect(mockAdvancedGraphService.applyOntologyConfiguration).toHaveBeenCalledWith('financial');
+    });
+
+    it('should handle source type hints for ontology selection', async () => {
+      // Mock entity extraction
+      mockEntityExtractor.extract.mockResolvedValue({
+        entities: [
+          { type: 'Organization', name: 'Company', confidence: 0.7 }
+        ],
+        relationships: []
+      });
+
+      const mockDataSource = {
+        id: 'test-source-hint',
+        type: 'api',
+        metadata: { 
+          source: 'financial-api',
+          category: 'investment-data'
+        },
+        connect: jest.fn(),
+        disconnect: jest.fn(),
+        fetch: jest.fn().mockReturnValue([{ body: 'Generic company data' }])
+      };
+
+      const result = await pipeline.process(mockDataSource);
+
+      expect(result.success).toBe(true);
+      // Should use source metadata to hint at financial ontology
+      expect(mockAdvancedGraphService.applyOntologyConfiguration).toHaveBeenCalledWith('financial');
+    });
+  });
+
+  describe('configuration and customization', () => {
+    it('should allow custom ontology selection rules', async () => {
+      // Test with custom ontology selection logic
+      const customPipeline = new IngestionPipeline();
+      
+      // Mock custom ontology detection
+      mockEntityExtractor.extract.mockResolvedValue({
+        entities: [
+          { type: 'CustomEntity', name: 'Custom', confidence: 0.8 }
+        ],
+        relationships: []
+      });
+
+      const mockDataSource = {
+        id: 'test-custom',
+        type: 'document',
+        connect: jest.fn(),
+        disconnect: jest.fn(),
+        fetch: jest.fn().mockReturnValue([{ body: 'Custom content' }])
+      };
+
+      const result = await customPipeline.process(mockDataSource);
+
+      expect(result.success).toBe(true);
+      // Should handle custom entities gracefully
+      expect(mockAdvancedGraphService.applyOntologyConfiguration).toHaveBeenCalledWith('crm');
     });
   });
 }); 

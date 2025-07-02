@@ -14,6 +14,7 @@ The Knowledge Graph Dashboard ingests, processes, and analyzes data from various
 - **Knowledge Graph**: Neo4j-based graph database
 - **Chat Interface**: Natural language querying
 - **Vector Search**: Similarity-based entity matching
+- **MCP Server**: Claude Desktop integration for AI-powered queries
 
 ## Quick Start
 
@@ -21,6 +22,7 @@ The Knowledge Graph Dashboard ingests, processes, and analyzes data from various
 - Node.js 18+
 - Docker & Docker Compose
 - Python 3.8+ (for NLP services)
+- Claude Desktop (for MCP integration)
 
 ### Installation
 
@@ -48,6 +50,36 @@ python main.py &
 # Start application
 npm run dev
 ```
+
+### MCP Server Setup (Claude Desktop Integration)
+
+The MCP server enables Claude Desktop to query your knowledge graph directly.
+
+#### 1. Start the MCP Server
+```bash
+# In a separate terminal
+npm run dev:mcp
+```
+
+#### 2. Configure Claude Desktop
+1. Open Claude Desktop
+2. Go to Settings → MCP Servers
+3. Add a new server with these settings:
+   - **Name**: `llm-orchestrator`
+   - **Command**: `node`
+   - **Arguments**: `["/path/to/your/project/src/mcp/servers/mcp-server-simple.js"]`
+   - **Working Directory**: `/path/to/your/project`
+
+#### 3. Test the Integration
+In Claude Desktop, you can now ask questions like:
+- "Show me all deals for the company 'BlueWave'"
+- "Find contacts related to the deal 'Project Alpha'"
+- "List companies in the technology sector"
+
+#### Troubleshooting MCP
+- **Server not found**: Ensure the MCP server is running (`npm run dev:mcp`)
+- **Connection errors**: Check the file paths in Claude Desktop configuration
+- **No response**: Verify Neo4j is running and accessible
 
 ### Quick Demo
 
@@ -89,6 +121,12 @@ npm run chat:dev
                        │ • Algorithms    │
                        │ • API Endpoints │
                        └─────────────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │   MCP Server    │
+                       │ (Claude Desktop)│
+                       └─────────────────┘
 ```
 
 ### Project Structure
@@ -98,6 +136,7 @@ src/
 ├── platform/           # Core services (processing, ontology, reasoning)
 ├── ontologies/         # Domain ontologies (crm, financial, procurement)
 ├── ingestion/          # Data ingestion pipeline
+├── mcp/               # MCP server for Claude Desktop integration
 ├── shared/             # Shared utilities
 └── types/              # TypeScript types
 ```
@@ -112,11 +151,17 @@ src/
    - **Database**: Neo4j connection management
 
 2. **Domain Ontologies** (`src/ontologies/`)
+   - **Core**: Generic entities (Communication, etc.)
    - **CRM**: Customer relationship management
    - **Financial**: Financial domain entities and relationships
    - **Procurement**: Procurement and supply chain
 
-3. **Ingestion Pipeline** (`src/ingestion/`)
+3. **MCP Server** (`src/mcp/`)
+   - **Claude Desktop Integration**: Direct query access
+   - **Query Translation**: Natural language to Cypher queries
+   - **Schema Exposure**: Dynamic schema representation
+
+4. **Ingestion Pipeline** (`src/ingestion/`)
    - **Sources**: Data source adapters (email, documents, APIs)
    - **Core**: Pipeline orchestration
    - **Intelligence**: AI and NLP services
@@ -125,7 +170,7 @@ src/
 
 ### Base URL
 ```
-http://localhost:3000/api
+http://localhost:3001/api
 ```
 
 ### Core Endpoints
@@ -165,6 +210,15 @@ GET /health
 
 Domain-specific ontologies define entities, relationships, and reasoning algorithms.
 
+### Core Ontology
+The core ontology contains generic entities used across all domains:
+- **Communication**: Generic communication entity with properties like `subject`, `content`, `timestamp`
+
+### Domain Ontologies
+- **CRM**: Contact, Organization, Task
+- **Financial**: Company, Deal, Investment, Market
+- **Procurement**: Supplier, Contract, Purchase, Category
+
 ### Ontology Structure
 ```json
 {
@@ -186,19 +240,13 @@ Domain-specific ontologies define entities, relationships, and reasoning algorit
 }
 ```
 
-### Domain Ontologies
-- **CRM**: Contact, Organization, Communication, Task
-- **Financial**: Company, Deal, Investment, Market
-- **Procurement**: Supplier, Contract, Purchase, Category
-
 ## Processing Pipeline
 
 ### Email Processing
 1. **Parsing**: Extract email content and metadata
-2. **Attachment Processing**: Process PDF, Word, Excel, images
-3. **Entity Extraction**: AI-powered entity recognition
-4. **Ontology Mapping**: Map entities to domain ontologies
-5. **Graph Storage**: Store in Neo4j with vector embeddings
+2. **Entity Extraction**: AI-powered entity recognition
+3. **Ontology Mapping**: Map entities to domain ontologies
+4. **Graph Storage**: Store in Neo4j with vector embeddings
 
 ### Entity Types
 - **Company**: Business organizations
@@ -242,6 +290,18 @@ cd python-services/nlp-service
 python main.py &
 ```
 
+#### MCP Server Issues
+```bash
+# Check if MCP server is running
+ps aux | grep mcp-server
+
+# Restart MCP server
+npm run dev:mcp
+
+# Check Claude Desktop configuration
+# Ensure paths are correct and absolute
+```
+
 #### Email Processing
 ```bash
 # Test with known working email
@@ -257,7 +317,7 @@ file test-emails/your-email.eml
 LOG_LEVEL=debug npm run dev
 
 # Check service health
-curl http://localhost:3000/api/health
+curl http://localhost:3001/api/health
 curl http://localhost:8000/health
 ```
 
@@ -291,6 +351,7 @@ npm test -- --testPathPattern=email
 - **Database**: Neo4j (graph database)
 - **NLP**: Python spaCy microservice
 - **Vector Search**: Neo4j vector indexes
+- **MCP**: Model Context Protocol for Claude Desktop
 - **Architecture**: Domain-driven design, hexagonal architecture
 
 ## Roadmap
@@ -301,6 +362,7 @@ npm test -- --testPathPattern=email
 - ✅ Knowledge graph with vector search
 - ✅ Reasoning engine with algorithms
 - ✅ Chat interface for queries
+- ✅ MCP server for Claude Desktop
 
 ### Short Term (v1.1)
 - 🔄 Real-time processing

@@ -9,6 +9,8 @@ import { IngestionPipeline as IPipeline, ProcessingResult, PipelineMetrics, Proc
 import { NormalizedData } from '../types/normalized-data.interface';
 import { logger } from '@shared/utils/logger';
 import type { EntityExtractor, EntityExtraction } from '../../intelligence/entity-extractor.interface';
+import { OntologyDrivenAdvancedGraphService } from '@platform/processing/ontology-driven-advanced-graph.service';
+import { OntologyService } from '@platform/ontology/ontology.service';
 
 @singleton()
 export class IngestionPipeline implements IPipeline {
@@ -18,6 +20,8 @@ export class IngestionPipeline implements IPipeline {
 
   constructor(
     @inject('EntityExtractor') private extractor?: EntityExtractor,
+    private advancedGraphService?: OntologyDrivenAdvancedGraphService,
+    @inject(OntologyService) private ontologyService?: OntologyService,
   ) {
     // Generate unique ID using counter + timestamp for uniqueness
     IngestionPipeline.counter++;
@@ -48,6 +52,7 @@ export class IngestionPipeline implements IPipeline {
       let entitiesCreated = 0;
       let relationshipsCreated = 0;
       const errors: ProcessingError[] = [];
+      const detectedOntologies = new Set<string>();
 
       // Process each item from the source
       try {
@@ -63,7 +68,11 @@ export class IngestionPipeline implements IPipeline {
             entitiesCreated += extraction.entities.length;
             relationshipsCreated += extraction.relationships.length;
             
-            // 3. Store in knowledge graph
+            // 3. Detect ontologies based on extracted entities
+            const itemOntologies = this.detectOntologies(extraction.entities, normalized);
+            itemOntologies.forEach(ontology => detectedOntologies.add(ontology));
+            
+            // 4. Store in knowledge graph
             await this.storeData(normalized, extraction);
             
             itemsSucceeded++;
@@ -89,6 +98,17 @@ export class IngestionPipeline implements IPipeline {
         }
       }
 
+      // 5. Apply advanced relationships for detected ontologies
+      if (this.advancedGraphService && itemsSucceeded > 0) {
+        try {
+          await this.applyAdvancedRelationships(detectedOntologies, source);
+          logger.info(`🔗 Applied advanced relationships for ontologies: ${Array.from(detectedOntologies).join(', ')}`);
+        } catch (error) {
+          logger.warn(`⚠️ Failed to apply advanced relationships for source ${source.id}:`, error);
+          // Don't fail the pipeline if advanced relationships fail
+        }
+      }
+
       // Attempt to disconnect gracefully
       try {
         await source.disconnect();
@@ -111,13 +131,134 @@ export class IngestionPipeline implements IPipeline {
         errors,
         metadata: {
           sourceType: source.type,
-          pipelineId: this.id
+          pipelineId: this.id,
+          detectedOntologies: Array.from(detectedOntologies)
         }
       };
 
     } catch (error) {
       logger.error(`💥 Pipeline failed for source ${source.id}:`, error);
       throw error;
+    }
+  }
+
+  /**
+   * Detect relevant ontologies based on extracted entities and content
+   */
+  private detectOntologies(entities: any[], normalizedData: NormalizedData): string[] {
+    if (!this.ontologyService) {
+      return this.getFallbackOntologies(normalizedData.sourceType);
+    }
+
+    try {
+      const allOntologies = this.ontologyService.getAllOntologies();
+      const detectedOntologies = new Set<string>();
+      
+      // Analyze entities to determine relevant ontologies
+      for (const entity of entities) {
+        const entityType = entity.type || entity.entityType;
+        if (!entityType) continue;
+
+        // Find ontologies that contain this entity type
+        for (const ontology of allOntologies) {
+          if (ontology.entities && ontology.entities[entityType]) {
+            detectedOntologies.add(ontology.name);
+          }
+        }
+      }
+
+      // If no ontologies detected from entities, analyze content
+      if (detectedOntologies.size === 0) {
+        const contentOntologies = this.analyzeContentForOntologies(normalizedData, allOntologies);
+        contentOntologies.forEach(ontology => detectedOntologies.add(ontology));
+      }
+
+      // If still no ontologies detected, use fallback
+      if (detectedOntologies.size === 0) {
+        return this.getFallbackOntologies(normalizedData.sourceType);
+      }
+
+      return Array.from(detectedOntologies);
+    } catch (error) {
+      logger.warn('Failed to detect ontologies, using fallback:', error);
+      return this.getFallbackOntologies(normalizedData.sourceType);
+    }
+  }
+
+  /**
+   * Analyze content for ontology keywords and patterns
+   */
+  private analyzeContentForOntologies(normalizedData: NormalizedData, allOntologies: any[]): string[] {
+    const content = normalizedData.content.body?.toString().toLowerCase() || '';
+    const detectedOntologies = new Set<string>();
+
+    // Define keyword patterns for each ontology
+    const ontologyKeywords: Record<string, string[]> = {
+      'financial': ['deal', 'investment', 'funding', 'series', 'round', 'investor', 'capital', 'valuation', 'revenue', 'profit'],
+      'crm': ['contact', 'customer', 'client', 'lead', 'prospect', 'email', 'phone', 'address', 'company', 'organization'],
+      'procurement': ['tender', 'bid', 'lot', 'contract', 'supplier', 'vendor', 'rfp', 'rfi', 'procurement', 'purchase']
+    };
+
+    // Check content against ontology keywords
+    for (const [ontologyName, keywords] of Object.entries(ontologyKeywords)) {
+      const keywordMatches = keywords.filter(keyword => content.includes(keyword));
+      if (keywordMatches.length > 0) {
+        detectedOntologies.add(ontologyName);
+      }
+    }
+
+    // Check source metadata for hints
+    if (normalizedData.metadata?.source) {
+      const source = normalizedData.metadata.source.toString().toLowerCase();
+      if (source.includes('financial') || source.includes('investment')) {
+        detectedOntologies.add('financial');
+      }
+      if (source.includes('crm') || source.includes('contact')) {
+        detectedOntologies.add('crm');
+      }
+      if (source.includes('procurement') || source.includes('tender')) {
+        detectedOntologies.add('procurement');
+      }
+    }
+
+    return Array.from(detectedOntologies);
+  }
+
+  /**
+   * Get fallback ontologies based on source type
+   */
+  private getFallbackOntologies(sourceType: SourceType): string[] {
+    switch (sourceType) {
+      case 'email':
+        return ['crm']; // Default to CRM for emails
+      case 'document':
+        return ['financial']; // Default to financial for documents
+      case 'api':
+        return ['financial']; // Default to financial for APIs
+      case 'database':
+        return ['financial']; // Default to financial for databases
+      default:
+        return ['crm']; // Fallback to CRM
+    }
+  }
+
+  /**
+   * Apply advanced relationships for detected ontologies
+   */
+  private async applyAdvancedRelationships(detectedOntologies: Set<string>, source: DataSource): Promise<void> {
+    if (!this.advancedGraphService) {
+      return;
+    }
+
+    // Apply ontology configurations for all detected ontologies
+    for (const ontologyName of detectedOntologies) {
+      try {
+        await this.advancedGraphService.applyOntologyConfiguration(ontologyName);
+        logger.debug(`Applied advanced relationships for ontology: ${ontologyName}`);
+      } catch (error) {
+        logger.warn(`Failed to apply advanced relationships for ontology ${ontologyName}:`, error);
+        // Continue with other ontologies even if one fails
+      }
     }
   }
 

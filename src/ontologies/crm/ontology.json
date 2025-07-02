@@ -83,5 +83,49 @@
       "range": "Organization",
       "description": "Indicates that an organization is a subsidiary or division of another."
     }
+  },
+  "reasoning": {
+    "algorithms": {}
+  },
+  "advancedRelationships": {
+    "temporal": {
+      "enabled": false,
+      "patterns": []
+    },
+    "hierarchical": {
+      "enabled": false,
+      "structures": []
+    },
+    "similarity": {
+      "enabled": false,
+      "algorithms": []
+    },
+    "complex": {
+      "enabled": false,
+      "patterns": []
+    },
+    "queries": {
+      "timeline": {
+        "enabled": false,
+        "customQuery": ""
+      },
+      "hierarchy": {
+        "enabled": false,
+        "customQuery": ""
+      },
+      "similarity": {
+        "enabled": false,
+        "customQuery": ""
+      },
+      "complex": {
+        "enabled": false,
+        "customQuery": ""
+      }
+    }
+  },
+  "entityExtraction": {
+    "models": {},
+    "contextRules": {},
+    "enrichment": {}
   }
 } 

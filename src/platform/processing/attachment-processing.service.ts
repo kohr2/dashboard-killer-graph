@@ -3,6 +3,7 @@ import { logger } from '@shared/utils/logger';
 import xlsx from 'node-xlsx';
 import * as officeParser from 'officeparser';
 import { EmailAttachment } from './email-parsing.service';
+import { EnhancedEntityExtractionService, ExtractedEntity } from './enhanced-entity-extraction.service';
 
 export interface ProcessedAttachment {
   filename: string;
@@ -60,6 +61,12 @@ export class AttachmentProcessingService {
     'image/jpg',
     'image/gif',
   ]);
+
+  private enhancedEntityExtraction: EnhancedEntityExtractionService;
+
+  constructor() {
+    this.enhancedEntityExtraction = new EnhancedEntityExtractionService();
+  }
 
   /**
    * Process multiple email attachments
@@ -317,13 +324,57 @@ export class AttachmentProcessingService {
   }
 
   /**
-   * Extract entities from text (placeholder implementation)
+   * Extract entities from text using enhanced entity extraction service
    */
   private async extractEntitiesFromText(text: string, source: string): Promise<ExtractedEntity[]> {
-    // TODO: Implement actual entity extraction using NLP service
-    // For now, return empty array
-    logger.debug(`Entity extraction from text not implemented yet for ${source}`);
-    return [];
+    try {
+      // Determine context based on file type and content
+      const context = this.determineContext(source, text);
+      
+      logger.debug(`Extracting entities from ${source} with context: ${context}`);
+      
+      const entities = await this.enhancedEntityExtraction.extractEntities(text, context);
+      
+      logger.debug(`Extracted ${entities.length} entities from ${source}`);
+      return entities;
+    } catch (error) {
+      logger.error(`Error extracting entities from ${source}:`, error);
+      return [];
+    }
+  }
+
+  /**
+   * Determine the appropriate context for entity extraction based on file type and content
+   */
+  private determineContext(filename: string, text: string): string {
+    const lowerFilename = filename.toLowerCase();
+    const lowerText = text.toLowerCase();
+
+    // Check for financial documents
+    if (lowerFilename.includes('financial') || 
+        lowerFilename.includes('report') || 
+        lowerFilename.includes('statement') ||
+        lowerText.includes('revenue') || 
+        lowerText.includes('profit') || 
+        lowerText.includes('earnings') ||
+        lowerText.includes('$') ||
+        lowerText.includes('million') ||
+        lowerText.includes('billion')) {
+      return 'financial-report';
+    }
+
+    // Check for contracts
+    if (lowerFilename.includes('contract') || 
+        lowerFilename.includes('agreement') || 
+        lowerFilename.includes('terms') ||
+        lowerText.includes('contract') || 
+        lowerText.includes('agreement') || 
+        lowerText.includes('terms and conditions')) {
+      return 'contract';
+    }
+
+    // Default to email context for most documents
+    return 'email';
   }
 
   /**

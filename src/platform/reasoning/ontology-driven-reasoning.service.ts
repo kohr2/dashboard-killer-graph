@@ -39,7 +39,7 @@ export class OntologyDrivenReasoningService {
       const factors = algo.factors.map((f: string, i: number) =>
         `CASE WHEN e1.${f} = e2.${f} THEN ${algo.weights[i]} ELSE 0 END`
       ).join(' + ');
-      const relationshipType = algo.relationshipType || 'SIMILAR_TO';
+      const relationshipType = algo.relationshipType || `${entityType.toUpperCase()}_SIMILARITY`;
       
       return `
         MATCH (e1:${entityType}), (e2:${entityType})

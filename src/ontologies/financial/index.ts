@@ -20,8 +20,5 @@ export * from './infrastructure';
 // Interface Layer
 export * from './interface';
 
-// Extension Definition
-export { FinancialExtension } from './financial.extension';
-
 // Registration
 export { registerFinancial } from './register'; 

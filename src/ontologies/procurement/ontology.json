@@ -1,10 +1,8 @@
 {
   "name": "ProcurementOntology",
   "source": "https://eprocurementontology.github.io/",
+  "dependencies": ["crm"],
   "entities": {
-    "Organization": {
-      "description": "A collection of people, a company, an institution, or other social, commercial or political structure."
-    },
     "ProcurementProcedure": {
       "description": "A series of activities leading to the conclusion of a public contract. Based on ePO."
     },
@@ -126,5 +124,107 @@
         "threshold": 0.5
       }
     }
+  },
+  "advancedRelationships": {
+    "LOT_SIMILARITY": {
+      "domain": "Lot",
+      "range": "Lot",
+      "description": "Similarity relationship between lots based on category and value",
+      "properties": {
+        "score": { "type": "float", "description": "Similarity score between 0 and 1" },
+        "factors": { "type": "array", "description": "List of factors used in similarity calculation" },
+        "calculatedAt": { "type": "datetime", "description": "When the similarity was calculated" },
+        "algorithm": { "type": "string", "description": "Algorithm used for similarity calculation" },
+        "metadata": { "type": "object", "description": "Additional metadata about the similarity" }
+      },
+      "enabled": true,
+      "algorithms": [
+        {
+          "name": "LOT_SIMILARITY",
+          "description": "Calculate similarity between lots based on category and value",
+          "entityType": "Lot",
+          "factors": [
+            {
+              "property": "category",
+              "weight": 0.6,
+              "type": "categorical"
+            },
+            {
+              "property": "value",
+              "weight": 0.4,
+              "type": "numeric"
+            }
+          ],
+          "threshold": 0.6,
+          "metadata": {
+            "algorithm": "weighted_property_similarity",
+            "source": "procurement_analysis"
+          }
+        }
+      ],
+      "customQuery": "MATCH (lot1:Lot)-[r:LOT_SIMILARITY]->(lot2:Lot) WHERE r.score > 0.6 RETURN lot1.name as lot1Name, lot2.name as lot2Name, r.score as similarity ORDER BY r.score DESC"
+    },
+    "temporal": {
+      "enabled": false,
+      "patterns": []
+    },
+    "hierarchical": {
+      "enabled": false,
+      "structures": []
+    },
+    "similarity": {
+      "enabled": true,
+      "algorithms": [
+        {
+          "name": "LOT_SIMILARITY",
+          "description": "Calculate similarity between lots based on category and value",
+          "entityType": "Lot",
+          "factors": [
+            {
+              "property": "category",
+              "weight": 0.6,
+              "type": "categorical"
+            },
+            {
+              "property": "value",
+              "weight": 0.4,
+              "type": "numeric"
+            }
+          ],
+          "threshold": 0.6,
+          "metadata": {
+            "algorithm": "weighted_property_similarity",
+            "source": "procurement_analysis"
+          }
+        }
+      ]
+    },
+    "complex": {
+      "enabled": false,
+      "patterns": []
+    },
+    "queries": {
+      "timeline": {
+        "enabled": false,
+        "customQuery": ""
+      },
+      "hierarchy": {
+        "enabled": false,
+        "customQuery": ""
+      },
+      "similarity": {
+        "enabled": true,
+        "customQuery": "MATCH (lot1:Lot)-[r:LOT_SIMILARITY]->(lot2:Lot) WHERE r.score > 0.6 RETURN lot1.name as lot1Name, lot2.name as lot2Name, r.score as similarity ORDER BY r.score DESC"
+      },
+      "complex": {
+        "enabled": false,
+        "customQuery": ""
+      }
+    }
+  },
+  "entityExtraction": {
+    "models": {},
+    "contextRules": {},
+    "enrichment": {}
   }
 } 

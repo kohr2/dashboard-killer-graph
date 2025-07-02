@@ -7,7 +7,7 @@ import { Neo4jConnection } from '@platform/database/neo4j-connection';
 jest.mock('@platform/database/neo4j-connection');
 
 const mockFinancialOntology = {
-  name: 'FinancialExtensionOntology',
+  name: 'financial',
   entities: {
     Deal: { description: 'A financial transaction' }
   },
@@ -21,7 +21,7 @@ const mockFinancialOntology = {
         factors: ['sector', 'dealType'],
         weights: [0.7, 0.3],
         threshold: 0.5,
-        relationshipType: 'SIMILAR_TO'
+        relationshipType: 'DEAL_SIMILARITY'
       }
     }
   }
@@ -81,13 +81,13 @@ describe('Reasoning Integration', () => {
     
     expect(result.algorithms).toHaveLength(2);
     expect(result.algorithms[0].name).toBe('similarity_scoring');
-    expect(result.algorithms[0].ontology).toBe('FinancialExtensionOntology');
+    expect(result.algorithms[0].ontology).toBe('financial');
     expect(result.algorithms[1].name).toBe('lot_similarity');
     expect(result.algorithms[1].ontology).toBe('ProcurementOntology');
   });
 
   it('should execute reasoning for specific ontology', async () => {
-    const result = await reasoningController.executeOntologyReasoning('FinancialExtensionOntology');
+    const result = await reasoningController.executeOntologyReasoning('financial');
     
     expect(result.success).toBe(true);
     expect(sessionRun).toHaveBeenCalledTimes(1);

@@ -72,7 +72,9 @@
     "cleanup:dead-code": "npx ts-node scripts/maintenance/cleanup-dead-code.ts",
     "cleanup:configs": "npx ts-node scripts/maintenance/cleanup-configs.ts",
     "cleanup:complete": "npm run cleanup:dead-code && npm run cleanup:configs && npm run debt:quick-fix",
-    "demo:attachment-processing": "ts-node -r tsconfig-paths/register -P scripts/tsconfig.json scripts/demo/test-attachment-processing.ts"
+    "demo:attachment-processing": "ts-node -r tsconfig-paths/register -P scripts/tsconfig.json scripts/demo/test-attachment-processing.ts",
+    "demo:advanced-graph": "ts-node -r tsconfig-paths/register -P scripts/tsconfig.json scripts/demo/advanced-graph-demo.ts",
+    "demo:ontology-advanced-graph": "ts-node -r tsconfig-paths/register -P scripts/tsconfig.json scripts/demo/ontology-advanced-graph-demo.ts"
   },
   "keywords": [
     "knowledge-graph",

@@ -75,5 +75,93 @@
       "range": "Communication",
       "description": "Links a recipient entity to communications they received"
     }
+  },
+  "reasoning": {
+    "algorithms": {}
+  },
+  "advancedRelationships": {
+    "SIMILARITY_RELATIONSHIP": {
+      "domain": "Thing",
+      "range": "Thing",
+      "description": "Generic similarity relationship between any two entities",
+      "properties": {
+        "similarityType": { "type": "string", "description": "Type of similarity (e.g., DEAL_SIMILARITY, ORGANIZATION_SIMILARITY)" },
+        "score": { "type": "float", "description": "Similarity score between 0 and 1" },
+        "factors": { "type": "array", "description": "List of factors used in similarity calculation" },
+        "metadata": { "type": "object", "description": "Additional metadata about the similarity" },
+        "calculatedAt": { "type": "datetime", "description": "When the similarity was calculated" }
+      },
+      "enabled": true,
+      "algorithms": [
+        {
+          "name": "GENERIC_SIMILARITY",
+          "description": "Generic similarity relationship between any two entities",
+          "entityType": "Thing",
+          "factors": [
+            {
+              "property": "type",
+              "weight": 0.5,
+              "type": "categorical"
+            }
+          ],
+          "threshold": 0.5,
+          "metadata": {
+            "algorithm": "generic_similarity",
+            "source": "core_ontology"
+          }
+        }
+      ],
+      "customQuery": "MATCH (entity1)-[r:SIMILARITY_RELATIONSHIP]->(entity2) WHERE r.score > 0.7 RETURN entity1.name as entity1Name, entity2.name as entity2Name, r.score as similarity, r.similarityType as type ORDER BY r.score DESC"
+    },
+    "temporal": {
+      "enabled": false,
+      "patterns": []
+    },
+    "hierarchical": {
+      "enabled": false,
+      "structures": []
+    },
+    "complex": {
+      "enabled": false,
+      "patterns": []
+    },
+    "queries": {
+      "timeline": {
+        "enabled": false,
+        "customQuery": ""
+      },
+      "hierarchy": {
+        "enabled": false,
+        "customQuery": ""
+      },
+      "complex": {
+        "enabled": false,
+        "customQuery": ""
+      }
+    }
+  },
+  "entityExtraction": {
+    "models": {
+      "default": {
+        "type": "spacy",
+        "model": "en_core_web_sm",
+        "endpoint": "/extract-default",
+        "confidence": 0.6,
+        "priority": 1
+      }
+    },
+    "contextRules": {
+      "default": {
+        "priority": [],
+        "requiredModels": ["default"],
+        "confidenceThreshold": 0.5
+      }
+    },
+    "enrichment": {
+      "default": {
+        "services": [],
+        "properties": []
+      }
+    }
   }
 } 

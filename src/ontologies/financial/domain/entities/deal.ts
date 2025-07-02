@@ -6,5 +6,5 @@ export interface Deal {
   id: string;
   targets: TargetCompany[];
   has_process_type: string[];
-  similar_to: Deal[];
+  deal_similarity: Deal[];
 } 
