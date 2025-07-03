@@ -114,6 +114,9 @@ ontologies/**/build/
 # Ontology seed fixture archives
 ontologies/**/seed/*.gz
 
+# Generated code from ontologies
+codegen/generated/
+
 # Exclude src/platform/cache
 !src/platform/cache/**
 
