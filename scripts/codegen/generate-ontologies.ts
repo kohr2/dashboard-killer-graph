@@ -31,6 +31,11 @@ Handlebars.registerHelper('extractDescription', function(description: any) {
   return 'No description available';
 });
 
+// Register Handlebars helper for pascalCase
+Handlebars.registerHelper('pascalCase', function(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+});
+
 /**
  * Ontology Code Generator
  *
@@ -124,6 +129,7 @@ interface OntologyGenerator {
   generateRepositories(ontology: OntologyConfig): void;
   generateServices(ontology: OntologyConfig): void;
   generateDTOs(ontology: OntologyConfig): void;
+  generatePlugin(ontology: OntologyConfig): void;
   updateIndexFiles(ontology: OntologyConfig): void;
 }
 
@@ -396,6 +402,27 @@ class OntologyGeneratorImpl implements OntologyGenerator {
   }
 
   /**
+   * Generate plugin from ontology config
+   */
+  generatePlugin(ontology: OntologyConfig): void {
+    logger.info(`Generating plugin for ontology: ${ontology.name}`);
+    
+    const template = this.loadTemplate('plugin');
+    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase().replace('ontology', ''));
+    this.ensureDirectory(ontologyDir);
+
+    const pluginData = {
+      name: ontology.name.toLowerCase()
+    };
+
+    const generatedCode = template(pluginData);
+    const outputPath = path.join(ontologyDir, `${ontology.name.toLowerCase()}.plugin.ts`);
+    
+    fs.writeFileSync(outputPath, generatedCode);
+    logger.info(`Generated plugin: ${outputPath}`);
+  }
+
+  /**
    * Update index files for the ontology
    */
   updateIndexFiles(ontology: OntologyConfig): void {
@@ -439,6 +466,7 @@ ${exports.join('\n')}
       this.generateRepositories(config);
       this.generateServices(config);
       this.generateDTOs(config);
+      this.generatePlugin(config);
       this.updateIndexFiles(config);
       
       logger.info(`✅ Completed generation for ontology: ${ontologyName}`);

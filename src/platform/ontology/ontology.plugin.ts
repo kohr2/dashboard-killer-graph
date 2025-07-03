@@ -39,4 +39,10 @@ export interface OntologyPlugin {
    * (Not leveraged in the minimal implementation to satisfy current tests.)
    */
   serviceProviders?: Record<string, unknown>;
+
+  /**
+   * Optional entity extraction configuration for this ontology.
+   * Contains patterns and rules for extracting entities from text.
+   */
+  entityExtraction?: Record<string, unknown>;
 } 

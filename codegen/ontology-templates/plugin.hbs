@@ -1,5 +1,5 @@
 import { OntologyPlugin } from '@platform/ontology/ontology.plugin';
-import { registerCrm } from './register';
+import { register{{pascalCase name}} } from './register';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -7,13 +7,13 @@ import * as path from 'path';
 const ontologyPath = path.join(__dirname, 'ontology.json');
 const ontologyData = JSON.parse(fs.readFileSync(ontologyPath, 'utf8'));
 
-export const crmPlugin: OntologyPlugin = {
-  name: 'crm',
+export const {{name}}Plugin: OntologyPlugin = {
+  name: '{{name}}',
   entitySchemas: ontologyData.entities,
   relationshipSchemas: ontologyData.relationships,
   reasoning: ontologyData.reasoning,
   entityExtraction: ontologyData.entityExtraction,
   serviceProviders: {
-    register: registerCrm,
+    register: register{{pascalCase name}},
   },
 }; 

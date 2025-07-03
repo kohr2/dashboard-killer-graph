@@ -2,6 +2,72 @@
   "name": "CRM",
   "version": "1.0.0",
   "description": "Customer Relationship Management ontology",
+  "entityExtraction": {
+    "models": {
+      "organizations": {
+        "type": "spacy",
+        "model": "en_core_web_lg",
+        "endpoint": "/extract-orgs",
+        "confidence": 0.8,
+        "priority": 1
+      },
+      "persons": {
+        "type": "spacy",
+        "model": "en_core_web_lg",
+        "endpoint": "/extract-persons",
+        "confidence": 0.7,
+        "priority": 2
+      }
+    },
+    "patterns": {
+      "Email": {
+        "regex": "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b",
+        "confidence": 0.95,
+        "priority": 1
+      },
+      "PhoneNumber": {
+        "regex": "\\b(?:\\+?1[-.]?)?\\(?([0-9]{3})\\)?[-.]?([0-9]{3})[-.]?([0-9]{4})\\b",
+        "confidence": 0.9,
+        "priority": 2
+      },
+      "JobTitle": {
+        "regex": "\\b(CEO|CTO|CFO|VP|Director|Manager|Analyst|Consultant|Engineer|Developer)\\b",
+        "confidence": 0.7,
+        "priority": 3
+      }
+    },
+    "contextRules": {
+      "email": {
+        "priority": ["Person", "Organization", "Email", "PhoneNumber"],
+        "requiredModels": ["organizations", "persons"],
+        "confidenceThreshold": 0.6
+      },
+      "business-card": {
+        "priority": ["Person", "Organization", "JobTitle", "Email", "PhoneNumber"],
+        "requiredModels": ["organizations", "persons"],
+        "confidenceThreshold": 0.7
+      },
+      "meeting": {
+        "priority": ["Person", "Organization", "JobTitle"],
+        "requiredModels": ["organizations", "persons"],
+        "confidenceThreshold": 0.6
+      }
+    },
+    "enrichment": {
+      "Organization": {
+        "services": ["edgar", "openCorporates", "linkedin"],
+        "properties": ["industry", "size", "website", "description", "foundedYear"]
+      },
+      "Person": {
+        "services": ["linkedin", "edgar"],
+        "properties": ["title", "company", "role", "experience"]
+      },
+      "Contact": {
+        "services": ["linkedin", "email-validator"],
+        "properties": ["title", "company", "email", "phone"]
+      }
+    }
+  },
   "entities": {
     "Party": {
       "description": "Represents an actor, either an individual (Person) or a group (Organization). This is an abstract concept serving as a parent for more specific actor types."
