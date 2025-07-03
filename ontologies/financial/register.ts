@@ -24,7 +24,6 @@ import {
   FinancialEntityIntegrationService,
   HybridDealExtractionService
 } from '@generated/financial';
-import { FinancialToCrmBridge } from '@generated/financial/FinancialToCrmBridge';
 
 export function registerFinancial() {
   const ontologyService = container.resolve(OntologyService);
@@ -54,7 +53,6 @@ export function registerFinancial() {
   container.register('LegalDocumentService', { useClass: LegalDocumentService });
   container.register('RegulatoryInformationService', { useClass: RegulatoryInformationService });
   container.register('CommunicationService', { useClass: CommunicationService });
-  container.register('FinancialToCrmBridge', { useValue: new FinancialToCrmBridge() });
   container.register('FinancialEntityIntegrationService', { useClass: FinancialEntityIntegrationService });
   container.register('HybridDealExtractionService', { useClass: HybridDealExtractionService });
   

@@ -4,9 +4,8 @@ import { container } from 'tsyringe';
 import { singleton } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { FinancialToCrmBridge } from '@generated/financial';
-import { flattenEnrichmentData } from './utils/enrichment.utils';
 import { logger } from '@shared/utils/logger';
+import { flattenEnrichmentData } from './utils/enrichment.utils';
 
 export interface IngestionEntity {
   id: string;
@@ -37,14 +36,12 @@ export interface ProcessingResult {
 export class Neo4jIngestionService {
   private neo4jConnection: Neo4jConnection;
   private ontologyService: OntologyService;
-  private bridge: FinancialToCrmBridge;
   private session: Session | null = null;
   private indexableLabels: string[] = [];
 
   constructor() {
     this.neo4jConnection = container.resolve(Neo4jConnection);
     this.ontologyService = container.resolve(OntologyService);
-    this.bridge = container.resolve('FinancialToCrmBridge');
   }
 
   async initialize(): Promise<void> {
@@ -180,16 +177,6 @@ export class Neo4jIngestionService {
       if (!foundExistingNode) {
         // Create new entity
         const allLabels = [primaryLabel];
-        if (primaryLabel && this.bridge && 'getCrmLabelsForFinancialType' in this.bridge) {
-          try {
-            const crmLabels = this.bridge.getCrmLabelsForFinancialType(primaryLabel);
-            if (crmLabels.length > 0) {
-              allLabels.push(...crmLabels);
-            }
-          } catch (error: any) {
-            logger.error(`Error getting CRM labels for ${primaryLabel}:`, error.message);
-          }
-        }
         const labelsCypher = allLabels.map(l => `\`${l}\``).join(':');
 
         // Prepare properties
