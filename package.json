@@ -46,7 +46,6 @@
     "graph:analyze": "ts-node -r tsconfig-paths/register scripts/database/optimize-database.ts",
     "pipeline:email": "TS_NODE_PROJECT=scripts/tsconfig.json ts-node -T -r tsconfig-paths/register -r reflect-metadata scripts/pipeline/email-ingestion.ts",
     "ingest:all": "npx ts-node -r dotenv/config scripts/run-full-ingestion.ts",
-    "sync:ontology": "ts-node -r tsconfig-paths/register scripts/ontology/sync-ontology.ts",
     "chat:test": "ts-node -r tsconfig-paths/register scripts/demo/test-chat.ts",
     "perf:profile": "node --prof dist/api.js",
     "perf:analyze": "node --prof-process isolate-*.log > profile.txt",

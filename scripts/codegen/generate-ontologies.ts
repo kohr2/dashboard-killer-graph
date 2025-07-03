@@ -155,7 +155,7 @@ class OntologyGeneratorImpl implements OntologyGenerator {
     logger.info(`Generating entities for ontology: ${ontology.name}`);
     
     const template = this.loadTemplate('entity');
-    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase());
+    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase().replace('ontology', ''));
     this.ensureDirectory(ontologyDir);
 
     for (const [entityName, entityConfig] of Object.entries(ontology.entities)) {
@@ -199,7 +199,7 @@ class OntologyGeneratorImpl implements OntologyGenerator {
     logger.info(`Generating repositories for ontology: ${ontology.name}`);
     
     const template = this.loadTemplate('repository');
-    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase());
+    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase().replace('ontology', ''));
     this.ensureDirectory(ontologyDir);
 
     for (const [entityName, entityConfig] of Object.entries(ontology.entities)) {
@@ -224,7 +224,7 @@ class OntologyGeneratorImpl implements OntologyGenerator {
     logger.info(`Generating services for ontology: ${ontology.name}`);
     
     const template = this.loadTemplate('service');
-    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase());
+    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase().replace('ontology', ''));
     this.ensureDirectory(ontologyDir);
 
     for (const [entityName, entityConfig] of Object.entries(ontology.entities)) {
@@ -249,7 +249,7 @@ class OntologyGeneratorImpl implements OntologyGenerator {
     logger.info(`Generating DTOs for ontology: ${ontology.name}`);
     
     const template = this.loadTemplate('dto');
-    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase());
+    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase().replace('ontology', ''));
     this.ensureDirectory(ontologyDir);
 
     for (const [entityName, entityConfig] of Object.entries(ontology.entities)) {
@@ -282,7 +282,7 @@ class OntologyGeneratorImpl implements OntologyGenerator {
   updateIndexFiles(ontology: OntologyConfig): void {
     logger.info(`Updating index files for ontology: ${ontology.name}`);
     
-    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase());
+    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase().replace('ontology', ''));
     const indexPath = path.join(ontologyDir, 'index.ts');
     
     const exports: string[] = [];
