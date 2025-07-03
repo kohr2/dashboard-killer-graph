@@ -7,34 +7,23 @@ export interface CommunicationDTO {
   id: string;
   type: string;
   label: string;
-  id: string;
-  type: string;
-  status: string;
-  subject: string;
-  body: string;
-  sender: string;
-  recipients: any[];
-  timestamp: Date;
-  metadata: Record<string, any>;
+  status?: string;
+  subject?: string;
+  body?: string;
+  sender?: string;
+  recipients?: any[];
+  timestamp?: Date;
+  metadata?: Record<string, any>;
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function isCommunicationDTO(obj: any): obj is CommunicationDTO {
   return obj && 
          typeof obj.id === 'string' && 
          typeof obj.type === 'string' && 
-         typeof obj.label === 'string' &&
-         typeof obj.id === 'string' &&
-         typeof obj.type === 'string' &&
-         typeof obj.status === 'string' &&
-         typeof obj.subject === 'string' &&
-         typeof obj.body === 'string' &&
-         typeof obj.sender === 'string' &&
-         typeof obj.recipients === 'any[]' &&
-         typeof obj.timestamp === 'Date' &&
-         typeof obj.metadata === 'Record<string, any>';
+         typeof obj.label === 'string';
 }
 
 export function createCommunicationDTO(data: Partial<CommunicationDTO>): CommunicationDTO {
@@ -42,15 +31,13 @@ export function createCommunicationDTO(data: Partial<CommunicationDTO>): Communi
     id: data.id || '',
     type: data.type || 'Communication',
     label: data.label || 'Communication',
-    id: data.id || null,
-    type: data.type || null,
-    status: data.status || null,
-    subject: data.subject || null,
-    body: data.body || null,
-    sender: data.sender || null,
-    recipients: data.recipients || null,
-    timestamp: data.timestamp || null,
-    metadata: data.metadata || null,
+    status: data.status,
+    subject: data.subject,
+    body: data.body,
+    sender: data.sender,
+    recipients: data.recipients,
+    timestamp: data.timestamp,
+    metadata: data.metadata,
     enrichedData: data.enrichedData,
     createdAt: data.createdAt || new Date(),
     updatedAt: data.updatedAt || new Date()

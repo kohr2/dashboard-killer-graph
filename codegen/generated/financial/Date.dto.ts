@@ -8,8 +8,8 @@ export interface DateDTO {
   type: string;
   label: string;
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function isDateDTO(obj: any): obj is DateDTO {

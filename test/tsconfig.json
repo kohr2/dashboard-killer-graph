@@ -5,19 +5,9 @@
     "outDir": "../dist/test",
     "rootDir": "..",
     "baseUrl": "..",
-    "paths": {
-      "@/*": ["*"],
-      "@platform/*": ["src/platform/*"],
-      "@crm/*": ["src/ontologies/crm/*"],
-      "@financial/*": ["src/ontologies/financial/*"],
-      "@shared/*": ["src/shared/*"]
-    },
     "types": ["jest", "node"]
   },
   "references": [
-    { "path": "../src/platform" },
-    { "path": "../src/ontologies/crm" },
-    { "path": "../src/ontologies/financial" }
   ],
-  "include": ["./**/*.ts", "../scripts/**/*.ts", "../src/**/*.ts"]
+  "include": ["./**/*.ts", "../scripts/**/*.ts", "../src/**/*.ts", "../types/**/*.d.ts"]
 }

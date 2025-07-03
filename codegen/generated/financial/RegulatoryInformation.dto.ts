@@ -8,8 +8,8 @@ export interface RegulatoryInformationDTO {
   type: string;
   label: string;
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function isRegulatoryInformationDTO(obj: any): obj is RegulatoryInformationDTO {

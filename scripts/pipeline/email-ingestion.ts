@@ -1,6 +1,7 @@
 // Email Ingestion Pipeline Demo - spaCy Microservice Version
 // Advanced entity extraction using a dedicated microservice from real .eml files
 
+import 'reflect-metadata';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { simpleParser, ParsedMail } from 'mailparser';
@@ -8,11 +9,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { Session } from 'neo4j-driver';
 import axios from 'axios';
-import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { registerAllOntologies } from '@src/register-ontologies';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { FinancialToCrmBridge } from '@generated/financial';
 import { ContentProcessingService } from '@platform/processing/content-processing.service';
 import { resetDatabase } from '../database/reset-neo4j';
 import { flattenEnrichmentData } from '../../src/platform/processing/utils/enrichment.utils';
@@ -98,7 +97,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
   // --- INITIALIZATION ---
   registerAllOntologies();
   const ontologyService = container.resolve(OntologyService);
-  const bridge = container.resolve('FinancialToCrmBridge');
+  const bridge: any = container.resolve('FinancialToCrmBridge');
   const validEntityTypes = ontologyService.getAllEntityTypes();
   const propertyEntityTypes = ontologyService.getPropertyEntityTypes();
   const validRelationshipTypes = ontologyService.getAllRelationshipTypes();
@@ -121,8 +120,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
     console.log('   ✅ Ontology synced successfully.');
   } catch (error: any) {
     console.error('   ❌ Failed to sync ontology with NLP service. The service might not be running or the endpoint is incorrect.', error.message);
-    // Depending on the desired behavior, you might want to exit the process
-    process.exit(1);
+    console.warn('   ⚠️ Continuing without NLP ontology sync. Some NLP features may be disabled.');
   }
   // --- END INITIALIZATION ---
 
@@ -273,10 +271,10 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
           if (!foundExistingNode) {
             const allLabels = [primaryLabel];
             // Apply CRM labels if the bridge defines them
-            if (primaryLabel && bridge && 'getCrmLabelsForFinancialType' in bridge) {
+            if (primaryLabel && bridge && typeof bridge === 'object' && 'getCrmLabelsForFinancialType' in bridge) {
               try {
-                const crmLabels = bridge.getCrmLabelsForFinancialType(primaryLabel);
-                if (crmLabels.length > 0) {
+                const crmLabels = (bridge as any).getCrmLabelsForFinancialType(primaryLabel);
+                if (crmLabels && Array.isArray(crmLabels) && crmLabels.length > 0) {
                   allLabels.push(...crmLabels);
                 }
               } catch (error: any) {
@@ -364,7 +362,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
                   id: nodeId,
                   name: entity.name,
                   category: entity.category || 'Generic',
-                  createdAt: (entity.createdAt || new Date()).toISOString(),
+                  createdAt: (entity.createdAt instanceof Date ? entity.createdAt : new Date(entity.createdAt || Date.now())).toISOString(),
                   embedding: entity.embedding,
                   ...(entity.properties || {}),
                   ...additionalProperties, // Add all property values here
@@ -452,7 +450,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
             id: communicationId,
             subject: parsedEmail.subject || 'No Subject',
             from: parsedEmail.from?.text || 'Unknown Sender',
-            date: (parsedEmail.date || new Date()).toISOString(),
+            date: (parsedEmail.date instanceof Date ? parsedEmail.date : new Date(parsedEmail.date || Date.now())).toISOString(),
             sourceFile: emailFile,
           },
         );

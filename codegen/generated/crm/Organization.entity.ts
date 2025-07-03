@@ -16,9 +16,6 @@ export interface Organization extends BaseEntity {
   activities: any[];
   knowledgeElements: any[];
   validationStatus: string;
-  createdAt: Date;
-  updatedAt: Date;
-  enrichedData: Record<string, any>;
   preferences: Record<string, any>;
 }
 
@@ -38,9 +35,6 @@ export class OrganizationEntity implements Organization {
   activities!: any[];
   knowledgeElements!: any[];
   validationStatus!: string;
-  createdAt!: Date;
-  updatedAt!: Date;
-  enrichedData!: Record<string, any>;
   preferences!: Record<string, any>;
 
   constructor(data: Partial<Organization>) {

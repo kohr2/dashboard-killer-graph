@@ -1,8 +1,6 @@
 import { BaseEntity } from '@shared/types/base-entity';
 
 export interface Communication extends BaseEntity {
-  id: string;
-  type: string;
   status: string;
   subject: string;
   body: string;
@@ -13,8 +11,6 @@ export interface Communication extends BaseEntity {
 }
 
 export class CommunicationEntity implements Communication {
-  id!: string;
-  type!: string;
   status!: string;
   subject!: string;
   body!: string;

@@ -21,10 +21,10 @@ import {
   LegalDocumentService,
   RegulatoryInformationService,
   CommunicationService,
-  FinancialToCrmBridge,
   FinancialEntityIntegrationService,
   HybridDealExtractionService
 } from '@generated/financial';
+import { FinancialToCrmBridge } from '@generated/financial/FinancialToCrmBridge';
 
 export function registerFinancial() {
   const ontologyService = container.resolve(OntologyService);

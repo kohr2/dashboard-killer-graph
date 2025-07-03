@@ -8,8 +8,8 @@ export interface EmailDTO {
   type: string;
   label: string;
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function isEmailDTO(obj: any): obj is EmailDTO {

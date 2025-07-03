@@ -8,8 +8,8 @@ export interface PhoneNumberDTO {
   type: string;
   label: string;
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function isPhoneNumberDTO(obj: any): obj is PhoneNumberDTO {

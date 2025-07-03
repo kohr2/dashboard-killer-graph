@@ -11,7 +11,7 @@ import {
   PhoneNumberService,
   ActivityService,
   LocationService
-} from '@generated/crm';
+} from '../../codegen/generated/crm';
 
 export function registerCrm() {
   // Register generated services

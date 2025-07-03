@@ -8,8 +8,8 @@ export interface PartyDTO {
   type: string;
   label: string;
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function isPartyDTO(obj: any): obj is PartyDTO {

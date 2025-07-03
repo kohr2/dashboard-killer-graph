@@ -8,19 +8,18 @@ export interface {{entityName}}DTO {
   type: string;
   label: string;
   {{#each properties}}
-  {{@key}}: {{{replaceType this}}};
+  {{@key}}?: {{{replaceType this}}};
   {{/each}}
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function is{{entityName}}DTO(obj: any): obj is {{entityName}}DTO {
   return obj && 
          typeof obj.id === 'string' && 
          typeof obj.type === 'string' && 
-         typeof obj.label === 'string'{{#each properties}} &&
-         typeof obj.{{@key}} === '{{{replaceType this}}}'{{/each}};
+         typeof obj.label === 'string';
 }
 
 export function create{{entityName}}DTO(data: Partial<{{entityName}}DTO>): {{entityName}}DTO {
@@ -29,7 +28,7 @@ export function create{{entityName}}DTO(data: Partial<{{entityName}}DTO>): {{ent
     type: data.type || '{{entityName}}',
     label: data.label || '{{entityName}}',
     {{#each properties}}
-    {{@key}}: data.{{@key}} || null,
+    {{@key}}: data.{{@key}},
     {{/each}}
     enrichedData: data.enrichedData,
     createdAt: data.createdAt || new Date(),

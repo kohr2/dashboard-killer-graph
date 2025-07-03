@@ -7,24 +7,19 @@ export interface CommunicationDTO {
   id: string;
   type: string;
   label: string;
-  subject: string;
-  date: any;
-  type: string;
-  participants: any[];
+  subject?: string;
+  date?: any;
+  participants?: any[];
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function isCommunicationDTO(obj: any): obj is CommunicationDTO {
   return obj && 
          typeof obj.id === 'string' && 
          typeof obj.type === 'string' && 
-         typeof obj.label === 'string' &&
-         typeof obj.subject === 'string' &&
-         typeof obj.date === 'any' &&
-         typeof obj.type === 'string' &&
-         typeof obj.participants === 'any[]';
+         typeof obj.label === 'string';
 }
 
 export function createCommunicationDTO(data: Partial<CommunicationDTO>): CommunicationDTO {
@@ -32,10 +27,9 @@ export function createCommunicationDTO(data: Partial<CommunicationDTO>): Communi
     id: data.id || '',
     type: data.type || 'Communication',
     label: data.label || 'Communication',
-    subject: data.subject || null,
-    date: data.date || null,
-    type: data.type || null,
-    participants: data.participants || null,
+    subject: data.subject,
+    date: data.date,
+    participants: data.participants,
     enrichedData: data.enrichedData,
     createdAt: data.createdAt || new Date(),
     updatedAt: data.updatedAt || new Date()

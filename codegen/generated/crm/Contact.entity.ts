@@ -12,8 +12,6 @@ export interface Contact extends BaseEntity {
   activities: any[];
   knowledgeElements: any[];
   validationStatus: string;
-  createdAt: Date;
-  updatedAt: Date;
   additionalEmails: any[];
   address: Record<string, any>;
   preferences: Record<string, any>;
@@ -31,8 +29,6 @@ export class ContactEntity implements Contact {
   activities!: any[];
   knowledgeElements!: any[];
   validationStatus!: string;
-  createdAt!: Date;
-  updatedAt!: Date;
   additionalEmails!: any[];
   address!: Record<string, any>;
   preferences!: Record<string, any>;

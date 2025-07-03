@@ -16,7 +16,7 @@ export interface IngestionEntity {
   embedding?: number[];
   resolvedId?: string;
   category?: string;
-  createdAt?: Date;
+  createdAt?: Date | string;
   properties?: { [key: string]: any };
   getOntologicalType?: () => string;
   enrichedData?: any;
@@ -267,7 +267,18 @@ export class Neo4jIngestionService {
               id: nodeId,
               name: entity.name,
               category: entity.category || 'Generic',
-              createdAt: (entity.createdAt || new Date()).toISOString(),
+              createdAt: (() => {
+                if (!entity.createdAt) {
+                  return new Date().toISOString();
+                }
+                if (typeof entity.createdAt === 'string') {
+                  return entity.createdAt;
+                }
+                if (typeof (entity.createdAt as any).toISOString === 'function') {
+                  return (entity.createdAt as Date).toISOString();
+                }
+                return new Date().toISOString();
+              })(),
               embedding: entity.embedding,
               ...(entity.properties || {}),
               ...additionalProperties,

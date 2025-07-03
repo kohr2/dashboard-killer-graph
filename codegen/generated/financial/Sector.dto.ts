@@ -8,8 +8,8 @@ export interface SectorDTO {
   type: string;
   label: string;
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function isSectorDTO(obj: any): obj is SectorDTO {

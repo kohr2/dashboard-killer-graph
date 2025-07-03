@@ -7,26 +7,19 @@ export interface CriterionDTO {
   id: string;
   type: string;
   label: string;
-  id: string;
-  name: string;
-  description: string;
-  type: string;
-  weight: number;
+  name?: string;
+  description?: string;
+  weight?: number;
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function isCriterionDTO(obj: any): obj is CriterionDTO {
   return obj && 
          typeof obj.id === 'string' && 
          typeof obj.type === 'string' && 
-         typeof obj.label === 'string' &&
-         typeof obj.id === 'string' &&
-         typeof obj.name === 'string' &&
-         typeof obj.description === 'string' &&
-         typeof obj.type === 'string' &&
-         typeof obj.weight === 'number';
+         typeof obj.label === 'string';
 }
 
 export function createCriterionDTO(data: Partial<CriterionDTO>): CriterionDTO {
@@ -34,11 +27,9 @@ export function createCriterionDTO(data: Partial<CriterionDTO>): CriterionDTO {
     id: data.id || '',
     type: data.type || 'Criterion',
     label: data.label || 'Criterion',
-    id: data.id || null,
-    name: data.name || null,
-    description: data.description || null,
-    type: data.type || null,
-    weight: data.weight || null,
+    name: data.name,
+    description: data.description,
+    weight: data.weight,
     enrichedData: data.enrichedData,
     createdAt: data.createdAt || new Date(),
     updatedAt: data.updatedAt || new Date()

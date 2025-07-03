@@ -162,8 +162,10 @@ class OntologyGeneratorImpl implements OntologyGenerator {
       // Convert properties to the format expected by the template
       const properties: Record<string, string> = {};
       if (entityConfig.properties) {
+        const reservedKeys = ['id', 'type', 'label', 'createdAt', 'updatedAt', 'enrichedData'];
         logger.info(`Processing properties for ${entityName}:`, Object.keys(entityConfig.properties));
         for (const [key, prop] of Object.entries(entityConfig.properties)) {
+          if (reservedKeys.includes(key)) continue; // avoid duplicates
           const tsType = this.getTypeScriptType(prop.type);
           properties[key] = tsType;
           logger.info(`  ${key}: ${prop.type} -> ${tsType}`);
@@ -254,7 +256,9 @@ class OntologyGeneratorImpl implements OntologyGenerator {
       // Convert properties to the format expected by the template
       const properties: Record<string, string> = {};
       if (entityConfig.properties) {
+        const reservedKeys = ['id', 'type', 'label', 'createdAt', 'updatedAt', 'enrichedData'];
         for (const [key, prop] of Object.entries(entityConfig.properties)) {
+          if (reservedKeys.includes(key)) continue;
           properties[key] = this.getTypeScriptType(prop.type);
         }
       }

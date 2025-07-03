@@ -9,7 +9,7 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
@@ -24,9 +24,9 @@
       "@financial/*": ["ontologies/financial/*"],
       "@procurement/*": ["ontologies/procurement/*"],
       "@shared/*": ["src/shared/*"],
+      "@mcp/*": ["src/mcp/*"],
       "@generated/*": ["codegen/generated/*"],
-      "@codegen/generated/*": ["codegen/generated/*"],
-      "@generated/*/*DTO": ["codegen/generated/*/*.dto.ts"]
+      "@codegen/generated/*": ["codegen/generated/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

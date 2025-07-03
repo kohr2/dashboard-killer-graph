@@ -40,14 +40,20 @@ export default async () => {
     console.log('\nWaiting for dependent services to start...');
     
     const neo4jPromise = checkTcpPort(NEO4J_PORT);
-    const nlpPromise = waitForService(NLP_SERVICE_URL, MAX_RETRIES, RETRY_INTERVAL_MS);
-
-    await Promise.all([
+    const results = await Promise.allSettled([
       neo4jPromise.then(() => console.log('✅ Neo4j test database is responsive.')),
-      nlpPromise.then(() => console.log('✅ Python NLP service is responsive.'))
+      waitForService(NLP_SERVICE_URL, MAX_RETRIES, RETRY_INTERVAL_MS)
+        .then(() => console.log('✅ Python NLP service is responsive.'))
+        .catch((err) => {
+          console.warn('⚠️  NLP service is not reachable, continuing tests without it:', err.message);
+        })
     ]);
-    
-    console.log('All services are up. Starting tests...');
+    // If Neo4j check failed, halt tests. NLP is optional.
+    const neo4jStatus = results[0];
+    if (neo4jStatus.status === 'rejected') {
+      throw neo4jStatus.reason;
+    }
+    console.log('All critical services are up. Starting tests...');
   } catch (error) {
     console.error('\n❌ A required service is not available.');
     console.error((error as Error).message);

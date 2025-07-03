@@ -9,11 +9,15 @@
       "@platform/*": ["src/platform/*"],
       "@crm/*": ["ontologies/crm/*"],
       "@financial/*": ["ontologies/financial/*"],
-      "@shared/*": ["src/shared/*"]
+      "@shared/*": ["src/shared/*"],
+      "@generated/*": ["codegen/generated/*"],
+      "@generated/*/*DTO": ["codegen/generated/*/*.dto.ts"],
+      "@generated/*/*Dto": ["codegen/generated/*/*.dto.ts"]
     },
     "noEmit": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "isolatedModules": false
   },
-  "include": ["./**/*.ts", "../src/**/*.ts", "../ontologies/**/*.ts"],
+  "include": ["./**/*.ts", "../src/**/*.ts", "../ontologies/**/*.ts", "../codegen/**/*.ts"],
   "exclude": ["../node_modules", "../dist"]
 } 

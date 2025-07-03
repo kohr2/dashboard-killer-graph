@@ -8,8 +8,8 @@ export interface MandateDTO {
   type: string;
   label: string;
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function isMandateDTO(obj: any): obj is MandateDTO {

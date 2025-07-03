@@ -7,22 +7,18 @@ export interface InvestorDTO {
   id: string;
   type: string;
   label: string;
-  name: string;
-  type: string;
-  aum: number;
+  name?: string;
+  aum?: number;
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function isInvestorDTO(obj: any): obj is InvestorDTO {
   return obj && 
          typeof obj.id === 'string' && 
          typeof obj.type === 'string' && 
-         typeof obj.label === 'string' &&
-         typeof obj.name === 'string' &&
-         typeof obj.type === 'string' &&
-         typeof obj.aum === 'number';
+         typeof obj.label === 'string';
 }
 
 export function createInvestorDTO(data: Partial<InvestorDTO>): InvestorDTO {
@@ -30,9 +26,8 @@ export function createInvestorDTO(data: Partial<InvestorDTO>): InvestorDTO {
     id: data.id || '',
     type: data.type || 'Investor',
     label: data.label || 'Investor',
-    name: data.name || null,
-    type: data.type || null,
-    aum: data.aum || null,
+    name: data.name,
+    aum: data.aum,
     enrichedData: data.enrichedData,
     createdAt: data.createdAt || new Date(),
     updatedAt: data.updatedAt || new Date()

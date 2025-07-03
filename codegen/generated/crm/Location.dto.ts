@@ -8,8 +8,8 @@ export interface LocationDTO {
   type: string;
   label: string;
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function isLocationDTO(obj: any): obj is LocationDTO {

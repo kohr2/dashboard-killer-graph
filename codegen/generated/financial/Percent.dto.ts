@@ -8,8 +8,8 @@ export interface PercentDTO {
   type: string;
   label: string;
   enrichedData?: any;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export function isPercentDTO(obj: any): obj is PercentDTO {
