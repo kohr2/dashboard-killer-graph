@@ -6,8 +6,8 @@
     "version": "2024.06",
     "description": "eProcurement Ontology (ePO) by Publications Office of the EU"
   },
-  "entities": {
-    "ConcessionContract": {
+  "entities": [
+    {
       "name": "ConcessionContract",
       "description": {
         "_": "A Contract between one or more Buyers and one or more Economic Operators giving the right to the Economic Operators to exploit the rights foreseen in the Contract which may include the receipt of Payments.",
@@ -39,7 +39,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ConcessionContract"
     },
-    "Winner": {
+    {
       "name": "Winner",
       "description": {
         "_": "A Role of an Agent to whom a Lot is awarded.",
@@ -71,7 +71,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Winner"
     },
-    "OfflineAccessProvider": {
+    {
       "name": "OfflineAccessProvider",
       "description": {
         "_": "A Role of an Agent responsible for providing offline access to the Procurement Documents.",
@@ -99,7 +99,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#OfflineAccessProvider"
     },
-    "DirectAwardTerm": {
+    {
       "name": "DirectAwardTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of the award of a Contract without prior publication. Addtional Information: Direct award may refer to a previous Procedure and/or specific Lot(s). It may also refer to other justified situations whereby there is no previous Procedure. See Directive 2014/24/EU Article 32.",
@@ -127,7 +127,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#DirectAwardTerm"
     },
-    "Estimate": {
+    {
       "name": "Estimate",
       "description": {
         "_": "An approximate calculation or a judgement of the value, number, Quantity or extent of something.",
@@ -155,7 +155,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Estimate"
     },
-    "ConcessionEstimate": {
+    {
       "name": "ConcessionEstimate",
       "description": {
         "_": "Approximation concerning the foreseen Concession Contract.",
@@ -183,7 +183,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ConcessionEstimate"
     },
-    "ProfessionalSuitabilitySummary": {
+    {
       "name": "ProfessionalSuitabilitySummary",
       "description": {
         "_": "Overview of the professional ability required for the economic operator to execute the contract.",
@@ -215,7 +215,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ProfessionalSuitabilitySummary"
     },
-    "ReviewInformation": {
+    {
       "name": "ReviewInformation",
       "description": {
         "_": "Review Information",
@@ -235,7 +235,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewInformation"
     },
-    "Buyer": {
+    {
       "name": "Buyer",
       "description": {
         "_": "A Role of an Agent that awards a Contract and/or purchases items. Additional information: In Public Procurement the Role of Buyer is carried out by the following types of Organisation: Contracting Authority, Contracting Entity, a defense Contractor, an international Organisation, or an organisation awarding a Contract subsidized by a Contracting Authority. In Pre-Award, the Buyer generally awards the Contract, however future purchasers may be foreseen. In Post-Award the buyer generally refers to the purchaser of items.",
@@ -263,7 +263,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Buyer"
     },
-    "CentralPurchasingBody": {
+    {
       "name": "CentralPurchasingBody",
       "description": {
         "_": "Role of an Agent that provides centralised purchasing activities and, possibly, ancillary purchasing activities for other Buyers. Additional Information: In Public Procurement the Role of Central Purchasing Body is carried out by a Contracting Authority for other Contracting Authorities. Contracting Authority procuring activities conducted on a permanent basis, in one of the following forms:[...](b) the award of Public Contracts or the conclusion of Framework Agreements for works, supplies or services intended for Contracting Authorities;",
@@ -295,7 +295,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#CentralPurchasingBody"
     },
-    "CatalogueReceiver": {
+    {
       "name": "CatalogueReceiver",
       "description": {
         "_": "A Role of an Agent processing a Catalogue. Additional Information: The Catalogue Receiver may not only receive it but also validate it, process it, etc. The Catalogue Receiver role is usually played by the agent that acts as a Buyer, or by another Agent that acts on behalf of the Buyer.",
@@ -327,7 +327,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#CatalogueReceiver"
     },
-    "SubmissionTerm": {
+    {
       "name": "SubmissionTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of submitting Documents to the Buyer. Additional Information: These Documents can be Tenders, Request To Participate and expressions of interest.",
@@ -359,7 +359,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#SubmissionTerm"
     },
-    "QualificationCriterion": {
+    {
       "name": "QualificationCriterion",
       "description": {
         "_": "Criterion used in the first stage of procurement.",
@@ -391,7 +391,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#QualificationCriterion"
     },
-    "OfferIssuer": {
+    {
       "name": "OfferIssuer",
       "description": {
         "_": "The Role of an Agent that distributes an Offer.",
@@ -423,7 +423,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#OfferIssuer"
     },
-    "ExclusionGround": {
+    {
       "name": "ExclusionGround",
       "description": {
         "_": "Criterion that describes a legal Requirement to be met by the Economic Operator to be a Candidate in the Procurement.",
@@ -455,7 +455,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ExclusionGround"
     },
-    "OpeningTerm": {
+    {
       "name": "OpeningTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of the opening of Tenders. Additional Information: The opening of Tenders is the event when Tenders are made accessible for evaluation, it is generally the same date and time for all Tenders.",
@@ -487,7 +487,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#OpeningTerm"
     },
-    "ProcurementElement": {
+    {
       "name": "ProcurementElement",
       "description": {
         "_": "Gathering class for critical/central elements in the Procurement Process. TODO: add definition Additional information: Alias: ProcurementComponent",
@@ -511,7 +511,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementElement"
     },
-    "TenderReceiver": {
+    {
       "name": "TenderReceiver",
       "description": {
         "_": "A Role of an Agent responsible for receiving Tenders.",
@@ -539,7 +539,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#TenderReceiver"
     },
-    "TaxDocumentation": {
+    {
       "name": "TaxDocumentation",
       "description": {
         "_": "Tax Documentation",
@@ -563,7 +563,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#TaxDocumentation"
     },
-    "Documentation": {
+    {
       "name": "Documentation",
       "description": {
         "_": "Documentation",
@@ -583,7 +583,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Documentation"
     },
-    "Fund": {
+    {
       "name": "Fund",
       "description": {
         "_": "A financial resource used to support the Procurement. Additional Information: In the context of EU, Funds can be divided into programmes, actions and projects. Examples of EU funds are: the European Structural and Investment Funds, European Social Fund (ESF), the Connecting Europe Facility (CEF) programme, or the ISA2 programme and its actions (e.g. Action 2016.05 European Public Procurement Initiative, which supports the eProcurement Ontology under sub-action 3). Funds may change between the lot and the contract, for example in the case of an emergency crisis, a contract may be financed by a budget that was not foreseen in the call.",
@@ -611,7 +611,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Fund"
     },
-    "SelectionCriteriaSummary": {
+    {
       "name": "SelectionCriteriaSummary",
       "description": {
         "_": "Overview of the Selection Criteria.",
@@ -643,7 +643,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#SelectionCriteriaSummary"
     },
-    "Lot": {
+    {
       "name": "Lot",
       "description": {
         "_": "A qualitative, quantitative or strategic subdivision of the goods, services or works to be procured, allowing the award of one or more Contracts.",
@@ -675,7 +675,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Lot"
     },
-    "Certifier": {
+    {
       "name": "Certifier",
       "description": {
         "_": "The role of an agent who issues a certificate. Additional Information: The certifier is responsible for verifying and confirming the conformance of the instance of the concept to a defined set of criteria.",
@@ -703,7 +703,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Certifier"
     },
-    "ExclusionGroundsSummary": {
+    {
       "name": "ExclusionGroundsSummary",
       "description": {
         "_": "Overview of the Exclusion Grounds.",
@@ -735,7 +735,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ExclusionGroundsSummary"
     },
-    "DesignContestRegimeTerm": {
+    {
       "name": "DesignContestRegimeTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of a Design Contest.",
@@ -767,7 +767,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#DesignContestRegimeTerm"
     },
-    "JuryMember": {
+    {
       "name": "JuryMember",
       "description": {
         "_": "Role of an Agent who evaluates a design contest.",
@@ -799,7 +799,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#JuryMember"
     },
-    "ReviewRequester": {
+    {
       "name": "ReviewRequester",
       "description": {
         "_": "Role of an Agent who requests the review of a (Procurement) Procedure.",
@@ -831,7 +831,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewRequester"
     },
-    "Certificate": {
+    {
       "name": "Certificate",
       "description": {
         "_": "Proof of conformance of the instance of the concept to a defined set of criteria. Additional Information: Certificates provide assurance of credibility, trust, and transparency in the procurement process.",
@@ -863,7 +863,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Certificate"
     },
-    "AwardEvaluationTerm": {
+    {
       "name": "AwardEvaluationTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of the evaluation of Award Criteria.",
@@ -887,7 +887,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AwardEvaluationTerm"
     },
-    "ReviewProcedureInformationProvider": {
+    {
       "name": "ReviewProcedureInformationProvider",
       "description": {
         "_": "A Role of an Agent who is providing more information on the time limits for review Procedures.",
@@ -915,7 +915,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewProcedureInformationProvider"
     },
-    "MultipleStageProcedureTerm": {
+    {
       "name": "MultipleStageProcedureTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of Procedures carried out in several steps Additional Information: Generally this refers to Procedures where selection is carried out to qualify Tenderers who are then requested to submit the rest of their Tender for evaluation is Restricted Procedure.",
@@ -947,7 +947,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#MultipleStageProcedureTerm"
     },
-    "CleanVehicleDirectiveInformation": {
+    {
       "name": "CleanVehicleDirectiveInformation",
       "description": {
         "_": "Information related to clean vehicles legislation. Additional information: In the European Union, the legislation concerned is the European Parliament and Council 2009/33/EC (Clean Vehicles Directive – CVD).",
@@ -979,7 +979,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#CleanVehicleDirectiveInformation"
     },
-    "FrameworkAgreementTechnique": {
+    {
       "name": "FrameworkAgreementTechnique",
       "description": {
         "_": "Technique that establishes the terms governing Contracts to be awarded during a given Period, in particular with regard to Price and, where appropriate, the Quantity envisaged.",
@@ -1011,7 +1011,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#FrameworkAgreementTechnique"
     },
-    "PurchaseContract": {
+    {
       "name": "PurchaseContract",
       "description": {
         "_": "A Contract resulting from using a Dynamic Purchasing System Technique or Framework Agreement Technique.",
@@ -1039,7 +1039,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#PurchaseContract"
     },
-    "ProcurementDocument": {
+    {
       "name": "ProcurementDocument",
       "description": {
         "_": "Document produced or referred to by the Buyer to describe or determine elements of the Procurement. Additional information: Procurement Documents are to be accessible since the date of publication of the Contract Notice or the prior information Notice when used as a call for competition. Examples of Procurement Documents are Technical Specifications, the Descriptive Document, proposed conditions of Contract, formats for the presentation of Documents by Candidates and Tenderers, information on generally applicable obligations. Other Documents related to the Procedure such as Notices are not considered to be Procurement Documents.",
@@ -1067,7 +1067,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementDocument"
     },
-    "SecurityClearanceTerm": {
+    {
       "name": "SecurityClearanceTerm",
       "description": {
         "_": "Conditions and stipulations about the status requested of individuals allowing them access to classified information (state or organisational secrets) or to restricted areas, after completion of a thorough background check.",
@@ -1099,7 +1099,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#SecurityClearanceTerm"
     },
-    "CatalogueProvider": {
+    {
       "name": "CatalogueProvider",
       "description": {
         "_": "A Role of an Agent compiling and supplying a Catalogue. Additional Information: The Catalogue Provider Role is usually played by the Agent that acts as a Seller, or by another Agent that acts on behalf of the Seller.",
@@ -1131,7 +1131,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#CatalogueProvider"
     },
-    "AwardCriterion": {
+    {
       "name": "AwardCriterion",
       "description": {
         "_": "Criterion that describes a Requirement that the Tender needs to resolve and on which the Tender is evaluated and ranked.",
@@ -1159,7 +1159,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AwardCriterion"
     },
-    "StrategicProcurement": {
+    {
       "name": "StrategicProcurement",
       "description": {
         "_": "Public Procurement that contributes to achieving pressing policy goals. Additional Information: Specific strategic goals could be, for example, Environmental Protection, innovation, job creation and the development of small and medium enterprises. The subclasses are given by the choices in BT-06 Strategic Procurement. Based on https://legalinstruments.oecd.org/en/instruments/OECD-LEGAL-0411 (see paragraph on \"background information\".",
@@ -1187,7 +1187,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#StrategicProcurement"
     },
-    "MonetaryValue": {
+    {
       "name": "MonetaryValue",
       "description": {
         "_": "A number of monetary units specified using a given unit of currency. Additional information: In the pre-award phase of the procurement, all monetary values are considered to exclude VAT based on the Directive 2014/24/EU.",
@@ -1219,7 +1219,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#MonetaryValue"
     },
-    "EvaluationTerm": {
+    {
       "name": "EvaluationTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of the Tender evaluation.",
@@ -1251,7 +1251,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#EvaluationTerm"
     },
-    "ProcurementProcedureInformationProvider": {
+    {
       "name": "ProcurementProcedureInformationProvider",
       "description": {
         "_": "A Role of an Agent responsible for providing additional information about the Procurement Procedure.",
@@ -1279,7 +1279,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementProcedureInformationProvider"
     },
-    "LeadBuyer": {
+    {
       "name": "LeadBuyer",
       "description": {
         "_": "A Role of an Agent who is a Buyer and takes the administrative lead of the Procedure.",
@@ -1311,7 +1311,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#LeadBuyer"
     },
-    "Mediator": {
+    {
       "name": "Mediator",
       "description": {
         "_": "A Role of an Agent that attempts to resolve a dispute between different Agents and come to an agreement.",
@@ -1343,7 +1343,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Mediator"
     },
-    "Candidate": {
+    {
       "name": "Candidate",
       "description": {
         "_": "The Role of an Agent that has sought an invitation or has been invited to take part in a restricted Procedure, in a competitive Procedure with negotiation, in a negotiated Procedure without prior publication, in a competitive dialogue or in an innovation partnership.",
@@ -1375,7 +1375,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Candidate"
     },
-    "AgentInRole": {
+    {
       "name": "AgentInRole",
       "description": {
         "_": "Relative concept that ties an Agent to a part they play in a given Situational Context. Additional information: The classification of roles is based is based on the degree of involvement into the Procurement Process: - Primary (Procurement) Pole is directly involved in the Procurement Process; - Secondary (Procurement sub-) Role is secondary to the Procurement Process - Tertiary (Related) Role is not involved in the Procurement Process.",
@@ -1399,7 +1399,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AgentInRole"
     },
-    "ParticipationRequestTerm": {
+    {
       "name": "ParticipationRequestTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of requesting participation in a Procedure.",
@@ -1427,7 +1427,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ParticipationRequestTerm"
     },
-    "ReliedUponEntity": {
+    {
       "name": "ReliedUponEntity",
       "description": {
         "_": "Economic Operator (who is not a Subcontractor) on which the Tenderer relies upon, to meet Selection Criteria.",
@@ -1455,7 +1455,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ReliedUponEntity"
     },
-    "ContractTerm": {
+    {
       "name": "ContractTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of the Post Award Phase.",
@@ -1487,7 +1487,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ContractTerm"
     },
-    "ProcurementServiceProvider": {
+    {
       "name": "ProcurementServiceProvider",
       "description": {
         "_": "Role of a public or private body which offers ancillary purchasing activities on the market. Additional information: \"Ancillary Purchasing Activities\" means activities consisting in the provision of support to purchasing activities, in particular in the following forms: (a) technical infrastructure enabling Contracting Authorities to award Public Contracts or to conclude Framework Agreements for works, supplies or services; (b) advice on the conduct or design of public Procurement Procedures; (c) preparation and management of Procurement Procedures on behalf and for the account of the Contracting Authority concerned; This would be equivalent to the concept of 'ProcuringEntity' in OCDS: 'The Entity managing the Procurement, which may be different from the Buyer who is paying / using the items being procured'.",
@@ -1519,7 +1519,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementServiceProvider"
     },
-    "GreenProcurement": {
+    {
       "name": "GreenProcurement",
       "description": {
         "_": "Approach whereby Buyers seek to procure with a reduced Environmental Impact. Additional Information: The approach may apply to the complete life cycle. The reduced Environmental Impact is in comparison to goods, services and works with the same primary function that would otherwise be procured. Tightly related are article 68 - Life-cycle costing and article 67 - most economically advantageous Tender (see GPP handbook) https://ec.europa.eu/environment/gpp/pdf/Buying-Green-Handbook-3rd-Edition.pdf An instance of the class GreenProcurement is represented in eForms with the code \"env-imp\" defined in the codelist Strategic-Procurement.Paragraphs) https://ec.europa.eu/environment/gpp/pdf/Buying-Green-Handbook-3rd-Edition.pdf",
@@ -1547,7 +1547,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#GreenProcurement"
     },
-    "AcquiringParty": {
+    {
       "name": "AcquiringParty",
       "description": {
         "_": "The Role of an Agent that acts on the buying side of a Procurement Process.",
@@ -1575,7 +1575,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AcquiringParty"
     },
-    "NonDisclosureAgreementTerm": {
+    {
       "name": "NonDisclosureAgreementTerm",
       "description": {
         "_": "Conditions and stipulations about a non-disclosure agreement. Additional information: A non-disclosure agreement is a Contract between different parties which ensures information is not shared with other parties.",
@@ -1607,7 +1607,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#NonDisclosureAgreementTerm"
     },
-    "ParticipationRequestReceiver": {
+    {
       "name": "ParticipationRequestReceiver",
       "description": {
         "_": "A Role of an Agent responsible for receiving Requests To Participate.",
@@ -1635,7 +1635,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ParticipationRequestReceiver"
     },
-    "TechnicalSpecification": {
+    {
       "name": "TechnicalSpecification",
       "description": {
         "_": "A set of documented Requirements applicable to the object of the Procurement. Additional Information: A specification often includes technical standards.",
@@ -1663,7 +1663,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#TechnicalSpecification"
     },
-    "DynamicPurchaseSystemTechnique": {
+    {
       "name": "DynamicPurchaseSystemTechnique",
       "description": {
         "_": "A Technique that allows the selection of Candidates throughout the Procedure via the Qualification Criteria, followed by individual Mini-Competitions for the Award of Purchase Contracts.",
@@ -1695,7 +1695,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#DynamicPurchaseSystemTechnique"
     },
-    "SocialProcurement": {
+    {
       "name": "SocialProcurement",
       "description": {
         "_": "Approach whereby Buyers seek to procure by fulfilling social objectives. Additional Information: Socially Responsible Public Procurement (SRPP) - ‘SRPP’ means Procurement Operations that take into account one or more of the following social considerations: employment opportunities, decent work, compliance with social and labour rights, social inclusion (including persons with disabilities), equal opportunities, accessibility design for all, taking account of sustainability criteria, including ethical trade issues and wider voluntary compliance with corporate social responsibility (CSR), while observing the principles enshrined in the Treaty for the European Union (TFEU) and the Procurement Directives. See Article 18 and Annex X Directive 2014/24.",
@@ -1723,7 +1723,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#SocialProcurement"
     },
-    "SubcontractingEstimate": {
+    {
       "name": "SubcontractingEstimate",
       "description": {
         "_": "Approximation concerning the foreseen Subcontracting.",
@@ -1751,7 +1751,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#SubcontractingEstimate"
     },
-    "UniqueResponsibleOfTheProcurement": {
+    {
       "name": "UniqueResponsibleOfTheProcurement",
       "description": {
         "_": "Unique Responsible Of The Procurement",
@@ -1775,7 +1775,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#UniqueResponsibleOfTheProcurement"
     },
-    "AwardCriteriaSummary": {
+    {
       "name": "AwardCriteriaSummary",
       "description": {
         "_": "Overview of the Award Criteria.",
@@ -1807,7 +1807,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AwardCriteriaSummary"
     },
-    "TaxInformationProvider": {
+    {
       "name": "TaxInformationProvider",
       "description": {
         "_": "A Role of an Agent responsible for providing information concerning the general regulatory framework for taxes.",
@@ -1831,7 +1831,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#TaxInformationProvider"
     },
-    "Project": {
+    {
       "name": "Project",
       "description": {
         "_": "A collaborative enterprise that is carefully planned to achieve a particular aim.",
@@ -1855,7 +1855,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Project"
     },
-    "EnvironmentalDocumentation": {
+    {
       "name": "EnvironmentalDocumentation",
       "description": {
         "_": "Environmental Documentation",
@@ -1879,7 +1879,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#EnvironmentalDocumentation"
     },
-    "ProcessPlanningTerm": {
+    {
       "name": "ProcessPlanningTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of the unfolding of the Procurement Process.",
@@ -1907,7 +1907,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcessPlanningTerm"
     },
-    "AwardingCentralPurchasingBody": {
+    {
       "name": "AwardingCentralPurchasingBody",
       "description": {
         "_": "Role of an Agent procuring activities conducted on a permanent basis in the form of the award of Public Contracts or the conclusion of Framework Agreements for works, supplies or services intended for other Buyers. Additional Information: In Public Procurement the Role of Awarding Central purchasing Body is carried out by a Central Purchasing Body for other Contracting Authorities.",
@@ -1939,7 +1939,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AwardingCentralPurchasingBody"
     },
-    "FrameworkAgreementTerm": {
+    {
       "name": "FrameworkAgreementTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities in a Framework Agreement.",
@@ -1967,7 +1967,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#FrameworkAgreementTerm"
     },
-    "MaskableObject": {
+    {
       "name": "MaskableObject",
       "description": {
         "_": "Maskable Object",
@@ -1987,7 +1987,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#MaskableObject"
     },
-    "EmploymentInformationProvider": {
+    {
       "name": "EmploymentInformationProvider",
       "description": {
         "_": "A Role of an Agent responsible for providing information concerning the general regulatory framework for employment protection and working conditions.",
@@ -2011,7 +2011,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#EmploymentInformationProvider"
     },
-    "NoticeAwardInformation": {
+    {
       "name": "NoticeAwardInformation",
       "description": {
         "_": "Information about an Award Notice.",
@@ -2039,7 +2039,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#NoticeAwardInformation"
     },
-    "DirectContract": {
+    {
       "name": "DirectContract",
       "description": {
         "_": "A Contract resulting from Lot Award Outcome. Additional information: A Framework Agreement is not a Direct Contract.",
@@ -2071,7 +2071,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#DirectContract"
     },
-    "Notice": {
+    {
       "name": "Notice",
       "description": {
         "_": "Document published by the Buyer about market opportunities and results.",
@@ -2099,7 +2099,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Notice"
     },
-    "SelectedCandidateList": {
+    {
       "name": "SelectedCandidateList",
       "description": {
         "_": "Record of Candidates admitted to take part in award phases of procurements.",
@@ -2127,7 +2127,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#SelectedCandidateList"
     },
-    "EAuctionTechnique": {
+    {
       "name": "EAuctionTechnique",
       "description": {
         "_": "A repetitive Technique in which new Prices, revised downwards, and/or new values concerning certain elements of Tenders are bid on-line.",
@@ -2159,7 +2159,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#EAuctionTechnique"
     },
-    "AdHocChannel": {
+    {
       "name": "AdHocChannel",
       "description": {
         "_": "Web page where tools and devices for electronic communication that are not generally available can be downloaded free of charge.",
@@ -2191,7 +2191,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AdHocChannel"
     },
-    "ProcurementObject": {
+    {
       "name": "ProcurementObject",
       "description": {
         "_": "The whole or a division of goods, services or works to be procured. Additional Information: Anything that can specify the procurement content (i.e. goods, services, work) is a Procurement Object. In a sense, such an \"object\" can constitute the \"object of a Contract\". To test whether something is a Procedure Object check if it can have a Purpose and/or CPV classification (<i>The CPV establishes a single classification system for public procurement aimed at standardising the references used by Contracting Authorities and entities to describe the subject of Procurement Contracts.</i>). Note: Procedure, seems to be an exception from this rule. Because it is a conflated term: it carries process properties and \"purpose\" properties.",
@@ -2215,7 +2215,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementObject"
     },
-    "Reviewer": {
+    {
       "name": "Reviewer",
       "description": {
         "_": "Role of an Agent who investigates the overall correctness of a Procurement Procedure, producing a related report. Additional Information: Any Organisation or Person may request a review of a Procurement Procedure.",
@@ -2247,7 +2247,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Reviewer"
     },
-    "PlannedProcurementPart": {
+    {
       "name": "PlannedProcurementPart",
       "description": {
         "_": "A subdivision of a Planned Procurement that may later become one or more Lots or a self-standing Procedure. A Lot or a Procedure can also cover one or more parts of the Planned Procurement.",
@@ -2279,7 +2279,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#PlannedProcurementPart"
     },
-    "StatisticalInformation": {
+    {
       "name": "StatisticalInformation",
       "description": {
         "_": "Statistical data on the Procedure and the Lot. Additional Information At the present time Procurement Procedures are not fully electronic. At a later date, information on the Tenders received could be inferred by the data in the eProcurement System. Therefore this class is temporal and should cease to exist in fully electronic Procurement. The need for its presence responds also to the alignment with the Regulation (EU) 2019/1780 (eForms). Attention will have to be paid in the future to possible inconsistencies derived from data placed in other classes and data held in the Statistical Information class; e.g. the TenderEvaluation class (see eEvaluation diagram) has the attribute admissibileTender indicator, which in case of being false, may enter in contradiction with the highest or lowest Tender value for that very same inadmissible Tender.",
@@ -2311,7 +2311,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#StatisticalInformation"
     },
-    "ParticipationRequestProcessor": {
+    {
       "name": "ParticipationRequestProcessor",
       "description": {
         "_": "A Role of an Agent responsible for processing Requests To Participate.",
@@ -2339,7 +2339,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ParticipationRequestProcessor"
     },
-    "ElectronicSignature": {
+    {
       "name": "ElectronicSignature",
       "description": {
         "_": "Data in electronic form which is attached to or logically associated with other data in electronic form and which is used by the signatory to sign. Additional information: The definition comes from REGULATION (EU) No 910/2014.",
@@ -2367,7 +2367,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ElectronicSignature"
     },
-    "ProcurementCriteriaSummary": {
+    {
       "name": "ProcurementCriteriaSummary",
       "description": {
         "_": "Overview of the Procurement Criteria.",
@@ -2399,7 +2399,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementCriteriaSummary"
     },
-    "ProcurementCriterion": {
+    {
       "name": "ProcurementCriterion",
       "description": {
         "_": "A criterion specific to Procurement. Additional Information: This Procurement Criterion can be only Exclusion Ground, Selection Criterion or Award Criterion. Each of these Criteria can contain subcriteria (Criterion class).",
@@ -2431,7 +2431,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementCriterion"
     },
-    "LotAwardOutcome": {
+    {
       "name": "LotAwardOutcome",
       "description": {
         "_": "Result concerning the Lot that was attributed by the Awarder.",
@@ -2459,7 +2459,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#LotAwardOutcome"
     },
-    "Procedure": {
+    {
       "name": "Procedure",
       "description": {
         "_": "A legally defined set of administrative activities conducted to conclude one or more Contracts. Additional Information The Procedure is categorised in the law according to different rules determining whether the Procedure is Open, Restricted, Negotiated with or without publicity, etc. (see Procedure Type).",
@@ -2491,7 +2491,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Procedure"
     },
-    "PaymentExecutor": {
+    {
       "name": "PaymentExecutor",
       "description": {
         "_": "A Role of an Agent responsible for executing the Payment.",
@@ -2519,7 +2519,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#PaymentExecutor"
     },
-    "BudgetProvider": {
+    {
       "name": "BudgetProvider",
       "description": {
         "_": "A role of an agent whose Budget is used to pay for the Contract.",
@@ -2547,7 +2547,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#BudgetProvider"
     },
-    "ParticipationCondition": {
+    {
       "name": "ParticipationCondition",
       "description": {
         "_": "Criterion that describes a Requirement to take part in a procurement.",
@@ -2579,7 +2579,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ParticipationCondition"
     },
-    "LotGroupAwardInformation": {
+    {
       "name": "LotGroupAwardInformation",
       "description": {
         "_": "Award information related to a given Group of Lots.",
@@ -2607,7 +2607,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#LotGroupAwardInformation"
     },
-    "SubcontractTerm": {
+    {
       "name": "SubcontractTerm",
       "description": {
         "_": "A concept to describe the main information regarding the share of parts of the Contract to third parties.",
@@ -2635,7 +2635,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#SubcontractTerm"
     },
-    "FrameworkAgreement": {
+    {
       "name": "FrameworkAgreement",
       "description": {
         "_": "An agreement between one or more Contracting Authorities and one or more Economic Operators. Additional Information: When a Framework Agreement is concerned, the FA will result from LotAwardOutcome which describes a Lot which specifies the both the Qualification and Award Criteria.",
@@ -2667,7 +2667,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#FrameworkAgreement"
     },
-    "EconomicStandingSummary": {
+    {
       "name": "EconomicStandingSummary",
       "description": {
         "_": "Overview of the financial viability of the economic operator.",
@@ -2699,7 +2699,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#EconomicStandingSummary"
     },
-    "Subcontractor": {
+    {
       "name": "Subcontractor",
       "description": {
         "_": "A Role of an Agent that has an agreement to perform part or all of the obligations of another Agents's Contract. Additional information For some Procedures, the Subcontractor signs as well the Contract between the Buyer and the Contractor. At tendering time, entities relied upon by the Economic Operators can be Subcontractors or not. When modelling ESPD we will analyze whether we need or not a Role named \"relied upon\".",
@@ -2731,7 +2731,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Subcontractor"
     },
-    "SelectionCriterion": {
+    {
       "name": "SelectionCriterion",
       "description": {
         "_": "Criterion that describes a capacity Requirement that the Economic Operator needs to fulfill to participate in the procurement. Additional Information: Selection criteria may relate to: (a) suitability to pursue the professional activity; (b) economic and financial standing; (c) technical and professional ability",
@@ -2763,7 +2763,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#SelectionCriterion"
     },
-    "Technique": {
+    {
       "name": "Technique",
       "description": {
         "_": "Method used for conducting Procurement Procedures. Several Techniques can be combined in one single Procurement Procedure (e.g. eAuction can be carried out in a Framework Agreement or DPS).",
@@ -2791,7 +2791,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Technique"
     },
-    "EnvironmentalProtectionInformationProvider": {
+    {
       "name": "EnvironmentalProtectionInformationProvider",
       "description": {
         "_": "A Role of an Agent responsible for providing information concerning the general regulatory framework for Environmental Protection.",
@@ -2815,7 +2815,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#EnvironmentalProtectionInformationProvider"
     },
-    "ParticipationConditionsSummary": {
+    {
       "name": "ParticipationConditionsSummary",
       "description": {
         "_": "Overview of the Participation Conditions.",
@@ -2847,7 +2847,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ParticipationConditionsSummary"
     },
-    "OriginatorRequest": {
+    {
       "name": "OriginatorRequest",
       "description": {
         "_": "Document in which the Originator describes his needs.",
@@ -2875,7 +2875,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#OriginatorRequest"
     },
-    "Awarder": {
+    {
       "name": "Awarder",
       "description": {
         "_": "A Role of an Agent that signs the Award Decision. Additional information: BT-08 can be Awarding CBP; BG-03 is the Buyer. But Awarding CPB is not the same as the Buyer; the organisations may differ for these roles. Having the Awarder Role allows us to specify which Organisation is involved in the Award Decision.",
@@ -2903,7 +2903,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Awarder"
     },
-    "CertificationLabel": {
+    {
       "name": "CertificationLabel",
       "description": {
         "_": "Concept that stands for a set of norms, expectations, standards and policies. Additional Information: Such standards may relate to social, ethical and quality etc.",
@@ -2935,7 +2935,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#CertificationLabel"
     },
-    "PlannedProcurement": {
+    {
       "name": "PlannedProcurement",
       "description": {
         "_": "Planned Procurement",
@@ -2959,7 +2959,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#PlannedProcurement"
     },
-    "AwardDecision": {
+    {
       "name": "AwardDecision",
       "description": {
         "_": "Resolution of the Buyer as to the result of the Procurement Procedure.",
@@ -2987,7 +2987,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AwardDecision"
     },
-    "Quantity": {
+    {
       "name": "Quantity",
       "description": {
         "_": "A counted number of non-monetary units possibly including fractions.",
@@ -3011,7 +3011,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Quantity"
     },
-    "Document": {
+    {
       "name": "Document",
       "description": {
         "_": "A set of interrelated Business Information representing the Business facts and associated metadata. The information may be conveyed in any language, medium or form, including textual, numerical, graphic, cartographic, audio-visual forms, etc.",
@@ -3039,7 +3039,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Document"
     },
-    "TenderProcessor": {
+    {
       "name": "TenderProcessor",
       "description": {
         "_": "A Role of an Agent responsible for processing Tenders.",
@@ -3067,7 +3067,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#TenderProcessor"
     },
-    "AwardOutcome": {
+    {
       "name": "AwardOutcome",
       "description": {
         "_": "Result concerning the competition that was attributed by the Awarder.",
@@ -3099,7 +3099,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AwardOutcome"
     },
-    "System": {
+    {
       "name": "System",
       "description": {
         "_": "Software application used for performing Procurement activities.",
@@ -3131,7 +3131,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#System"
     },
-    "AccessTerm": {
+    {
       "name": "AccessTerm",
       "description": {
         "_": "Conditions and stipulations about where and how to access the Procurement Documents.",
@@ -3163,7 +3163,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AccessTerm"
     },
-    "EmploymentDocumentation": {
+    {
       "name": "EmploymentDocumentation",
       "description": {
         "_": "Employment Documentation",
@@ -3187,7 +3187,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#EmploymentDocumentation"
     },
-    "Term": {
+    {
       "name": "Term",
       "description": {
         "_": "A governing condition or stipulation.",
@@ -3211,7 +3211,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Term"
     },
-    "OrganisationGroup": {
+    {
       "name": "OrganisationGroup",
       "description": {
         "_": "Agreed collaboration of several Organisations. Additional Information: This concept has been created to fulfill the need to represent a grouping of Organisations that is not necessarily registered i.e, consortia.",
@@ -3243,7 +3243,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#OrganisationGroup"
     },
-    "ProcedureTerm": {
+    {
       "name": "ProcedureTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of the Procedure.",
@@ -3271,7 +3271,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcedureTerm"
     },
-    "TenderAwardOutcome": {
+    {
       "name": "TenderAwardOutcome",
       "description": {
         "_": "Result concerning the Tender attributed by the Awarder.",
@@ -3295,7 +3295,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#TenderAwardOutcome"
     },
-    "ProcurementProcessInformation": {
+    {
       "name": "ProcurementProcessInformation",
       "description": {
         "_": "Information about the temporal unfolding or succession of Procurement Objects.",
@@ -3323,7 +3323,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementProcessInformation"
     },
-    "ReviewDecision": {
+    {
       "name": "ReviewDecision",
       "description": {
         "_": "Information about Review Decisions.",
@@ -3347,7 +3347,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewDecision"
     },
-    "TechnicalAbilitySummary": {
+    {
       "name": "TechnicalAbilitySummary",
       "description": {
         "_": "Overview of the expertise required for the economic operator to execute the contract.",
@@ -3379,7 +3379,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#TechnicalAbilitySummary"
     },
-    "QualificationCriteriaSummary": {
+    {
       "name": "QualificationCriteriaSummary",
       "description": {
         "_": "Overview of the Qualification Criteria.",
@@ -3411,7 +3411,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#QualificationCriteriaSummary"
     },
-    "ReviewRequestSummary": {
+    {
       "name": "ReviewRequestSummary",
       "description": {
         "_": "Overview of the requests received by the Buyer to review any of its decisions (e.g. the technical specifications, award decision), as set out in Art. 1(5) of Directive 89/665/EEC and Directive 92/13/EEC, and about the complainants that submitted the requests.",
@@ -3439,7 +3439,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewRequestSummary"
     },
-    "MiniCompetitionAwardOutcome": {
+    {
       "name": "MiniCompetitionAwardOutcome",
       "description": {
         "_": "Result concerning the mini-competition that was attributed by the Awarder. Additional Information: The mini-competition is the process where multiple winners or candidates of previous stages of a procedure bid for a specific procurement. It is typically used in framework agreements where the suppliers have already been pre-selected, and the mini competition is used to determine which supplier is best suited for a particular project or contract. It is also used in a Dynamic Purchasing System where the suppliers come from a list of Candidates.",
@@ -3471,7 +3471,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#MiniCompetitionAwardOutcome"
     },
-    "SubmissionStatisticalInformation": {
+    {
       "name": "SubmissionStatisticalInformation",
       "description": {
         "_": "Statistical information about submissions on a given competition, either at Lot level or Mini-Competition level.",
@@ -3499,7 +3499,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#SubmissionStatisticalInformation"
     },
-    "SelectionEvaluationTerm": {
+    {
       "name": "SelectionEvaluationTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of the evaluation of Selection Criteria.",
@@ -3527,7 +3527,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#SelectionEvaluationTerm"
     },
-    "ContextDescription": {
+    {
       "name": "ContextDescription",
       "description": {
         "_": "A description concerning a Procurement Object or a Notice in a specific Situation Context. Additional Information: The description has its own identity (+I) but is dependent (+D) on the concerned Entity. We say that ContextDescription *concerns* an Entity.",
@@ -3551,7 +3551,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ContextDescription"
     },
-    "ReviewRequest": {
+    {
       "name": "ReviewRequest",
       "description": {
         "_": "Information about requests to review procedures.",
@@ -3579,7 +3579,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewRequest"
     },
-    "Purpose": {
+    {
       "name": "Purpose",
       "description": {
         "_": "The description of the objectives related to a Procurement. Additional information: The description of the objectives includes the Subject Matter and Quantities. The quantification of the objectives related to a procurement. To be re-reviewed by the WG the soonest. (WG to be discussed, this was pointed out on the 09/04/2019 14:38:25 WG Meeting) The old definition read as follows: The description of the objectives related to a procurement.",
@@ -3607,7 +3607,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Purpose"
     },
-    "ContextualProjection": {
+    {
       "name": "ContextualProjection",
       "description": {
         "_": "Projection of an Entity and all of its properties that hold in a given Situation Context. Additional Information: The contextual projection does not have its own identity (-I), is dependent (+D) on the described Entity, and is anti-rigid (~R) We say that ContextualProjection *describes* an Entity. Adaptation of ContextSlices pattern encoding a 4D view. http://ontologydesignpatterns.org/wiki/Submissions:Context_Slices",
@@ -3631,7 +3631,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ContextualProjection"
     },
-    "LotGroup": {
+    {
       "name": "LotGroup",
       "description": {
         "_": "Combination of several Lots to conduct comparative assessment of the Tenders. Additional Information: The comparative assessment may refer to the Selection Criteria, Award and Value that apply to several Lots. Pending of discussion with eForms Member States may provide that, where more than one lot may be awarded to the same tenderer, contracting authorities may award contracts combining several or all lots where they have specified in the contract notice or in the invitation to confirm interest that they reserve the possibility of doing so and indicate the lots or groups of lots that may be combined.",
@@ -3655,7 +3655,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#LotGroup"
     },
-    "EnergyEfficiencyInformation": {
+    {
       "name": "EnergyEfficiencyInformation",
       "description": {
         "_": "Energy Efficiency Information",
@@ -3679,7 +3679,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#EnergyEfficiencyInformation"
     },
-    "AuxiliaryParty": {
+    {
       "name": "AuxiliaryParty",
       "description": {
         "_": "Role of an Agent who may be mentioned in the information exchanged during the Procurement Process but who does not play an active part in it.",
@@ -3707,7 +3707,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AuxiliaryParty"
     },
-    "ReviewTerm": {
+    {
       "name": "ReviewTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of the review.",
@@ -3739,7 +3739,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewTerm"
     },
-    "Tenderer": {
+    {
       "name": "Tenderer",
       "description": {
         "_": "A Role of an Agent that has submitted a Tender. Additional Information: A Tenderer is an Economic Operator or group of Economic Operators that has submitted a Tender.",
@@ -3771,7 +3771,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Tenderer"
     },
-    "LocalLegalBasisInformation": {
+    {
       "name": "LocalLegalBasisInformation",
       "description": {
         "_": "Local Legal Basis Information",
@@ -3791,7 +3791,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#LocalLegalBasisInformation"
     },
-    "Offer": {
+    {
       "name": "Offer",
       "description": {
         "_": "Document providing the Monetary Value and the details to fulfill the Requirements set out in the Procurement Documents or Request for Offer. Additional information: A quotation is considered to be an Offer in the eProcurement Ontology.",
@@ -3819,7 +3819,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Offer"
     },
-    "OfferingParty": {
+    {
       "name": "OfferingParty",
       "description": {
         "_": "The Role of an Agent that acts on the Economic Operator side during a Procurement Process. Additional information: As per the European Procurement Directives the notion of ‘Economic Operators’ should be interpreted in a broad manner so as to include any Persons and/or Entities which offer the execution of works, the supply of products or the provision of services on the market, irrespective of the legal form under which they have chosen to operate. Thus, firms, branches, subsidiaries, partnerships, cooperative societies, limited companies, universities, public or private, and other forms of entities than natural Persons should all fall within the notion of Economic Operator, whether or not they are ‘Legal Persons’ in all circumstances.",
@@ -3847,7 +3847,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#OfferingParty"
     },
-    "Contractor": {
+    {
       "name": "Contractor",
       "description": {
         "_": "The Role of an Agent that has signed a Contract with a Buyer.",
@@ -3879,7 +3879,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Contractor"
     },
-    "Business": {
+    {
       "name": "Business",
       "description": {
         "_": "A private law company registered in a national registry.",
@@ -3911,7 +3911,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Business"
     },
-    "NonPublishedInformation": {
+    {
       "name": "NonPublishedInformation",
       "description": {
         "_": "Information about fields not published in this Notice. Additional Information: The non-published information may become available at a later date and may differ from one element to another within a given Document. Examples of fields that may not be immediately published are Winner, Tender and Procedure Lot Result, etc., e.g. for security reasons.",
@@ -3939,7 +3939,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#NonPublishedInformation"
     },
-    "Prize": {
+    {
       "name": "Prize",
       "description": {
         "_": "A reward given in a Contest.",
@@ -3967,7 +3967,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Prize"
     },
-    "Tender": {
+    {
       "name": "Tender",
       "description": {
         "_": "Information submitted by the Economic Operator to specify its Offer regarding a specific Lot, in response to the call for Tender.",
@@ -3999,7 +3999,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Tender"
     },
-    "InternationalProcurementInstrumentMeasuresInformation": {
+    {
       "name": "InternationalProcurementInstrumentMeasuresInformation",
       "description": {
         "_": "International Procurement Instrument Measures Information",
@@ -4023,7 +4023,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#InternationalProcurementInstrumentMeasuresInformation"
     },
-    "AcquiringCentralPurchasingBody": {
+    {
       "name": "AcquiringCentralPurchasingBody",
       "description": {
         "_": "Role of an Agent procuring activities conducted on a permanent basis in the form of the acquisition of supplies and/or services intended for other Buyers. Additional Information: In Public Procurement the Role of Acquiring Central Purchasing Body is carried out by a Central Purchasing Body for other Contracting Authorities.",
@@ -4055,7 +4055,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AcquiringCentralPurchasingBody"
     },
-    "ContractLotCompletionInformation": {
+    {
       "name": "ContractLotCompletionInformation",
       "description": {
         "_": "Information related to a given Lot at the end of the procurement.",
@@ -4083,7 +4083,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ContractLotCompletionInformation"
     },
-    "ChangeInformation": {
+    {
       "name": "ChangeInformation",
       "description": {
         "_": "Alteration to previously provided details.",
@@ -4111,7 +4111,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ChangeInformation"
     },
-    "ReviewIrregularitySummary": {
+    {
       "name": "ReviewIrregularitySummary",
       "description": {
         "_": "Overview of the number and type of requests the Buyer received to review any of its decisions (e.g. the Technical Specifications, Award Decision).",
@@ -4139,7 +4139,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewIrregularitySummary"
     },
-    "InnovativeProcurement": {
+    {
       "name": "InnovativeProcurement",
       "description": {
         "_": "Approach whereby Buyers seek to procure an innovative work, supply or service. Additional Information: ‘innovation’ means the implementation of a new or significantly improved product, service or process, including but not limited to production, building or construction processes, a new marketing method, or a new organizational method in business practices, workplace Organisation or external relations inter alia with the purpose of helping to solve societal challenges or to support the Europe 2020 strategy for smart, sustainable and inclusive growth; See: Directive 2014/24 Articles: 2, 26 (3), 31, 67 (2.a)",
@@ -4167,7 +4167,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#InnovativeProcurement"
     },
-    "Contract": {
+    {
       "name": "Contract",
       "description": {
         "_": "A voluntary, deliberate, and legally binding agreement between two or more competent parties.",
@@ -4195,7 +4195,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Contract"
     },
-    "TenderGroup": {
+    {
       "name": "TenderGroup",
       "description": {
         "_": "Specific Offer in response to a Lot Group. Additional Information: This class is generally used to provide the Monetary Value in response to a Lot Group.",
@@ -4219,7 +4219,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#TenderGroup"
     },
-    "SpecificationInformation": {
+    {
       "name": "SpecificationInformation",
       "description": {
         "_": "Specification Information",
@@ -4239,7 +4239,7 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#SpecificationInformation"
     },
-    "ExpressionOfInterest": {
+    {
       "name": "ExpressionOfInterest",
       "description": {
         "_": "Document presenting an Economic Operator's Request to be considered for Procedures covering a specific domain.",
@@ -4267,9 +4267,9 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ExpressionOfInterest"
     }
-  },
-  "relationships": {
-    "hasCalculationBasedOn": {
+  ],
+  "relationships": [
+    {
       "name": "hasCalculationBasedOn",
       "description": {
         "_": "has Calculation Based On",
@@ -4281,7 +4281,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasCalculationBasedOn"
     },
-    "providesEvidence": {
+    {
       "name": "providesEvidence",
       "description": {
         "_": "provides Evidence",
@@ -4293,7 +4293,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#providesEvidence"
     },
-    "hasTransportHandlingUnitQuantity": {
+    {
       "name": "hasTransportHandlingUnitQuantity",
       "description": {
         "_": "Relation indicating the number of the Transport Handling Unit.",
@@ -4305,7 +4305,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTransportHandlingUnitQuantity"
     },
-    "hasConcessionEstimatedValue": {
+    {
       "name": "hasConcessionEstimatedValue",
       "description": {
         "_": "has Concession Estimated Value",
@@ -4317,7 +4317,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasConcessionEstimatedValue"
     },
-    "specifiesEconomicOperator": {
+    {
       "name": "specifiesEconomicOperator",
       "description": {
         "_": "specifies Economic Operator",
@@ -4329,7 +4329,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesEconomicOperator"
     },
-    "hasQualificationSystemDuration": {
+    {
       "name": "hasQualificationSystemDuration",
       "description": {
         "_": "has Qualification System Duration",
@@ -4341,7 +4341,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasQualificationSystemDuration"
     },
-    "hasProcurementLowestReceivedTenderValue": {
+    {
       "name": "hasProcurementLowestReceivedTenderValue",
       "description": {
         "_": "The lowest received tender value for the procurement. Additional Information: This corresponds to section II.1.7.2. according to Regulation (EU) 2015/1986.",
@@ -4353,7 +4353,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasProcurementLowestReceivedTenderValue"
     },
-    "canProvideNonDiscriminatoryEvidence": {
+    {
       "name": "canProvideNonDiscriminatoryEvidence",
       "description": {
         "_": "Relation showing that an Organization can supply an Evidence with regard to the fulfilment of non-discriminatory criteria or the rules applied in order to reduce the number of participants.",
@@ -4365,7 +4365,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#canProvideNonDiscriminatoryEvidence"
     },
-    "doesNotRequireSelectionCriterionType": {
+    {
       "name": "doesNotRequireSelectionCriterionType",
       "description": {
         "_": "does Not Require Selection Criterion Type",
@@ -4377,7 +4377,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#doesNotRequireSelectionCriterionType"
     },
-    "hasPrimaryContactPoint": {
+    {
       "name": "hasPrimaryContactPoint",
       "description": {
         "_": "has Primary Contact Point",
@@ -4389,7 +4389,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasPrimaryContactPoint"
     },
-    "hasSubcontractor": {
+    {
       "name": "hasSubcontractor",
       "description": {
         "_": "has Subcontractor",
@@ -4401,7 +4401,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasSubcontractor"
     },
-    "hasItemCountryOfOrigin": {
+    {
       "name": "hasItemCountryOfOrigin",
       "description": {
         "_": "The source country of the product or service. Additional Information: The country of origin can be provided by the buyer as a requirement or by the tenderer information of the item to be provided. The codelist to be used is at-voc:country which is available at http://publications.europa.eu/resource/dataset/country",
@@ -4413,7 +4413,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasItemCountryOfOrigin"
     },
-    "hasCertification": {
+    {
       "name": "hasCertification",
       "description": {
         "_": "Relation to the proof of conformance.",
@@ -4425,7 +4425,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasCertification"
     },
-    "announcesNoticeAwardInformation": {
+    {
       "name": "announcesNoticeAwardInformation",
       "description": {
         "_": "announces Notice Award Information",
@@ -4437,7 +4437,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#announcesNoticeAwardInformation"
     },
-    "concernsTender": {
+    {
       "name": "concernsTender",
       "description": {
         "_": "Relates to Tender.",
@@ -4449,7 +4449,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsTender"
     },
-    "hasVariantPermission": {
+    {
       "name": "hasVariantPermission",
       "description": {
         "_": "The obligation or possibility for tenderers to submit variants or not. Additional Information: Variants are alternative ways to fulfil the buyer's needs as opposed to solutions indicated in the procurement documents. eForms: Whether tenderers are required, allowed or forbidden to submit tenders which fulfil the buyer's needs differently than as proposed in the procurement documents. Additional Information: Further conditions for submitting variant tenders are in the procurement documents.",
@@ -4461,7 +4461,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasVariantPermission"
     },
-    "providesOrganisationFinancialCapability": {
+    {
       "name": "providesOrganisationFinancialCapability",
       "description": {
         "_": "A monetary amount representing the financial capability of the Organization. Additional information: Used to represent the general Turnover of the Organization (for statistical purposes).",
@@ -4473,7 +4473,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#providesOrganisationFinancialCapability"
     },
-    "associatedWith": {
+    {
       "name": "associatedWith",
       "description": {
         "_": "The document to which a document is associated.",
@@ -4485,7 +4485,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#associatedWith"
     },
-    "isAppointedBy": {
+    {
       "name": "isAppointedBy",
       "description": {
         "_": "is Appointed By",
@@ -4497,7 +4497,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isAppointedBy"
     },
-    "hasDocumentType": {
+    {
       "name": "hasDocumentType",
       "description": {
         "_": "has Document Type",
@@ -4509,7 +4509,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasDocumentType"
     },
-    "hasCountryOfOrigin": {
+    {
       "name": "hasCountryOfOrigin",
       "description": {
         "_": "The source country of the product or service. Additional Information: The country of origin can be provided by the buyer as a requirement or by the tenderer information of the item to be provided.",
@@ -4521,7 +4521,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasCountryOfOrigin"
     },
-    "needsToBeAWinner": {
+    {
       "name": "needsToBeAWinner",
       "description": {
         "_": "The Contractor must be a Winner.",
@@ -4533,7 +4533,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#needsToBeAWinner"
     },
-    "hasNetVolume": {
+    {
       "name": "hasNetVolume",
       "description": {
         "_": "The amount of space that is required without the packaging.",
@@ -4545,7 +4545,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasNetVolume"
     },
-    "definesLotGroup": {
+    {
       "name": "definesLotGroup",
       "description": {
         "_": "Relation indicating a ProcedureTerm has a LotGroup.",
@@ -4557,7 +4557,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesLotGroup"
     },
-    "hasTraceID": {
+    {
       "name": "hasTraceID",
       "description": {
         "_": "The identifier used for tracking the Goods Item. Additional information: An example is the EPC number used in RFID.",
@@ -4569,7 +4569,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTraceID"
     },
-    "involvesProcurementDocument": {
+    {
       "name": "involvesProcurementDocument",
       "description": {
         "_": "involves Procurement Document",
@@ -4581,7 +4581,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#involvesProcurementDocument"
     },
-    "resultsFromLotAwardOutcome": {
+    {
       "name": "resultsFromLotAwardOutcome",
       "description": {
         "_": "Relation to indicate that a given type of Contract is a consequence of a given LotAwardOutcome.",
@@ -4593,7 +4593,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#resultsFromLotAwardOutcome"
     },
-    "fulfillsStrategicProcurement": {
+    {
       "name": "fulfillsStrategicProcurement",
       "description": {
         "_": "fulfills Strategic Procurement",
@@ -4605,7 +4605,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#fulfillsStrategicProcurement"
     },
-    "hasMandateIdentifier": {
+    {
       "name": "hasMandateIdentifier",
       "description": {
         "_": "An unique identifier for referencing the direct debit mandate, assigned by the Payee.",
@@ -4617,7 +4617,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMandateIdentifier"
     },
-    "setsGroupingContextForLot": {
+    {
       "name": "setsGroupingContextForLot",
       "description": {
         "_": "sets Grouping Context For Lot",
@@ -4629,7 +4629,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#setsGroupingContextForLot"
     },
-    "summarisesInformationForAwardOutcome": {
+    {
       "name": "summarisesInformationForAwardOutcome",
       "description": {
         "_": "Relates to submission for the given competition, either at Lot level or Mini-Competition level.",
@@ -4641,7 +4641,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#summarisesInformationForAwardOutcome"
     },
-    "hasDeliveryLocation": {
+    {
       "name": "hasDeliveryLocation",
       "description": {
         "_": "Location delivery area where the Item can be ordered to the given price.",
@@ -4653,7 +4653,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasDeliveryLocation"
     },
-    "hasHazardousClassID": {
+    {
       "name": "hasHazardousClassID",
       "description": {
         "_": "Specification of the hazardous nature of an item according to a classification schema. Provides detail of the classification and nature of a hazardous item.",
@@ -4665,7 +4665,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasHazardousClassID"
     },
-    "hasTaxIdentifier": {
+    {
       "name": "hasTaxIdentifier",
       "description": {
         "_": "has Tax Identifier",
@@ -4677,7 +4677,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTaxIdentifier"
     },
-    "hasContractNatureType": {
+    {
       "name": "hasContractNatureType",
       "description": {
         "_": "Subject of the acquisition.",
@@ -4689,7 +4689,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasContractNatureType"
     },
-    "hasManufacturerID": {
+    {
       "name": "hasManufacturerID",
       "description": {
         "_": "The manufacturer's identifier for the item.",
@@ -4701,7 +4701,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasManufacturerID"
     },
-    "concernsReviewSummaryForLot": {
+    {
       "name": "concernsReviewSummaryForLot",
       "description": {
         "_": "Relates to Lot review summary.",
@@ -4713,7 +4713,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsReviewSummaryForLot"
     },
-    "hasGrossVolume": {
+    {
       "name": "hasGrossVolume",
       "description": {
         "_": "The amount of space that is required including the packaging.",
@@ -4725,7 +4725,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasGrossVolume"
     },
-    "concernsGreenProcurement": {
+    {
       "name": "concernsGreenProcurement",
       "description": {
         "_": "Relates to Green Procurement.",
@@ -4737,7 +4737,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsGreenProcurement"
     },
-    "hasBargainPrice": {
+    {
       "name": "hasBargainPrice",
       "description": {
         "_": "The value of procured supplies that have used a particularly advantageous opportunity available for a very short time at a value considerably lower than normal market prices.",
@@ -4749,7 +4749,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasBargainPrice"
     },
-    "hasBatchID": {
+    {
       "name": "hasBatchID",
       "description": {
         "_": "The identifier assigned to a specific batch of the produced Item.",
@@ -4761,7 +4761,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasBatchID"
     },
-    "hasCustomerReference": {
+    {
       "name": "hasCustomerReference",
       "description": {
         "_": "An identifier assigned by the Buyer used for internal routing purposes.",
@@ -4773,7 +4773,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasCustomerReference"
     },
-    "hasEstimatedDeliveryPeriod": {
+    {
       "name": "hasEstimatedDeliveryPeriod",
       "description": {
         "_": "The forecasted time period given by the Despatcher to provide the goods and services.",
@@ -4785,7 +4785,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasEstimatedDeliveryPeriod"
     },
-    "refersToPreviousNotice": {
+    {
       "name": "refersToPreviousNotice",
       "description": {
         "_": "refers To Previous Notice",
@@ -4797,7 +4797,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToPreviousNotice"
     },
-    "evaluatesProcurementCriterion": {
+    {
       "name": "evaluatesProcurementCriterion",
       "description": {
         "_": "evaluates Procurement Criterion",
@@ -4809,7 +4809,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#evaluatesProcurementCriterion"
     },
-    "specifiesCatalogueReceiver": {
+    {
       "name": "specifiesCatalogueReceiver",
       "description": {
         "_": "specifies Catalogue Receiver",
@@ -4821,7 +4821,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesCatalogueReceiver"
     },
-    "hasInvoicedObjectIdentifier": {
+    {
       "name": "hasInvoicedObjectIdentifier",
       "description": {
         "_": "An identifier for an object on which the invoice is based, given by the Seller.",
@@ -4833,7 +4833,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasInvoicedObjectIdentifier"
     },
-    "isBasedOnImplementingRegulation": {
+    {
       "name": "isBasedOnImplementingRegulation",
       "description": {
         "_": "Indicates under which regulation a notice is created.",
@@ -4845,7 +4845,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isBasedOnImplementingRegulation"
     },
-    "specifiesDeliveryAgreementLocation": {
+    {
       "name": "specifiesDeliveryAgreementLocation",
       "description": {
         "_": "specifies Delivery Agreement Location",
@@ -4857,7 +4857,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesDeliveryAgreementLocation"
     },
-    "hasMainClassification": {
+    {
       "name": "hasMainClassification",
       "description": {
         "_": "has Main Classification",
@@ -4869,7 +4869,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMainClassification"
     },
-    "exposesChannel": {
+    {
       "name": "exposesChannel",
       "description": {
         "_": "exposes Channel",
@@ -4881,7 +4881,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#exposesChannel"
     },
-    "announcesLot": {
+    {
       "name": "announcesLot",
       "description": {
         "_": "announces Lot",
@@ -4893,7 +4893,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#announcesLot"
     },
-    "concernsProcurementElement": {
+    {
       "name": "concernsProcurementElement",
       "description": {
         "_": "concerns Procurement Element",
@@ -4905,7 +4905,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsProcurementElement"
     },
-    "specifiesPlaceOfDelivery": {
+    {
       "name": "specifiesPlaceOfDelivery",
       "description": {
         "_": "specifies Place Of Delivery",
@@ -4917,7 +4917,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesPlaceOfDelivery"
     },
-    "hasShortQuantity": {
+    {
       "name": "hasShortQuantity",
       "description": {
         "_": "has Short Quantity",
@@ -4929,7 +4929,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasShortQuantity"
     },
-    "concernsEnergyEfficiencyItemCategory": {
+    {
       "name": "concernsEnergyEfficiencyItemCategory",
       "description": {
         "_": "concerns Energy Efficiency Item Category",
@@ -4941,7 +4941,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsEnergyEfficiencyItemCategory"
     },
-    "hasNetMonetaryValue": {
+    {
       "name": "hasNetMonetaryValue",
       "description": {
         "_": "has Net Monetary Value",
@@ -4953,7 +4953,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasNetMonetaryValue"
     },
-    "fulfillsRequirement": {
+    {
       "name": "fulfillsRequirement",
       "description": {
         "_": "The requirement to which the concept meets.",
@@ -4965,7 +4965,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#fulfillsRequirement"
     },
-    "hasProcurementHighestReceivedTenderValue": {
+    {
       "name": "hasProcurementHighestReceivedTenderValue",
       "description": {
         "_": "The highest received tender value for the procurement. Additional Information: This corresponds to section II.1.7.3. according to Regulation (EU) 2015/1986.",
@@ -4977,7 +4977,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasProcurementHighestReceivedTenderValue"
     },
-    "isFundedBy": {
+    {
       "name": "isFundedBy",
       "description": {
         "_": "Funding is provided either completely or partially by a Fund. Additional information: Funds may change between the lot and the contract, for example in the case of an emergency crisis, a contract may be financed by a budget that was not foreseen in the call.",
@@ -4989,7 +4989,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isFundedBy"
     },
-    "hasEInvoicingPermission": {
+    {
       "name": "hasEInvoicingPermission",
       "description": {
         "_": "has E Invoicing Permission",
@@ -5001,7 +5001,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasEInvoicingPermission"
     },
-    "announcesPlannedProcurement": {
+    {
       "name": "announcesPlannedProcurement",
       "description": {
         "_": "announces Planned Procurement",
@@ -5013,7 +5013,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#announcesPlannedProcurement"
     },
-    "specifiesPlaceOfDespatch": {
+    {
       "name": "specifiesPlaceOfDespatch",
       "description": {
         "_": "Relation indicating the Location of the Despatch of the Goods Items to be delivered.",
@@ -5025,7 +5025,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesPlaceOfDespatch"
     },
-    "hasFinancialOfferValue": {
+    {
       "name": "hasFinancialOfferValue",
       "description": {
         "_": "The value offered by the Tenderer for a Lot. Additional Information: This value is normally the one awarded for a winning Tender Lot. In case of negotiated procedures the original financial value may be reviewed and the offer updated.",
@@ -5037,7 +5037,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasFinancialOfferValue"
     },
-    "refersToAwardDecision": {
+    {
       "name": "refersToAwardDecision",
       "description": {
         "_": "refers To Award Decision",
@@ -5049,7 +5049,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToAwardDecision"
     },
-    "hasSubcontracting": {
+    {
       "name": "hasSubcontracting",
       "description": {
         "_": "has Subcontracting",
@@ -5061,7 +5061,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasSubcontracting"
     },
-    "hasTenderSubcontractingInformation": {
+    {
       "name": "hasTenderSubcontractingInformation",
       "description": {
         "_": "The information about subcontracting that must be indicated in the tender.",
@@ -5073,7 +5073,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTenderSubcontractingInformation"
     },
-    "specifiesOfferCurrency": {
+    {
       "name": "specifiesOfferCurrency",
       "description": {
         "_": "specifies Offer Currency",
@@ -5085,7 +5085,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesOfferCurrency"
     },
-    "foreseesSubcontracting": {
+    {
       "name": "foreseesSubcontracting",
       "description": {
         "_": "foresees Subcontracting",
@@ -5097,7 +5097,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#foreseesSubcontracting"
     },
-    "hasJuryMember": {
+    {
       "name": "hasJuryMember",
       "description": {
         "_": "An agent involved in an evaluation board.",
@@ -5109,7 +5109,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasJuryMember"
     },
-    "concernsLotAwardOutcome": {
+    {
       "name": "concernsLotAwardOutcome",
       "description": {
         "_": "concerns Lot Award Outcome",
@@ -5121,7 +5121,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsLotAwardOutcome"
     },
-    "announcesRole": {
+    {
       "name": "announcesRole",
       "description": {
         "_": "announces Role",
@@ -5133,7 +5133,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#announcesRole"
     },
-    "refersToPreviousProcedure": {
+    {
       "name": "refersToPreviousProcedure",
       "description": {
         "_": "Reference to a previous procedure. Additional Information: In the case of Direct Award Terms, this property points to a previous Procedure justifying the use of Direct Award without a prior publication.",
@@ -5145,7 +5145,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToPreviousProcedure"
     },
-    "refersToPreviousProcedureLot": {
+    {
       "name": "refersToPreviousProcedureLot",
       "description": {
         "_": "Reference to one or more Lots in a previous procedure. Additional Information: In the case of Direct Award Terms, this property points to a previous Procedure justifying the use of Direct Award without a prior publication.",
@@ -5157,7 +5157,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToPreviousProcedureLot"
     },
-    "hasMaximumFrameworkAgreementAwardedValue": {
+    {
       "name": "hasMaximumFrameworkAgreementAwardedValue",
       "description": {
         "_": "The maximum value which can be spent through all the framework agreements announced in this notice, including options and renewals of contracts. Additional information: The value provided is a threshold value that implicity means that it cannot be exceeded however it may not be reached during the execution of a contract. The Framework Agreements in a CAN are to be traced back and added to provide this value.",
@@ -5169,7 +5169,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMaximumFrameworkAgreementAwardedValue"
     },
-    "providesContractTotalPenaltyValue": {
+    {
       "name": "providesContractTotalPenaltyValue",
       "description": {
         "_": "provides Contract Total Penalty Value",
@@ -5181,7 +5181,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#providesContractTotalPenaltyValue"
     },
-    "hasExpectedDeliveryTime": {
+    {
       "name": "hasExpectedDeliveryTime",
       "description": {
         "_": "The expected amount of time between the order and delivery of an item.",
@@ -5193,7 +5193,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasExpectedDeliveryTime"
     },
-    "hasAwardedValue": {
+    {
       "name": "hasAwardedValue",
       "description": {
         "_": "The value of the procurement provided by the Award Decision. Additional Information: Different cases of awarded values may refer to a lot, the global value of the procedure, or of a combinatorial value of a group of lots. In the case of framework agreements and dynamic purchasing systems this refers to the maximum awarded value.",
@@ -5205,7 +5205,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasAwardedValue"
     },
-    "concernsLotGroup": {
+    {
       "name": "concernsLotGroup",
       "description": {
         "_": "concerns Lot Group",
@@ -5217,7 +5217,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsLotGroup"
     },
-    "refersToLotGroupAwardInformation": {
+    {
       "name": "refersToLotGroupAwardInformation",
       "description": {
         "_": "refers To Lot Group Award Information",
@@ -5229,7 +5229,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToLotGroupAwardInformation"
     },
-    "hasNonElectronicSubmissionJustification": {
+    {
       "name": "hasNonElectronicSubmissionJustification",
       "description": {
         "_": "Reason for not accepting electronic information.",
@@ -5241,7 +5241,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasNonElectronicSubmissionJustification"
     },
-    "concernsAwardOutcome": {
+    {
       "name": "concernsAwardOutcome",
       "description": {
         "_": "concerns Award Outcome",
@@ -5253,7 +5253,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsAwardOutcome"
     },
-    "foreseesTerm": {
+    {
       "name": "foreseesTerm",
       "description": {
         "_": "foresees Term",
@@ -5265,7 +5265,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#foreseesTerm"
     },
-    "hasWidth": {
+    {
       "name": "hasWidth",
       "description": {
         "_": "The measurement of the depth. Additional Information: The width is the shorter side between the length and the width.",
@@ -5277,7 +5277,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasWidth"
     },
-    "hasPurpose": {
+    {
       "name": "hasPurpose",
       "description": {
         "_": "Relation indicating the Purpose of a concept.",
@@ -5289,7 +5289,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasPurpose"
     },
-    "hasTotalAccountingCurrencyTaxAmount": {
+    {
       "name": "hasTotalAccountingCurrencyTaxAmount",
       "description": {
         "_": "has Total Accounting Currency Tax Amount",
@@ -5301,7 +5301,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalAccountingCurrencyTaxAmount"
     },
-    "hasDeclaredStatisticalValue": {
+    {
       "name": "hasDeclaredStatisticalValue",
       "description": {
         "_": "The Monetary Value declared for statistical purposes.",
@@ -5313,7 +5313,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasDeclaredStatisticalValue"
     },
-    "hasPaymentIdentifier": {
+    {
       "name": "hasPaymentIdentifier",
       "description": {
         "_": "has Payment Identifier",
@@ -5325,7 +5325,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasPaymentIdentifier"
     },
-    "isCalculatedOn": {
+    {
       "name": "isCalculatedOn",
       "description": {
         "_": "The monetary amount to which the multiplier factor is applied in calculating the amount of this allowance, charge or tax.",
@@ -5337,7 +5337,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isCalculatedOn"
     },
-    "needsToBeATenderer": {
+    {
       "name": "needsToBeATenderer",
       "description": {
         "_": "The Winner must be a Tenderer.",
@@ -5349,7 +5349,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#needsToBeATenderer"
     },
-    "hasProcedureType": {
+    {
       "name": "hasProcedureType",
       "description": {
         "_": "Identification of the Procedure used.",
@@ -5361,7 +5361,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasProcedureType"
     },
-    "foreseesTechnique": {
+    {
       "name": "foreseesTechnique",
       "description": {
         "_": "foresees Technique",
@@ -5373,7 +5373,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#foreseesTechnique"
     },
-    "conformsToLegalBasis": {
+    {
       "name": "conformsToLegalBasis",
       "description": {
         "_": "The Notice was designed in accordance with the given legal basis. Additional Information: This Notice can be used for Procedures which do not have the same legal basis. This holds for standard forms.",
@@ -5385,7 +5385,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#conformsToLegalBasis"
     },
-    "hasMeasure": {
+    {
       "name": "hasMeasure",
       "description": {
         "_": "has Measure",
@@ -5397,7 +5397,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMeasure"
     },
-    "hasMaximumOrderQuantity": {
+    {
       "name": "hasMaximumOrderQuantity",
       "description": {
         "_": "The maximum number of orderable units that can be ordered according to details provided in the catalogue line, such as price.",
@@ -5409,7 +5409,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMaximumOrderQuantity"
     },
-    "signsAwardDecision": {
+    {
       "name": "signsAwardDecision",
       "description": {
         "_": "signs Award Decision",
@@ -5421,7 +5421,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#signsAwardDecision"
     },
-    "delegatesAncillaryActivitiesTo": {
+    {
       "name": "delegatesAncillaryActivitiesTo",
       "description": {
         "_": "Entrusts ancillary purchasing activities to ProcurementServiceProvider.",
@@ -5433,7 +5433,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#delegatesAncillaryActivitiesTo"
     },
-    "hasModificationJustification": {
+    {
       "name": "hasModificationJustification",
       "description": {
         "_": "Explanation of why a contract was modified. The codelist to be used is at-voc:modification-justification which is available at http://publications.europa.eu/resource/dataset/modification-justification",
@@ -5445,7 +5445,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasModificationJustification"
     },
-    "specifiesContractor": {
+    {
       "name": "specifiesContractor",
       "description": {
         "_": "specifies Contractor",
@@ -5457,7 +5457,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesContractor"
     },
-    "hasEstimatedValue": {
+    {
       "name": "hasEstimatedValue",
       "description": {
         "_": "A forecast of the value of the procurement before competition. Additional Information: Different cases of estimated values may refer to a lot, the global value of the procedure, or of a combinatorial value of a group of lots. The forecast is calculated by the buyer and covers all revenues whether coming from the buyer or third parties. See for example recital (19), Article 5 of Directive 2014/24/EU and other articles from the rest of Directives about procurement. In the case of framework agreements and dynamic purchasing systems this refers to the maximum estimated value.",
@@ -5469,7 +5469,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasEstimatedValue"
     },
-    "hasLowestReceivedTenderValue": {
+    {
       "name": "hasLowestReceivedTenderValue",
       "description": {
         "_": "Amount of the Tender with the lowest value. Additional Information The value must correspond to an admissible tender. For example, tenders compliant with the procurement document requirements, not having an abnormally low price or cost, etc.",
@@ -5481,7 +5481,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasLowestReceivedTenderValue"
     },
-    "hasSubcontractingEstimatedValue": {
+    {
       "name": "hasSubcontractingEstimatedValue",
       "description": {
         "_": "The estimated value of a single subcontract.",
@@ -5493,7 +5493,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasSubcontractingEstimatedValue"
     },
-    "hasWeightValueType": {
+    {
       "name": "hasWeightValueType",
       "description": {
         "_": "No definition. Waiting on CCCEV alignment.",
@@ -5505,7 +5505,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasWeightValueType"
     },
-    "hasBackorderQuantity": {
+    {
       "name": "hasBackorderQuantity",
       "description": {
         "_": "has Backorder Quantity",
@@ -5517,7 +5517,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasBackorderQuantity"
     },
-    "hasFundProgramme": {
+    {
       "name": "hasFundProgramme",
       "description": {
         "_": "has Fund Programme",
@@ -5529,7 +5529,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasFundProgramme"
     },
-    "hasInvoicingPeriod": {
+    {
       "name": "hasInvoicingPeriod",
       "description": {
         "_": "has Invoicing Period",
@@ -5541,7 +5541,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasInvoicingPeriod"
     },
-    "hasUnofficialLanguage": {
+    {
       "name": "hasUnofficialLanguage",
       "description": {
         "_": "The language translation(s) in which the instances of the given concepts are available. These linguistic versions are not an official translation, they are provided only for information.",
@@ -5553,7 +5553,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasUnofficialLanguage"
     },
-    "concernsProcedure": {
+    {
       "name": "concernsProcedure",
       "description": {
         "_": "Relates to Procedure.",
@@ -5565,7 +5565,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsProcedure"
     },
-    "hasTotalValue": {
+    {
       "name": "hasTotalValue",
       "description": {
         "_": "has Total Value",
@@ -5577,7 +5577,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalValue"
     },
-    "isReinforcedBy": {
+    {
       "name": "isReinforcedBy",
       "description": {
         "_": "Relation indicating an Evidence that supports the Response.",
@@ -5589,7 +5589,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isReinforcedBy"
     },
-    "hasDeliveryPeriod": {
+    {
       "name": "hasDeliveryPeriod",
       "description": {
         "_": "has Delivery Period",
@@ -5601,7 +5601,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasDeliveryPeriod"
     },
-    "concernsLot": {
+    {
       "name": "concernsLot",
       "description": {
         "_": "Relates to Lot.",
@@ -5613,7 +5613,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsLot"
     },
-    "hasNationality": {
+    {
       "name": "hasNationality",
       "description": {
         "_": "has Nationality",
@@ -5625,7 +5625,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasNationality"
     },
-    "definesTenderProcessor": {
+    {
       "name": "definesTenderProcessor",
       "description": {
         "_": "Relation indicating a SubmissionTerm has a TenderProcessor.",
@@ -5637,7 +5637,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesTenderProcessor"
     },
-    "hasTotalTaxAmount": {
+    {
       "name": "hasTotalTaxAmount",
       "description": {
         "_": "has Total Tax Amount",
@@ -5649,7 +5649,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalTaxAmount"
     },
-    "hasAdditionalContractNature": {
+    {
       "name": "hasAdditionalContractNature",
       "description": {
         "_": "Additional type of acquisition taken into consideration in the contract.",
@@ -5661,7 +5661,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasAdditionalContractNature"
     },
-    "hasDespatcherConsignmentID": {
+    {
       "name": "hasDespatcherConsignmentID",
       "description": {
         "_": "The identifier of the the Consignment given by the Despatcher.",
@@ -5673,7 +5673,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasDespatcherConsignmentID"
     },
-    "includesTender": {
+    {
       "name": "includesTender",
       "description": {
         "_": "includes Tender",
@@ -5685,7 +5685,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#includesTender"
     },
-    "hasMinimumTemperature": {
+    {
       "name": "hasMinimumTemperature",
       "description": {
         "_": "The lowest tolerated temperature.",
@@ -5697,7 +5697,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMinimumTemperature"
     },
-    "canProvideEvidence": {
+    {
       "name": "canProvideEvidence",
       "description": {
         "_": "Relation showing that an Organization can supply an Evidence with regard to the payment of social security contributions and taxes.",
@@ -5709,7 +5709,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#canProvideEvidence"
     },
-    "refersToNoticeAwardInformation": {
+    {
       "name": "refersToNoticeAwardInformation",
       "description": {
         "_": "refers To Notice Award Information",
@@ -5721,7 +5721,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToNoticeAwardInformation"
     },
-    "hasTaxInformation": {
+    {
       "name": "hasTaxInformation",
       "description": {
         "_": "has Tax Information",
@@ -5733,7 +5733,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTaxInformation"
     },
-    "hasGrossWeight": {
+    {
       "name": "hasGrossWeight",
       "description": {
         "_": "The total mass of goods including the packaging.",
@@ -5745,7 +5745,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasGrossWeight"
     },
-    "definesProcurementProcedureInformationProvider": {
+    {
       "name": "definesProcurementProcedureInformationProvider",
       "description": {
         "_": "Relation indicating an AccessTerm has a ProcurementProcedureInformationProvider.",
@@ -5757,7 +5757,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesProcurementProcedureInformationProvider"
     },
-    "definesMediator": {
+    {
       "name": "definesMediator",
       "description": {
         "_": "Relation indicating a ProcedureTerm has a Mediator.",
@@ -5769,7 +5769,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesMediator"
     },
-    "definesContractPeriod": {
+    {
       "name": "definesContractPeriod",
       "description": {
         "_": "Relation indicating a ContractTerm has a Period.",
@@ -5781,7 +5781,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesContractPeriod"
     },
-    "hasAdditionalClassification": {
+    {
       "name": "hasAdditionalClassification",
       "description": {
         "_": "has Additional Classification",
@@ -5793,7 +5793,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasAdditionalClassification"
     },
-    "hasItemStandardID": {
+    {
       "name": "hasItemStandardID",
       "description": {
         "_": "The general identifier assigned to the concept based on a standard scheme.​ Additional information: For example the GTIN scheme (Global Trade Item Number).",
@@ -5805,7 +5805,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasItemStandardID"
     },
-    "hasSerialID": {
+    {
       "name": "hasSerialID",
       "description": {
         "_": "The identifier assigned to the specific instance of the produced concept.",
@@ -5817,7 +5817,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasSerialID"
     },
-    "hasLanguage": {
+    {
       "name": "hasLanguage",
       "description": {
         "_": "Language in which the submitted information is to be expressed.",
@@ -5829,7 +5829,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasLanguage"
     },
-    "refersToRole": {
+    {
       "name": "refersToRole",
       "description": {
         "_": "refers To Role",
@@ -5841,7 +5841,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToRole"
     },
-    "hasTotalAwardedValue": {
+    {
       "name": "hasTotalAwardedValue",
       "description": {
         "_": "The awarded value of all lots announced in this notice, including options and renewals. Additional information: The values of the individual Lots awarded under a framework agreement and mentioned in this notice are included. The values of the individual lots announced in a CAN are to be traced back and added to provide this value.",
@@ -5853,7 +5853,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalAwardedValue"
     },
-    "isSubordinatedToContract": {
+    {
       "name": "isSubordinatedToContract",
       "description": {
         "_": "is Subordinated To Contract",
@@ -5865,7 +5865,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isSubordinatedToContract"
     },
-    "hasContractValue": {
+    {
       "name": "hasContractValue",
       "description": {
         "_": "has Contract Value",
@@ -5877,7 +5877,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasContractValue"
     },
-    "resultsFromMiniCompetitionAwardOutcome": {
+    {
       "name": "resultsFromMiniCompetitionAwardOutcome",
       "description": {
         "_": "results From Mini Competition Award Outcome",
@@ -5889,7 +5889,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#resultsFromMiniCompetitionAwardOutcome"
     },
-    "describesResultNotice": {
+    {
       "name": "describesResultNotice",
       "description": {
         "_": "describes Result Notice",
@@ -5901,7 +5901,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#describesResultNotice"
     },
-    "announcesCompletionOfContract": {
+    {
       "name": "announcesCompletionOfContract",
       "description": {
         "_": "announces Completion Of Contract",
@@ -5913,7 +5913,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#announcesCompletionOfContract"
     },
-    "hasMainActivity": {
+    {
       "name": "hasMainActivity",
       "description": {
         "_": "The principal sectoral area in which an organisation operates. Additional information: The activities associated with buyers are derived from the top level of the Classification of the functions of the government (COFOG) from the United Nations Statistics Division. The activities associated with buyer are derived from sectors explicitly falling within the sectoral directive (2014/25/EU Art. 8 - Art. 14).",
@@ -5925,7 +5925,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMainActivity"
     },
-    "providesProcurementDocumentsInOfficialLanguage": {
+    {
       "name": "providesProcurementDocumentsInOfficialLanguage",
       "description": {
         "_": "provides Procurement Documents In Official Language",
@@ -5937,7 +5937,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#providesProcurementDocumentsInOfficialLanguage"
     },
-    "hasSpecificationInformation": {
+    {
       "name": "hasSpecificationInformation",
       "description": {
         "_": "has Specification Information",
@@ -5949,7 +5949,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasSpecificationInformation"
     },
-    "specifiesCleanVehicleDirectiveVehicleCategory": {
+    {
       "name": "specifiesCleanVehicleDirectiveVehicleCategory",
       "description": {
         "_": "specifies Clean Vehicle Directive Vehicle Category",
@@ -5961,7 +5961,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesCleanVehicleDirectiveVehicleCategory"
     },
-    "actsOnBehalfOf": {
+    {
       "name": "actsOnBehalfOf",
       "description": {
         "_": "Represents.",
@@ -5973,7 +5973,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#actsOnBehalfOf"
     },
-    "announcesLotGroupAwardInformation": {
+    {
       "name": "announcesLotGroupAwardInformation",
       "description": {
         "_": "announces Lot Group Award Information",
@@ -5985,7 +5985,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#announcesLotGroupAwardInformation"
     },
-    "hasMinimumMeasure": {
+    {
       "name": "hasMinimumMeasure",
       "description": {
         "_": "has Minimum Measure",
@@ -5997,7 +5997,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMinimumMeasure"
     },
-    "hasTrackingID": {
+    {
       "name": "hasTrackingID",
       "description": {
         "_": "has Tracking ID",
@@ -6009,7 +6009,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTrackingID"
     },
-    "providesInformationOn": {
+    {
       "name": "providesInformationOn",
       "description": {
         "_": "Offers information about an instance of a concept.",
@@ -6021,7 +6021,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#providesInformationOn"
     },
-    "hasEnergyEfficiencyLabel": {
+    {
       "name": "hasEnergyEfficiencyLabel",
       "description": {
         "_": "has Energy Efficiency Label",
@@ -6033,7 +6033,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasEnergyEfficiencyLabel"
     },
-    "hasSellerOrderID": {
+    {
       "name": "hasSellerOrderID",
       "description": {
         "_": "The identifier of the Order given by the Seller. Additional Information: This identifier is different than the identifier of the Order given by the Buyer and it is useful for internal purposes.",
@@ -6045,7 +6045,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasSellerOrderID"
     },
-    "hasQuantityThreshold": {
+    {
       "name": "hasQuantityThreshold",
       "description": {
         "_": "has Quantity Threshold",
@@ -6057,7 +6057,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasQuantityThreshold"
     },
-    "hasSelectionCriterionType": {
+    {
       "name": "hasSelectionCriterionType",
       "description": {
         "_": "The classification of the selection criteria.",
@@ -6069,7 +6069,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasSelectionCriterionType"
     },
-    "requestsRemedyType": {
+    {
       "name": "requestsRemedyType",
       "description": {
         "_": "requests Remedy Type",
@@ -6081,7 +6081,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#requestsRemedyType"
     },
-    "hasOutstandingQuantity": {
+    {
       "name": "hasOutstandingQuantity",
       "description": {
         "_": "The Quantity of non-despatched Goods Items.",
@@ -6093,7 +6093,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasOutstandingQuantity"
     },
-    "definesReviewProcedureInformationProvider": {
+    {
       "name": "definesReviewProcedureInformationProvider",
       "description": {
         "_": "Relation indicating a ReviewTerm has a ReviewProcedureInformationProvider.",
@@ -6105,7 +6105,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesReviewProcedureInformationProvider"
     },
-    "hasLotReference": {
+    {
       "name": "hasLotReference",
       "description": {
         "_": "has Lot Reference",
@@ -6117,7 +6117,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasLotReference"
     },
-    "includesNationalCriterion": {
+    {
       "name": "includesNationalCriterion",
       "description": {
         "_": "Relation indicating that a Criterion contains a Criterion that is specific to a given Member State.",
@@ -6129,7 +6129,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#includesNationalCriterion"
     },
-    "hasLegalIdentifier": {
+    {
       "name": "hasLegalIdentifier",
       "description": {
         "_": "has Legal Identifier",
@@ -6141,7 +6141,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasLegalIdentifier"
     },
-    "hasInvoiceLineObjectIdentifier": {
+    {
       "name": "hasInvoiceLineObjectIdentifier",
       "description": {
         "_": "An identifier for an object on which the invoice line is based, given by the Seller. Additional Information: It may be a subscription number, telephone number, meter point etc., as applicable.",
@@ -6153,7 +6153,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasInvoiceLineObjectIdentifier"
     },
-    "hasExclusionGroundType": {
+    {
       "name": "hasExclusionGroundType",
       "description": {
         "_": "has Exclusion Ground Type",
@@ -6165,7 +6165,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasExclusionGroundType"
     },
-    "hasAwardCriterionType": {
+    {
       "name": "hasAwardCriterionType",
       "description": {
         "_": "Category of award criterion.",
@@ -6177,7 +6177,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasAwardCriterionType"
     },
-    "hasConfirmedIrregularityType": {
+    {
       "name": "hasConfirmedIrregularityType",
       "description": {
         "_": "has Confirmed Irregularity Type",
@@ -6189,7 +6189,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasConfirmedIrregularityType"
     },
-    "hasVehicleID": {
+    {
       "name": "hasVehicleID",
       "description": {
         "_": "The identifier of the Transport Means.",
@@ -6201,7 +6201,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasVehicleID"
     },
-    "hasLegalBasis": {
+    {
       "name": "hasLegalBasis",
       "description": {
         "_": "The legal basis under which the procurement procedure takes place. Additional Information: For example European Directives or Regulations, national laws etc. The recommended code list is the example for the legal basis at the European level.",
@@ -6213,7 +6213,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasLegalBasis"
     },
-    "hasNonPublicationJustification": {
+    {
       "name": "hasNonPublicationJustification",
       "description": {
         "_": "The reason why data is not published.",
@@ -6225,7 +6225,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasNonPublicationJustification"
     },
-    "hasECataloguePermission": {
+    {
       "name": "hasECataloguePermission",
       "description": {
         "_": "The extent to which electronic catalogues may be used in tenders.",
@@ -6237,7 +6237,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasECataloguePermission"
     },
-    "isSupportedBy": {
+    {
       "name": "isSupportedBy",
       "description": {
         "_": "is Supported By",
@@ -6249,7 +6249,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isSupportedBy"
     },
-    "announcesProcedure": {
+    {
       "name": "announcesProcedure",
       "description": {
         "_": "announces Procedure",
@@ -6261,7 +6261,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#announcesProcedure"
     },
-    "isAssignedForEvaluationOf": {
+    {
       "name": "isAssignedForEvaluationOf",
       "description": {
         "_": "is Assigned For Evaluation Of",
@@ -6273,7 +6273,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isAssignedForEvaluationOf"
     },
-    "hasVehicleSegmentID": {
+    {
       "name": "hasVehicleSegmentID",
       "description": {
         "_": "The identifier of a part of the Transport Means.",
@@ -6285,7 +6285,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasVehicleSegmentID"
     },
-    "foreseesProcurementObject": {
+    {
       "name": "foreseesProcurementObject",
       "description": {
         "_": "Relation indicating the instance of a Procurement Object that is planned. Additional Information: The properties of the Procurement Object that is foreseen should be read as foreseen properties. For example, Procedure isSMESuitable should be read as Procedure foreseesToBeSMESuitable. For example, Procedure isFundedBy should be read as Procedure foreseesToBeFundedBy.",
@@ -6297,7 +6297,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#foreseesProcurementObject"
     },
-    "comprisesAwardOutcome": {
+    {
       "name": "comprisesAwardOutcome",
       "description": {
         "_": "Incorporates AwardOutcome.",
@@ -6309,7 +6309,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#comprisesAwardOutcome"
     },
-    "definesSpecificPlaceOfPerformance": {
+    {
       "name": "definesSpecificPlaceOfPerformance",
       "description": {
         "_": "Relation indicating a ContractTerm has a specific place of performance.",
@@ -6321,7 +6321,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesSpecificPlaceOfPerformance"
     },
-    "hasLength": {
+    {
       "name": "hasLength",
       "description": {
         "_": "The horizontal measurement. Additional Information: The length is the longer side between the length and the width.",
@@ -6333,7 +6333,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasLength"
     },
-    "hasBuyerItemID": {
+    {
       "name": "hasBuyerItemID",
       "description": {
         "_": "The general identifier assigned to the concept as defined by the Buyer.​",
@@ -6345,7 +6345,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasBuyerItemID"
     },
-    "hasMaximumTemperature": {
+    {
       "name": "hasMaximumTemperature",
       "description": {
         "_": "The highest tolerated temperature.",
@@ -6357,7 +6357,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMaximumTemperature"
     },
-    "signedByContractor": {
+    {
       "name": "signedByContractor",
       "description": {
         "_": "signed By Contractor",
@@ -6369,7 +6369,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#signedByContractor"
     },
-    "definesParticipationRequestReceiver": {
+    {
       "name": "definesParticipationRequestReceiver",
       "description": {
         "_": "Relation indicating a ParticipationRequestTerm has a ParticipationRequestReceiver.",
@@ -6381,7 +6381,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesParticipationRequestReceiver"
     },
-    "hasDespatchedQuantity": {
+    {
       "name": "hasDespatchedQuantity",
       "description": {
         "_": "The Quantity that has been sent.",
@@ -6393,7 +6393,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasDespatchedQuantity"
     },
-    "hasHeight": {
+    {
       "name": "hasHeight",
       "description": {
         "_": "The vertical measurement.",
@@ -6405,7 +6405,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasHeight"
     },
-    "hasReviewDecisionType": {
+    {
       "name": "hasReviewDecisionType",
       "description": {
         "_": "has Review Decision Type",
@@ -6417,7 +6417,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasReviewDecisionType"
     },
-    "hasNetAmount": {
+    {
       "name": "hasNetAmount",
       "description": {
         "_": "has Net Amount",
@@ -6429,7 +6429,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasNetAmount"
     },
-    "definesSubcontractingTerm": {
+    {
       "name": "definesSubcontractingTerm",
       "description": {
         "_": "Relation indicating a ContractTerm has a SubcontractingTerm.",
@@ -6441,7 +6441,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesSubcontractingTerm"
     },
-    "definesReviewer": {
+    {
       "name": "definesReviewer",
       "description": {
         "_": "Relation indicating a ReviewTerm has a Reviewer.",
@@ -6453,7 +6453,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesReviewer"
     },
-    "hasEstimatedDuration": {
+    {
       "name": "hasEstimatedDuration",
       "description": {
         "_": "Relation indicating a Dynamic Purchase System has an estimated Duration.",
@@ -6465,7 +6465,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasEstimatedDuration"
     },
-    "hasThresholdType": {
+    {
       "name": "hasThresholdType",
       "description": {
         "_": "The method to interpret the threshold value as minimum or a maximum.",
@@ -6477,7 +6477,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasThresholdType"
     },
-    "hasChangeJustification": {
+    {
       "name": "hasChangeJustification",
       "description": {
         "_": "Code explaining the change.",
@@ -6489,7 +6489,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasChangeJustification"
     },
-    "hasManufacturerItemID": {
+    {
       "name": "hasManufacturerItemID",
       "description": {
         "_": "The general identifier assigned to the concept as defined by the Manufacturer. ​",
@@ -6501,7 +6501,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasManufacturerItemID"
     },
-    "specifiesDeliverable": {
+    {
       "name": "specifiesDeliverable",
       "description": {
         "_": "specifies Deliverable",
@@ -6513,7 +6513,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesDeliverable"
     },
-    "hasQualifiedValue": {
+    {
       "name": "hasQualifiedValue",
       "description": {
         "_": "Qualified value of the property, which is defined in a classification scheme. Additional Information: For example, the (0173-1#02-AAA026#007) drilling diameter of an item has value of 12 inches.",
@@ -6525,7 +6525,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasQualifiedValue"
     },
-    "describesLotGroup": {
+    {
       "name": "describesLotGroup",
       "description": {
         "_": "describes Lot Group",
@@ -6537,7 +6537,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#describesLotGroup"
     },
-    "hasDocumentRestrictionJustification": {
+    {
       "name": "hasDocumentRestrictionJustification",
       "description": {
         "_": "An explanation about the reasons why some procurement documents are restricted.",
@@ -6549,7 +6549,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasDocumentRestrictionJustification"
     },
-    "distributesOffer": {
+    {
       "name": "distributesOffer",
       "description": {
         "_": "distributes Offer",
@@ -6561,7 +6561,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#distributesOffer"
     },
-    "hasItemConsumptionSavings": {
+    {
       "name": "hasItemConsumptionSavings",
       "description": {
         "_": "has Item Consumption Savings",
@@ -6573,7 +6573,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasItemConsumptionSavings"
     },
-    "bindsContractor": {
+    {
       "name": "bindsContractor",
       "description": {
         "_": "Provides legal constraint on the Contractor.",
@@ -6585,7 +6585,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#bindsContractor"
     },
-    "definesParticipationRequestProcessor": {
+    {
       "name": "definesParticipationRequestProcessor",
       "description": {
         "_": "Relation indicating a ParticipationRequestTerm has a ParticipationRequestProcessor.",
@@ -6597,7 +6597,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesParticipationRequestProcessor"
     },
-    "hasMinimumQuantityGuaranteedForDelivery": {
+    {
       "name": "hasMinimumQuantityGuaranteedForDelivery",
       "description": {
         "_": "The minimum quantity of an item that is guaranteed by the seller to be delivered.",
@@ -6609,7 +6609,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMinimumQuantityGuaranteedForDelivery"
     },
-    "hasEstimatedBuyerConcessionRevenue": {
+    {
       "name": "hasEstimatedBuyerConcessionRevenue",
       "description": {
         "_": "The expected payments made by the buyer to the economic operator awarded the concession that are not directly related to the use of the concession. <u>Additional Information:</u> For example the public buyer pays a yearly fee to provide a ticketing solution to the public. The fee the public pays for every ticket sold through the solution is not included in this estimation but in the estimation of the user concession revenue.",
@@ -6621,7 +6621,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasEstimatedBuyerConcessionRevenue"
     },
-    "hasItemConsumption": {
+    {
       "name": "hasItemConsumption",
       "description": {
         "_": "has Item Consumption",
@@ -6633,7 +6633,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasItemConsumption"
     },
-    "isUsedInProfile": {
+    {
       "name": "isUsedInProfile",
       "description": {
         "_": "is Used In Profile",
@@ -6645,7 +6645,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isUsedInProfile"
     },
-    "announcesAwardDecision": {
+    {
       "name": "announcesAwardDecision",
       "description": {
         "_": "announces Award Decision",
@@ -6657,7 +6657,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#announcesAwardDecision"
     },
-    "concernsReviewDecision": {
+    {
       "name": "concernsReviewDecision",
       "description": {
         "_": "concerns Review Decision",
@@ -6669,7 +6669,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsReviewDecision"
     },
-    "hasDestinationCountryCode": {
+    {
       "name": "hasDestinationCountryCode",
       "description": {
         "_": "has Destination Country Code",
@@ -6681,7 +6681,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasDestinationCountryCode"
     },
-    "hasNutsCode": {
+    {
       "name": "hasNutsCode",
       "description": {
         "_": "has Nuts Code",
@@ -6693,7 +6693,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasNutsCode"
     },
-    "hasPerformingStaffQualificationInformation": {
+    {
       "name": "hasPerformingStaffQualificationInformation",
       "description": {
         "_": "Explanation as to if and/or when information of the persons to carry out the contract is to be provided. The codelist to be used is at-voc:requirement-stage which is available at http://publications.europa.eu/resource/dataset/requirement-stage",
@@ -6705,7 +6705,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasPerformingStaffQualificationInformation"
     },
-    "hasPlannedDuration": {
+    {
       "name": "hasPlannedDuration",
       "description": {
         "_": "has Planned Duration",
@@ -6717,7 +6717,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasPlannedDuration"
     },
-    "hasPrepaidAmount": {
+    {
       "name": "hasPrepaidAmount",
       "description": {
         "_": "has Prepaid Amount",
@@ -6729,7 +6729,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasPrepaidAmount"
     },
-    "refersToContractToBeModified": {
+    {
       "name": "refersToContractToBeModified",
       "description": {
         "_": "refers To Contract To Be Modified",
@@ -6741,7 +6741,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToContractToBeModified"
     },
-    "hasApproximateGroupFrameworkAgreementValue": {
+    {
       "name": "hasApproximateGroupFrameworkAgreementValue",
       "description": {
         "_": "has Approximate Group Framework Agreement Value",
@@ -6753,7 +6753,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasApproximateGroupFrameworkAgreementValue"
     },
-    "refersToReviewRequest": {
+    {
       "name": "refersToReviewRequest",
       "description": {
         "_": "refers To Review Request",
@@ -6765,7 +6765,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToReviewRequest"
     },
-    "hasTenderValidityPeriod": {
+    {
       "name": "hasTenderValidityPeriod",
       "description": {
         "_": "The relation indicating until when a tender instance is applicable.",
@@ -6777,7 +6777,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTenderValidityPeriod"
     },
-    "hasTotalTaxInclusiveAmount": {
+    {
       "name": "hasTotalTaxInclusiveAmount",
       "description": {
         "_": "has Total Tax Inclusive Amount",
@@ -6789,7 +6789,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalTaxInclusiveAmount"
     },
-    "announcesContract": {
+    {
       "name": "announcesContract",
       "description": {
         "_": "announces Contract",
@@ -6801,7 +6801,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#announcesContract"
     },
-    "leadBy": {
+    {
       "name": "leadBy",
       "description": {
         "_": "The epo:OrganisationGroup epo:leadBy org:Organization was implemented to be used in case of an Economic Operator Group.",
@@ -6813,7 +6813,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#leadBy"
     },
-    "hasAmount": {
+    {
       "name": "hasAmount",
       "description": {
         "_": "The predetermined monetary value charged in addition to the price.",
@@ -6825,7 +6825,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasAmount"
     },
-    "providesOrganisationEmployeeQuantity": {
+    {
       "name": "providesOrganisationEmployeeQuantity",
       "description": {
         "_": "The number of people hired by the Organization.",
@@ -6837,7 +6837,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#providesOrganisationEmployeeQuantity"
     },
-    "hasGroupFrameworkAgreementMaximumValue": {
+    {
       "name": "hasGroupFrameworkAgreementMaximumValue",
       "description": {
         "_": "has Group Framework Agreement Maximum Value",
@@ -6849,7 +6849,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasGroupFrameworkAgreementMaximumValue"
     },
-    "specifiesProcurementCriteriaSummary": {
+    {
       "name": "specifiesProcurementCriteriaSummary",
       "description": {
         "_": "specifies Procurement Criteria Summary",
@@ -6861,7 +6861,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesProcurementCriteriaSummary"
     },
-    "contextualisedBy": {
+    {
       "name": "contextualisedBy",
       "description": {
         "_": "The place of the AgentInRole in the procurement is expressed by a ProcurementObject.",
@@ -6873,7 +6873,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#contextualisedBy"
     },
-    "hasConstraint": {
+    {
       "name": "hasConstraint",
       "description": {
         "_": "has Constraint",
@@ -6885,7 +6885,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasConstraint"
     },
-    "definesContractDuration": {
+    {
       "name": "definesContractDuration",
       "description": {
         "_": "Relation indicating a Contract has a Duration.",
@@ -6897,7 +6897,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesContractDuration"
     },
-    "definesTenderReceiver": {
+    {
       "name": "definesTenderReceiver",
       "description": {
         "_": "Relation indicating a SubmissionTerm has a TenderReceiver.",
@@ -6909,7 +6909,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesTenderReceiver"
     },
-    "answersReviewRequest": {
+    {
       "name": "answersReviewRequest",
       "description": {
         "_": "answers Review Request",
@@ -6921,7 +6921,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#answersReviewRequest"
     },
-    "hasElectronicSignature": {
+    {
       "name": "hasElectronicSignature",
       "description": {
         "_": "has Electronic Signature",
@@ -6933,7 +6933,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasElectronicSignature"
     },
-    "hasProcurementScopeDividedIntoLot": {
+    {
       "name": "hasProcurementScopeDividedIntoLot",
       "description": {
         "_": "Defines Lot.",
@@ -6945,7 +6945,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasProcurementScopeDividedIntoLot"
     },
-    "hasReviewIrregularitySummary": {
+    {
       "name": "hasReviewIrregularitySummary",
       "description": {
         "_": "has Review Irregularity Summary",
@@ -6957,7 +6957,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasReviewIrregularitySummary"
     },
-    "refersToProject": {
+    {
       "name": "refersToProject",
       "description": {
         "_": "refers To Project",
@@ -6969,7 +6969,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToProject"
     },
-    "hasRegistrationCountry": {
+    {
       "name": "hasRegistrationCountry",
       "description": {
         "_": "has Registration Country",
@@ -6981,7 +6981,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasRegistrationCountry"
     },
-    "summarisesInformationAboutEvidence": {
+    {
       "name": "summarisesInformationAboutEvidence",
       "description": {
         "_": "Relation indicating the Certificate that the information refers to.",
@@ -6993,7 +6993,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#summarisesInformationAboutEvidence"
     },
-    "hasTotalTaxExclusiveAmount": {
+    {
       "name": "hasTotalTaxExclusiveAmount",
       "description": {
         "_": "has Total Tax Exclusive Amount",
@@ -7005,7 +7005,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalTaxExclusiveAmount"
     },
-    "hasTotalDebitAmount": {
+    {
       "name": "hasTotalDebitAmount",
       "description": {
         "_": "has Total Debit Amount",
@@ -7017,7 +7017,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalDebitAmount"
     },
-    "concernsOriginatorRequest": {
+    {
       "name": "concernsOriginatorRequest",
       "description": {
         "_": "concerns Originator Request",
@@ -7029,7 +7029,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsOriginatorRequest"
     },
-    "hasUUID": {
+    {
       "name": "hasUUID",
       "description": {
         "_": "A universally unique identifier for an instance of this document.",
@@ -7041,7 +7041,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasUUID"
     },
-    "hasBusinessSize": {
+    {
       "name": "hasBusinessSize",
       "description": {
         "_": "The category of the business depending on number of employees and turnover. Additional information: See Commission Recommendation of 6 May 2003 concerning the definition of micro, small and medium-sized enterprises.",
@@ -7053,7 +7053,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasBusinessSize"
     },
-    "isSubmittedBy": {
+    {
       "name": "isSubmittedBy",
       "description": {
         "_": "Relation indicating the submission of a tender by an economic operator.",
@@ -7065,7 +7065,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isSubmittedBy"
     },
-    "foreseesSubcontractor": {
+    {
       "name": "foreseesSubcontractor",
       "description": {
         "_": "Relation indicating that an Organization plans to have a Subcontractor. Additional information: In eForms, in a Result Notice, the foreseen Subcontractors in a Tender are associated to the Organization that proposes the Subcontractors. The Subcontractor is associated to the Organization, rather than the Tenderer, so that, in the case of multiple Organizations being a Tenderer, it is clear to which Organization the proposed Subcontractor is associated.",
@@ -7077,7 +7077,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#foreseesSubcontractor"
     },
-    "hasCurrency": {
+    {
       "name": "hasCurrency",
       "description": {
         "_": "The identifier of the currency as in the standard code list used.",
@@ -7089,7 +7089,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasCurrency"
     },
-    "hasCountryOfBirth": {
+    {
       "name": "hasCountryOfBirth",
       "description": {
         "_": "The country in which the Person was born.",
@@ -7101,7 +7101,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasCountryOfBirth"
     },
-    "specifiesForeignSubsidiesMeasureConclusion": {
+    {
       "name": "specifiesForeignSubsidiesMeasureConclusion",
       "description": {
         "_": "specifies Foreign Subsidies Measure Conclusion",
@@ -7113,7 +7113,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesForeignSubsidiesMeasureConclusion"
     },
-    "isBeneficialOwnerOf": {
+    {
       "name": "isBeneficialOwnerOf",
       "description": {
         "_": "A role of any natural person(s) who ultimately owns or controls the organisation or on whose behalf a transaction or activity is being conducted. Additional Information: This role is defined in the directive EU 2015/849 and it's beyond the scope for public eProcurement domain.",
@@ -7125,7 +7125,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isBeneficialOwnerOf"
     },
-    "ownsSystem": {
+    {
       "name": "ownsSystem",
       "description": {
         "_": "owns System",
@@ -7137,7 +7137,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#ownsSystem"
     },
-    "definesBudgetProvider": {
+    {
       "name": "definesBudgetProvider",
       "description": {
         "_": "Relation indicating a ProcedureTerm has a BudgetProvider.",
@@ -7149,7 +7149,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesBudgetProvider"
     },
-    "refersToProcedure": {
+    {
       "name": "refersToProcedure",
       "description": {
         "_": "refers To Procedure",
@@ -7161,7 +7161,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToProcedure"
     },
-    "hasEstimatedUserConcessionRevenue": {
+    {
       "name": "hasEstimatedUserConcessionRevenue",
       "description": {
         "_": "The estimated revenue coming from the use of the concession. Additional Information: Revenues are for example fees and fines. For example, the fees and fines coming from the cars using a motorway.",
@@ -7173,7 +7173,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasEstimatedUserConcessionRevenue"
     },
-    "hasOrderabableUnitFactorRate": {
+    {
       "name": "hasOrderabableUnitFactorRate",
       "description": {
         "_": "has Orderabable Unit Factor Rate",
@@ -7185,7 +7185,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasOrderabableUnitFactorRate"
     },
-    "hasHighestReceivedTenderValue": {
+    {
       "name": "hasHighestReceivedTenderValue",
       "description": {
         "_": "Amount of the Tender with the highest value. Additional Information The value must correspond to an admissible tender. For example, tenders compliant with the procurement document requirements, not having an abnormally low price or cost, etc.",
@@ -7197,7 +7197,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasHighestReceivedTenderValue"
     },
-    "hasTotalPaymentAmount": {
+    {
       "name": "hasTotalPaymentAmount",
       "description": {
         "_": "has Total Payment Amount",
@@ -7209,7 +7209,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalPaymentAmount"
     },
-    "hasDPSScope": {
+    {
       "name": "hasDPSScope",
       "description": {
         "_": "Explanation as to whether a dps is used and by whom. The codelist to be used is at-voc:dps-usage which is available at http://publications.europa.eu/resource/dataset/dps-usage",
@@ -7221,7 +7221,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasDPSScope"
     },
-    "issuedByCertifier": {
+    {
       "name": "issuedByCertifier",
       "description": {
         "_": "Relation indicating the Certifier responsible for providing the ItemCertificate. Additional Information: Certifier is a role played by an organisation.",
@@ -7233,7 +7233,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#issuedByCertifier"
     },
-    "indicatesAwardToWinner": {
+    {
       "name": "indicatesAwardToWinner",
       "description": {
         "_": "Reveals the winner to whom the tender award outcome is attributed.",
@@ -7245,7 +7245,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#indicatesAwardToWinner"
     },
-    "hasFixedValueType": {
+    {
       "name": "hasFixedValueType",
       "description": {
         "_": "The method to interpret the fixed value as pertaining to a total or unit.",
@@ -7257,7 +7257,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasFixedValueType"
     },
-    "definesCatalogueProvider": {
+    {
       "name": "definesCatalogueProvider",
       "description": {
         "_": "Relation indicating an AccessTerm has a CatalogueProvider.",
@@ -7269,7 +7269,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesCatalogueProvider"
     },
-    "hasTotalQuantity": {
+    {
       "name": "hasTotalQuantity",
       "description": {
         "_": "The number of units required. Additional Information: The quantity needs to go along with the unit.",
@@ -7281,7 +7281,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalQuantity"
     },
-    "hasQuantity": {
+    {
       "name": "hasQuantity",
       "description": {
         "_": "has Quantity",
@@ -7293,7 +7293,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasQuantity"
     },
-    "providesProcurementDocumentsInUnofficialLanguage": {
+    {
       "name": "providesProcurementDocumentsInUnofficialLanguage",
       "description": {
         "_": "provides Procurement Documents In Unofficial Language",
@@ -7305,7 +7305,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#providesProcurementDocumentsInUnofficialLanguage"
     },
-    "hasItemClassificationIdentifier": {
+    {
       "name": "hasItemClassificationIdentifier",
       "description": {
         "_": "has Item Classification Identifier",
@@ -7317,7 +7317,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasItemClassificationIdentifier"
     },
-    "hasLabelType": {
+    {
       "name": "hasLabelType",
       "description": {
         "_": "The label type such environmental, quality, social etc.",
@@ -7329,7 +7329,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasLabelType"
     },
-    "providesRulingOnRemedy": {
+    {
       "name": "providesRulingOnRemedy",
       "description": {
         "_": "States the measures to be taken after a review procedure.",
@@ -7341,7 +7341,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#providesRulingOnRemedy"
     },
-    "hasPrizeValue": {
+    {
       "name": "hasPrizeValue",
       "description": {
         "_": "The monetary value of a prize, if any, for the winner (or runners-up) of the design contest.",
@@ -7353,7 +7353,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasPrizeValue"
     },
-    "answersQuestion": {
+    {
       "name": "answersQuestion",
       "description": {
         "_": "Relation indicating that the Response replies to a question.",
@@ -7365,7 +7365,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#answersQuestion"
     },
-    "hasReservedProcurement": {
+    {
       "name": "hasReservedProcurement",
       "description": {
         "_": "Explanation as to whether a procurement may be reserved for the participation of certain types of organisation.",
@@ -7377,7 +7377,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasReservedProcurement"
     },
-    "involvesBuyer": {
+    {
       "name": "involvesBuyer",
       "description": {
         "_": "involves Buyer",
@@ -7389,7 +7389,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#involvesBuyer"
     },
-    "definesCatalogueReceiver": {
+    {
       "name": "definesCatalogueReceiver",
       "description": {
         "_": "Relation indicating an AccessTerm has a CatalogueReceiver.",
@@ -7401,7 +7401,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesCatalogueReceiver"
     },
-    "definesOfflineAccessProvider": {
+    {
       "name": "definesOfflineAccessProvider",
       "description": {
         "_": "Relation indicating an AccessTerm has an OfflineAccessProvider.",
@@ -7413,7 +7413,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesOfflineAccessProvider"
     },
-    "comprisesTenderAwardOutcome": {
+    {
       "name": "comprisesTenderAwardOutcome",
       "description": {
         "_": "Incorporates TenderAwardOutcome.",
@@ -7425,7 +7425,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#comprisesTenderAwardOutcome"
     },
-    "concernsNotice": {
+    {
       "name": "concernsNotice",
       "description": {
         "_": "Relates to Notice.",
@@ -7437,7 +7437,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsNotice"
     },
-    "refersToLot": {
+    {
       "name": "refersToLot",
       "description": {
         "_": "refers To Lot",
@@ -7449,7 +7449,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToLot"
     },
-    "hasBankingIdentifier": {
+    {
       "name": "hasBankingIdentifier",
       "description": {
         "_": "An unique banking reference identifier of the Payee or Seller, assigned by the Payee or Seller bank.",
@@ -7461,7 +7461,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasBankingIdentifier"
     },
-    "hasDebitedAccountIdentifier": {
+    {
       "name": "hasDebitedAccountIdentifier",
       "description": {
         "_": "An identifier for the account to be debited by the direct debit.",
@@ -7473,7 +7473,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasDebitedAccountIdentifier"
     },
-    "hasTotalAllowanceAmount": {
+    {
       "name": "hasTotalAllowanceAmount",
       "description": {
         "_": "has Total Allowance Amount",
@@ -7485,7 +7485,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalAllowanceAmount"
     },
-    "hasApproximateFrameworkAgreementValue": {
+    {
       "name": "hasApproximateFrameworkAgreementValue",
       "description": {
         "_": "The estimated value to be spent within the Framework Agreement(s). Additional information: In the case of an Award Decision for a Lot, this relation represents the estimated value for the awarded Framework Agreement. In the case of a Notice, this relation represents the estimated value for all Framework Agreements covered by the Notice.",
@@ -7497,7 +7497,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasApproximateFrameworkAgreementValue"
     },
-    "hasReviewRequestFee": {
+    {
       "name": "hasReviewRequestFee",
       "description": {
         "_": "has Review Request Fee",
@@ -7509,7 +7509,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasReviewRequestFee"
     },
-    "hasBroadPlaceOfPerformance": {
+    {
       "name": "hasBroadPlaceOfPerformance",
       "description": {
         "_": "Geopolitical zone where the contract can be executed. Additional Information Used for setting restrictions that cannot be established with one country code or a geographical zone identifier (like NUTS), because they have a broader scope (geographical, economic, political, other).",
@@ -7521,7 +7521,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasBroadPlaceOfPerformance"
     },
-    "resultsFromUsingCandidateList": {
+    {
       "name": "resultsFromUsingCandidateList",
       "description": {
         "_": "results From Using Candidate List",
@@ -7533,7 +7533,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#resultsFromUsingCandidateList"
     },
-    "hasFrameworkAgreementMaximumValue": {
+    {
       "name": "hasFrameworkAgreementMaximumValue",
       "description": {
         "_": "has Framework Agreement Maximum Value",
@@ -7545,7 +7545,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasFrameworkAgreementMaximumValue"
     },
-    "hasMaximumValue": {
+    {
       "name": "hasMaximumValue",
       "description": {
         "_": "has Maximum Value",
@@ -7557,7 +7557,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMaximumValue"
     },
-    "hasAwardStatus": {
+    {
       "name": "hasAwardStatus",
       "description": {
         "_": "Indicates whether the lot is awarded, not awarded or still open.",
@@ -7569,7 +7569,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasAwardStatus"
     },
-    "hasFrameworkAgreementType": {
+    {
       "name": "hasFrameworkAgreementType",
       "description": {
         "_": "The form of framework agreement used in a procurement procedure. Addition information: A concept to distinguish the different types of framework agreement, which are: 1. Framework agreement without reopening of competition, 2. Framework agreement with reopening of competition, or 3. Framework agreement partly without reopening of competition.",
@@ -7581,7 +7581,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasFrameworkAgreementType"
     },
-    "hasESubmissionPermission": {
+    {
       "name": "hasESubmissionPermission",
       "description": {
         "_": "The requirements as to what extent electronic submission is allowed.",
@@ -7593,7 +7593,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasESubmissionPermission"
     },
-    "hasConsigneeConsignmentID": {
+    {
       "name": "hasConsigneeConsignmentID",
       "description": {
         "_": "The identifier of the the Consignment given by the Consignee.",
@@ -7605,7 +7605,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasConsigneeConsignmentID"
     },
-    "hasOversupplyQuantity": {
+    {
       "name": "hasOversupplyQuantity",
       "description": {
         "_": "has Oversupply Quantity",
@@ -7617,7 +7617,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasOversupplyQuantity"
     },
-    "hasBuyerLegalType": {
+    {
       "name": "hasBuyerLegalType",
       "description": {
         "_": "A category that indicates the right of an Organisation to play the role of a buyer. Additional Information: The category also effects the rules that the buyer has to abide to within the public procurement procedure.",
@@ -7629,7 +7629,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasBuyerLegalType"
     },
-    "hasEndpointIdentifier": {
+    {
       "name": "hasEndpointIdentifier",
       "description": {
         "_": "has Endpoint Identifier",
@@ -7641,7 +7641,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasEndpointIdentifier"
     },
-    "hasRemedyValue": {
+    {
       "name": "hasRemedyValue",
       "description": {
         "_": "has Remedy Value",
@@ -7653,7 +7653,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasRemedyValue"
     },
-    "hasContactPointInRole": {
+    {
       "name": "hasContactPointInRole",
       "description": {
         "_": "has Contact Point In Role",
@@ -7665,7 +7665,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasContactPointInRole"
     },
-    "agreedByBuyer": {
+    {
       "name": "agreedByBuyer",
       "description": {
         "_": "Accepted by Buyer.",
@@ -7677,7 +7677,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#agreedByBuyer"
     },
-    "specifiesCatalogueProvider": {
+    {
       "name": "specifiesCatalogueProvider",
       "description": {
         "_": "specifies Catalogue Provider",
@@ -7689,7 +7689,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesCatalogueProvider"
     },
-    "providesRankToTender": {
+    {
       "name": "providesRankToTender",
       "description": {
         "_": "provides Rank To Tender",
@@ -7701,7 +7701,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#providesRankToTender"
     },
-    "hasNetQuantity": {
+    {
       "name": "hasNetQuantity",
       "description": {
         "_": "The net quantity of the item that is contained in each consumable unit, excluding any packaging materials.",
@@ -7713,7 +7713,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasNetQuantity"
     },
-    "refersToNotice": {
+    {
       "name": "refersToNotice",
       "description": {
         "_": "Reference to a Notice.",
@@ -7725,7 +7725,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToNotice"
     },
-    "hasMember": {
+    {
       "name": "hasMember",
       "description": {
         "_": "has Member",
@@ -7737,7 +7737,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMember"
     },
-    "containsCandidate": {
+    {
       "name": "containsCandidate",
       "description": {
         "_": "Includes Candidate.",
@@ -7749,7 +7749,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#containsCandidate"
     },
-    "definesEstimatedContractDuration": {
+    {
       "name": "definesEstimatedContractDuration",
       "description": {
         "_": "Relation indicating a Contract has an estimated Duration.",
@@ -7761,7 +7761,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesEstimatedContractDuration"
     },
-    "concernsOrganisation": {
+    {
       "name": "concernsOrganisation",
       "description": {
         "_": "Relates to Organization.",
@@ -7773,7 +7773,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsOrganisation"
     },
-    "hasUnknownUsageOfSelectionCriterionType": {
+    {
       "name": "hasUnknownUsageOfSelectionCriterionType",
       "description": {
         "_": "has Unknown Usage Of Selection Criterion Type",
@@ -7785,7 +7785,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasUnknownUsageOfSelectionCriterionType"
     },
-    "definesInformationProvider": {
+    {
       "name": "definesInformationProvider",
       "description": {
         "_": "Relation indicating a ProcedureTerm has an information provider.",
@@ -7797,7 +7797,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesInformationProvider"
     },
-    "hasGrossMonetaryValue": {
+    {
       "name": "hasGrossMonetaryValue",
       "description": {
         "_": "has Gross Monetary Value",
@@ -7809,7 +7809,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasGrossMonetaryValue"
     },
-    "hasDespatchPeriod": {
+    {
       "name": "hasDespatchPeriod",
       "description": {
         "_": "The time period when the Despatcher picks-up the Goods Items to be delivered.",
@@ -7821,7 +7821,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasDespatchPeriod"
     },
-    "hasTotalChargeAmount": {
+    {
       "name": "hasTotalChargeAmount",
       "description": {
         "_": "has Total Charge Amount",
@@ -7833,7 +7833,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalChargeAmount"
     },
-    "isSubmittedForLot": {
+    {
       "name": "isSubmittedForLot",
       "description": {
         "_": "is Submitted For Lot",
@@ -7845,7 +7845,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isSubmittedForLot"
     },
-    "hasTotalCreditAmount": {
+    {
       "name": "hasTotalCreditAmount",
       "description": {
         "_": "has Total Credit Amount",
@@ -7857,7 +7857,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalCreditAmount"
     },
-    "definesPrize": {
+    {
       "name": "definesPrize",
       "description": {
         "_": "Relation indicating a DesignContestRegimeTerm has a Prize.",
@@ -7869,7 +7869,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesPrize"
     },
-    "providesContractTotalPaymentValue": {
+    {
       "name": "providesContractTotalPaymentValue",
       "description": {
         "_": "provides Contract Total Payment Value",
@@ -7881,7 +7881,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#providesContractTotalPaymentValue"
     },
-    "usesTechnique": {
+    {
       "name": "usesTechnique",
       "description": {
         "_": "uses Technique",
@@ -7893,7 +7893,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#usesTechnique"
     },
-    "hasInvoiceLinePeriod": {
+    {
       "name": "hasInvoiceLinePeriod",
       "description": {
         "_": "has Invoice Line Period",
@@ -7905,7 +7905,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasInvoiceLinePeriod"
     },
-    "bindsBuyer": {
+    {
       "name": "bindsBuyer",
       "description": {
         "_": "Provides legal constraint on the Buyer.",
@@ -7917,7 +7917,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#bindsBuyer"
     },
-    "hasTotalGoodsItemQuantity": {
+    {
       "name": "hasTotalGoodsItemQuantity",
       "description": {
         "_": "Relation indicating the number of the Goods Items.",
@@ -7929,7 +7929,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalGoodsItemQuantity"
     },
-    "isExecutedByProcurementServiceProvider": {
+    {
       "name": "isExecutedByProcurementServiceProvider",
       "description": {
         "_": "is Executed By Procurement Service Provider",
@@ -7941,7 +7941,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isExecutedByProcurementServiceProvider"
     },
-    "amendsContract": {
+    {
       "name": "amendsContract",
       "description": {
         "_": "amends Contract",
@@ -7953,7 +7953,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#amendsContract"
     },
-    "announcesReviewRequest": {
+    {
       "name": "announcesReviewRequest",
       "description": {
         "_": "announces Review Request",
@@ -7965,7 +7965,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#announcesReviewRequest"
     },
-    "signedByBuyer": {
+    {
       "name": "signedByBuyer",
       "description": {
         "_": "signed By Buyer",
@@ -7977,7 +7977,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#signedByBuyer"
     },
-    "specifiesReviewRequester": {
+    {
       "name": "specifiesReviewRequester",
       "description": {
         "_": "specifies Review Requester",
@@ -7989,7 +7989,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesReviewRequester"
     },
-    "hasBaseQuantity": {
+    {
       "name": "hasBaseQuantity",
       "description": {
         "_": "The quantity at which the net monetary value applies.",
@@ -8001,7 +8001,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasBaseQuantity"
     },
-    "hasLaunchFrameworkAgreementMaximumValue": {
+    {
       "name": "hasLaunchFrameworkAgreementMaximumValue",
       "description": {
         "_": "has Launch Framework Agreement Maximum Value",
@@ -8013,7 +8013,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasLaunchFrameworkAgreementMaximumValue"
     },
-    "announcesPlannedProcurementPart": {
+    {
       "name": "announcesPlannedProcurementPart",
       "description": {
         "_": "announces Planned Procurement Part",
@@ -8025,7 +8025,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#announcesPlannedProcurementPart"
     },
-    "hasPaymentServiceProviderIdentifier": {
+    {
       "name": "hasPaymentServiceProviderIdentifier",
       "description": {
         "_": "An identifier for the payment service provider where a payment account is located.",
@@ -8037,7 +8037,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasPaymentServiceProviderIdentifier"
     },
-    "hasDirectAwardJustification": {
+    {
       "name": "hasDirectAwardJustification",
       "description": {
         "_": "List of reasons for using a procedure which allows awarding contracts directly without publishing a notice.",
@@ -8049,7 +8049,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasDirectAwardJustification"
     },
-    "relatesToEFormSectionIdentifier": {
+    {
       "name": "relatesToEFormSectionIdentifier",
       "description": {
         "_": "relates To E Form Section Identifier",
@@ -8061,7 +8061,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#relatesToEFormSectionIdentifier"
     },
-    "isSubjectToGrouping": {
+    {
       "name": "isSubjectToGrouping",
       "description": {
         "_": "is Subject To Grouping",
@@ -8073,7 +8073,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isSubjectToGrouping"
     },
-    "updatesContractValue": {
+    {
       "name": "updatesContractValue",
       "description": {
         "_": "updates Contract Value",
@@ -8085,7 +8085,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#updatesContractValue"
     },
-    "hasValidityPeriod": {
+    {
       "name": "hasValidityPeriod",
       "description": {
         "_": "The relation indicating until when a given instance of a concept is applicable.",
@@ -8097,7 +8097,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasValidityPeriod"
     },
-    "isOwnedByAgent": {
+    {
       "name": "isOwnedByAgent",
       "description": {
         "_": "is Owned By Agent",
@@ -8109,7 +8109,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isOwnedByAgent"
     },
-    "hasMaximumMeasure": {
+    {
       "name": "hasMaximumMeasure",
       "description": {
         "_": "has Maximum Measure",
@@ -8121,7 +8121,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMaximumMeasure"
     },
-    "playedBy": {
+    {
       "name": "playedBy",
       "description": {
         "_": "played By",
@@ -8133,7 +8133,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#playedBy"
     },
-    "comprisesTender": {
+    {
       "name": "comprisesTender",
       "description": {
         "_": "Incorporates Tender.",
@@ -8145,7 +8145,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#comprisesTender"
     },
-    "specifiesEvidence": {
+    {
       "name": "specifiesEvidence",
       "description": {
         "_": "specifies Evidence",
@@ -8157,7 +8157,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesEvidence"
     },
-    "hasCreditAmount": {
+    {
       "name": "hasCreditAmount",
       "description": {
         "_": "has Credit Amount",
@@ -8169,7 +8169,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasCreditAmount"
     },
-    "hasUnitCode": {
+    {
       "name": "hasUnitCode",
       "description": {
         "_": "has Unit Code",
@@ -8181,7 +8181,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasUnitCode"
     },
-    "isSubmittedForLotGroup": {
+    {
       "name": "isSubmittedForLotGroup",
       "description": {
         "_": "is Submitted For Lot Group",
@@ -8193,7 +8193,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isSubmittedForLotGroup"
     },
-    "attestedByLabel": {
+    {
       "name": "attestedByLabel",
       "description": {
         "_": "Relation indicating which label the certificate is about.",
@@ -8205,7 +8205,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#attestedByLabel"
     },
-    "hasTotalLineAmount": {
+    {
       "name": "hasTotalLineAmount",
       "description": {
         "_": "has Total Line Amount",
@@ -8217,7 +8217,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTotalLineAmount"
     },
-    "hasInternalIdentifier": {
+    {
       "name": "hasInternalIdentifier",
       "description": {
         "_": "has Internal Identifier",
@@ -8229,7 +8229,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasInternalIdentifier"
     },
-    "followsRulesSetBy": {
+    {
       "name": "followsRulesSetBy",
       "description": {
         "_": "follows Rules Set By",
@@ -8241,7 +8241,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#followsRulesSetBy"
     },
-    "hasEstimatedValidityPeriod": {
+    {
       "name": "hasEstimatedValidityPeriod",
       "description": {
         "_": "has Estimated Validity Period",
@@ -8253,7 +8253,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasEstimatedValidityPeriod"
     },
-    "hasPaymentAccountIdentifier": {
+    {
       "name": "hasPaymentAccountIdentifier",
       "description": {
         "_": "A unique identifier of the financial payment account, at a payment service provider, to which payment should be made.",
@@ -8265,7 +8265,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasPaymentAccountIdentifier"
     },
-    "hasCountryCode": {
+    {
       "name": "hasCountryCode",
       "description": {
         "_": "has Country Code",
@@ -8277,7 +8277,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasCountryCode"
     },
-    "refersToPlannedPart": {
+    {
       "name": "refersToPlannedPart",
       "description": {
         "_": "refers To Planned Part",
@@ -8289,7 +8289,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToPlannedPart"
     },
-    "foreseesConcession": {
+    {
       "name": "foreseesConcession",
       "description": {
         "_": "foresees Concession",
@@ -8301,7 +8301,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#foreseesConcession"
     },
-    "hasElectronicDigest": {
+    {
       "name": "hasElectronicDigest",
       "description": {
         "_": "has Electronic Digest",
@@ -8313,7 +8313,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasElectronicDigest"
     },
-    "hasRequestedDeliveryPeriod": {
+    {
       "name": "hasRequestedDeliveryPeriod",
       "description": {
         "_": "has Requested Delivery Period",
@@ -8325,7 +8325,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasRequestedDeliveryPeriod"
     },
-    "concernsContract": {
+    {
       "name": "concernsContract",
       "description": {
         "_": "concerns Contract",
@@ -8337,7 +8337,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsContract"
     },
-    "hasFormType": {
+    {
       "name": "hasFormType",
       "description": {
         "_": "A categorisation of the steps in which the Notice is used.",
@@ -8349,7 +8349,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasFormType"
     },
-    "hasReservedExecution": {
+    {
       "name": "hasReservedExecution",
       "description": {
         "_": "has Reserved Execution",
@@ -8361,7 +8361,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasReservedExecution"
     },
-    "providesDecisionFor": {
+    {
       "name": "providesDecisionFor",
       "description": {
         "_": "provides Decision For",
@@ -8373,7 +8373,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#providesDecisionFor"
     },
-    "hasLoadingMeter": {
+    {
       "name": "hasLoadingMeter",
       "description": {
         "_": "The area of the Consignment in meters divided by the width of the truck, which is considered to be 2.4 meters.",
@@ -8385,7 +8385,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasLoadingMeter"
     },
-    "refersToContract": {
+    {
       "name": "refersToContract",
       "description": {
         "_": "refers To Contract",
@@ -8397,7 +8397,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToContract"
     },
-    "hasAssociatedDocument": {
+    {
       "name": "hasAssociatedDocument",
       "description": {
         "_": "Is related to a Document.",
@@ -8409,7 +8409,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasAssociatedDocument"
     },
-    "concernsInternationalProcurementInstrumentMeasure": {
+    {
       "name": "concernsInternationalProcurementInstrumentMeasure",
       "description": {
         "_": "concerns International Procurement Instrument Measure",
@@ -8421,7 +8421,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsInternationalProcurementInstrumentMeasure"
     },
-    "includesAccessibilityCriterion": {
+    {
       "name": "includesAccessibilityCriterion",
       "description": {
         "_": "Explanation as to whether accessibility Criterion are used or not.",
@@ -8433,7 +8433,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#includesAccessibilityCriterion"
     },
-    "hasCatalogueLineValidity": {
+    {
       "name": "hasCatalogueLineValidity",
       "description": {
         "_": "The relation indicating until when a Catalogue Line instance is applicable.",
@@ -8445,7 +8445,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasCatalogueLineValidity"
     },
-    "hasSourceSpecificationCustomisation": {
+    {
       "name": "hasSourceSpecificationCustomisation",
       "description": {
         "_": "has Source Specification Customisation",
@@ -8457,7 +8457,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasSourceSpecificationCustomisation"
     },
-    "specifiesBuyer": {
+    {
       "name": "specifiesBuyer",
       "description": {
         "_": "specifies Buyer",
@@ -8469,7 +8469,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesBuyer"
     },
-    "usesEvaluationFormula": {
+    {
       "name": "usesEvaluationFormula",
       "description": {
         "_": "uses Evaluation Formula",
@@ -8481,7 +8481,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#usesEvaluationFormula"
     },
-    "hasBalanceAmount": {
+    {
       "name": "hasBalanceAmount",
       "description": {
         "_": "has Balance Amount",
@@ -8493,7 +8493,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasBalanceAmount"
     },
-    "hasNoticeType": {
+    {
       "name": "hasNoticeType",
       "description": {
         "_": "has Notice Type",
@@ -8505,7 +8505,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasNoticeType"
     },
-    "hasSellerItemID": {
+    {
       "name": "hasSellerItemID",
       "description": {
         "_": "The general identifier assigned to the concept as defined by the Seller.​",
@@ -8517,7 +8517,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasSellerItemID"
     },
-    "substantiatesExclusionGround": {
+    {
       "name": "substantiatesExclusionGround",
       "description": {
         "_": "substantiates Exclusion Ground",
@@ -8529,7 +8529,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#substantiatesExclusionGround"
     },
-    "hasRejectedQuantity": {
+    {
       "name": "hasRejectedQuantity",
       "description": {
         "_": "has Rejected Quantity",
@@ -8541,7 +8541,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasRejectedQuantity"
     },
-    "definesPaymentExecutor": {
+    {
       "name": "definesPaymentExecutor",
       "description": {
         "_": "Relation indicating a ContractTerm has a PaymentExecutor.",
@@ -8553,7 +8553,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#definesPaymentExecutor"
     },
-    "hasPriceValidity": {
+    {
       "name": "hasPriceValidity",
       "description": {
         "_": "has Price Validity",
@@ -8565,7 +8565,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasPriceValidity"
     },
-    "specifiesTenderer": {
+    {
       "name": "specifiesTenderer",
       "description": {
         "_": "specifies Tenderer",
@@ -8577,7 +8577,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesTenderer"
     },
-    "hasBeneficialOwner": {
+    {
       "name": "hasBeneficialOwner",
       "description": {
         "_": "A role of any natural person(s) who ultimately owns or controls the organisation or on whose behalf a transaction or activity is being conducted. Additional Information: This role is defined in the directive EU 2015/849 and it's beyond the scope for public eProcurement domain.",
@@ -8589,7 +8589,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasBeneficialOwner"
     },
-    "isResponsibilityOfBuyer": {
+    {
       "name": "isResponsibilityOfBuyer",
       "description": {
         "_": "The buyer in charge of the procedure.",
@@ -8601,7 +8601,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isResponsibilityOfBuyer"
     },
-    "refersToApplicablePeriod": {
+    {
       "name": "refersToApplicablePeriod",
       "description": {
         "_": "Relation indicating the period to which the Response shall apply.",
@@ -8613,7 +8613,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToApplicablePeriod"
     },
-    "hasLateSubmissionPermission": {
+    {
       "name": "hasLateSubmissionPermission",
       "description": {
         "_": "Whether economic operator-related information can be supplemented even after the submission deadline. Additional Information This is specific to the information on the economic operator and not the actual offer. This does not apply to the requests for clarification.",
@@ -8625,7 +8625,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasLateSubmissionPermission"
     },
-    "hasPreferredLanguageForProcurementDocument": {
+    {
       "name": "hasPreferredLanguageForProcurementDocument",
       "description": {
         "_": "has Preferred Language For Procurement Document",
@@ -8637,7 +8637,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasPreferredLanguageForProcurementDocument"
     },
-    "specifiesCleanVehicleDirectiveContractType": {
+    {
       "name": "specifiesCleanVehicleDirectiveContractType",
       "description": {
         "_": "specifies Clean Vehicle Directive Contract Type",
@@ -8649,7 +8649,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesCleanVehicleDirectiveContractType"
     },
-    "hasSourceVersionSpecification": {
+    {
       "name": "hasSourceVersionSpecification",
       "description": {
         "_": "has Source Version Specification",
@@ -8661,7 +8661,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasSourceVersionSpecification"
     },
-    "hasAllegedIrregularityType": {
+    {
       "name": "hasAllegedIrregularityType",
       "description": {
         "_": "has Alleged Irregularity Type",
@@ -8673,7 +8673,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasAllegedIrregularityType"
     },
-    "hasTenderValidityDuration": {
+    {
       "name": "hasTenderValidityDuration",
       "description": {
         "_": "has Tender Validity Duration",
@@ -8685,7 +8685,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTenderValidityDuration"
     },
-    "hasReceivedQuantity": {
+    {
       "name": "hasReceivedQuantity",
       "description": {
         "_": "has Received Quantity",
@@ -8697,7 +8697,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasReceivedQuantity"
     },
-    "hasReviewBodyType": {
+    {
       "name": "hasReviewBodyType",
       "description": {
         "_": "has Review Body Type",
@@ -8709,7 +8709,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasReviewBodyType"
     },
-    "hasPlannedPeriod": {
+    {
       "name": "hasPlannedPeriod",
       "description": {
         "_": "has Planned Period",
@@ -8721,7 +8721,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasPlannedPeriod"
     },
-    "specifiesProcurementCriterion": {
+    {
       "name": "specifiesProcurementCriterion",
       "description": {
         "_": "specifies Procurement Criterion",
@@ -8733,7 +8733,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesProcurementCriterion"
     },
-    "hasAmountDueForPayment": {
+    {
       "name": "hasAmountDueForPayment",
       "description": {
         "_": "has Amount Due For Payment",
@@ -8745,7 +8745,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasAmountDueForPayment"
     },
-    "isSubjectToTerm": {
+    {
       "name": "isSubjectToTerm",
       "description": {
         "_": "is Subject To Term",
@@ -8757,7 +8757,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isSubjectToTerm"
     },
-    "hasStartDate": {
+    {
       "name": "hasStartDate",
       "description": {
         "_": "has Start Date",
@@ -8769,7 +8769,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasStartDate"
     },
-    "describesDirectAwardPrenotificationNotice": {
+    {
       "name": "describesDirectAwardPrenotificationNotice",
       "description": {
         "_": "describes Direct Award Prenotification Notice",
@@ -8781,7 +8781,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#describesDirectAwardPrenotificationNotice"
     },
-    "providesDocumentation": {
+    {
       "name": "providesDocumentation",
       "description": {
         "_": "provides Documentation",
@@ -8793,7 +8793,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#providesDocumentation"
     },
-    "concernsReviewRequest": {
+    {
       "name": "concernsReviewRequest",
       "description": {
         "_": "concerns Review Request",
@@ -8805,7 +8805,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsReviewRequest"
     },
-    "refersToPrevious": {
+    {
       "name": "refersToPrevious",
       "description": {
         "_": "refers To Previous",
@@ -8817,7 +8817,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#refersToPrevious"
     },
-    "isContainedInTender": {
+    {
       "name": "isContainedInTender",
       "description": {
         "_": "is Contained In Tender",
@@ -8829,7 +8829,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isContainedInTender"
     },
-    "hasNetWeight": {
+    {
       "name": "hasNetWeight",
       "description": {
         "_": "The total mass of goods without the packaging.",
@@ -8841,7 +8841,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasNetWeight"
     },
-    "preparesForPotentialProcurementObject": {
+    {
       "name": "preparesForPotentialProcurementObject",
       "description": {
         "_": "prepares For Potential Procurement Object",
@@ -8853,7 +8853,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#preparesForPotentialProcurementObject"
     },
-    "hasRoundingAmount": {
+    {
       "name": "hasRoundingAmount",
       "description": {
         "_": "has Rounding Amount",
@@ -8865,7 +8865,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasRoundingAmount"
     },
-    "concernsMaskedObject": {
+    {
       "name": "concernsMaskedObject",
       "description": {
         "_": "concerns Masked Object",
@@ -8877,7 +8877,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#concernsMaskedObject"
     },
-    "hasOfficialLanguage": {
+    {
       "name": "hasOfficialLanguage",
       "description": {
         "_": "The language(s) in which the instances of the given concepts are officially available. These linguistic versions are equally legally valid.",
@@ -8889,7 +8889,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasOfficialLanguage"
     },
-    "hasNonAwardJustification": {
+    {
       "name": "hasNonAwardJustification",
       "description": {
         "_": "On hold; Enumeration.",
@@ -8901,7 +8901,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasNonAwardJustification"
     },
-    "hasSubcontractingObligation": {
+    {
       "name": "hasSubcontractingObligation",
       "description": {
         "_": "The requirement the tender must meet with regard to subcontracting parts of the contract.",
@@ -8913,7 +8913,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasSubcontractingObligation"
     },
-    "announcesLotGroup": {
+    {
       "name": "announcesLotGroup",
       "description": {
         "_": "announces Lot Group",
@@ -8925,7 +8925,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#announcesLotGroup"
     },
-    "usesChannel": {
+    {
       "name": "usesChannel",
       "description": {
         "_": "uses Channel",
@@ -8937,7 +8937,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#usesChannel"
     },
-    "hasInternationalProcurementInstrumentExceptionInformation": {
+    {
       "name": "hasInternationalProcurementInstrumentExceptionInformation",
       "description": {
         "_": "has International Procurement Instrument Exception Information",
@@ -8949,7 +8949,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasInternationalProcurementInstrumentExceptionInformation"
     },
-    "hasDebitAmount": {
+    {
       "name": "hasDebitAmount",
       "description": {
         "_": "has Debit Amount",
@@ -8961,7 +8961,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasDebitAmount"
     },
-    "hasIrregularityType": {
+    {
       "name": "hasIrregularityType",
       "description": {
         "_": "has Irregularity Type",
@@ -8973,7 +8973,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasIrregularityType"
     },
-    "hasMinimumValue": {
+    {
       "name": "hasMinimumValue",
       "description": {
         "_": "has Minimum Value",
@@ -8985,7 +8985,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasMinimumValue"
     },
-    "specifiesOfferValidityPeriod": {
+    {
       "name": "specifiesOfferValidityPeriod",
       "description": {
         "_": "specifies Offer Validity Period",
@@ -8997,7 +8997,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesOfferValidityPeriod"
     },
-    "specifiesReviewer": {
+    {
       "name": "specifiesReviewer",
       "description": {
         "_": "specifies Reviewer",
@@ -9009,7 +9009,7 @@
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesReviewer"
     }
-  },
+  ],
   "metadata": {
     "sourceUrl": "https://raw.githubusercontent.com/OP-TED/ePO/master/implementation/ePO_core/owl_ontology/ePO_core.rdf",
     "extractionDate": "2025-07-03T22:25:47.045Z",

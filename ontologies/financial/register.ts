@@ -2,24 +2,13 @@ import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { logger } from '@shared/utils/logger';
 import { 
-  InvestorService,
-  DealService,
-  TargetCompanyService,
-  FundService,
-  SponsorService,
-  SectorService,
-  GeographicRegionService,
-  MandateService,
-  RelationshipService,
-  EventService,
-  MonetaryAmountService,
-  PercentService,
-
-  DocumentService,
-  ProcessService,
-  LegalDocumentService,
-  RegulatoryInformationService,
-  CommunicationService
+  LegalEntityService,
+  OrganizationService,
+  PersonService,
+  AccountService,
+  FinancialInstrumentService,
+  SecurityService,
+  AgreementService
 } from '@generated/financial';
 
 export function registerFinancial() {

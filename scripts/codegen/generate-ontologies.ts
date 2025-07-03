@@ -20,24 +20,31 @@ Handlebars.registerHelper('hasValidKeyProperties', function(keyProperties: strin
   return keyProperties.some(key => properties && properties[key] !== undefined);
 });
 
+// Register Handlebars helper to extract description text
+Handlebars.registerHelper('extractDescription', function(description: any) {
+  if (typeof description === 'string') {
+    return description;
+  }
+  if (description && typeof description === 'object') {
+    return description._ || description.description || 'No description available';
+  }
+  return 'No description available';
+});
+
 /**
  * Ontology Code Generator
  *
- * Reads each `ontology.json` under `ontologies/<domain>/` and generates minimal
- * DTO + Repository stubs into `build/ontologies/<domain>/`.
+ * Reads the new ontology JSON files (source.ontology.json and ontology.json) 
+ * under `ontologies/<domain>/` and generates minimal DTO + Repository stubs 
+ * into `codegen/generated/<domain>/`.
  *
  * This is **proof-of-concept** scaffolding – refine templates as your domain
  * grows.
  */
 
 const ONTOLOGIES_DIR = path.resolve(__dirname, '../../ontologies');
-const BUILD_DIR = path.resolve(__dirname, '../../build/ontologies');
+const GENERATED_DIR = path.resolve(__dirname, '../../codegen/generated');
 const TEMPLATE_DIR = path.resolve(__dirname, '../../codegen/ontology-templates');
-
-interface EntitySchema {
-  name: string;
-  properties?: (string | { name: string; type: string })[];
-}
 
 interface OntologyProperty {
   type: string;
@@ -47,22 +54,59 @@ interface OntologyProperty {
 }
 
 interface OntologyEntity {
-  description: string;
-  parent?: string;
+  name: string;
+  description: any; // Can be string or object with _ property
   properties?: Record<string, OntologyProperty>;
   keyProperties?: string[];
   vectorIndex?: boolean;
-  enrichment?: {
-    service: string;
-    properties: string[];
-  };
+  documentation?: string;
+  parentClass?: string;
 }
 
 interface OntologyRelationship {
-  domain: string;
-  range: string;
-  description?: string;
-  properties?: Record<string, OntologyProperty>;
+  name: string;
+  description: any;
+  source: string;
+  target: string;
+  documentation?: string;
+}
+
+interface SourceOntology {
+  name: string;
+  source: {
+    url: string;
+    type: string;
+    version: string;
+    description: string;
+  };
+  entities: OntologyEntity[];
+  relationships: OntologyRelationship[];
+  metadata: {
+    sourceUrl: string;
+    extractionDate: string;
+    sourceVersion: string;
+    entityCount: number;
+    relationshipCount: number;
+  };
+}
+
+interface FinalOntology {
+  name: string;
+  source: {
+    url: string;
+    type: string;
+    version: string;
+    description: string;
+  };
+  entities: Record<string, OntologyEntity>;
+  relationships: Record<string, OntologyRelationship>;
+  metadata: {
+    sourceUrl: string;
+    extractionDate: string;
+    sourceVersion: string;
+    entityCount: number;
+    relationshipCount: number;
+  };
 }
 
 interface OntologyConfig {
@@ -71,6 +115,8 @@ interface OntologyConfig {
   description: string;
   entities: Record<string, OntologyEntity>;
   relationships?: Record<string, OntologyRelationship>;
+  source: any;
+  metadata: any;
 }
 
 interface OntologyGenerator {
@@ -84,39 +130,57 @@ interface OntologyGenerator {
 class OntologyGeneratorImpl implements OntologyGenerator {
   private templatesDir: string;
   private generatedDir: string;
-  private configDir: string;
+  private ontologiesDir: string;
 
   constructor() {
     this.templatesDir = path.join(__dirname, '..', '..', 'codegen', 'ontology-templates');
     this.generatedDir = path.join(__dirname, '..', '..', 'codegen', 'generated');
-    this.configDir = path.join(__dirname, '..', '..', 'config', 'ontology');
+    this.ontologiesDir = path.join(__dirname, '..', '..', 'ontologies');
   }
 
   /**
-   * Load and validate ontology configuration
+   * Load and validate ontology configuration from the new JSON format
    */
   private loadOntologyConfig(ontologyName: string): OntologyConfig {
-    // Try config/ontology first, then ontologies/
-    const configPath = path.join(this.configDir, `${ontologyName}.ontology.json`);
-    const ontologiesPath = path.join(__dirname, '..', '..', 'ontologies', ontologyName, 'ontology.json');
+    const ontologyDir = path.join(this.ontologiesDir, ontologyName);
+    const sourcePath = path.join(ontologyDir, 'source.ontology.json');
+    const finalPath = path.join(ontologyDir, 'ontology.json');
     
-    let configData: string;
-    
-    if (fs.existsSync(configPath)) {
-      configData = fs.readFileSync(configPath, 'utf8');
-    } else if (fs.existsSync(ontologiesPath)) {
-      configData = fs.readFileSync(ontologiesPath, 'utf8');
+    // Load source ontology (raw extraction)
+    let sourceOntology: SourceOntology;
+    if (fs.existsSync(sourcePath)) {
+      const sourceData = fs.readFileSync(sourcePath, 'utf8');
+      sourceOntology = JSON.parse(sourceData) as SourceOntology;
     } else {
-      throw new Error(`Ontology config not found: ${configPath} or ${ontologiesPath}`);
+      throw new Error(`Source ontology not found: ${sourcePath}`);
     }
 
-    const config = JSON.parse(configData) as OntologyConfig;
+    // Load final ontology (with overrides)
+    let finalOntology: FinalOntology;
+    if (fs.existsSync(finalPath)) {
+      const finalData = fs.readFileSync(finalPath, 'utf8');
+      finalOntology = JSON.parse(finalData) as FinalOntology;
+    } else {
+      throw new Error(`Final ontology not found: ${finalPath}`);
+    }
+
+    // Merge source and final ontologies, with final taking precedence
+    const config: OntologyConfig = {
+      name: finalOntology.name,
+      version: finalOntology.source.version,
+      description: finalOntology.source.description,
+      entities: finalOntology.entities,
+      relationships: finalOntology.relationships,
+      source: finalOntology.source,
+      metadata: finalOntology.metadata
+    };
 
     // Basic validation
     if (!config.name || !config.entities) {
       throw new Error(`Invalid ontology config: ${ontologyName}`);
     }
 
+    logger.info(`Loaded ontology: ${config.name} with ${Object.keys(config.entities).length} entities`);
     return config;
   }
 
@@ -154,8 +218,22 @@ class OntologyGeneratorImpl implements OntologyGenerator {
       case 'datetime': return 'Date';
       case 'array': return 'any[]';
       case 'object': return 'Record<string, any>';
+      case 'float': return 'number';
       default: return 'any';
     }
+  }
+
+  /**
+   * Extract description text from various formats
+   */
+  private extractDescriptionText(description: any): string {
+    if (typeof description === 'string') {
+      return description;
+    }
+    if (description && typeof description === 'object') {
+      return description._ || description.description || 'No description available';
+    }
+    return 'No description available';
   }
 
   /**
@@ -165,10 +243,10 @@ class OntologyGeneratorImpl implements OntologyGenerator {
     const properties: Record<string, string> = {};
     
     // Add properties from parent entities (recursive)
-    if (entityConfig.parent) {
-      const parentConfig = ontology.entities[entityConfig.parent];
+    if (entityConfig.parentClass) {
+      const parentConfig = ontology.entities[entityConfig.parentClass];
       if (parentConfig) {
-        const parentProperties = this.getAllEntityProperties(entityConfig.parent, parentConfig, ontology);
+        const parentProperties = this.getAllEntityProperties(entityConfig.parentClass, parentConfig, ontology);
         Object.assign(properties, parentProperties);
       }
     }
@@ -207,7 +285,8 @@ class OntologyGeneratorImpl implements OntologyGenerator {
         properties,
         keyProperties: entityConfig.keyProperties || [],
         vectorIndex: entityConfig.vectorIndex || false,
-        enrichment: entityConfig.enrichment
+        description: this.extractDescriptionText(entityConfig.description),
+        documentation: entityConfig.documentation
       };
 
       logger.info(`Entity data for ${entityName}:`, JSON.stringify(entityData, null, 2));
@@ -375,22 +454,18 @@ ${exports.join('\n')}
   generateAllOntologies(): void {
     logger.info('Starting ontology generation for all ontologies...');
     
-    const ontologiesDir = path.join(__dirname, '..', '..', 'ontologies');
     const ontologyNames = new Set<string>();
     
-    // Get ontologies from config/ontology
-    if (fs.existsSync(this.configDir)) {
-      const configFiles = fs.readdirSync(this.configDir)
-        .filter(file => file.endsWith('.ontology.json'))
-        .map(file => file.replace('.ontology.json', ''));
-      
-      configFiles.forEach(name => ontologyNames.add(name));
-    }
-    
-    // Get ontologies from ontologies/
-    if (fs.existsSync(ontologiesDir)) {
-      const ontologyDirs = fs.readdirSync(ontologiesDir, { withFileTypes: true })
+    // Get ontologies from ontologies/ directory (new structure)
+    if (fs.existsSync(this.ontologiesDir)) {
+      const ontologyDirs = fs.readdirSync(this.ontologiesDir, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory())
+        .filter(dirent => {
+          // Check if the directory has both source.ontology.json and ontology.json
+          const sourcePath = path.join(this.ontologiesDir, dirent.name, 'source.ontology.json');
+          const finalPath = path.join(this.ontologiesDir, dirent.name, 'ontology.json');
+          return fs.existsSync(sourcePath) && fs.existsSync(finalPath);
+        })
         .map(dirent => dirent.name);
       
       ontologyDirs.forEach(name => ontologyNames.add(name));

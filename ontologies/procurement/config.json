@@ -1,0 +1,30 @@
+{
+  "name": "procurement",
+  "source": {
+    "url": "https://raw.githubusercontent.com/OP-TED/ePO/master/implementation/ePO_core/owl_ontology/ePO_core.rdf",
+    "type": "owl",
+    "version": "2024.06",
+    "description": "eProcurement Ontology (ePO) by Publications Office of the EU"
+  },
+  "extraction": {
+    "entities": {
+      "path": "//owl:Class[contains(@rdf:about, \"a4g/ontology\")]",
+      "name": "substring-after(@rdf:about, \"#\")",
+      "description": "//skos:definition/text()"
+    },
+    "relationships": {
+      "path": "//owl:ObjectProperty[contains(@rdf:about, \"a4g/ontology\")]",
+      "name": "substring-after(@rdf:about, \"#\")",
+      "description": "//skos:definition/text()"
+    }
+  },
+  "overrides": {
+    "entities": {},
+    "relationships": {}
+  },
+  "metadata": {
+    "lastExtraction": "",
+    "sourceVersion": "2024.06",
+    "localVersion": "1.0.0"
+  }
+} 

@@ -31,15 +31,15 @@ import {
 } from '@generated/core';
 
 import { 
-  InvestorDTO, 
-  isInvestorDTO, 
-  createInvestorDTO 
+  LegalEntityDTO, 
+  isLegalEntityDTO, 
+  createLegalEntityDTO 
 } from '@generated/financial';
 
 import { 
-  DealDTO, 
-  isDealDTO, 
-  createDealDTO 
+  OrganizationDTO as FinancialOrganizationDTO, 
+  isOrganizationDTO as isFinancialOrganizationDTO, 
+  createOrganizationDTO as createFinancialOrganizationDTO 
 } from '@generated/financial';
 
 /**
@@ -50,8 +50,8 @@ export type EnrichableEntity =
   | PersonDTO 
   | ContactDTO 
   | CommunicationDTO 
-  | InvestorDTO 
-  | DealDTO;
+  | LegalEntityDTO 
+  | FinancialOrganizationDTO;
 
 // Re-export all DTOs
 export type {
@@ -59,8 +59,8 @@ export type {
   PersonDTO,
   ContactDTO,
   CommunicationDTO,
-  InvestorDTO,
-  DealDTO
+  LegalEntityDTO,
+  FinancialOrganizationDTO
 };
 
 // Re-export all type guards
@@ -69,8 +69,8 @@ export {
   isPersonDTO,
   isContactDTO,
   isCommunicationDTO,
-  isInvestorDTO,
-  isDealDTO
+  isLegalEntityDTO,
+  isFinancialOrganizationDTO
 };
 
 // Re-export all factory functions
@@ -79,8 +79,8 @@ export {
   createPersonDTO,
   createContactDTO,
   createCommunicationDTO,
-  createInvestorDTO,
-  createDealDTO
+  createLegalEntityDTO,
+  createFinancialOrganizationDTO
 };
 
 /**
@@ -172,36 +172,38 @@ export const mapCommunicationToDTO = (comm: any): CommunicationDTO => {
   });
 };
 
-// Investor legacy mapper
-export const mapInvestorToDTO = (investor: any): InvestorDTO => {
-  if (isInvestorDTO(investor)) {
-    return investor;
+// LegalEntity legacy mapper
+export const mapLegalEntityToDTO = (legalEntity: any): LegalEntityDTO => {
+  if (isLegalEntityDTO(legalEntity)) {
+    return legalEntity;
   }
-  return createInvestorDTO({
-    id: investor.id || investor.getId?.() || '',
-    name: investor.name || investor.getName?.() || '',
-    aum: investor.aum || investor.getAum?.() || 0,
-    enrichedData: investor.enrichedData,
-    createdAt: investor.createdAt || new Date(),
-    updatedAt: investor.updatedAt || new Date()
+  return createLegalEntityDTO({
+    id: legalEntity.id || legalEntity.getId?.() || '',
+    name: legalEntity.name || legalEntity.getName?.() || '',
+    legalIdentifier: legalEntity.legalIdentifier || legalEntity.getLegalIdentifier?.() || '',
+    jurisdiction: legalEntity.jurisdiction || legalEntity.getJurisdiction?.() || '',
+    incorporationDate: legalEntity.incorporationDate || legalEntity.getIncorporationDate?.() || undefined,
+    enrichedData: legalEntity.enrichedData,
+    createdAt: legalEntity.createdAt || new Date(),
+    updatedAt: legalEntity.updatedAt || new Date()
   });
 };
 
-// Deal legacy mapper
-export const mapDealToDTO = (deal: any): DealDTO => {
-  if (isDealDTO(deal)) {
-    return deal;
+// Financial Organization legacy mapper
+export const mapFinancialOrganizationToDTO = (org: any): FinancialOrganizationDTO => {
+  if (isFinancialOrganizationDTO(org)) {
+    return org;
   }
-  return createDealDTO({
-    id: deal.id || '',
-    dealSize: deal.dealSize,
-    sector: deal.sector,
-    dealType: deal.dealType,
-    purpose: deal.purpose,
-    status: deal.status,
-    enrichedData: deal.enrichedData,
-    createdAt: deal.createdAt || new Date(),
-    updatedAt: deal.updatedAt || new Date()
+  return createFinancialOrganizationDTO({
+    id: org.id || org.getId?.() || '',
+    name: org.name || org.getName?.() || '',
+    organizationType: org.organizationType || org.getOrganizationType?.() || '',
+    industry: org.industry || org.getIndustry?.() || '',
+    size: org.size || org.getSize?.() || '',
+    website: org.website || org.getWebsite?.() || '',
+    enrichedData: org.enrichedData,
+    createdAt: org.createdAt || new Date(),
+    updatedAt: org.updatedAt || new Date()
   });
 };
 
@@ -262,20 +264,27 @@ export const mapDTOToCommunication = (dto: CommunicationDTO): any => ({
   getDate: () => dto.timestamp,
 });
 
-export const mapDTOToInvestor = (dto: InvestorDTO): any => ({
+export const mapDTOToLegalEntity = (dto: LegalEntityDTO): any => ({
   ...dto,
   // Legacy method stubs
   getId: () => dto.id,
   getName: () => dto.name,
-  getAum: () => dto.aum,
+  getLegalIdentifier: () => dto.legalIdentifier,
+  getJurisdiction: () => dto.jurisdiction,
+  getIncorporationDate: () => dto.incorporationDate,
   getType: () => dto.type,
   getLabel: () => dto.label,
 });
 
-export const mapDTOToDeal = (dto: DealDTO): any => ({
+export const mapDTOToFinancialOrganization = (dto: FinancialOrganizationDTO): any => ({
   ...dto,
   // Legacy method stubs
   getId: () => dto.id,
+  getName: () => dto.name,
+  getOrganizationType: () => dto.organizationType,
+  getIndustry: () => dto.industry,
+  getSize: () => dto.size,
+  getWebsite: () => dto.website,
   getType: () => dto.type,
   getLabel: () => dto.label,
 }); 
