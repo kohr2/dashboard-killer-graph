@@ -1,6 +1,4 @@
 import { Session } from 'neo4j-driver';
-import { singleton } from 'tsyringe';
-import { container } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { logger } from '@shared/utils/logger';
 
@@ -56,13 +54,12 @@ export interface GraphPattern {
   resultMapping?: Record<string, string>;
 }
 
-@singleton()
 export class AdvancedGraphService {
   private neo4jConnection: Neo4jConnection;
   private session: Session | null = null;
 
-  constructor() {
-    this.neo4jConnection = container.resolve(Neo4jConnection);
+  constructor(neo4jConnection: Neo4jConnection = new Neo4jConnection()) {
+    this.neo4jConnection = neo4jConnection;
   }
 
   async initialize(): Promise<void> {

@@ -1,12 +1,43 @@
 /**
- * I{{name}}Repository - generated from ontology.json
+ * I{{entityName}}Repository - generated from ontology.json
  * DO NOT EDIT MANUALLY. Changes will be overwritten.
  */
 
-import type { {{name}}DTO } from './{{name}}DTO';
+import { {{entityName}} } from './{{entityName}}.entity';
 
-export interface I{{name}}Repository {
-  save(dto: {{name}}DTO): Promise<void>;
-  findById(id: string): Promise<{{name}}DTO | null>;
+export interface I{{entityName}}Repository {
+  findById(id: string): Promise<{{entityName}} | null>;
+  findAll(): Promise<{{entityName}}[]>;
+  create(entity: {{entityName}}): Promise<{{entityName}}>;
+  update(id: string, entity: Partial<{{entityName}}>): Promise<{{entityName}}>;
   delete(id: string): Promise<void>;
+  {{#if keyProperties}}
+  findBy{{#each keyProperties}}{{#if @first}}{{this}}{{else}}And{{this}}{{/if}}{{/each}}({{#each keyProperties}}{{this}}: string{{#unless @last}}, {{/unless}}{{/each}}): Promise<{{entityName}} | null>;
+  {{/if}}
+  {{#if vectorIndex}}
+  findSimilar(entity: {{entityName}}, limit?: number): Promise<{{entityName}}[]>;
+  {{/if}}
+}
+
+export abstract class Base{{entityName}}Repository implements I{{entityName}}Repository {
+  abstract findById(id: string): Promise<{{entityName}} | null>;
+  abstract findAll(): Promise<{{entityName}}[]>;
+  abstract create(entity: {{entityName}}): Promise<{{entityName}}>;
+  abstract update(id: string, entity: Partial<{{entityName}}>): Promise<{{entityName}}>;
+  abstract delete(id: string): Promise<void>;
+  
+  {{#if keyProperties}}
+  async findBy{{#each keyProperties}}{{#if @first}}{{this}}{{else}}And{{this}}{{/if}}{{/each}}({{#each keyProperties}}{{this}}: string{{#unless @last}}, {{/unless}}{{/each}}): Promise<{{entityName}} | null> {
+    const all = await this.findAll();
+    return all.find(entity => {{#each keyProperties}}entity.{{this}} === {{this}}{{#unless @last}} && {{/unless}}{{/each}}) || null;
+  }
+  {{/if}}
+
+  {{#if vectorIndex}}
+  async findSimilar(entity: {{entityName}}, limit: number = 10): Promise<{{entityName}}[]> {
+    // Implementation would depend on vector similarity algorithm
+    const all = await this.findAll();
+    return all.filter(e => e.id !== entity.id).slice(0, limit);
+  }
+  {{/if}}
 } 

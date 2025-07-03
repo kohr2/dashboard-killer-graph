@@ -1,8 +1,7 @@
-import { singleton, inject } from 'tsyringe';
 import axios from 'axios';
 import { logger } from '@shared/utils/logger';
 import { EnrichmentOrchestratorService } from '@platform/enrichment';
-import { Organization } from '@crm/domain/entities/organization';
+import { OrganizationDTO } from '@platform/enrichment/dto-aliases';
 
 export interface LlmGraphEntity {
   value: string;
@@ -33,24 +32,14 @@ interface IngestionEntity {
   embedding?: number[];
 }
 
-@singleton()
 export class ContentProcessingService {
   private nlpServiceUrl: string;
   private enrichmentOrchestrator: EnrichmentOrchestratorService;
 
   constructor(
-    @inject(EnrichmentOrchestratorService)
-    enrichmentOrchestrator?: EnrichmentOrchestratorService,
+    enrichmentOrchestrator: EnrichmentOrchestratorService = new EnrichmentOrchestratorService(),
   ) {
-    // If no orchestrator is provided (e.g., in unit tests), fall back to a no-op implementation
-    this.enrichmentOrchestrator =
-      enrichmentOrchestrator ??
-      ({
-        register: () => {},
-        getServices: () => [],
-        enrich: async (e: any) => e,
-      } as unknown as EnrichmentOrchestratorService);
-
+    this.enrichmentOrchestrator = enrichmentOrchestrator;
     this.nlpServiceUrl = 'http://127.0.0.1:8000';
   }
 
@@ -104,10 +93,40 @@ export class ContentProcessingService {
         if (entity.type === 'Organization') {
           logger.info(`      -> Auto-enriching Organization: ${entity.name}`);
           try {
-            const org = new Organization(entity.id, entity.name);
-            const enrichedOrg = await this.enrichmentOrchestrator.enrich(org);
+            const orgDTO: OrganizationDTO = {
+              id: entity.id,
+              name: entity.name,
+              type: 'Organization',
+              label: entity.label || 'Organization',
+              enrichedData: entity.properties.enrichedData || '',
+              legalName: entity.properties.legalName || '',
+              industry: entity.properties.industry || '',
+              website: entity.properties.website || '',
+              description: entity.properties.description || '',
+              size: entity.properties.size || '',
+              foundedYear: entity.properties.foundedYear || '',
+              headquarters: entity.properties.headquarters || '',
+              address: entity.properties.address || '',
+              phone: entity.properties.phone || '',
+              email: entity.properties.email || '',
+              parentOrganizationId: entity.properties.parentOrganizationId || '',
+              activities: entity.properties.activities || '',
+              knowledgeElements: entity.properties.knowledgeElements || '',
+              validationStatus: entity.properties.validationStatus || 'VALID',
+              createdAt: entity.properties.createdAt || new Date().toISOString(),
+              updatedAt: entity.properties.updatedAt || new Date().toISOString(),
+              preferences: entity.properties.preferences || '',
+            };
+            const enrichedOrg = await this.enrichmentOrchestrator.enrich(orgDTO);
             if (enrichedOrg) {
-              const finalEntity = { ...entity, ...enrichedOrg, properties: { ...entity.properties, ...enrichedOrg.enrichedData } };
+              const finalEntity = { 
+                ...entity, 
+                ...enrichedOrg, 
+                properties: { 
+                  ...entity.properties, 
+                  ...enrichedOrg 
+                } 
+              };
               enrichedEntities.push(finalEntity);
             } else {
               enrichedEntities.push(entity);

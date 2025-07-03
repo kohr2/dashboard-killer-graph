@@ -1,4 +1,4 @@
-import { OntologyService } from '../../../platform/ontology/ontology.service';
+import { OntologyService } from '@platform/ontology/ontology.service';
 import { procurementPlugin } from '../procurement.plugin';
 
 describe('OntologyService - Procurement Plugin Loading', () => {

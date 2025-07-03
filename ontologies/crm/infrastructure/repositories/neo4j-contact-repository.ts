@@ -1,26 +1,63 @@
 import { injectable, inject } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { ContactOntology, OCreamContactEntity } from '../../domain/entities/contact-ontology';
-import { ContactRepository } from '../../domain/repositories/contact-repository';
+import { ContactRepository } from '../../repositories/contact-repository';
 import { Session, Record as Neo4jRecord } from 'neo4j-driver';
+
+// Temporary type definition until import issues are resolved
+interface ContactDTO {
+  id: string;
+  name: string;
+  type: string;
+  label: string;
+  enrichedData: string;
+  email: string;
+  title: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  description: string;
+  organizationId: string;
+  activities: string;
+  knowledgeElements: string;
+  validationStatus: string;
+  createdAt: string;
+  updatedAt: string;
+  additionalEmails: string;
+  address: string;
+  preferences: string;
+}
 
 @injectable()
 export class Neo4jContactRepository implements ContactRepository {
   constructor(@inject(Neo4jConnection) private connection: Neo4jConnection) {}
 
-  private nodeToContact(node: any): OCreamContactEntity {
-    return ContactOntology.createOCreamContact({
+  private nodeToContactDTO(node: any): ContactDTO {
+    return {
       id: node.id,
+      name: node.name || `${node.firstName} ${node.lastName}`,
+      type: 'Contact',
+      label: node.name || `${node.firstName} ${node.lastName}`,
+      enrichedData: node.enrichedData || '',
+      email: node.email,
+      title: node.title || '',
       firstName: node.firstName,
       lastName: node.lastName,
-      email: node.email,
-      phone: node.phone,
-      title: node.title,
-      organizationId: node.organizationId,
-    });
+      phone: node.phone || '',
+      description: node.description || '',
+      organizationId: node.organizationId || '',
+      activities: node.activities || '',
+      knowledgeElements: node.knowledgeElements || '',
+      validationStatus: node.validationStatus || 'VALID',
+      createdAt: node.createdAt || new Date().toISOString(),
+      updatedAt: node.updatedAt || new Date().toISOString(),
+      additionalEmails: node.additionalEmails || '',
+      address: node.address || '',
+      preferences: node.preferences || '',
+    };
   }
 
-  async save(contact: OCreamContactEntity): Promise<OCreamContactEntity> {
+  async save(contact: ContactDTO): Promise<ContactDTO> {
     const session = this.connection.getSession();
     try {
       const cypherQuery = `
@@ -34,26 +71,35 @@ export class Neo4jContactRepository implements ContactRepository {
         id: contact.id,
         props: {
           name: contact.name,
-          email: contact.personalInfo.email,
+          email: contact.email,
           organizationId: contact.organizationId,
-          phone: contact.personalInfo.phone,
-          title: contact.personalInfo.title,
-          firstName: contact.personalInfo.firstName,
-          lastName: contact.personalInfo.lastName,
+          phone: contact.phone,
+          title: contact.title,
+          firstName: contact.firstName,
+          lastName: contact.lastName,
           description: contact.description,
+          type: contact.type,
+          label: contact.label,
+          enrichedData: contact.enrichedData,
+          activities: contact.activities,
+          knowledgeElements: contact.knowledgeElements,
+          validationStatus: contact.validationStatus,
+          additionalEmails: contact.additionalEmails,
+          address: contact.address,
+          preferences: contact.preferences,
         },
       });
 
       const singleRecord = result.records[0];
       const contactNode = singleRecord.get('c').properties;
 
-      return this.nodeToContact(contactNode);
+      return this.nodeToContactDTO(contactNode);
     } finally {
       await session.close();
     }
   }
 
-  async findById(id: string): Promise<OCreamContactEntity | null> {
+  async findById(id: string): Promise<ContactDTO | null> {
     const session = this.connection.getSession();
     try {
       const result = await session.run('MATCH (c:Contact {id: $id}) RETURN c', { id });
@@ -65,27 +111,27 @@ export class Neo4jContactRepository implements ContactRepository {
       const singleRecord = result.records[0];
       const contactNode = singleRecord.get('c').properties;
 
-      return this.nodeToContact(contactNode);
+      return this.nodeToContactDTO(contactNode);
     } finally {
       await session.close();
     }
   }
 
-  async findAll(): Promise<OCreamContactEntity[]> {
+  async findAll(): Promise<ContactDTO[]> {
     const session = this.connection.getSession();
     try {
       const result = await session.run('MATCH (c:Contact) RETURN c');
 
       return result.records.map((record: Neo4jRecord) => {
         const contactNode = record.get('c').properties;
-        return this.nodeToContact(contactNode);
+        return this.nodeToContactDTO(contactNode);
       });
     } finally {
       await session.close();
     }
   }
 
-  async findByEmail(email: string): Promise<OCreamContactEntity | null> {
+  async findByEmail(email: string): Promise<ContactDTO | null> {
     const session = this.connection.getSession();
     try {
       const result = await session.run('MATCH (c:Contact {email: $email}) RETURN c', {
@@ -99,13 +145,13 @@ export class Neo4jContactRepository implements ContactRepository {
       const singleRecord = result.records[0];
       const contactNode = singleRecord.get('c').properties;
 
-      return this.nodeToContact(contactNode);
+      return this.nodeToContactDTO(contactNode);
     } finally {
       await session.close();
     }
   }
 
-  async search(query: string): Promise<OCreamContactEntity[]> {
+  async search(query: string): Promise<ContactDTO[]> {
     const session = this.connection.getSession();
     try {
       const result = await session.run(
@@ -114,7 +160,7 @@ export class Neo4jContactRepository implements ContactRepository {
       );
       return result.records.map((record: Neo4jRecord) => {
         const contactNode = record.get('c').properties;
-        return this.nodeToContact(contactNode);
+        return this.nodeToContactDTO(contactNode);
       });
     } finally {
       await session.close();

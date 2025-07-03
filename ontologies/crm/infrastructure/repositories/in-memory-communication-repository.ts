@@ -1,29 +1,25 @@
 // In-Memory Communication Repository Implementation
 // Provides in-memory storage for testing and development
 
-import {
-  Communication,
-  CommunicationType,
-  CommunicationStatus,
-} from '@crm/domain/entities/communication';
+import { CommunicationDTO } from '@generated/crm/generated/CommunicationDTO';
 import { CommunicationRepository } from '@crm/domain/repositories/communication-repository';
 import { SpacyExtractedEntity } from '@crm/application/services/spacy-entity-extraction.service';
 
 export class InMemoryCommunicationRepository
   implements CommunicationRepository
 {
-  private communications: Map<string, Communication> = new Map();
+  private communications: Map<string, CommunicationDTO> = new Map();
 
-  async save(communication: Communication): Promise<Communication> {
+  async save(communication: CommunicationDTO): Promise<CommunicationDTO> {
     this.communications.set(communication.id, communication);
     return communication;
   }
 
-  async findById(id: string): Promise<Communication | null> {
+  async findById(id: string): Promise<CommunicationDTO | null> {
     return this.communications.get(id) || null;
   }
 
-  async findAll(): Promise<Communication[]> {
+  async findAll(): Promise<CommunicationDTO[]> {
     return Array.from(this.communications.values());
   }
 
@@ -31,8 +27,8 @@ export class InMemoryCommunicationRepository
     return this.communications.delete(id);
   }
 
-  async findByContactId(contactId: string): Promise<Communication[]> {
-    const results: Communication[] = [];
+  async findByContactId(contactId: string): Promise<CommunicationDTO[]> {
+    const results: CommunicationDTO[] = [];
     for (const communication of this.communications.values()) {
       if (
         communication.recipients.includes(contactId) ||
@@ -44,8 +40,8 @@ export class InMemoryCommunicationRepository
     return results;
   }
 
-  async findByType(type: CommunicationType): Promise<Communication[]> {
-    const results: Communication[] = [];
+  async findByType(type: string): Promise<CommunicationDTO[]> {
+    const results: CommunicationDTO[] = [];
     for (const communication of this.communications.values()) {
       if (communication.type === type) {
         results.push(communication);
@@ -54,8 +50,8 @@ export class InMemoryCommunicationRepository
     return results;
   }
 
-  async findByStatus(status: CommunicationStatus): Promise<Communication[]> {
-    const results: Communication[] = [];
+  async findByStatus(status: string): Promise<CommunicationDTO[]> {
+    const results: CommunicationDTO[] = [];
     for (const communication of this.communications.values()) {
       if (communication.status === status) {
         results.push(communication);
@@ -64,9 +60,9 @@ export class InMemoryCommunicationRepository
     return results;
   }
 
-  async search(query: string): Promise<Communication[]> {
+  async search(query: string): Promise<CommunicationDTO[]> {
     const searchTerm = query.toLowerCase();
-    const results: Communication[] = [];
+    const results: CommunicationDTO[] = [];
     for (const communication of this.communications.values()) {
       const subject = communication.subject?.toLowerCase() || '';
       const body = communication.body?.toLowerCase() || '';
@@ -91,22 +87,25 @@ export class InMemoryCommunicationRepository
   ): Promise<void> {
     const communication = await this.findById(communicationId);
     if (communication) {
-      if (!communication.metadata) {
-        communication.metadata = {};
-      }
-      communication.metadata.linkedEntities = entities.map(e => `${e.type}:${e.value}`);
-      await this.save(communication);
+      const linkedEntities = entities.map(e => `${e.type}:${e.value}`).join(',');
+      const updatedCommunication: CommunicationDTO = {
+        ...communication,
+        metadata: linkedEntities,
+        updatedAt: new Date().toISOString(),
+      };
+      await this.save(updatedCommunication);
     }
   }
 
   async updateProperties(id: string, properties: Record<string, any>): Promise<void> {
     const communication = await this.findById(id);
     if (communication) {
-      if (!communication.metadata) {
-        communication.metadata = {};
-      }
-      Object.assign(communication.metadata, properties);
-      await this.save(communication);
+      const updatedCommunication: CommunicationDTO = {
+        ...communication,
+        ...properties,
+        updatedAt: new Date().toISOString(),
+      };
+      await this.save(updatedCommunication);
     }
     return Promise.resolve();
   }

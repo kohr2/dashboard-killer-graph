@@ -24,7 +24,8 @@
       "@financial/*": ["ontologies/financial/*"],
       "@procurement/*": ["ontologies/procurement/*"],
       "@shared/*": ["src/shared/*"],
-      "@generated/*": ["build/ontologies/*"]
+      "@generated/*": ["codegen/generated/*"],
+      "@codegen/generated/*": ["codegen/generated/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

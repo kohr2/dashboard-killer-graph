@@ -1,6 +1,9 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import { compile } from 'handlebars';
+#!/usr/bin/env ts-node
+
+import * as fs from 'fs';
+import * as path from 'path';
+import * as Handlebars from 'handlebars';
+import { logger } from '../../src/shared/utils/logger';
 
 /**
  * Ontology Code Generator
@@ -18,78 +21,336 @@ const TEMPLATE_DIR = path.resolve(__dirname, '../../codegen/ontology-templates')
 
 interface EntitySchema {
   name: string;
-  properties?: string[];
+  properties?: (string | { name: string; type: string })[];
 }
 
-async function loadTemplate(name: string) {
-  const templatePath = path.join(TEMPLATE_DIR, `${name}.hbs`);
-  const contents = await fs.readFile(templatePath, 'utf-8');
-  return compile(contents);
+interface OntologyProperty {
+  type: string;
+  description: string;
+  required?: boolean;
+  validation?: Record<string, any>;
 }
 
-async function ensureDir(dir: string) {
-  await fs.mkdir(dir, { recursive: true });
+interface OntologyEntity {
+  description: string;
+  parent?: string;
+  properties?: Record<string, OntologyProperty>;
+  keyProperties?: string[];
+  vectorIndex?: boolean;
+  enrichment?: {
+    service: string;
+    properties: string[];
+  };
 }
 
-async function generateForDomain(domain: string) {
-  const schemaPath = path.join(ONTOLOGIES_DIR, domain, 'ontology.json');
-  const exists = await fs
-    .stat(schemaPath)
-    .then(s => s.isFile())
-    .catch(() => false);
-  if (!exists) {
-    console.warn(`⚠️  No ontology.json found for domain '${domain}', skipping.`);
-    return;
-  }
-
-  const raw = await fs.readFile(schemaPath, 'utf-8');
-  const schema = JSON.parse(raw);
-  let entities: EntitySchema[] = [];
-  if (Array.isArray(schema.entities)) {
-    entities = schema.entities;
-  } else if (schema.entities && typeof schema.entities === 'object') {
-    // Convert object map to array with properties if provided
-    entities = Object.entries<any>(schema.entities).map(([name, def]) => ({
-      name,
-      properties: def?.properties || def?.props || [],
-    }));
-  }
-  if (!entities.length) {
-    console.warn(`⚠️  No entities declared in ${schemaPath}`);
-    return;
-  }
-
-  const dtoTemplate = await loadTemplate('dto');
-  const repoTemplate = await loadTemplate('repository');
-
-  for (const entity of entities) {
-    const outDir = path.join(BUILD_DIR, domain, 'generated');
-    await ensureDir(outDir);
-
-    // DTO file
-    const dtoFile = path.join(outDir, `${entity.name}DTO.ts`);
-    await fs.writeFile(dtoFile, dtoTemplate(entity));
-
-    // Repository interface
-    const repoFile = path.join(outDir, `I${entity.name}Repository.ts`);
-    await fs.writeFile(repoFile, repoTemplate(entity));
-  }
-
-  console.log(`✅ Generated ${entities.length} entities for domain ${domain}.`);
+interface OntologyRelationship {
+  domain: string;
+  range: string;
+  description?: string;
+  properties?: Record<string, OntologyProperty>;
 }
 
-async function main() {
-  const domains = await fs.readdir(ONTOLOGIES_DIR);
-  for (const d of domains) {
-    const domainPath = path.join(ONTOLOGIES_DIR, d);
-    const stat = await fs.stat(domainPath);
-    if (stat.isDirectory()) {
-      await generateForDomain(d);
+interface OntologyConfig {
+  name: string;
+  version: string;
+  description: string;
+  entities: Record<string, OntologyEntity>;
+  relationships?: Record<string, OntologyRelationship>;
+}
+
+interface OntologyGenerator {
+  generateEntities(ontology: OntologyConfig): void;
+  generateRepositories(ontology: OntologyConfig): void;
+  generateServices(ontology: OntologyConfig): void;
+  generateDTOs(ontology: OntologyConfig): void;
+  updateIndexFiles(ontology: OntologyConfig): void;
+}
+
+class OntologyGeneratorImpl implements OntologyGenerator {
+  private templatesDir: string;
+  private generatedDir: string;
+  private configDir: string;
+
+  constructor() {
+    this.templatesDir = path.join(__dirname, '..', '..', 'codegen', 'ontology-templates');
+    this.generatedDir = path.join(__dirname, '..', '..', 'codegen', 'generated');
+    this.configDir = path.join(__dirname, '..', '..', 'config', 'ontology');
+  }
+
+  /**
+   * Load and validate ontology configuration
+   */
+  private loadOntologyConfig(ontologyName: string): OntologyConfig {
+    const configPath = path.join(this.configDir, `${ontologyName}.ontology.json`);
+    
+    if (!fs.existsSync(configPath)) {
+      throw new Error(`Ontology config not found: ${configPath}`);
+    }
+
+    const configData = fs.readFileSync(configPath, 'utf8');
+    const config = JSON.parse(configData) as OntologyConfig;
+
+    // Basic validation
+    if (!config.name || !config.entities) {
+      throw new Error(`Invalid ontology config: ${ontologyName}`);
+    }
+
+    return config;
+  }
+
+  /**
+   * Load Handlebars template
+   */
+  private loadTemplate(templateName: string): HandlebarsTemplateDelegate {
+    const templatePath = path.join(this.templatesDir, `${templateName}.hbs`);
+    
+    if (!fs.existsSync(templatePath)) {
+      throw new Error(`Template not found: ${templatePath}`);
+    }
+
+    const templateContent = fs.readFileSync(templatePath, 'utf8');
+    return Handlebars.compile(templateContent);
+  }
+
+  /**
+   * Ensure directory exists
+   */
+  private ensureDirectory(dirPath: string): void {
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
     }
   }
+
+  /**
+   * Generate TypeScript type from JSON type
+   */
+  private getTypeScriptType(jsonType: string): string {
+    switch (jsonType) {
+      case 'string': return 'string';
+      case 'number': return 'number';
+      case 'boolean': return 'boolean';
+      case 'datetime': return 'Date';
+      case 'array': return 'any[]';
+      case 'object': return 'Record<string, any>';
+      default: return 'any';
+    }
+  }
+
+  /**
+   * Generate entities from ontology config
+   */
+  generateEntities(ontology: OntologyConfig): void {
+    logger.info(`Generating entities for ontology: ${ontology.name}`);
+    
+    const template = this.loadTemplate('entity');
+    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase());
+    this.ensureDirectory(ontologyDir);
+
+    for (const [entityName, entityConfig] of Object.entries(ontology.entities)) {
+      // Convert properties to the format expected by the template
+      const properties: Record<string, string> = {};
+      if (entityConfig.properties) {
+        logger.info(`Processing properties for ${entityName}:`, Object.keys(entityConfig.properties));
+        for (const [key, prop] of Object.entries(entityConfig.properties)) {
+          const tsType = this.getTypeScriptType(prop.type);
+          properties[key] = tsType;
+          logger.info(`  ${key}: ${prop.type} -> ${tsType}`);
+        }
+      } else {
+        logger.info(`No properties found for ${entityName}`);
+      }
+
+      const entityData = {
+        entityName,
+        properties,
+        keyProperties: entityConfig.keyProperties || [],
+        vectorIndex: entityConfig.vectorIndex || false,
+        enrichment: entityConfig.enrichment
+      };
+
+      logger.info(`Entity data for ${entityName}:`, JSON.stringify(entityData, null, 2));
+
+      const generatedCode = template(entityData);
+      const outputPath = path.join(ontologyDir, `${entityName}.entity.ts`);
+      
+      fs.writeFileSync(outputPath, generatedCode);
+      logger.info(`Generated entity: ${outputPath}`);
+    }
+  }
+
+  /**
+   * Generate repositories from ontology config
+   */
+  generateRepositories(ontology: OntologyConfig): void {
+    logger.info(`Generating repositories for ontology: ${ontology.name}`);
+    
+    const template = this.loadTemplate('repository');
+    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase());
+    this.ensureDirectory(ontologyDir);
+
+    for (const [entityName, entityConfig] of Object.entries(ontology.entities)) {
+      const entityData = {
+        entityName,
+        keyProperties: entityConfig.keyProperties || [],
+        vectorIndex: entityConfig.vectorIndex || false
+      };
+
+      const generatedCode = template(entityData);
+      const outputPath = path.join(ontologyDir, `${entityName}.repository.ts`);
+      
+      fs.writeFileSync(outputPath, generatedCode);
+      logger.info(`Generated repository: ${outputPath}`);
+    }
+  }
+
+  /**
+   * Generate services from ontology config
+   */
+  generateServices(ontology: OntologyConfig): void {
+    logger.info(`Generating services for ontology: ${ontology.name}`);
+    
+    const template = this.loadTemplate('service');
+    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase());
+    this.ensureDirectory(ontologyDir);
+
+    for (const [entityName, entityConfig] of Object.entries(ontology.entities)) {
+      const entityData = {
+        entityName,
+        keyProperties: entityConfig.keyProperties || [],
+        vectorIndex: entityConfig.vectorIndex || false
+      };
+
+      const generatedCode = template(entityData);
+      const outputPath = path.join(ontologyDir, `${entityName}.service.ts`);
+      
+      fs.writeFileSync(outputPath, generatedCode);
+      logger.info(`Generated service: ${outputPath}`);
+    }
+  }
+
+  /**
+   * Generate DTOs from ontology config
+   */
+  generateDTOs(ontology: OntologyConfig): void {
+    logger.info(`Generating DTOs for ontology: ${ontology.name}`);
+    
+    const template = this.loadTemplate('dto');
+    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase());
+    this.ensureDirectory(ontologyDir);
+
+    for (const [entityName, entityConfig] of Object.entries(ontology.entities)) {
+      // Convert properties to the format expected by the template
+      const properties: Record<string, string> = {};
+      if (entityConfig.properties) {
+        for (const [key, prop] of Object.entries(entityConfig.properties)) {
+          properties[key] = this.getTypeScriptType(prop.type);
+        }
+      }
+
+      const entityData = {
+        entityName,
+        properties
+      };
+
+      const generatedCode = template(entityData);
+      const outputPath = path.join(ontologyDir, `${entityName}.dto.ts`);
+      
+      fs.writeFileSync(outputPath, generatedCode);
+      logger.info(`Generated DTO: ${outputPath}`);
+    }
+  }
+
+  /**
+   * Update index files for the ontology
+   */
+  updateIndexFiles(ontology: OntologyConfig): void {
+    logger.info(`Updating index files for ontology: ${ontology.name}`);
+    
+    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase());
+    const indexPath = path.join(ontologyDir, 'index.ts');
+    
+    const exports: string[] = [];
+    
+    // Export entities
+    for (const entityName of Object.keys(ontology.entities)) {
+      exports.push(`export * from './${entityName}.entity';`);
+      exports.push(`export * from './${entityName}.repository';`);
+      exports.push(`export * from './${entityName}.service';`);
+      exports.push(`export * from './${entityName}.dto';`);
+    }
+    
+    const indexContent = `/**
+ * Generated index file for ${ontology.name} ontology
+ * DO NOT EDIT MANUALLY. Changes will be overwritten.
+ */
+
+${exports.join('\n')}
+`;
+    
+    fs.writeFileSync(indexPath, indexContent);
+    logger.info(`Updated index file: ${indexPath}`);
+  }
+
+  /**
+   * Generate all code for a single ontology
+   */
+  generateOntology(ontologyName: string): void {
+    try {
+      logger.info(`Starting generation for ontology: ${ontologyName}`);
+      
+      const config = this.loadOntologyConfig(ontologyName);
+      
+      this.generateEntities(config);
+      this.generateRepositories(config);
+      this.generateServices(config);
+      this.generateDTOs(config);
+      this.updateIndexFiles(config);
+      
+      logger.info(`✅ Completed generation for ontology: ${ontologyName}`);
+    } catch (error) {
+      logger.error(`❌ Failed to generate ontology ${ontologyName}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Generate all ontologies
+   */
+  generateAllOntologies(): void {
+    logger.info('Starting ontology generation for all ontologies...');
+    
+    const ontologyFiles = fs.readdirSync(this.configDir)
+      .filter(file => file.endsWith('.ontology.json'))
+      .map(file => file.replace('.ontology.json', ''));
+    
+    if (ontologyFiles.length === 0) {
+      logger.warn('No ontology files found in config directory');
+      return;
+    }
+    
+    logger.info(`Found ${ontologyFiles.length} ontology files: ${ontologyFiles.join(', ')}`);
+    
+    for (const ontologyName of ontologyFiles) {
+      this.generateOntology(ontologyName);
+    }
+    
+    logger.info('✅ Completed generation for all ontologies');
+  }
 }
 
+// Main execution
 if (require.main === module) {
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  main();
-} 
+  const generator = new OntologyGeneratorImpl();
+  
+  const args = process.argv.slice(2);
+  if (args.length > 0) {
+    // Generate specific ontology
+    generator.generateOntology(args[0]);
+  } else {
+    // Generate all ontologies
+    generator.generateAllOntologies();
+  }
+}
+
+export { OntologyGeneratorImpl };
+export type { OntologyGenerator }; 

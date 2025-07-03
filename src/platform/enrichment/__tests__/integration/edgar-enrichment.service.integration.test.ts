@@ -1,10 +1,8 @@
-import 'reflect-metadata';
 import * as dotenv from 'dotenv';
 import { join } from 'path';
 import { promises as fs } from 'fs';
 import { EdgarEnrichmentService } from '../../edgar-enrichment.service';
-import { Organization } from '@crm/domain/entities/organization';
-import { container } from 'tsyringe';
+import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -14,9 +12,6 @@ const SEC_API_USER_AGENT = process.env.SEC_API_USER_AGENT;
 if (!SEC_API_USER_AGENT) {
   throw new Error('SEC_API_USER_AGENT must be set in your .env file for this test.');
 }
-
-// Register the user agent with the DI container
-container.register('SEC_API_USER_AGENT', { useValue: SEC_API_USER_AGENT });
 
 describe('EdgarEnrichmentService - Integration Test', () => {
   let service: EdgarEnrichmentService;
@@ -36,14 +31,18 @@ describe('EdgarEnrichmentService - Integration Test', () => {
   });
   
   beforeEach(() => {
-    // Resolve the service from the container.
-    // This will inject the SEC_API_USER_AGENT.
-    service = container.resolve(EdgarEnrichmentService);
+    service = new EdgarEnrichmentService(SEC_API_USER_AGENT);
   });
 
   it('should successfully enrich "MORGAN STANLEY" by fetching live data from the SEC', async () => {
     // Arrange: Create the entity to be enriched
-    const morganStanley = new Organization('org-ms', 'MORGAN STANLEY');
+    const morganStanley: OrganizationDTO = {
+      id: 'org-ms',
+      name: 'MORGAN STANLEY',
+      type: 'Organization',
+      label: 'Organization',
+      enrichedData: '',
+    };
 
     // Act: Enrich the entity
     const enrichedData = await service.enrich(morganStanley);

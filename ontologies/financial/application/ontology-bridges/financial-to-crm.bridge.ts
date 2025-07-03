@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe';
-import { Investor } from '../../domain/entities/investor';
-import { Deal } from '../../domain/entities/deal';
+import { InvestorDTO } from '@generated/financial/generated/InvestorDTO';
+import { DealDTO } from '@generated/financial/generated/DealDTO';
 
 /**
  * Provides mapping between Financial and CRM domain concepts by adding labels.

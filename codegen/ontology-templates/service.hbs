@@ -1,0 +1,98 @@
+import { singleton } from 'tsyringe';
+import { {{entityName}} } from './{{entityName}}.entity';
+import { I{{entityName}}Repository } from './{{entityName}}.repository';
+import { logger } from '@shared/utils/logger';
+
+@singleton()
+export class {{entityName}}Service {
+  constructor(private repository: I{{entityName}}Repository) {}
+
+  /**
+   * Find entity by ID
+   */
+  async findById(id: string): Promise<{{entityName}} | null> {
+    try {
+      return await this.repository.findById(id);
+    } catch (error) {
+      logger.error(`Error finding {{entityName}} by ID ${id}:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Get all entities
+   */
+  async findAll(): Promise<{{entityName}}[]> {
+    try {
+      return await this.repository.findAll();
+    } catch (error) {
+      logger.error('Error finding all {{entityName}} entities:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Create new entity
+   */
+  async create(entity: {{entityName}}): Promise<{{entityName}} | null> {
+    try {
+      return await this.repository.create(entity);
+    } catch (error) {
+      logger.error('Error creating {{entityName}}:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Update existing entity
+   */
+  async update(id: string, entity: Partial<{{entityName}}>): Promise<{{entityName}} | null> {
+    try {
+      return await this.repository.update(id, entity);
+    } catch (error) {
+      logger.error(`Error updating {{entityName}} ${id}:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Delete entity
+   */
+  async delete(id: string): Promise<boolean> {
+    try {
+      await this.repository.delete(id);
+      return true;
+    } catch (error) {
+      logger.error(`Error deleting {{entityName}} ${id}:`, error);
+      return false;
+    }
+  }
+
+  {{#if keyProperties}}
+  /**
+   * Find entity by key properties
+   */
+  async findBy{{#each keyProperties}}{{#if @first}}{{this}}{{else}}And{{this}}{{/if}}{{/each}}({{#each keyProperties}}{{this}}: string{{#unless @last}}, {{/unless}}{{/each}}): Promise<{{entityName}} | null> {
+    try {
+      return await this.repository.findBy{{#each keyProperties}}{{#if @first}}{{this}}{{else}}And{{this}}{{/if}}{{/each}}({{#each keyProperties}}{{this}}{{#unless @last}}, {{/unless}}{{/each}});
+    } catch (error) {
+      logger.error(`Error finding {{entityName}} by key properties:`, error);
+      return null;
+    }
+  }
+  {{/if}}
+
+  {{#if vectorIndex}}
+  /**
+   * Find similar entities
+   */
+  async findSimilar(entity: {{entityName}}, limit?: number): Promise<{{entityName}}[]> {
+    try {
+      return await this.repository.findSimilar(entity, limit);
+    } catch (error) {
+      logger.error('Error finding similar {{entityName}} entities:', error);
+      return [];
+    }
+  }
+  {{/if}}
+} 

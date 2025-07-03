@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { promises as fs } from 'fs';
 import { join } from 'path';
-import { singleton, inject } from 'tsyringe';
-import { IEnrichmentService, EnrichableEntity } from './i-enrichment-service.interface';
+import { IEnrichmentService } from './i-enrichment-service.interface';
 import { logger } from '@shared/utils/logger';
-import { Organization } from '@crm/domain/entities/organization';
+import { OrganizationDTO, PersonDTO, ContactDTO, isOrganizationDTO, isPersonDTO, isContactDTO } from './dto-aliases';
+import { mapEntityToDTO } from './entity-mappers';
 
 const CIK_LOOKUP_URL = 'https://www.sec.gov/files/company_tickers.json';
 const COMPANY_DATA_URL_BASE = 'https://data.sec.gov/submissions/';
@@ -15,22 +15,20 @@ interface CikData {
   title: string;
 }
 
-@singleton()
 export class EdgarEnrichmentService implements IEnrichmentService {
   public readonly name = 'EDGAR';
   private cikMap: Map<string, number> | null = null;
   private cachePath: string;
 
-  constructor(@inject('SEC_API_USER_AGENT') private userAgent: string) {
+  constructor(private userAgent: string = (process.env.SEC_API_USER_AGENT || 'dashboard-graph/1.0')) {
     if (!userAgent) {
       throw new Error('A User-Agent string is required for the SEC EDGAR API.');
     }
     this.cachePath = join(__dirname, '..', '..', 'cache', 'company_tickers.json');
   }
 
-  public async enrich(entity: EnrichableEntity): Promise<Record<string, any> | null> {
-    // This service only enriches Organizations, so we expect an Organization entity.
-    if (!(entity instanceof Organization)) {
+  public async enrich(entity: OrganizationDTO | PersonDTO | ContactDTO): Promise<Record<string, any> | null> {
+    if (!isOrganizationDTO(entity)) {
       return {};
     }
 
@@ -41,9 +39,7 @@ export class EdgarEnrichmentService implements IEnrichmentService {
       return {};
     }
 
-    const organization = entity as Organization;
-
-    const cleanedName = organization.name.replace(/[.,]$/, '').toUpperCase();
+    const cleanedName = entity.name.replace(/[.,]$/, '').toUpperCase();
     const cik = this.cikMap!.get(cleanedName);
 
     if (!cik) {

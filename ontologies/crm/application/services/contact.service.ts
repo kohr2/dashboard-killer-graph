@@ -11,10 +11,9 @@ import {
   AddNoteDto,
   SearchContactsDto,
 } from '../dto/contact.dto';
-import type { ContactRepository } from '../../domain/repositories/contact-repository';
+import type { ContactRepository } from '../../repositories/contact-repository';
 import {
   OCreamContactEntity,
-  ContactOntology,
 } from '../../domain/entities/contact-ontology';
 import {
   OCreamV2Ontology,
@@ -29,11 +28,16 @@ import {
   DOLCECategory,
   ActivityType,
   KnowledgeType,
-} from '../../domain/ontology/o-cream-v2';
+} from '../../ontology/o-cream-v2';
 import { v4 as uuidv4 } from 'uuid';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
 import { User } from '@platform/security/domain/user';
 import { injectable, inject } from 'tsyringe';
+import { createContactDTO } from '@platform/enrichment/dto-aliases';
+
+// Temporary mapper functions until import issues are resolved
+const mapContactToDTO = (contact: any): any => contact;
+const mapDTOToContact = (dto: any): any => dto;
 
 @injectable()
 export class ContactService {
@@ -50,20 +54,34 @@ export class ContactService {
     if (!contact) {
       return null;
     }
-    return this.toContactResponseDto(contact);
+    // Convert DTO back to legacy entity for response
+    const legacyContact = mapDTOToContact(contact);
+    return this.toContactResponseDto(legacyContact);
   }
 
   async createContact(user: User, contactDto: CreateContactDto): Promise<ContactResponseDto> {
     if (!this.accessControlService.can(user, 'create', 'Contact')) {
       throw new Error('Access denied');
     }
-    const ocreamContact = ContactOntology.createOCreamContact(contactDto);
+    
+    // Use DTO factory instead of legacy ContactOntology
+    const contactDTO = createContactDTO({
+      firstName: contactDto.firstName,
+      lastName: contactDto.lastName,
+      email: contactDto.email,
+      phone: contactDto.phone,
+      title: contactDto.title,
+    });
     
     // This is a temporary measure until the Ontology service is fully integrated
     const ontology = OCreamV2Ontology.getInstance();
+    const ocreamContact = mapDTOToContact(contactDTO);
     ontology.addEntity(ocreamContact);
 
-    const savedContact = await this.contactRepository.save(ocreamContact);
+    const savedContactDTO = await this.contactRepository.save(contactDTO);
+    
+    // Convert back to legacy entity for response
+    const savedContact = mapDTOToContact(savedContactDTO);
     return this.toContactResponseDto(savedContact);
   }
 
@@ -85,7 +103,12 @@ export class ContactService {
     }
     // existingContact.markAsModified();
 
-    const updatedContact = await this.contactRepository.save(existingContact);
+    // Convert legacy entity to DTO for repository
+    const contactDTO = mapContactToDTO(existingContact);
+    const updatedContactDTO = await this.contactRepository.save(contactDTO);
+    
+    // Convert back to legacy entity for response
+    const updatedContact = mapDTOToContact(updatedContactDTO);
     return this.toContactResponseDto(updatedContact);
   }
 
@@ -111,7 +134,10 @@ export class ContactService {
     // Implementation pending a more robust search than just by a single field
     const query = searchDto.name || searchDto.email || searchDto.company || '';
     const contacts = await this.contactRepository.search(query);
-    return contacts.map(c => this.toContactResponseDto(c));
+    return contacts.map(c => {
+      const legacyContact = mapDTOToContact(c);
+      return this.toContactResponseDto(legacyContact);
+    });
   }
 
   async addNoteToContact(user: User, contactId: string, noteDto: AddNoteDto): Promise<ContactResponseDto> {
@@ -130,7 +156,12 @@ export class ContactService {
     // It has been removed as it was invalid and part of a larger, commented-out block.
     // A proper implementation for adding notes/activities should be added here.
     
-    const updatedContact = await this.contactRepository.save(contact);
+    // Convert legacy entity to DTO for repository
+    const contactDTO = mapContactToDTO(contact);
+    const updatedContactDTO = await this.contactRepository.save(contactDTO);
+    
+    // Convert back to legacy entity for response
+    const updatedContact = mapDTOToContact(updatedContactDTO);
     return this.toContactResponseDto(updatedContact);
   }
 

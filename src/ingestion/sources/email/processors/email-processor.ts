@@ -6,7 +6,6 @@
  * src/ontologies/crm/application/services/email-processing.service.ts
  */
 
-import { singleton } from 'tsyringe';
 import { logger } from '@shared/utils/logger';
 import { EmailParsingService, ParsedEmailData } from '@platform/processing/email-parsing.service';
 import { AttachmentProcessingService, AttachmentProcessingResult } from '@platform/processing/attachment-processing.service';
@@ -26,7 +25,6 @@ export interface EmailProcessingResult {
   errors: string[];
 }
 
-@singleton()
 export class EmailProcessor {
   constructor(
     private emailParsingService: EmailParsingService,

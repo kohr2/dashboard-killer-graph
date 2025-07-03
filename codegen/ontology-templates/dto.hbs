@@ -1,10 +1,38 @@
 /**
- * {{name}}DTO - generated from ontology.json
+ * {{entityName}}DTO - generated from ontology.json
  * DO NOT EDIT MANUALLY. Changes will be overwritten.
  */
 
-export interface {{name}}DTO {
-{{#each properties}}
-  {{this}}: string;
-{{/each}}
+export interface {{entityName}}DTO {
+  id: string;
+  type: string;
+  label: string;
+  {{#each properties}}
+  {{@key}}: {{type}};
+  {{/each}}
+  enrichedData?: any;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export function is{{entityName}}DTO(obj: any): obj is {{entityName}}DTO {
+  return obj && 
+         typeof obj.id === 'string' && 
+         typeof obj.type === 'string' && 
+         typeof obj.label === 'string'{{#each properties}} &&
+         typeof obj.{{@key}} === '{{type}}'{{/each}};
+}
+
+export function create{{entityName}}DTO(data: Partial<{{entityName}}DTO>): {{entityName}}DTO {
+  return {
+    id: data.id || '',
+    type: data.type || '{{entityName}}',
+    label: data.label || '{{entityName}}',
+    {{#each properties}}
+    {{@key}}: data.{{@key}} || null,
+    {{/each}}
+    enrichedData: data.enrichedData,
+    createdAt: data.createdAt || new Date(),
+    updatedAt: data.updatedAt || new Date()
+  };
 } 

@@ -37,16 +37,8 @@ describe('AdvancedGraphService', () => {
       close: jest.fn().mockResolvedValue(undefined),
     } as any;
 
-    // Mock container.resolve
-    const { container } = require('tsyringe');
-    container.resolve = jest.fn().mockImplementation((token: any) => {
-      if (token === Neo4jConnection) {
-        return mockNeo4jConnection;
-      }
-      return {};
-    });
-
-    advancedGraphService = new AdvancedGraphService();
+    // Directly inject the mocked Neo4jConnection
+    advancedGraphService = new AdvancedGraphService(mockNeo4jConnection);
   });
 
   describe('initialization', () => {

@@ -1,11 +1,6 @@
-import { OCreamContactEntity } from '@crm/domain/entities/contact-ontology';
-import { Organization } from '@crm/domain/entities/organization';
+import { OrganizationDTO, PersonDTO, ContactDTO } from './dto-aliases';
 
-/**
- * Represents a generic entity that can be enriched.
- * It could be a person, an organization, a deal, etc.
- */
-export type EnrichableEntity = OCreamContactEntity | Organization;
+export type EnrichableEntity = OrganizationDTO | PersonDTO | ContactDTO;
 
 /**
  * Defines the contract for an enrichment service.

@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 import { join } from 'path';
 import { promises as fs } from 'fs';
 import { EdgarEnrichmentService } from '@platform/enrichment';
-import { Organization } from '@crm/domain/entities/organization';
+import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
 import { container } from 'tsyringe';
 import { CacheService } from '@platform/cache/cache.service';
 
@@ -46,7 +46,13 @@ describe.skip('EdgarEnrichmentService - Integration Test', () => {
 
   it('should successfully enrich "MORGAN STANLEY" by fetching live data from the SEC', async () => {
     // Arrange: Create the entity to be enriched
-    const morganStanley = new Organization('org-ms', 'MORGAN STANLEY');
+    const morganStanley: OrganizationDTO = {
+      id: 'org-ms',
+      name: 'MORGAN STANLEY',
+      type: 'Organization',
+      label: 'Organization',
+      enrichedData: '',
+    };
 
     // Act: Enrich the entity
     const enrichedData = await service.enrich(morganStanley);

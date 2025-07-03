@@ -1,6 +1,6 @@
 import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { ContactOntology } from './domain/entities/contact-ontology';
+import { createContactDTO } from '@platform/enrichment/dto-aliases';
 import { SpacyEntityExtractionService } from './application/services/spacy-entity-extraction.service';
 import { Neo4jContactRepository } from './infrastructure/repositories/neo4j-contact-repository';
 import { logger } from '@shared/utils/logger';
@@ -26,7 +26,7 @@ export function registerCrm() {
 
   ontologyService.registerEntityType(
     'OCreamContact',
-    ContactOntology.createOCreamContact,
+    createContactDTO,
   );
 
   // TODO: Register Organization entity once it is defined.

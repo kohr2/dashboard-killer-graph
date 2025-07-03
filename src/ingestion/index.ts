@@ -4,7 +4,6 @@
 
 // Core types
 export * from './core/types/data-source.interface';
-export * from './core/types/pipeline.interface';
 export * from './core/types/normalized-data.interface';
 
 // Core components

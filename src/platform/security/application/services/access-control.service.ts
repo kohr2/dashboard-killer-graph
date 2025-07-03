@@ -1,9 +1,7 @@
-import { singleton } from 'tsyringe';
 import { User } from '../../domain/user';
-import { PermissionAction, PermissionResource } from '../../domain/role';
-import { Role } from '../../domain/role';
+import { Role, PermissionAction, PermissionResource } from '../../domain/role';
 
-@singleton()
+// Removed tsyringe dependency
 export class AccessControlService {
   private roles: Role[] = [];
 

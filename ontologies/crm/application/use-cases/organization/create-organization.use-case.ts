@@ -1,13 +1,22 @@
 import { container, inject, injectable } from 'tsyringe';
 import { logger } from '@shared/utils/logger';
 import type { IOrganizationRepository } from '@crm/domain/repositories/i-organization-repository';
-import { Organization } from '@crm/domain/entities/organization';
 import { EnrichmentOrchestratorService } from '@platform/enrichment';
+import { OrganizationDTO, mapDTOToOrganization } from '@platform/enrichment/dto-aliases';
 
 export interface CreateOrganizationRequest {
   name: string;
+  legalName?: string;
   website?: string;
   industry?: string;
+  description?: string;
+  size?: string;
+  foundedYear?: string;
+  headquarters?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  parentOrganizationId?: string;
 }
 
 export interface CreateOrganizationResponse {
@@ -37,16 +46,34 @@ export class CreateOrganizationUseCase {
         };
       }
 
-      const organization = new Organization(
-        '', // ID will be set by the repository
-        request.name,
-        request.website,
-        request.industry,
-      );
-
-      const savedOrganization =
-        await this.organizationRepository.save(organization);
-
+      const organizationDTO: OrganizationDTO = {
+        id: '', // ID will be set by the repository
+        name: request.name,
+        type: 'Organization',
+        label: 'Organization',
+        enrichedData: '',
+        legalName: request.legalName || '',
+        industry: request.industry || '',
+        website: request.website || '',
+        description: request.description || '',
+        size: request.size || '',
+        foundedYear: request.foundedYear || '',
+        headquarters: request.headquarters || '',
+        address: request.address || '',
+        phone: request.phone || '',
+        email: request.email || '',
+        parentOrganizationId: request.parentOrganizationId || '',
+        activities: '',
+        knowledgeElements: '',
+        validationStatus: 'VALID',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        preferences: '',
+      };
+      
+      // Save the DTO directly (assuming the repository can handle DTOs)
+      const savedOrganization = await this.organizationRepository.save(organizationDTO);
+      
       // Asynchronously trigger enrichment
       this.enrichmentOrchestrator.enrich(savedOrganization).catch(err => {
         logger.error(

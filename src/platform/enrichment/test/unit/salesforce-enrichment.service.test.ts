@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { SalesforceEnrichmentService } from '../../salesforce-enrichment.service';
-import { Organization } from '@crm/domain/entities/organization';
+import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
 import { IEnrichmentService, EnrichableEntity } from '@platform/enrichment';
 
 describe('SalesforceEnrichmentService', () => {
@@ -16,7 +16,7 @@ describe('SalesforceEnrichmentService', () => {
   });
 
   it('should not enrich an entity without an external identifier', async () => {
-    const entity: Organization = {
+    const entity: OrganizationDTO = {
       id: 'org-1',
       name: 'No ID Corp',
       label: 'Organization',
@@ -27,7 +27,7 @@ describe('SalesforceEnrichmentService', () => {
   });
 
   it('should enrich an entity that has a CIK in its metadata', async () => {
-    const entity: Organization = {
+    const entity: OrganizationDTO = {
       id: 'org-2',
       name: 'Has CIK Corp',
       label: 'Organization',
@@ -49,7 +49,7 @@ describe('SalesforceEnrichmentService', () => {
   it('should return null if the API call (simulated) fails', async () => {
     // In a real scenario, we would mock the Salesforce client (e.g., jsforce)
     // For now, we can add a special case in the service logic for testing failures.
-    const entity: Organization = {
+    const entity: OrganizationDTO = {
       id: 'org-fail',
       name: 'Fail Corp',
       label: 'Organization',

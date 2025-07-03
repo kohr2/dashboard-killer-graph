@@ -1,9 +1,8 @@
-import { singleton } from 'tsyringe';
 import type { AxiosInstance } from 'axios';
-import { IEnrichmentService, EnrichableEntity } from './i-enrichment-service.interface';
+import { IEnrichmentService } from './i-enrichment-service.interface';
+import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
 import { logger } from '@shared/utils/logger';
 
-@singleton()
 export class SalesforceEnrichmentService implements IEnrichmentService {
   public readonly name = 'Salesforce';
 
@@ -18,7 +17,7 @@ export class SalesforceEnrichmentService implements IEnrichmentService {
    * @param entity The entity to enrich.
    * @returns Enriched metadata or null if enrichment is not possible.
    */
-  public async enrich(entity: EnrichableEntity): Promise<Record<string, any> | null> {
+  public async enrich(entity: OrganizationDTO): Promise<Record<string, any> | null> {
     // We only handle Organization type entities in this mock implementation
     if (entity.label !== 'Organization') {
       return null;

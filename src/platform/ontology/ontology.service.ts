@@ -5,7 +5,7 @@ import * as glob from 'glob';
 import { singleton } from 'tsyringe';
 import { z } from 'zod';
 import { logger } from '@shared/utils/logger';
-import { EnrichableEntity } from '@platform/enrichment';
+import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
 import { OntologyPlugin } from '@platform/ontology/ontology.plugin';
 
 // Zod Schemas for validation
@@ -210,7 +210,7 @@ export class OntologyService {
     return parts.join('\n');
   }
 
-  public getEnrichmentServiceName(entity: EnrichableEntity): string | undefined {
+  public getEnrichmentServiceName(entity: OrganizationDTO): string | undefined {
     const entityType = 'label' in entity ? entity.label : undefined;
     if (!entityType) return undefined;
 

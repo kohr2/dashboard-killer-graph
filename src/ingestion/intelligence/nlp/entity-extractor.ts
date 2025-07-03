@@ -7,7 +7,6 @@
  */
 
 import axios from 'axios';
-import { singleton } from 'tsyringe';
 import { logger } from '@shared/utils/logger';
 
 // TODO: Update these imports to use unified types
@@ -20,7 +19,6 @@ export interface EntityExtractionResult {
   processingTime: number;
 }
 
-@singleton()
 export class EntityExtractor {
   private readonly nlpServiceUrl: string;
 

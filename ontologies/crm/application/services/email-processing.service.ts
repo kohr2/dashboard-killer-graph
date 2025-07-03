@@ -5,8 +5,8 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { simpleParser, ParsedMail, AddressObject } from 'mailparser';
 import { SpacyEntityExtractionService, SpacyEntityExtractionResult } from './spacy-entity-extraction.service';
-import type { ContactRepository } from '../../domain/repositories/contact-repository';
-import type { CommunicationRepository } from '../../domain/repositories/communication-repository';
+import type { ContactRepository } from '../../repositories/contact-repository';
+import type { CommunicationRepository } from '../../repositories/communication-repository';
 import { Neo4jCommunicationRepository } from '../../infrastructure/repositories/neo4j-communication-repository';
 import { OCreamContactEntity, ContactOntology } from '../../domain/entities/contact-ontology';
 import {
@@ -18,11 +18,19 @@ import {
   InformationElement,
   Activity,
   OCreamRelationship,
-} from '../../domain/ontology/o-cream-v2';
-import { Communication, CommunicationStatus, CommunicationType } from '../../domain/entities/communication';
-import { singleton } from 'tsyringe';
+} from '../../ontology/o-cream-v2';
+import { CommunicationDTO, createContactDTO } from '@src/platform/enrichment/dto-aliases';
+import { singleton, injectable, inject } from 'tsyringe';
 import { EntityType } from './spacy-entity-extraction.service';
-import { logger } from '@shared/utils/logger';
+import { logger } from '@src/shared/utils/logger';
+import { v4 as uuidv4 } from 'uuid';
+import { ContactDTO } from '@generated/crm/generated/ContactDTO';
+import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
+import { PersonDTO } from '@generated/crm/generated/PersonDTO';
+import { CommunicationDTO } from '@generated/crm/generated/CommunicationDTO';
+import { User } from '@platform/security/domain/user';
+import { GUEST_ROLE, ANALYST_ROLE } from '@platform/security/domain/role';
+import { AccessControlService } from '@platform/security/application/services/access-control.service';
 
 export interface ParsedEmail {
   messageId: string;
@@ -377,25 +385,87 @@ export class EmailProcessingService {
   }
 
   private async findOrCreateContact(address: EmailAddress): Promise<OCreamContactEntity | null> {
-    if (!address || !address.email) {
-      return null;
+    // First try to find existing contact by email
+    const existingContact = await this.contactRepository.findByEmail(address.email);
+    if (existingContact) {
+      // Convert DTO back to legacy entity for return
+      return {
+        id: existingContact.id,
+        personalInfo: {
+          firstName: existingContact.firstName,
+          lastName: existingContact.lastName,
+          email: existingContact.email,
+          phone: existingContact.phone,
+          title: existingContact.title,
+        },
+        getId: () => existingContact.id,
+        getName: () => existingContact.name,
+        addActivity: (id: string) => ({ id }),
+        addKnowledgeElement: (id: string) => ({ id }),
+        getActivities: () => [],
+        getKnowledgeElements: () => [],
+        getOntologyMetadata: () => ({ validationStatus: 'VALID' }),
+        // Add missing methods to satisfy OCreamContactEntity interface
+        updatePersonalInfo: () => {},
+        updatePreferences: () => {},
+        updateStatus: () => {},
+        markAsModified: () => {},
+        getPersonalInfo: () => ({ firstName: '', lastName: '', email: '', phone: '', title: '' }),
+        getPreferences: () => ({}),
+        getStatus: () => 'ACTIVE',
+        isModified: () => false,
+        getCreatedAt: () => new Date(),
+        getUpdatedAt: () => new Date(),
+      } as unknown as OCreamContactEntity;
     }
 
-    let contact = await this.contactRepository.findByEmail(address.email);
+    // Create new contact if not found
+    const [firstName, ...lastNameParts] = (address.name || '').split(' ');
+    const lastName = lastNameParts.join(' ');
 
-    if (!contact) {
-      const [firstName, ...lastNameParts] = (address.name || '').split(' ');
-      const lastName = lastNameParts.join(' ');
-
-      contact = ContactOntology.createOCreamContact({
-        firstName,
-        lastName,
-        email: address.email,
-      });
-      await this.contactRepository.save(contact);
-    }
-
-    return contact;
+    const contactDTO = createContactDTO({
+      firstName,
+      lastName,
+      email: address.email,
+    });
+    
+    await this.contactRepository.save(contactDTO);
+    
+    // Return legacy entity for compatibility
+    return {
+      id: contactDTO.id,
+      category: DOLCECategory.PhysicalObject,
+      name: contactDTO.name,
+      description: contactDTO.description,
+      createdAt: new Date(contactDTO.createdAt),
+      updatedAt: new Date(contactDTO.updatedAt),
+      personalInfo: {
+        firstName: contactDTO.firstName,
+        lastName: contactDTO.lastName,
+        email: contactDTO.email,
+        phone: contactDTO.phone,
+        title: contactDTO.title,
+        address: contactDTO.address,
+      },
+      organizationId: contactDTO.organizationId,
+      activities: [],
+      knowledgeElements: [],
+      ontologyMetadata: {
+        validationStatus: contactDTO.validationStatus.toLowerCase() as 'valid' | 'invalid' | 'unchecked',
+      },
+      metadata: {},
+      enrichedData: {},
+      preferences: contactDTO.preferences ? JSON.parse(contactDTO.preferences) : {},
+      getId() { return this.id; },
+      getName() { return this.name; },
+      addActivity(activityId: string) { this.activities.push(activityId); },
+      addKnowledgeElement(elementId: string) { this.knowledgeElements.push(elementId); },
+      updatePersonalInfo(info: any) { this.personalInfo = { ...this.personalInfo, ...info }; },
+      updatePreferences(prefs: Record<string, any>) { this.preferences = { ...this.preferences, ...prefs }; },
+      updateStatus(status: unknown) { /* placeholder */ },
+      markAsModified() { this.updatedAt = new Date(); },
+      get label() { return 'Contact'; },
+    } as OCreamContactEntity;
   }
 
   /**
@@ -417,17 +487,29 @@ export class EmailProcessingService {
     logger.info(`     🧠 Inserting into Knowledge Graph...`);
 
     // 1. Save the communication activity
-    const communication = await this.communicationRepository.save({
+    const communicationDTO: CommunicationDTO = {
       id: email.messageId,
-      type: CommunicationType.EMAIL,
+      name: email.subject,
+      type: 'email',
+      label: 'Communication',
+      enrichedData: '',
+      status: 'processed',
       subject: email.subject,
       body: email.body,
       sender: email.from.email,
-      recipients: email.to.map(r => r.email),
-      timestamp: email.date,
-      status: CommunicationStatus.PROCESSED,
-      metadata: { parsed: email.metadata },
-    });
+      recipients: email.to.map(r => r.email).join(','),
+      timestamp: email.date.toISOString(),
+      metadata: JSON.stringify({ parsed: email.metadata }),
+      channel: 'email',
+      priority: email.metadata.priority || 'normal',
+      duration: '',
+      attachments: email.attachments.length > 0 ? email.attachments.map(a => a.filename).join(',') : '',
+      tags: '',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    
+    const communication = await this.communicationRepository.save(communicationDTO);
 
     const { entities } = entityExtraction;
 

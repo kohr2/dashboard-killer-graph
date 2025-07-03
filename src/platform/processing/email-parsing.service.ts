@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs';
 import { simpleParser, ParsedMail, AddressObject } from 'mailparser';
-import { singleton } from 'tsyringe';
 import { logger } from '@shared/utils/logger';
 
 export interface ParsedEmailData {
@@ -24,7 +23,6 @@ export interface EmailAttachment {
   content: Buffer;
 }
 
-@singleton()
 export class EmailParsingService {
   /**
    * Parse .eml file using mailparser

@@ -1,8 +1,6 @@
 // Neo4j Knowledge Graph Connection Manager
 // Manages connections to the Neo4j graph database
 
-import 'reflect-metadata';
-import { singleton } from 'tsyringe';
 import neo4j, { Driver, Session } from 'neo4j-driver';
 import { config } from 'dotenv';
 import { logger } from '@shared/utils/logger';
@@ -11,7 +9,6 @@ import { OntologyService } from '@platform/ontology/ontology.service';
 
 config(); // Make sure environment variables are loaded
 
-@singleton()
 export class Neo4jConnection {
   private driver: Driver | null = null;
   private readonly uri: string;

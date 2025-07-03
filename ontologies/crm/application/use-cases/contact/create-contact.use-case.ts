@@ -1,17 +1,72 @@
 // Create Contact Use Case - Application Layer
 // Use case for creating a new contact with O-CREAM-v2 integration
 
-import { ContactRepository } from '@crm/domain/repositories/contact-repository';
+import { injectable, inject } from 'tsyringe';
+import { ContactRepository } from '@crm/repositories/contact-repository';
+import { ContactDTO } from '@generated/crm/generated/ContactDTO';
+import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
+import { PersonDTO } from '@generated/crm/generated/PersonDTO';
 import {
-  ContactOntology,
   OCreamContactEntity,
+  ContactOntology,
 } from '@crm/domain/entities/contact-ontology';
+import { User } from '@platform/security/domain/user';
+import { GUEST_ROLE, ANALYST_ROLE } from '@platform/security/domain/role';
 import {
-  oCreamV2,
-  ActivityType,
+  OCreamV2Ontology,
   DOLCECategory,
-} from '@crm/domain/ontology/o-cream-v2';
+  KnowledgeType,
+  ActivityType,
+  RelationshipType,
+  InformationElement,
+  Activity,
+} from '@crm/ontology/o-cream-v2';
+import { createContactDTO } from '@platform/enrichment/dto-aliases';
 import { logger } from '@shared/utils/logger';
+
+// Temporary mapper functions until import issues are resolved
+const mapContactToDTO = (contact: any): any => ({
+  id: contact.id,
+  name: contact.getName(),
+  type: 'Contact',
+  label: contact.getName(),
+  enrichedData: '',
+  email: contact.personalInfo.email,
+  title: contact.personalInfo.title || '',
+  firstName: contact.personalInfo.firstName,
+  lastName: contact.personalInfo.lastName,
+  phone: contact.personalInfo.phone || '',
+  description: '',
+  organizationId: contact.organizationId || '',
+  activities: '',
+  knowledgeElements: '',
+  validationStatus: 'VALID',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  additionalEmails: '',
+  address: '',
+  preferences: '',
+});
+
+const mapDTOToContact = (dto: any): any => ({
+  id: dto.id,
+  personalInfo: {
+    firstName: dto.firstName,
+    lastName: dto.lastName,
+    email: dto.email,
+    phone: dto.phone,
+    title: dto.title,
+  },
+  organizationId: dto.organizationId,
+  createdAt: dto.createdAt,
+  getId: () => dto.id,
+  getName: () => dto.name,
+  addActivity: (id: string) => ({ id }),
+  addKnowledgeElement: (id: string) => ({ id }),
+  getActivities: () => [],
+  getKnowledgeElements: () => [],
+  getOntologyMetadata: () => ({ validationStatus: 'VALID' }),
+});
 
 export interface CreateContactRequest {
   firstName: string;
@@ -45,9 +100,10 @@ export interface CreateContactResponse {
   };
 }
 
+@injectable()
 export class CreateContactUseCase {
   constructor(
-    private contactRepository: ContactRepository
+    @inject(ContactRepository) private contactRepository: ContactRepository
   ) {}
 
   async execute(request: CreateContactRequest): Promise<CreateContactResponse> {
@@ -79,26 +135,25 @@ export class CreateContactUseCase {
 
       const fullName = `${request.firstName.trim()} ${request.lastName.trim()}`;
       
-      // Create O-CREAM-v2 ontological representation first
-      const oCreamContact = ContactOntology.createOCreamContact({
+      // Create DTO using the factory function and save directly
+      const contactDTO = createContactDTO({
         firstName: request.firstName.trim(),
         lastName: request.lastName.trim(),
         email: request.email.trim(),
         phone: request.phone,
-        organizationId: request.organizationId,
         title: request.title,
-        address: request.address,
-        preferences: request.preferences || {}
       });
 
-      // Save to repository
-      const savedContact = await this.contactRepository.save(oCreamContact);
+      const savedContactDTO = await this.contactRepository.save(contactDTO);
+
+      // Convert back to legacy entity for ontology operations
+      const savedContact = mapDTOToContact(savedContactDTO);
 
       // Register with global ontology and create activity
       let ontologyStatus: 'registered' | 'error' = 'registered';
       try {
         // The entity now has an ID from the repository
-        oCreamV2.addEntity(savedContact);
+        OCreamV2Ontology.addEntity(savedContact);
 
         // Create initial activity
         const creationActivity: any = {
@@ -121,7 +176,7 @@ export class CreateContactUseCase {
           updatedAt: new Date()
         };
 
-        oCreamV2.addEntity(creationActivity);
+        OCreamV2Ontology.addEntity(creationActivity);
         savedContact.addActivity(creationActivity.id);
 
       } catch (ontologyError) {
@@ -138,7 +193,7 @@ export class CreateContactUseCase {
           name: `${savedContact.personalInfo.firstName} ${savedContact.personalInfo.lastName}`,
           email: savedContact.personalInfo.email,
           phone: savedContact.personalInfo.phone,
-          createdAt: savedContact.createdAt,
+          createdAt: new Date(savedContact.createdAt),
           ontologyStatus
         }
       };

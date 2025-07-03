@@ -2,7 +2,7 @@ import axios from 'axios';
 import { promises as fs } from 'fs';
 import { EdgarEnrichmentService } from '@platform/enrichment';
 import { IEnrichmentService, EnrichableEntity } from '@platform/enrichment';
-import { Organization } from '@crm/domain/entities/organization';
+import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
 
 jest.mock('axios');
 jest.mock('fs', () => ({
@@ -41,10 +41,13 @@ describe('EdgarEnrichmentService', () => {
       sicDescription: 'Test Industry',
       addresses: { business: { street1: '123 Test St', city: 'Testville', stateOrCountry: 'TS', zipCode: '12345' } },
     };
-    const baseEntity: Organization = new Organization(
-        'org-1',
-        'Enrichment Corp'
-    );
+    const baseEntity: OrganizationDTO = {
+        id: 'org-1',
+        name: 'Enrichment Corp',
+        type: 'Organization',
+        label: 'Organization',
+        enrichedData: '',
+    };
 
     it('should return enriched data for a known organization', async () => {
       mockedFs.readFile.mockRejectedValue(new Error('Cache miss'));
@@ -61,7 +64,13 @@ describe('EdgarEnrichmentService', () => {
 
     it('should return an empty object for an unknown organization', async () => {
       mockedFs.readFile.mockResolvedValue(JSON.stringify(mockCikData));
-      const unknownEntity: Organization = new Organization('org-2', 'Unknown LLC');
+      const unknownEntity: OrganizationDTO = {
+        id: 'org-2',
+        name: 'Unknown LLC',
+        type: 'Organization',
+        label: 'Organization',
+        enrichedData: '',
+      };
       const result = await service.enrich(unknownEntity);
       expect(result).toEqual({});
     });
@@ -76,8 +85,8 @@ describe('EdgarEnrichmentService', () => {
     });
 
     it('should not enrich entities that are not Organizations', async () => {
-        const personEntity: EnrichableEntity = { id: 'p-1', name: 'John Doe', label: 'Person' } as any;
-        const result = await service.enrich(personEntity);
+        const notOrg: any = { id: 'x', name: 'NotOrg', type: 'NotOrg' };
+        const result = await service.enrich(notOrg as OrganizationDTO);
         expect(result).toEqual({});
     });
   });

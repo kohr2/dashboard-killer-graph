@@ -1,7 +1,7 @@
 import { injectable, inject } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
-import { Communication, CommunicationType, CommunicationStatus } from '../../domain/entities/communication';
-import { CommunicationRepository, PaginationOptions } from '../../domain/repositories/communication-repository';
+import { CommunicationDTO } from '@generated/crm/generated/CommunicationDTO';
+import { CommunicationRepository, PaginationOptions } from '../../repositories/communication-repository';
 import { SpacyExtractedEntity, EntityType } from '../../application/services/spacy-entity-extraction.service';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { logger } from '@shared/utils/logger';
@@ -30,6 +30,38 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
     this.ontologyService = ontologyService;
     this.communicationLabels =
       this.ontologyService.getLabelsForEntityType('Communication');
+  }
+
+  private _mapRecordToCommunicationDTO(record: any): CommunicationDTO | null {
+    if (!record) {
+      return null;
+    }
+    const node = record.get('c');
+    if (!node || !node.properties) {
+      return null;
+    }
+    const props = node.properties;
+    return {
+      id: props.id,
+      name: props.name || props.subject || '',
+      type: props.type || 'Communication',
+      label: props.label || 'Communication',
+      enrichedData: props.enrichedData || '',
+      status: props.status || '',
+      subject: props.subject || '',
+      body: props.body || '',
+      sender: props.sender || '',
+      recipients: props.recipients || '',
+      timestamp: props.timestamp ? props.timestamp.toString() : '',
+      metadata: props.metadata || '',
+      channel: props.channel || '',
+      priority: props.priority || '',
+      duration: props.duration || '',
+      attachments: props.attachments || '',
+      tags: props.tags || '',
+      createdAt: props.createdAt || new Date().toISOString(),
+      updatedAt: props.updatedAt || new Date().toISOString(),
+    };
   }
 
   async linkEntitiesToCommunication(
@@ -109,47 +141,71 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
     }
   }
 
-  async save(communication: Communication): Promise<Communication> {
+  async save(communication: CommunicationDTO): Promise<CommunicationDTO> {
     const session = this.connection.getSession();
     try {
       const query = `
         MERGE (c:${this.communicationLabels} {id: $id})
         SET c += {
+          name: $name,
           type: $type,
+          label: $label,
+          enrichedData: $enrichedData,
+          status: $status,
           subject: $subject,
           body: $body,
           sender: $sender,
           recipients: $recipients,
-          timestamp: datetime($timestamp),
-          status: $status,
-          metadata: $metadata
+          timestamp: $timestamp,
+          metadata: $metadata,
+          channel: $channel,
+          priority: $priority,
+          duration: $duration,
+          attachments: $attachments,
+          tags: $tags,
+          createdAt: $createdAt,
+          updatedAt: $updatedAt
         }
         RETURN c
       `;
       
       const result = await session.run(query, {
         id: communication.id,
+        name: communication.name,
         type: communication.type,
+        label: communication.label,
+        enrichedData: communication.enrichedData,
+        status: communication.status,
         subject: communication.subject,
         body: communication.body,
         sender: communication.sender,
         recipients: communication.recipients,
-        timestamp: communication.timestamp.toISOString(),
-        status: communication.status,
-        metadata: JSON.stringify(communication.metadata),
+        timestamp: communication.timestamp,
+        metadata: communication.metadata,
+        channel: communication.channel,
+        priority: communication.priority,
+        duration: communication.duration,
+        attachments: communication.attachments,
+        tags: communication.tags,
+        createdAt: communication.createdAt,
+        updatedAt: communication.updatedAt,
       });
 
       if (result.records.length === 0) {
         throw new Error('Failed to save communication.');
       }
       
-      return communication;
+      const savedRecord = this._mapRecordToCommunicationDTO(result.records[0]);
+      if (!savedRecord) {
+        throw new Error('Failed to map saved communication record.');
+      }
+      return savedRecord;
     } finally {
       await session.close();
     }
   }
 
-  async findById(id: string): Promise<Communication | null> {
+  async findById(id: string): Promise<CommunicationDTO | null> {
     const session = this.connection.getSession();
     try {
       const query = `
@@ -162,26 +218,13 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
         return null;
       }
       
-      const record = result.records[0].get('c').properties;
-      
-      // Re-hydrate the Communication object
-      return new Communication({
-        id: record.id,
-        type: record.type as CommunicationType,
-        subject: record.subject,
-        body: record.body,
-        sender: record.sender,
-        recipients: record.recipients,
-        timestamp: new Date(record.timestamp.toString()),
-        status: record.status as CommunicationStatus,
-        metadata: JSON.parse(record.metadata),
-      });
+      return this._mapRecordToCommunicationDTO(result.records[0]);
     } finally {
       await session.close();
     }
   }
 
-  async findAll(options?: PaginationOptions): Promise<Communication[]> {
+  async findAll(options?: PaginationOptions): Promise<CommunicationDTO[]> {
     // Implementation pending
     return [];
   }
@@ -191,22 +234,22 @@ export class Neo4jCommunicationRepository implements CommunicationRepository {
     return false;
   }
 
-  async findByContactId(contactId: string): Promise<Communication[]> {
+  async findByContactId(contactId: string): Promise<CommunicationDTO[]> {
     // Implementation pending
     return [];
   }
 
-  async findByType(type: CommunicationType): Promise<Communication[]> {
+  async findByType(type: string): Promise<CommunicationDTO[]> {
     // Implementation pending
     return [];
   }
 
-  async findByStatus(status: CommunicationStatus): Promise<Communication[]> {
+  async findByStatus(status: string): Promise<CommunicationDTO[]> {
     // Implementation pending
     return [];
   }
 
-  async search(query: string): Promise<Communication[]> {
+  async search(query: string): Promise<CommunicationDTO[]> {
     // Implementation pending
     return [];
   }

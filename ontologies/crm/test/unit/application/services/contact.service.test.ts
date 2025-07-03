@@ -3,10 +3,11 @@ import { ContactService } from '@crm/application/services/contact.service';
 import { ContactRepository } from '@crm/domain/repositories/contact-repository';
 import { CreateContactDto, UpdateContactDto, SearchContactsDto } from '@crm/application/dto/contact.dto';
 import { OCreamV2Ontology } from '@crm/domain/ontology/o-cream-v2';
-import { ContactOntology, OCreamContactEntity } from '@crm/domain/entities/contact-ontology';
+import { OCreamContactEntity } from '@crm/domain/entities/contact-ontology';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
 import { User } from '@platform/security/domain/user';
 import { GUEST_ROLE, ANALYST_ROLE } from '@platform/security/domain/role';
+import { createContactDTO } from '@platform/enrichment/dto-aliases';
 
 // Mock dependencies
 jest.mock('@crm/domain/repositories/contact-repository');
@@ -91,16 +92,16 @@ describe('ContactService', () => {
         mockAccessControlService.can.mockReturnValue(true);
         const contactDto: CreateContactDto = { firstName: 'Jane', lastName: 'Doe', email: 'jane.doe@example.com' };
         
-        // Mock the static creator method
-        const createdEntity = { ...mockPerson, id: 'new-contact' };
-        jest.spyOn(ContactOntology, 'createOCreamContact').mockReturnValue(createdEntity);
+        // Mock the DTO factory
+        const createdDTO = { id: 'new-contact', name: 'Jane Doe', type: 'Contact' } as any;
+        jest.spyOn(createContactDTO).mockReturnValue(createdDTO);
 
-        mockContactRepository.save.mockResolvedValue(createdEntity);
+        mockContactRepository.save.mockResolvedValue(createdDTO);
 
         const result = await contactService.createContact(analystUser, contactDto);
         
         expect(mockAccessControlService.can).toHaveBeenCalledWith(analystUser, 'create', 'Contact');
-        expect(ContactOntology.createOCreamContact).toHaveBeenCalledWith(contactDto);
+        expect(createContactDTO).toHaveBeenCalledWith(contactDto);
         expect(mockOntology.addEntity).toHaveBeenCalledWith(createdEntity);
         expect(mockContactRepository.save).toHaveBeenCalledWith(createdEntity);
         expect(result.id).toBe('new-contact');

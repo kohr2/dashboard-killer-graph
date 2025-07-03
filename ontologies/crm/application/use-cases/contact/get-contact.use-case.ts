@@ -1,9 +1,34 @@
 // Get Contact Use Case - Application Layer
 // Use case for retrieving a contact with ontological insights
 
-import { ContactRepository } from '../../../domain/repositories/contact-repository';
+import { ContactRepository } from '../../../repositories/contact-repository';
 import { OCreamContactEntity } from '../../../domain/entities/contact-ontology';
-import { oCreamV2, KnowledgeType, ActivityType, RelationshipType, InformationElement, Activity } from '../../../domain/ontology/o-cream-v2';
+import { oCreamV2, KnowledgeType, ActivityType, RelationshipType, InformationElement, Activity } from '../../../ontology/o-cream-v2';
+
+// Temporary mapper function until import issues are resolved
+const mapDTOToContact = (dto: any): any => ({
+  id: dto.id,
+  personalInfo: {
+    firstName: dto.firstName,
+    lastName: dto.lastName,
+    email: dto.email,
+    phone: dto.phone,
+    title: dto.title,
+  },
+  organizationId: dto.organizationId,
+  createdAt: dto.createdAt,
+  updatedAt: dto.updatedAt,
+  knowledgeElements: dto.knowledgeElements ? dto.knowledgeElements.split(',').filter((s: string) => s.trim()) : [],
+  activities: dto.activities ? dto.activities.split(',').filter((s: string) => s.trim()) : [],
+  ontologyMetadata: { validationStatus: dto.validationStatus },
+  getId: () => dto.id,
+  getName: () => dto.name,
+  addActivity: (id: string) => ({ id }),
+  addKnowledgeElement: (id: string) => ({ id }),
+  getActivities: () => dto.activities ? dto.activities.split(',').filter((s: string) => s.trim()) : [],
+  getKnowledgeElements: () => dto.knowledgeElements ? dto.knowledgeElements.split(',').filter((s: string) => s.trim()) : [],
+  getOntologyMetadata: () => ({ validationStatus: dto.validationStatus }),
+});
 
 export interface GetContactRequest {
   id: string;
@@ -66,13 +91,16 @@ export class GetContactUseCase {
       }
 
       // Get contact from repository
-      const contact = await this.contactRepository.findById(request.id);
-      if (!contact) {
+      const contactDTO = await this.contactRepository.findById(request.id);
+      if (!contactDTO) {
         return {
           success: false,
           message: 'Contact not found'
         };
       }
+
+      // Convert DTO to legacy entity for processing
+      const contact = mapDTOToContact(contactDTO);
 
       // Prepare basic response
       const response: GetContactResponse = {
@@ -83,8 +111,8 @@ export class GetContactUseCase {
           name: contact.getName(),
           email: contact.personalInfo.email,
           phone: contact.personalInfo.phone,
-          createdAt: contact.createdAt,
-          updatedAt: contact.updatedAt,
+          createdAt: new Date(contact.createdAt),
+          updatedAt: new Date(contact.updatedAt),
         }
       };
 
@@ -92,10 +120,10 @@ export class GetContactUseCase {
       if (request.includeOntologyData) {
         const oCreamContact = contact;
         
-        const knowledgeElements = oCreamContact.knowledgeElements
+        const knowledgeElements = oCreamContact.getKnowledgeElements()
           .map((keId: string) => oCreamV2.getEntity(keId))
           .filter(Boolean) as InformationElement[];
-        const activities = oCreamContact.activities
+        const activities = oCreamContact.getActivities()
           .map((actId: string) => oCreamV2.getEntity(actId))
           .filter(Boolean) as Activity[];
         const relationships: unknown[] = [];
@@ -117,7 +145,7 @@ export class GetContactUseCase {
           })),
           relationships: [],
           ontologyHealth: {
-            validationStatus: oCreamContact.ontologyMetadata.validationStatus,
+            validationStatus: oCreamContact.getOntologyMetadata().validationStatus,
             completenessScore: this.calculateCompletenessScore(oCreamContact),
             consistencyScore: 0
           }
