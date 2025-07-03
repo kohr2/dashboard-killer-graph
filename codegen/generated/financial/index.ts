@@ -79,3 +79,6 @@ export * from './Communication.entity';
 export * from './Communication.repository';
 export * from './Communication.service';
 export * from './Communication.dto';
+export * from './FinancialToCrmBridge';
+export * from './FinancialEntityIntegrationService';
+export * from './HybridDealExtractionService';

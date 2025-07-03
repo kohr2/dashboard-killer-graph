@@ -5,7 +5,7 @@ import * as glob from 'glob';
 import { singleton } from 'tsyringe';
 import { z } from 'zod';
 import { logger } from '@shared/utils/logger';
-import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
+import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
 import { OntologyPlugin } from '@platform/ontology/ontology.plugin';
 
 // Zod Schemas for validation

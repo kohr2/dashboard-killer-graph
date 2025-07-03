@@ -3,7 +3,7 @@ import {
   EnrichmentOrchestratorService,
   IEnrichmentService,
 } from '@platform/enrichment';
-import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
+import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
 
 // Mock Implementation of IEnrichmentService for testing
 class MockEdgarService implements IEnrichmentService {

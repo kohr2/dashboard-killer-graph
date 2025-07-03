@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import { join } from 'path';
 import { promises as fs } from 'fs';
 import { EdgarEnrichmentService } from '../../edgar-enrichment.service';
-import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
+import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
 
 // Load environment variables from .env file
 dotenv.config();

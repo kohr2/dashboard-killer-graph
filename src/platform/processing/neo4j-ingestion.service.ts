@@ -4,7 +4,7 @@ import { container } from 'tsyringe';
 import { singleton } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { FinancialToCrmBridge } from '@financial/application/ontology-bridges/financial-to-crm.bridge';
+import { FinancialToCrmBridge } from '@generated/financial';
 import { flattenEnrichmentData } from './utils/enrichment.utils';
 import { logger } from '@shared/utils/logger';
 

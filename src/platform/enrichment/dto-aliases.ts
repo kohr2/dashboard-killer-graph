@@ -6,12 +6,12 @@
  */
 
 // Import generated DTOs
-import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
-import { PersonDTO } from '@generated/crm/generated/PersonDTO';
-import { ContactDTO } from '@generated/crm/generated/ContactDTO';
-import { CommunicationDTO } from '@generated/crm/generated/CommunicationDTO';
-import { InvestorDTO } from '@generated/financial/generated/InvestorDTO';
-import { DealDTO } from '@generated/financial/generated/DealDTO';
+import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
+import { PersonDTO } from '@generated/crm/PersonDTO';
+import { ContactDTO } from '@generated/crm/ContactDTO';
+import { CommunicationDTO } from '@generated/crm/CommunicationDTO';
+import { InvestorDTO } from '@generated/financial/InvestorDTO';
+import { DealDTO } from '@generated/financial/DealDTO';
 
 /**
  * Type alias for EnrichableEntity to use generated DTOs only

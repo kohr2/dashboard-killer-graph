@@ -1,6 +1,6 @@
 import { injectable, inject } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
-import { CommunicationDTO } from '@generated/crm/generated/CommunicationDTO';
+import { CommunicationDTO } from '@generated/crm/CommunicationDTO';
 import { CommunicationRepository, PaginationOptions } from '../../repositories/communication-repository';
 import { SpacyExtractedEntity, EntityType } from '../../application/services/spacy-entity-extraction.service';
 import { OntologyService } from '@platform/ontology/ontology.service';

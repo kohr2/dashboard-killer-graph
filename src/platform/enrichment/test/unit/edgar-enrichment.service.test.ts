@@ -2,7 +2,7 @@ import axios from 'axios';
 import { promises as fs } from 'fs';
 import { EdgarEnrichmentService } from '@platform/enrichment';
 import { IEnrichmentService, EnrichableEntity } from '@platform/enrichment';
-import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
+import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
 
 jest.mock('axios');
 jest.mock('fs', () => ({

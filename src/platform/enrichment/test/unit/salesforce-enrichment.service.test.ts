@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { SalesforceEnrichmentService } from '../../salesforce-enrichment.service';
-import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
+import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
 import { IEnrichmentService, EnrichableEntity } from '@platform/enrichment';
 
 describe('SalesforceEnrichmentService', () => {

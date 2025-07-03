@@ -3,9 +3,9 @@
 
 import { injectable, inject } from 'tsyringe';
 import { ContactRepository } from '@crm/repositories/contact-repository';
-import { ContactDTO } from '@generated/crm/generated/ContactDTO';
-import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
-import { PersonDTO } from '@generated/crm/generated/PersonDTO';
+import { ContactDTO } from '@generated/crm/ContactDTO';
+import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
+import { PersonDTO } from '@generated/crm/PersonDTO';
 import {
   OCreamContactEntity,
   ContactOntology,

@@ -1,9 +1,10 @@
 import { injectable } from 'tsyringe';
-import { InvestorDTO } from '@generated/financial/InvestorDTO';
-import { DealDTO } from '@generated/financial/DealDTO';
+import { InvestorDTO } from './Investor.dto';
+import { DealDTO } from './Deal.dto';
 
 /**
  * Provides mapping between Financial and CRM domain concepts by adding labels.
+ * This bridge enables cross-ontology entity linking and labeling.
  */
 @injectable()
 export class FinancialToCrmBridge {
@@ -26,7 +27,16 @@ export class FinancialToCrmBridge {
     return this.typeMappings[entityType] || [];
   }
 
-  // The previous, more complex logic was removed because financial entities
-  // do not contain the necessary properties (like name or email) to create
-  // full-fledged CRM entities. This simpler, label-based approach is more robust.
-} 
+  /**
+   * Maps a financial entity to its corresponding CRM entity type.
+   * This enables cross-ontology entity resolution and linking.
+   *
+   * @param financialEntity The financial entity to map
+   * @returns The corresponding CRM entity type or null if no mapping exists
+   */
+  public mapFinancialToCrmType(financialEntity: any): string | null {
+    const entityType = financialEntity.type || financialEntity.constructor?.name;
+    const crmLabels = this.getCrmLabelsForFinancialType(entityType);
+    return crmLabels.length > 0 ? crmLabels[0] : null;
+  }
+}

@@ -1,6 +1,6 @@
 import type { AxiosInstance } from 'axios';
 import { IEnrichmentService } from './i-enrichment-service.interface';
-import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
+import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
 import { logger } from '@shared/utils/logger';
 
 export class SalesforceEnrichmentService implements IEnrichmentService {

@@ -1,7 +1,7 @@
 // In-Memory Communication Repository Implementation
 // Provides in-memory storage for testing and development
 
-import { CommunicationDTO } from '@generated/crm/generated/CommunicationDTO';
+import { CommunicationDTO } from '@generated/crm/CommunicationDTO';
 import { CommunicationRepository } from '@crm/domain/repositories/communication-repository';
 import { SpacyExtractedEntity } from '@crm/application/services/spacy-entity-extraction.service';
 

@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
-import { FinancialEntityIntegrationService, LlmGraphResponse } from '@financial/application/services/financial-entity-integration.service';
+import { FinancialEntityIntegrationService, LlmGraphResponse } from '@generated/financial';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { Transaction } from 'neo4j-driver';
 

@@ -1,4 +1,4 @@
-import { CommunicationDTO } from '@generated/crm/generated/CommunicationDTO';
+import { CommunicationDTO } from '@generated/crm/CommunicationDTO';
 import { SpacyExtractedEntity } from '../../application/services/spacy-entity-extraction.service';
 
 export interface PaginationOptions {

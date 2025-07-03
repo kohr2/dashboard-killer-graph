@@ -5,9 +5,9 @@
  * and the new generated DTOs during the incremental migration process.
  */
 
-import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
-import { PersonDTO } from '@generated/crm/generated/PersonDTO';
-import { ContactDTO } from '@generated/crm/generated/ContactDTO';
+import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
+import { PersonDTO } from '@generated/crm/PersonDTO';
+import { ContactDTO } from '@generated/crm/ContactDTO';
 import { EnrichableEntity, isOrganizationDTO, isPersonDTO, isContactDTO } from './dto-aliases';
 
 /**

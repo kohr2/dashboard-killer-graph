@@ -1,7 +1,7 @@
 import { injectable, inject } from 'tsyringe';
 import { v4 as uuidv4 } from 'uuid';
 import { IOrganizationRepository } from '@crm/repositories/i-organization-repository';
-import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
+import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { logger } from '@shared/utils/logger';
 

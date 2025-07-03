@@ -1,4 +1,4 @@
-import { ContactDTO } from '@generated/crm/generated/ContactDTO';
+import { ContactDTO } from '@generated/crm/ContactDTO';
 
 export interface ContactRepository {
   save(contact: ContactDTO): Promise<ContactDTO>;

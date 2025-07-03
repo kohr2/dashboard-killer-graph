@@ -1,4 +1,4 @@
-import { OrganizationDTO } from '@generated/crm/generated/OrganizationDTO';
+import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
 
 export interface IOrganizationRepository {
   findById(id: string): Promise<OrganizationDTO | null>;

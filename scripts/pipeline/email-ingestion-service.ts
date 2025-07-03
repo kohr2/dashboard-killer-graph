@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { container } from 'tsyringe';
 import { registerAllOntologies } from '@src/register-ontologies';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { FinancialToCrmBridge } from '@financial/application/ontology-bridges/financial-to-crm.bridge';
+import { FinancialToCrmBridge } from '@generated/financial';
 import { resetDatabase } from '../database/reset-neo4j';
 import { separatePropertyEntities } from './email-ingestion';
 import { flattenEnrichmentData } from '../../src/platform/processing/utils/enrichment.utils';
