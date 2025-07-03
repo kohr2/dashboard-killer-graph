@@ -24,7 +24,13 @@
       "@financial/*": ["ontologies/financial/*"],
       "@procurement/*": ["ontologies/procurement/*"],
       "@shared/*": ["src/shared/*"],
-      "@generated/*": ["build/ontologies/*"]
+      "@generated/*": ["build/ontologies/*"],
+      "@crm/domain/*": ["build/ontologies/crm/legacy/domain/*"],
+      "@crm/infrastructure/repositories/*": ["build/ontologies/crm/legacy/infrastructure/repositories/*"],
+      "@financial/domain/*": ["build/ontologies/financial/legacy/domain/*"],
+      "@financial/infrastructure/repositories/*": ["build/ontologies/financial/legacy/infrastructure/repositories/*"],
+      "@procurement/domain/*": ["build/ontologies/procurement/legacy/domain/*"],
+      "@procurement/infrastructure/repositories/*": ["build/ontologies/procurement/legacy/infrastructure/repositories/*"]
     }
   },
   "exclude": ["node_modules", "dist"]
