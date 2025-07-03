@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { registerAllOntologies } from '@src/register-ontologies';
-import { FinancialToCrmBridge } from '@financial/application/ontology-bridges/financial-to-crm.bridge';
+import { FinancialToCrmBridge } from '@generated/financial';
 import { v4 as uuidv4 } from 'uuid';
 import { Transaction } from 'neo4j-driver';
 import { OntologyService } from '@platform/ontology/ontology.service';

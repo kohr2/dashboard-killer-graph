@@ -9,7 +9,7 @@ export interface Communication extends BaseEntity {
   sender: string;
   recipients: any[];
   timestamp: Date;
-  metadata: Record&lt;string, any&gt;;
+  metadata: Record<string, any>;
 }
 
 export class CommunicationEntity implements Communication {
@@ -21,7 +21,7 @@ export class CommunicationEntity implements Communication {
   sender!: string;
   recipients!: any[];
   timestamp!: Date;
-  metadata!: Record&lt;string, any&gt;;
+  metadata!: Record<string, any>;
 
   constructor(data: Partial<Communication>) {
     Object.assign(this, data);

@@ -7,25 +7,25 @@ export interface OrganizationDTO {
   id: string;
   type: string;
   label: string;
-  name: ;
-  legalName: ;
-  industry: ;
-  website: ;
-  description: ;
-  size: ;
-  foundedYear: ;
-  headquarters: ;
-  address: ;
-  phone: ;
-  email: ;
-  parentOrganizationId: ;
-  activities: ;
-  knowledgeElements: ;
-  validationStatus: ;
-  createdAt: ;
-  updatedAt: ;
-  enrichedData: ;
-  preferences: ;
+  name: string;
+  legalName: string;
+  industry: string;
+  website: string;
+  description: string;
+  size: string;
+  foundedYear: string;
+  headquarters: Record<string, any>;
+  address: Record<string, any>;
+  phone: string;
+  email: string;
+  parentOrganizationId: string;
+  activities: any[];
+  knowledgeElements: any[];
+  validationStatus: string;
+  createdAt: Date;
+  updatedAt: Date;
+  enrichedData: Record<string, any>;
+  preferences: Record<string, any>;
   enrichedData?: any;
   createdAt?: Date;
   updatedAt?: Date;
@@ -36,25 +36,25 @@ export function isOrganizationDTO(obj: any): obj is OrganizationDTO {
          typeof obj.id === 'string' && 
          typeof obj.type === 'string' && 
          typeof obj.label === 'string' &&
-         typeof obj.name === '' &&
-         typeof obj.legalName === '' &&
-         typeof obj.industry === '' &&
-         typeof obj.website === '' &&
-         typeof obj.description === '' &&
-         typeof obj.size === '' &&
-         typeof obj.foundedYear === '' &&
-         typeof obj.headquarters === '' &&
-         typeof obj.address === '' &&
-         typeof obj.phone === '' &&
-         typeof obj.email === '' &&
-         typeof obj.parentOrganizationId === '' &&
-         typeof obj.activities === '' &&
-         typeof obj.knowledgeElements === '' &&
-         typeof obj.validationStatus === '' &&
-         typeof obj.createdAt === '' &&
-         typeof obj.updatedAt === '' &&
-         typeof obj.enrichedData === '' &&
-         typeof obj.preferences === '';
+         typeof obj.name === 'string' &&
+         typeof obj.legalName === 'string' &&
+         typeof obj.industry === 'string' &&
+         typeof obj.website === 'string' &&
+         typeof obj.description === 'string' &&
+         typeof obj.size === 'string' &&
+         typeof obj.foundedYear === 'string' &&
+         typeof obj.headquarters === 'Record<string, any>' &&
+         typeof obj.address === 'Record<string, any>' &&
+         typeof obj.phone === 'string' &&
+         typeof obj.email === 'string' &&
+         typeof obj.parentOrganizationId === 'string' &&
+         typeof obj.activities === 'any[]' &&
+         typeof obj.knowledgeElements === 'any[]' &&
+         typeof obj.validationStatus === 'string' &&
+         typeof obj.createdAt === 'Date' &&
+         typeof obj.updatedAt === 'Date' &&
+         typeof obj.enrichedData === 'Record<string, any>' &&
+         typeof obj.preferences === 'Record<string, any>';
 }
 
 export function createOrganizationDTO(data: Partial<OrganizationDTO>): OrganizationDTO {

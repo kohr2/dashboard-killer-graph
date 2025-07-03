@@ -15,8 +15,8 @@ export interface Contact extends BaseEntity {
   createdAt: Date;
   updatedAt: Date;
   additionalEmails: any[];
-  address: Record&lt;string, any&gt;;
-  preferences: Record&lt;string, any&gt;;
+  address: Record<string, any>;
+  preferences: Record<string, any>;
 }
 
 export class ContactEntity implements Contact {
@@ -34,8 +34,8 @@ export class ContactEntity implements Contact {
   createdAt!: Date;
   updatedAt!: Date;
   additionalEmails!: any[];
-  address!: Record&lt;string, any&gt;;
-  preferences!: Record&lt;string, any&gt;;
+  address!: Record<string, any>;
+  preferences!: Record<string, any>;
 
   constructor(data: Partial<Contact>) {
     Object.assign(this, data);

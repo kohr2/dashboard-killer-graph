@@ -74,7 +74,7 @@ export class EmailIngestionService {
     this.contentProcessingService = container.resolve(ContentProcessingService);
     this.neo4jConnection = container.resolve(Neo4jConnection);
     this.ontologyService = container.resolve(OntologyService);
-    this.bridge = container.resolve(FinancialToCrmBridge);
+    this.bridge = container.resolve('FinancialToCrmBridge');
     
     this.pipeline = new GenericIngestionPipeline(
       this.contentProcessingService,

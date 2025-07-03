@@ -12,6 +12,7 @@ import { simpleParser } from 'mailparser';
 import { ContentProcessingService } from '@platform/processing/content-processing.service';
 import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
+import { registerAllOntologies } from '@src/register-ontologies';
 
 jest.mock('axios');
 jest.mock('mailparser');
@@ -30,6 +31,8 @@ const mockedFsPromises = fs.promises as jest.Mocked<typeof fs.promises>;
 describe('EmailIngestionPipeline – relationship creation', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    container.reset();
+    registerAllOntologies();
   });
 
   it('should create edges for ontology-defined relationships like WORKS_FOR', async () => {

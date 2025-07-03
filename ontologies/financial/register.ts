@@ -24,7 +24,7 @@ import {
   FinancialToCrmBridge,
   FinancialEntityIntegrationService,
   HybridDealExtractionService
-} from '../../../codegen/generated/financial';
+} from '@generated/financial';
 
 export function registerFinancial() {
   const ontologyService = container.resolve(OntologyService);
@@ -32,11 +32,9 @@ export function registerFinancial() {
   // Example for registering a financial entity
   // ontologyService.registerEntityType('Investor', (data) => createInvestor(data));
   
-  logger.info('✅ Financial extension registered with generated services.');
-}
-
-export function registerFinancialServices() {
-  // Register all generated services
+  logger.info('Registering Financial ontology services...');
+  
+  // Register generated services
   container.register('InvestorService', { useClass: InvestorService });
   container.register('DealService', { useClass: DealService });
   container.register('TargetCompanyService', { useClass: TargetCompanyService });
@@ -56,9 +54,13 @@ export function registerFinancialServices() {
   container.register('LegalDocumentService', { useClass: LegalDocumentService });
   container.register('RegulatoryInformationService', { useClass: RegulatoryInformationService });
   container.register('CommunicationService', { useClass: CommunicationService });
-
-  // Register bridge and integration services
-  container.register('FinancialToCrmBridge', { useClass: FinancialToCrmBridge });
+  container.register('FinancialToCrmBridge', { useValue: new FinancialToCrmBridge() });
   container.register('FinancialEntityIntegrationService', { useClass: FinancialEntityIntegrationService });
   container.register('HybridDealExtractionService', { useClass: HybridDealExtractionService });
+  
+  logger.info('✅ Financial ontology services registered successfully');
+}
+
+export function registerFinancialServices() {
+  registerFinancial();
 }

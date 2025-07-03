@@ -7,11 +7,11 @@ export interface DealDTO {
   id: string;
   type: string;
   label: string;
-  dealSize: ;
-  sector: ;
-  dealType: ;
-  purpose: ;
-  status: ;
+  dealSize: number;
+  sector: string;
+  dealType: string;
+  purpose: string;
+  status: string;
   enrichedData?: any;
   createdAt?: Date;
   updatedAt?: Date;
@@ -22,11 +22,11 @@ export function isDealDTO(obj: any): obj is DealDTO {
          typeof obj.id === 'string' && 
          typeof obj.type === 'string' && 
          typeof obj.label === 'string' &&
-         typeof obj.dealSize === '' &&
-         typeof obj.sector === '' &&
-         typeof obj.dealType === '' &&
-         typeof obj.purpose === '' &&
-         typeof obj.status === '';
+         typeof obj.dealSize === 'number' &&
+         typeof obj.sector === 'string' &&
+         typeof obj.dealType === 'string' &&
+         typeof obj.purpose === 'string' &&
+         typeof obj.status === 'string';
 }
 
 export function createDealDTO(data: Partial<DealDTO>): DealDTO {

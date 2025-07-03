@@ -1,7 +1,7 @@
 // Exports for the CRM Ontology Extension
 
 // Generated Code
-export * from '../../../codegen/generated/crm';
+export * from '@generated/crm';
 
 // Registration
 export { registerCrm } from './register';

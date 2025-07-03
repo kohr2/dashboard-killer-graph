@@ -16,6 +16,8 @@ module.exports = {
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',
     '^@mcp/(.*)$': '<rootDir>/src/mcp/$1',
     '^@procurement/(.*)$': '<rootDir>/ontologies/procurement/$1',
+    '^@generated/(.*)$': '<rootDir>/codegen/generated/$1',
+    '^@codegen/generated/(.*)$': '<rootDir>/codegen/generated/$1',
     '^ontologies/(.*)$': '<rootDir>/ontologies/$1',
   },
 

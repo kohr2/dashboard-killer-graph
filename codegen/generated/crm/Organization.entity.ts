@@ -8,8 +8,8 @@ export interface Organization extends BaseEntity {
   description: string;
   size: string;
   foundedYear: string;
-  headquarters: Record&lt;string, any&gt;;
-  address: Record&lt;string, any&gt;;
+  headquarters: Record<string, any>;
+  address: Record<string, any>;
   phone: string;
   email: string;
   parentOrganizationId: string;
@@ -18,8 +18,8 @@ export interface Organization extends BaseEntity {
   validationStatus: string;
   createdAt: Date;
   updatedAt: Date;
-  enrichedData: Record&lt;string, any&gt;;
-  preferences: Record&lt;string, any&gt;;
+  enrichedData: Record<string, any>;
+  preferences: Record<string, any>;
 }
 
 export class OrganizationEntity implements Organization {
@@ -30,8 +30,8 @@ export class OrganizationEntity implements Organization {
   description!: string;
   size!: string;
   foundedYear!: string;
-  headquarters!: Record&lt;string, any&gt;;
-  address!: Record&lt;string, any&gt;;
+  headquarters!: Record<string, any>;
+  address!: Record<string, any>;
   phone!: string;
   email!: string;
   parentOrganizationId!: string;
@@ -40,8 +40,8 @@ export class OrganizationEntity implements Organization {
   validationStatus!: string;
   createdAt!: Date;
   updatedAt!: Date;
-  enrichedData!: Record&lt;string, any&gt;;
-  preferences!: Record&lt;string, any&gt;;
+  enrichedData!: Record<string, any>;
+  preferences!: Record<string, any>;
 
   constructor(data: Partial<Organization>) {
     Object.assign(this, data);

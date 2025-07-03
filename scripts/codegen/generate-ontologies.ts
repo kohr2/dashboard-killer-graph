@@ -5,6 +5,11 @@ import * as path from 'path';
 import * as Handlebars from 'handlebars';
 import { logger } from '../../src/shared/utils/logger';
 
+// Register Handlebars helper to fix HTML encoding in types
+Handlebars.registerHelper('replaceType', function(type: string) {
+  return type.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+});
+
 /**
  * Ontology Code Generator
  *
@@ -81,13 +86,20 @@ class OntologyGeneratorImpl implements OntologyGenerator {
    * Load and validate ontology configuration
    */
   private loadOntologyConfig(ontologyName: string): OntologyConfig {
+    // Try config/ontology first, then ontologies/
     const configPath = path.join(this.configDir, `${ontologyName}.ontology.json`);
+    const ontologiesPath = path.join(__dirname, '..', '..', 'ontologies', ontologyName, 'ontology.json');
     
-    if (!fs.existsSync(configPath)) {
-      throw new Error(`Ontology config not found: ${configPath}`);
+    let configData: string;
+    
+    if (fs.existsSync(configPath)) {
+      configData = fs.readFileSync(configPath, 'utf8');
+    } else if (fs.existsSync(ontologiesPath)) {
+      configData = fs.readFileSync(ontologiesPath, 'utf8');
+    } else {
+      throw new Error(`Ontology config not found: ${configPath} or ${ontologiesPath}`);
     }
 
-    const configData = fs.readFileSync(configPath, 'utf8');
     const config = JSON.parse(configData) as OntologyConfig;
 
     // Basic validation
@@ -319,18 +331,37 @@ ${exports.join('\n')}
   generateAllOntologies(): void {
     logger.info('Starting ontology generation for all ontologies...');
     
-    const ontologyFiles = fs.readdirSync(this.configDir)
-      .filter(file => file.endsWith('.ontology.json'))
-      .map(file => file.replace('.ontology.json', ''));
+    const ontologiesDir = path.join(__dirname, '..', '..', 'ontologies');
+    const ontologyNames = new Set<string>();
     
-    if (ontologyFiles.length === 0) {
-      logger.warn('No ontology files found in config directory');
+    // Get ontologies from config/ontology
+    if (fs.existsSync(this.configDir)) {
+      const configFiles = fs.readdirSync(this.configDir)
+        .filter(file => file.endsWith('.ontology.json'))
+        .map(file => file.replace('.ontology.json', ''));
+      
+      configFiles.forEach(name => ontologyNames.add(name));
+    }
+    
+    // Get ontologies from ontologies/
+    if (fs.existsSync(ontologiesDir)) {
+      const ontologyDirs = fs.readdirSync(ontologiesDir, { withFileTypes: true })
+        .filter(dirent => dirent.isDirectory())
+        .map(dirent => dirent.name);
+      
+      ontologyDirs.forEach(name => ontologyNames.add(name));
+    }
+    
+    const ontologyList = Array.from(ontologyNames);
+    
+    if (ontologyList.length === 0) {
+      logger.warn('No ontology files found in config or ontologies directories');
       return;
     }
     
-    logger.info(`Found ${ontologyFiles.length} ontology files: ${ontologyFiles.join(', ')}`);
+    logger.info(`Found ${ontologyList.length} ontology files: ${ontologyList.join(', ')}`);
     
-    for (const ontologyName of ontologyFiles) {
+    for (const ontologyName of ontologyList) {
       this.generateOntology(ontologyName);
     }
     

@@ -7,22 +7,22 @@ export interface ContactDTO {
   id: string;
   type: string;
   label: string;
-  name: ;
-  email: ;
-  title: ;
-  firstName: ;
-  lastName: ;
-  phone: ;
-  description: ;
-  organizationId: ;
-  activities: ;
-  knowledgeElements: ;
-  validationStatus: ;
-  createdAt: ;
-  updatedAt: ;
-  additionalEmails: ;
-  address: ;
-  preferences: ;
+  name: string;
+  email: string;
+  title: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  description: string;
+  organizationId: string;
+  activities: any[];
+  knowledgeElements: any[];
+  validationStatus: string;
+  createdAt: Date;
+  updatedAt: Date;
+  additionalEmails: any[];
+  address: Record<string, any>;
+  preferences: Record<string, any>;
   enrichedData?: any;
   createdAt?: Date;
   updatedAt?: Date;
@@ -33,22 +33,22 @@ export function isContactDTO(obj: any): obj is ContactDTO {
          typeof obj.id === 'string' && 
          typeof obj.type === 'string' && 
          typeof obj.label === 'string' &&
-         typeof obj.name === '' &&
-         typeof obj.email === '' &&
-         typeof obj.title === '' &&
-         typeof obj.firstName === '' &&
-         typeof obj.lastName === '' &&
-         typeof obj.phone === '' &&
-         typeof obj.description === '' &&
-         typeof obj.organizationId === '' &&
-         typeof obj.activities === '' &&
-         typeof obj.knowledgeElements === '' &&
-         typeof obj.validationStatus === '' &&
-         typeof obj.createdAt === '' &&
-         typeof obj.updatedAt === '' &&
-         typeof obj.additionalEmails === '' &&
-         typeof obj.address === '' &&
-         typeof obj.preferences === '';
+         typeof obj.name === 'string' &&
+         typeof obj.email === 'string' &&
+         typeof obj.title === 'string' &&
+         typeof obj.firstName === 'string' &&
+         typeof obj.lastName === 'string' &&
+         typeof obj.phone === 'string' &&
+         typeof obj.description === 'string' &&
+         typeof obj.organizationId === 'string' &&
+         typeof obj.activities === 'any[]' &&
+         typeof obj.knowledgeElements === 'any[]' &&
+         typeof obj.validationStatus === 'string' &&
+         typeof obj.createdAt === 'Date' &&
+         typeof obj.updatedAt === 'Date' &&
+         typeof obj.additionalEmails === 'any[]' &&
+         typeof obj.address === 'Record<string, any>' &&
+         typeof obj.preferences === 'Record<string, any>';
 }
 
 export function createContactDTO(data: Partial<ContactDTO>): ContactDTO {

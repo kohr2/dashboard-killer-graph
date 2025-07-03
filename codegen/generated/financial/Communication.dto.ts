@@ -7,10 +7,10 @@ export interface CommunicationDTO {
   id: string;
   type: string;
   label: string;
-  subject: ;
-  date: ;
-  type: ;
-  participants: ;
+  subject: string;
+  date: any;
+  type: string;
+  participants: any[];
   enrichedData?: any;
   createdAt?: Date;
   updatedAt?: Date;
@@ -21,10 +21,10 @@ export function isCommunicationDTO(obj: any): obj is CommunicationDTO {
          typeof obj.id === 'string' && 
          typeof obj.type === 'string' && 
          typeof obj.label === 'string' &&
-         typeof obj.subject === '' &&
-         typeof obj.date === '' &&
-         typeof obj.type === '' &&
-         typeof obj.participants === '';
+         typeof obj.subject === 'string' &&
+         typeof obj.date === 'any' &&
+         typeof obj.type === 'string' &&
+         typeof obj.participants === 'any[]';
 }
 
 export function createCommunicationDTO(data: Partial<CommunicationDTO>): CommunicationDTO {

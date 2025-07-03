@@ -2,7 +2,7 @@
 // Deal tracking and financial CRM functionality
 
 // Generated Code
-export * from '../../../codegen/generated/financial';
+export * from '@generated/financial';
 
 // Registration
 export { registerFinancial } from './register';

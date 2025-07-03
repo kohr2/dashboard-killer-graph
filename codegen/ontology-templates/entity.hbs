@@ -2,13 +2,13 @@ import { BaseEntity } from '@shared/types/base-entity';
 
 export interface {{entityName}} extends BaseEntity {
   {{#each properties}}
-  {{@key}}: {{this}};
+  {{@key}}: {{{replaceType this}}};
   {{/each}}
 }
 
 export class {{entityName}}Entity implements {{entityName}} {
   {{#each properties}}
-  {{@key}}!: {{this}};
+  {{@key}}!: {{{replaceType this}}};
   {{/each}}
 
   constructor(data: Partial<{{entityName}}>) {

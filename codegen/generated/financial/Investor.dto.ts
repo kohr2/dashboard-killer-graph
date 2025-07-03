@@ -7,9 +7,9 @@ export interface InvestorDTO {
   id: string;
   type: string;
   label: string;
-  name: ;
-  type: ;
-  aum: ;
+  name: string;
+  type: string;
+  aum: number;
   enrichedData?: any;
   createdAt?: Date;
   updatedAt?: Date;
@@ -20,9 +20,9 @@ export function isInvestorDTO(obj: any): obj is InvestorDTO {
          typeof obj.id === 'string' && 
          typeof obj.type === 'string' && 
          typeof obj.label === 'string' &&
-         typeof obj.name === '' &&
-         typeof obj.type === '' &&
-         typeof obj.aum === '';
+         typeof obj.name === 'string' &&
+         typeof obj.type === 'string' &&
+         typeof obj.aum === 'number';
 }
 
 export function createInvestorDTO(data: Partial<InvestorDTO>): InvestorDTO {

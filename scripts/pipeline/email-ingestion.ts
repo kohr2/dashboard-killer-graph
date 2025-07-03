@@ -98,7 +98,7 @@ export async function demonstrateSpacyEmailIngestionPipeline() {
   // --- INITIALIZATION ---
   registerAllOntologies();
   const ontologyService = container.resolve(OntologyService);
-  const bridge = container.resolve(FinancialToCrmBridge);
+  const bridge = container.resolve('FinancialToCrmBridge');
   const validEntityTypes = ontologyService.getAllEntityTypes();
   const propertyEntityTypes = ontologyService.getPropertyEntityTypes();
   const validRelationshipTypes = ontologyService.getAllRelationshipTypes();

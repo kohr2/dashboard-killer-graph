@@ -42,6 +42,8 @@ describe('EmailIngestionPipeline (script)', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    container.reset();
+    bootstrap();
   });
 
   it('should run the full pipeline with mocks and verify interactions', async () => {
