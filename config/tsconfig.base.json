@@ -25,7 +25,8 @@
       "@procurement/*": ["ontologies/procurement/*"],
       "@shared/*": ["src/shared/*"],
       "@generated/*": ["codegen/generated/*"],
-      "@codegen/generated/*": ["codegen/generated/*"]
+      "@codegen/generated/*": ["codegen/generated/*"],
+      "@generated/*/*DTO": ["codegen/generated/*/*.dto.ts"]
     }
   },
   "exclude": ["node_modules", "dist"]
