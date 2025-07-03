@@ -1,6 +1,6 @@
 import { OntologyPlugin } from '@platform/ontology/ontology.plugin';
-// Load canonical core ontology definition from JSON so that schema lives in one single source of truth
-import coreOntology from '../../../config/ontology/core.ontology.json';
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * Core Ontology Plugin
@@ -9,6 +9,26 @@ import coreOntology from '../../../config/ontology/core.ontology.json';
  */
 export const corePlugin: OntologyPlugin = {
   name: 'core',
-  entitySchemas: (coreOntology as any).entities,
-  relationshipSchemas: (coreOntology as any).relationships,
+  entitySchemas: (() => {
+    try {
+      const ontologyPath = path.join(__dirname, '..', '..', '..', 'config', 'ontology', 'core.ontology.json');
+      const ontologyData = fs.readFileSync(ontologyPath, 'utf8');
+      const ontology = JSON.parse(ontologyData);
+      return ontology.entities;
+    } catch (error) {
+      console.error('Failed to load core ontology:', error);
+      return {};
+    }
+  })(),
+  relationshipSchemas: (() => {
+    try {
+      const ontologyPath = path.join(__dirname, '..', '..', '..', 'config', 'ontology', 'core.ontology.json');
+      const ontologyData = fs.readFileSync(ontologyPath, 'utf8');
+      const ontology = JSON.parse(ontologyData);
+      return ontology.relationships;
+    } catch (error) {
+      console.error('Failed to load core ontology:', error);
+      return {};
+    }
+  })(),
 }; 
