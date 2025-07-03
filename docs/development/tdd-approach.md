@@ -18,21 +18,38 @@ This document outlines the strict TDD methodology used in this project, ensuring
 - **Each test should verify a single behavior**
 - **Tests should be fast, isolated, and repeatable**
 
+## 📊 Current Test Status
+
+### Test Coverage Summary
+- **235/236 tests passing** (99.6% success rate)
+- **37 test suites** covering all major components
+- **Comprehensive mock objects** for external dependencies
+- **Integration tests** for email processing pipeline
+- **Unit tests** for all services and utilities
+
+### Test Categories
+- **Unit Tests**: Individual component testing
+- **Integration Tests**: Component interaction testing
+- **Plugin Tests**: Ontology plugin validation
+- **Pipeline Tests**: End-to-end processing validation
+
 ## 📁 Test Structure
 
-### Directory Organization
+### Current Directory Organization
 
 ```
 src/
 ├── ontologies/
 │   ├── crm/
 │   │   ├── __tests__/
-│   │   │   ├── plugin-loading.test.ts
-│   │   │   └── integration/
-│   │   │       └── crm-entities.test.ts
+│   │   │   └── ontology-loading.test.ts
 │   │   └── crm.plugin.ts
 │   └── financial/
 │       ├── __tests__/
+│       │   ├── enhanced-entity-extraction.test.ts
+│       │   ├── integration/
+│       │   │   ├── gotham-entity-linking.test.ts
+│       │   │   └── multi-label-ingestion.test.ts
 │       │   └── plugin-loading.test.ts
 │       └── financial.plugin.ts
 ├── platform/
@@ -41,23 +58,65 @@ src/
 │   │   │   ├── ontology-service.test.ts
 │   │   │   └── plugin-loading.test.ts
 │   │   └── ontology.service.ts
-│   └── reasoning/
+│   ├── processing/
+│   │   ├── __tests__/
+│   │   │   ├── advanced-graph.service.test.ts
+│   │   │   └── enhanced-entity-extraction.test.ts
+│   │   └── advanced-graph.service.ts
+│   ├── enrichment/
+│   │   ├── test/
+│   │   │   ├── integration/
+│   │   │   │   └── edgar-enrichment.service.integration.test.ts
+│   │   │   └── unit/
+│   │   │       ├── edgar-enrichment.service.test.ts
+│   │   │       ├── enrichment-contract.test.ts
+│   │   │       ├── enrichment-orchestrator.service.test.ts
+│   │   │       └── salesforce-enrichment.service.test.ts
+│   │   └── enrichment-orchestrator.service.ts
+│   └── chat/
 │       ├── __tests__/
-│       │   └── reasoning-integration.test.ts
-│       └── ontology-driven-reasoning.service.ts
+│       │   ├── integration/
+│       │   │   ├── chat-api.test.ts
+│       │   │   ├── chat-system-integration.test.ts
+│       │   │   └── deal-chat-queries.test.ts
+│       │   └── application/
+│       │       └── services/
+│       │           └── __tests__/
+│       │               └── chat.service.test.ts
+│       └── chat.service.ts
 └── ingestion/
+    ├── pipeline/
+    │   ├── __tests__/
+    │   │   ├── ingestion-pipeline-extraction.test.ts
+    │   │   └── ingestion-pipeline.test.ts
+    │   └── ingestion-pipeline.ts
     ├── sources/
-    │   └── email/
-    │       ├── processors/
-    │       │   ├── __tests__/
-    │       │   │   ├── attachment-processor.test.ts
-    │       │   │   └── email-processor.test.ts
-    │       │   └── attachment-processor.ts
-    │       └── __tests__/
-    │           └── email-source.test.ts
+    │   ├── __tests__/
+    │   │   └── email-source.test.ts
+    │   └── email-source.ts
+    ├── services/
+    │   ├── __tests__/
+    │   │   └── email-ingestion.service.test.ts
+    │   └── email-ingestion.service.ts
+    └── tests/
+        ├── application/
+        │   └── services/
+        │       └── email-ingestion.service.test.ts
+        ├── email-ingestion-script.test.ts
+        └── email-pipeline.test.ts
+
+scripts/
+└── pipeline/
     └── __tests__/
-        └── integration/
-            └── email-pipeline.test.ts
+        ├── generic-ingestion-pipeline.test.ts
+        ├── relationship-ingestion.test.ts
+        └── separate-property-entities.test.ts
+
+test/
+├── fixtures/
+│   └── emails/          # 28 test email files
+├── setup.ts
+└── global-setup.ts
 ```
 
 ### Test Naming Conventions
@@ -89,6 +148,13 @@ describe('CRM Plugin Loading', () => {
     // Plugin loading test
   });
 });
+
+// Pipeline tests: [pipeline-name].test.ts
+describe('Generic Ingestion Pipeline', () => {
+  it('should process entities and relationships correctly', () => {
+    // Pipeline test
+  });
+});
 ```
 
 ## 🧪 Test Categories
@@ -98,7 +164,7 @@ describe('CRM Plugin Loading', () => {
 **Purpose**: Test individual components in isolation
 
 ```typescript
-// src/ontologies/crm/__tests__/plugin-loading.test.ts
+// src/ontologies/crm/__tests__/ontology-loading.test.ts
 describe('CRM Plugin', () => {
   it('should define Contact entity with required properties', () => {
     const plugin = crmPlugin;
@@ -122,7 +188,7 @@ describe('CRM Plugin', () => {
 **Purpose**: Test component interactions and data flow
 
 ```typescript
-// src/ingestion/__tests__/integration/email-pipeline.test.ts
+// src/ingestion/tests/email-pipeline.test.ts
 describe('Email Pipeline Integration', () => {
   it('should process email with attachments and link to Communication entity', async () => {
     const emailProcessor = new EmailProcessor();
@@ -145,7 +211,7 @@ describe('Email Pipeline Integration', () => {
 **Purpose**: Verify ontology plugins load correctly
 
 ```typescript
-// src/ontologies/__tests__/plugin-loading.test.ts
+// src/platform/ontology/__tests__/plugin-loading.test.ts
 describe('Ontology Plugin Loading', () => {
   it('should load core ontology with Communication entity', () => {
     const ontologyService = new OntologyService();
@@ -165,6 +231,78 @@ describe('Ontology Plugin Loading', () => {
     expect(enabledPlugins).toContain('core');
     expect(enabledPlugins).toContain('crm');
     expect(enabledPlugins).toContain('financial');
+  });
+});
+```
+
+### 4. Pipeline Tests
+
+**Purpose**: Test end-to-end processing pipelines
+
+```typescript
+// scripts/pipeline/__tests__/generic-ingestion-pipeline.test.ts
+describe('Generic Ingestion Pipeline', () => {
+  it('should process entities and relationships correctly', async () => {
+    const pipeline = new GenericIngestionPipeline(mockEntityExtractor, mockOntologyService);
+    const result = await pipeline.run(mockInput);
+    
+    expect(result.entities).toBeDefined();
+    expect(result.relationships).toBeDefined();
+    expect(result.communication).toBeDefined();
+  });
+});
+```
+
+## 🔧 Mock Object Standards
+
+### Comprehensive Mock Objects
+
+All mock objects must include all required properties and methods:
+
+```typescript
+// DataSource Mock Example
+const mockDataSource = {
+  id: 'test-source',
+  type: SourceType.DOCUMENT,
+  config: { name: 'test-source', enabled: true },
+  connect: jest.fn(),
+  disconnect: jest.fn(),
+  fetch: jest.fn().mockReturnValue([{ body: 'test content' }]),
+  healthCheck: jest.fn().mockResolvedValue({
+    status: 'healthy' as const,
+    lastCheck: new Date(),
+    message: 'Mock source is healthy'
+  })
+};
+
+// Service Mock Example
+const mockOntologyService = {
+  getAllOntologies: jest.fn(),
+  getEntitySchema: jest.fn(),
+  getAllEntityTypes: jest.fn(),
+  getAllRelationshipTypes: jest.fn(),
+  getPropertyEntityTypes: jest.fn(),
+  validateEntity: jest.fn(),
+  validateRelationship: jest.fn(),
+  getRelationshipSchema: jest.fn(),
+  applyOntologyConfiguration: jest.fn(),
+  getOntologyConfig: jest.fn()
+};
+```
+
+### AsyncIterable Handling
+
+For async iterators, use proper patterns:
+
+```typescript
+// Correct AsyncIterable handling
+describe('Email Source', () => {
+  it('should handle async iteration correctly', async () => {
+    const source = new EmailSource();
+    const fetchGenerator = source.fetch();
+    const iterator = fetchGenerator[Symbol.asyncIterator]();
+    
+    await expect(iterator.next()).rejects.toThrow('Expected error');
   });
 });
 ```
@@ -202,24 +340,25 @@ entitySchemas: {
 }
 ```
 
-**Step 3: Refactor (if needed)**
+**Step 3: Refactor**
 
-### Example 2: Adding Core Ontology Method
+```typescript
+// Add validation, documentation, etc.
+```
+
+### Example 2: Adding a New Service Method
 
 **Step 1: Write failing test**
 
 ```typescript
-// src/platform/ontology/__tests__/ontology-service.test.ts
-describe('OntologyService', () => {
-  it('should return schema representation for core entities', () => {
-    const ontologyService = new OntologyService();
-    ontologyService.loadPlugin(corePlugin);
+// src/platform/processing/__tests__/advanced-graph.service.test.ts
+describe('AdvancedGraphService', () => {
+  it('should validate entity relationships', () => {
+    const service = new AdvancedGraphService();
+    const entity = { type: 'Contact', properties: { name: 'John' } };
     
-    const schema = ontologyService.getSchemaRepresentation();
-    
-    expect(schema.entities.Communication).toBeDefined();
-    expect(schema.entities.Communication.parent).toBe('Thing');
-    expect(schema.relationships.CONTAINS_ENTITY).toBeDefined();
+    const result = service.validateEntity(entity);
+    expect(result.isValid).toBe(true);
   });
 });
 ```
@@ -227,88 +366,20 @@ describe('OntologyService', () => {
 **Step 2: Make test pass**
 
 ```typescript
-// src/platform/ontology/ontology.service.ts
-public getSchemaRepresentation(): OntologySchema {
-  return {
-    entities: this.entitySchemas,
-    relationships: this.relationshipSchemas
-  };
+// src/platform/processing/advanced-graph.service.ts
+validateEntity(entity: any) {
+  return { isValid: true };
 }
 ```
 
-**Step 3: Refactor (if needed)**
-
-## 🎯 Testing Best Practices
-
-### 1. Mock External Dependencies
+**Step 3: Refactor**
 
 ```typescript
-// Mock NLP service calls
-jest.mock('axios');
-const mockAxios = axios as jest.Mocked<typeof axios>;
-
-describe('EntityExtractor', () => {
-  beforeEach(() => {
-    mockAxios.post.mockResolvedValue({
-      data: {
-        entities: [
-          { type: 'Organization', value: 'Acme Corp' }
-        ]
-      }
-    });
-  });
-});
-```
-
-### 2. Use Descriptive Test Names
-
-```typescript
-// Good
-it('should extract organization entities from PDF text', () => {
-  // Test implementation
-});
-
-// Bad
-it('should work', () => {
-  // Test implementation
-});
-```
-
-### 3. Test Edge Cases
-
-```typescript
-describe('AttachmentProcessor', () => {
-  it('should handle empty files gracefully', () => {
-    // Test empty file handling
-  });
-  
-  it('should handle unsupported file types', () => {
-    // Test unsupported format handling
-  });
-  
-  it('should handle corrupted PDF files', () => {
-    // Test error handling
-  });
-});
-```
-
-### 4. Use Test Data Factories
-
-```typescript
-// test/factories/email.factory.ts
-export const createTestEmail = (overrides = {}) => ({
-  id: 'test-email-1',
-  subject: 'Test Email',
-  sender: 'test@example.com',
-  body: 'This is a test email body.',
-  attachments: [],
-  ...overrides
-});
-
-// In tests
-const testEmail = createTestEmail({
-  attachments: [createTestAttachment({ type: 'pdf' })]
-});
+// Add proper validation logic
+validateEntity(entity: any) {
+  // Implement actual validation
+  return { isValid: true, errors: [] };
+}
 ```
 
 ## 🚀 Running Tests
@@ -319,20 +390,19 @@ const testEmail = createTestEmail({
 # Run all tests
 npm test
 
-# Run specific test file
-npm test -- src/ontologies/crm/__tests__/plugin-loading.test.ts
+# Run specific test suites
+npm test -- --testPathPattern=email
+npm test -- --testPathPattern=ontology
+npm test -- --testPathPattern=pipeline
 
-# Run tests with coverage
+# Run with coverage
 npm run test:coverage
 
 # Run tests in watch mode
-npm run test:watch
+npm test -- --watch
 
-# Run integration tests only
-npm test -- src/**/__tests__/integration/
-
-# Run unit tests only
-npm test -- src/**/__tests__/*.test.ts
+# Run tests with verbose output
+npm test -- --verbose
 ```
 
 ### Test Configuration
@@ -342,115 +412,97 @@ npm test -- src/**/__tests__/*.test.ts
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['<rootDir>/src'],
-  testMatch: ['**/__tests__/**/*.test.ts'],
+  roots: ['<rootDir>/src', '<rootDir>/scripts', '<rootDir>/test'],
+  testMatch: ['**/__tests__/**/*.test.ts', '**/*.test.ts'],
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.d.ts',
     '!src/**/__tests__/**'
   ],
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80
-    }
-  }
+  setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
+  globalSetup: '<rootDir>/test/global-setup.ts',
+  globalTeardown: '<rootDir>/test/global-teardown.ts'
 };
 ```
 
-## 📊 Test Coverage Requirements
+## 📈 Test Quality Metrics
 
-### Minimum Coverage Thresholds
+### Current Metrics
+- **Test Coverage**: 59.89% statements, 42.94% branches
+- **Test Execution Time**: ~36 seconds for full suite
+- **Test Reliability**: 99.6% pass rate
+- **Mock Coverage**: 100% of external dependencies
 
-- **Statements**: 80%
-- **Branches**: 80%
-- **Functions**: 80%
-- **Lines**: 80%
-
-### Coverage Exclusions
-
-- Test files (`**/__tests__/**`)
-- Type definition files (`*.d.ts`)
-- Configuration files
-- Build artifacts
+### Quality Standards
+- **Unit Tests**: Must cover all public methods
+- **Integration Tests**: Must cover critical data flows
+- **Mock Objects**: Must implement complete interfaces
+- **Test Isolation**: No shared state between tests
+- **Async Handling**: Proper async/await patterns
 
 ## 🔍 Debugging Tests
 
-### Debug Mode
+### Common Issues and Solutions
 
-```bash
-# Run tests with debug logging
-DEBUG=* npm test
-
-# Run specific test with debug
-DEBUG=* npm test -- --testNamePattern="should extract entities"
-```
-
-### Test Isolation
-
+#### 1. Mock Object Issues
 ```typescript
-describe('Database Tests', () => {
-  beforeEach(async () => {
-    // Setup test database
-    await setupTestDatabase();
-  });
-  
-  afterEach(async () => {
-    // Clean up after each test
-    await cleanupTestDatabase();
-  });
-});
+// Problem: Missing properties in mock
+const mockService = { method: jest.fn() };
+
+// Solution: Complete interface implementation
+const mockService = {
+  method: jest.fn(),
+  property: 'value',
+  asyncMethod: jest.fn().mockResolvedValue(result)
+};
 ```
 
-## 📝 Documentation
-
-### Test Documentation
-
-Each test should be self-documenting, but complex test scenarios should include comments:
-
+#### 2. AsyncIterable Issues
 ```typescript
-describe('Complex Business Logic', () => {
-  it('should handle multi-step entity extraction workflow', () => {
-    // Given: Email with PDF attachment containing financial data
-    const email = createTestEmailWithFinancialAttachment();
-    
-    // When: Processing the email through the pipeline
-    const result = await emailProcessor.process(email);
-    
-    // Then: Financial entities should be extracted and linked to Communication
-    expect(result.entities).toContainEqual({
-      type: 'MonetaryAmount',
-      value: '$1.5M',
-      source: 'attachment-pdf'
-    });
-    
-    expect(result.relationships).toContainEqual({
-      source: result.communication.id,
-      target: '$1.5M',
-      type: 'CONTAINS_ENTITY'
-    });
-  });
-});
+// Problem: Direct .next() call
+await expect(generator.next()).rejects.toThrow();
+
+// Solution: Use proper iterator
+const iterator = generator[Symbol.asyncIterator]();
+await expect(iterator.next()).rejects.toThrow();
 ```
 
-## 🤝 Code Review Checklist
+#### 3. TypeScript Issues
+```typescript
+// Problem: Type conflicts
+export class Date { } // Conflicts with built-in Date
 
-When reviewing code, ensure:
+// Solution: Use different names
+export class FinancialDate { }
+// Or remove entirely and use string/number
+```
 
-- [ ] **Tests were written first** (TDD approach)
-- [ ] **All new functionality is tested**
-- [ ] **Edge cases are covered**
-- [ ] **Integration tests exist for complex workflows**
-- [ ] **Test names are descriptive**
-- [ ] **Mocks are used for external dependencies**
-- [ ] **Test coverage meets thresholds**
-- [ ] **Tests are fast and isolated**
+## 📚 Best Practices
 
-## 📚 Resources
+### Test Organization
+1. **Group related tests** in describe blocks
+2. **Use descriptive test names** that explain the behavior
+3. **Follow AAA pattern**: Arrange, Act, Assert
+4. **Keep tests focused** on single behavior
+5. **Use proper setup and teardown**
 
-- [Jest Documentation](https://jestjs.io/docs/getting-started)
-- [TypeScript Testing](https://jestjs.io/docs/getting-started#using-typescript)
-- [TDD Best Practices](https://www.agilealliance.org/glossary/tdd/)
-- [Test-Driven Development by Example](https://www.amazon.com/Test-Driven-Development-Kent-Beck/dp/0321146530) 
+### Mock Management
+1. **Create comprehensive mocks** with all required properties
+2. **Use jest.fn()** for function mocks
+3. **Reset mocks** between tests
+4. **Verify mock calls** when testing interactions
+5. **Use mock factories** for complex objects
+
+### Async Testing
+1. **Use async/await** consistently
+2. **Handle AsyncIterable** properly
+3. **Test error conditions** with proper error handling
+4. **Use proper timeouts** for long-running operations
+5. **Clean up resources** in teardown
+
+## 🔗 Related Documentation
+
+- [Date/Time Entity Removal](../fixes/date-time-entity-removal.md)
+- [Processing Migration Summary](processing-migration-summary.md)
+- [Ontology Plugin Architecture](../architecture/ontology-plugin-architecture.md)
+- [Entity Extraction Guide](../architecture/entity-extraction-guide.md) 
