@@ -35,6 +35,7 @@ This index provides navigation to all documentation files in the Knowledge Graph
 - **[TDD MCP Implementation](development/tdd-mcp-implementation.md)** - MCP server development with TDD
 - **[Processing Migration Summary](development/processing-migration-summary.md)** - Pipeline refactoring details
 - **[Ontology Generation Strategy](development/ontology-generation-strategy.md)** - Code generation approach
+- **[Ontology Scripts](development/ontology-scripts.md)** - Ontology-agnostic builder and CLI system
 
 ### System Status
 - **[System Status Report](development/system-status.md)** - Current system health and metrics
@@ -71,7 +72,8 @@ This index provides navigation to all documentation files in the Knowledge Graph
 ### For Ontology Developers
 1. **[Ontology Plugin Architecture](architecture/ontology-plugin-architecture.md)** - Plugin system
 2. **[Ontology Generation Strategy](development/ontology-generation-strategy.md)** - Code generation
-3. **[Ontology Advanced Relationships](architecture/ontology-advanced-relationships.md)** - Complex modeling
+3. **[Ontology Scripts](development/ontology-scripts.md)** - Ontology-agnostic builder and CLI
+4. **[Ontology Advanced Relationships](architecture/ontology-advanced-relationships.md)** - Complex modeling
 
 ## 🔍 Troubleshooting
 

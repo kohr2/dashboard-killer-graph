@@ -2,7 +2,14 @@
 
 ## Overview
 
-The `scripts/ontology` directory contains a comprehensive ontology processing system designed to extract, transform, and merge ontologies from various sources. This system supports multiple ontology formats and provides a flexible framework for ontology management.
+The `scripts/ontology` directory contains a comprehensive ontology-agnostic processing system designed to extract, transform, and merge ontologies from various sources. This system supports multiple ontology formats (OWL/RDF, JSON) and provides a flexible plugin-based framework for ontology management.
+
+### Key Features
+- **Ontology-Agnostic**: Plugin-based architecture supporting any ontology source
+- **Real Source Integration**: Live extraction from FIBO, O-CREAM, ePO, and other ontologies
+- **Rich Property Extraction**: Comprehensive metadata including definitions, documentation, and version history
+- **Code Generation Integration**: Seamless integration with the codegen system
+- **Comprehensive Testing**: Full test suite with real source integration tests
 
 ## Architecture
 
@@ -11,13 +18,47 @@ The ontology processing system follows a modular architecture with clear separat
 ```
 scripts/ontology/
 ├── cli.ts              # Main CLI processor and orchestration
+├── build-ontology.ts   # Generic ontology builder CLI
 ├── config.ts           # Configuration interfaces and validation
 ├── ontology-source.ts  # Core interfaces and types
 ├── extractor.ts        # Ontology extraction logic
 ├── merger.ts          # Ontology merging and override logic
 ├── sources/           # Source-specific implementations
 │   └── owl-source.ts  # OWL/RDF ontology source handler
+├── show-procurement-properties.ts  # Property display utility
 └── __tests__/         # Comprehensive test suite
+    ├── cli.test.ts    # CLI integration tests
+    ├── debug-parser.test.ts  # Parser debugging tests
+    └── real-sources.test.ts  # Real source integration tests
+```
+
+## CLI Usage
+
+### Generic Ontology Builder
+
+The system provides a generic CLI for building any ontology:
+
+```bash
+# Build procurement ontology
+npx ts-node scripts/ontology/build-ontology.ts procurement
+
+# Build any ontology by name
+npx ts-node scripts/ontology/build-ontology.ts <ontology-name>
+
+# Build from specific config file
+npx ts-node scripts/ontology/build-ontology.ts --config path/to/config.json
+
+# Show help
+npx ts-node scripts/ontology/build-ontology.ts --help
+```
+
+### Property Display Utility
+
+View rich property information for ontologies:
+
+```bash
+# Show procurement ontology properties
+npx ts-node scripts/ontology/show-procurement-properties.ts
 ```
 
 ## Core Components
@@ -158,6 +199,97 @@ Handles OWL/RDF ontology formats with support for:
 - URLs containing 'owl'
 - URLs containing 'fibo'
 - URLs containing 'o-cream'
+
+## Real-World Example: Procurement Ontology
+
+### Procurement Ontology Configuration
+
+The procurement ontology demonstrates the full capabilities of the system:
+
+```json
+{
+  "name": "procurement",
+  "source": {
+    "url": "https://raw.githubusercontent.com/OP-TED/ePO/master/ePO.owl",
+    "type": "owl",
+    "version": "2024-01",
+    "description": "eProcurement Ontology (ePO) from OP-TED"
+  },
+  "extraction": {
+    "entities": {
+      "path": "epo",
+      "name": "ePO Entities",
+      "description": "Extract ePO entities with rich properties"
+    },
+    "relationships": {
+      "path": "epo", 
+      "name": "ePO Relationships",
+      "description": "Extract ePO relationships"
+    }
+  },
+  "overrides": {
+    "entities": {},
+    "relationships": {}
+  },
+  "metadata": {
+    "lastExtraction": "2024-01-15T10:00:00Z",
+    "sourceVersion": "2024-01",
+    "localVersion": "1.0.0"
+  }
+}
+```
+
+### Results
+
+The procurement ontology build process successfully extracted:
+- **148 Entities** with rich descriptions and properties
+- **395 Relationships** with domain/range information
+- **Rich Metadata** including definitions, documentation links, and version history
+- **Complete Code Generation** with entities, repositories, services, and DTOs
+
+### Generated Files
+
+```
+ontologies/procurement/
+├── config.json              # Ontology configuration
+├── source.ontology.json     # Raw extraction from source
+└── ontology.json           # Final ontology with overrides
+```
+
+## Code Generation Integration
+
+The ontology builder integrates seamlessly with the codegen system:
+
+### Generate Code from Ontologies
+
+```bash
+# Generate code for procurement ontology
+npx ts-node scripts/codegen/generate-ontologies.ts procurement
+
+# Generate code for all ontologies
+npx ts-node scripts/codegen/generate-ontologies.ts
+```
+
+### Generated Code Structure
+
+```
+codegen/generated/procurement/
+├── *.entity.ts          # Entity interfaces and classes
+├── *.repository.ts      # Repository interfaces and base classes
+├── *.service.ts         # Business logic services
+├── *.dto.ts            # Data transfer objects
+└── index.ts            # Barrel exports
+```
+
+### Features of Generated Code
+
+- **Rich Entity Structure**: Properties extracted from ontology with descriptions
+- **Repository Pattern**: Abstract base repositories with CRUD operations
+- **Service Layer**: Business logic services with error handling and logging
+- **DTO Layer**: Data transfer objects for API communication
+- **Type Safety**: Full TypeScript support with proper interfaces
+- **Vector Search**: Built-in similarity search capabilities
+- **Documentation**: Rich descriptions and documentation links preserved
 
 ## Configuration Examples
 

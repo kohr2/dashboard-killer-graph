@@ -52,6 +52,25 @@ python main.py &
 npm run dev
 ```
 
+### Ontology Management
+
+The system includes an ontology-agnostic builder for managing domain ontologies:
+
+```bash
+# Build procurement ontology from ePO source
+npx ts-node scripts/ontology/build-ontology.ts procurement
+
+# Build any ontology by name
+npx ts-node scripts/ontology/build-ontology.ts <ontology-name>
+
+# Build from specific config file
+npx ts-node scripts/ontology/build-ontology.ts --config path/to/config.json
+
+# Generate code from ontologies
+npx ts-node scripts/codegen/generate-ontologies.ts procurement
+npx ts-node scripts/codegen/generate-ontologies.ts  # Generate all ontologies
+```
+
 ### MCP Server Setup (Claude Desktop Integration)
 
 The MCP server enables Claude Desktop to query your knowledge graph directly.
@@ -107,11 +126,17 @@ npm test
 - **Build**: Zero compilation errors
 - **Tests**: 235/236 passing (99.6% success rate)
 - **Email Pipeline**: Fully functional with 28 test emails
-- **Ontologies**: 3 domains loaded (Core, CRM, Financial)
+- **Ontologies**: 4 domains loaded (Core, CRM, Financial, Procurement)
 - **Database**: Neo4j with vector search working
 - **MCP Integration**: Claude Desktop integration active
+- **Ontology Builder**: Ontology-agnostic builder with OWL/RDF support
 
 ### Recent Improvements
+- **Ontology-Agnostic Builder**: Plugin-based architecture supporting FIBO, O-CREAM, and ePO
+- **Procurement Ontology**: Built complete procurement ontology (148 entities, 395 relationships)
+- **Enhanced Codegen**: Adapted for new JSON format with rich property extraction
+- **Real Source Integration**: OWL/RDF parsing with XML namespace handling
+- **Comprehensive Testing**: Full test suite for ontology builder and parser
 - **Removed Date/Time entities** to prevent conflicts with JavaScript Date type
 - **Enhanced test coverage** with comprehensive mock objects
 - **Fixed AsyncIterable handling** in email source tests
@@ -186,7 +211,13 @@ scripts/
    - **Core**: Generic entities (Communication, Fund, Sponsor, Event, Document, Process)
    - **CRM**: Customer relationship management (Contact, Organization)
    - **Financial**: Financial domain entities (Investor, Deal, MonetaryAmount, etc.)
-   - **Procurement**: Procurement and supply chain (disabled by default)
+   - **Procurement**: Procurement and supply chain (148 entities, 395 relationships)
+
+3. **Ontology Builder** (`scripts/ontology/`)
+   - **Ontology-Agnostic CLI**: Plugin-based architecture for any ontology source
+   - **OWL/RDF Support**: FIBO, O-CREAM, ePO ontology parsing
+   - **Real Source Integration**: Live ontology extraction and validation
+   - **Code Generation**: Automatic entity, repository, service, and DTO generation
 
 3. **MCP Server** (`src/mcp/`)
    - **Claude Desktop Integration**: Direct query access
