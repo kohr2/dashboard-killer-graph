@@ -1,0 +1,30 @@
+{
+  "name": "ocream",
+  "source": {
+    "url": "https://raw.githubusercontent.com/o-cream/ontology/main/o-cream.owl",
+    "type": "owl",
+    "version": "2.0.0",
+    "description": "O-CREAM v2.0.0 - Open Customer Relationship and Enterprise Activity Model"
+  },
+  "extraction": {
+    "entities": {
+      "path": "o-cream",
+      "name": "O-CREAM Entities",
+      "description": "Extract O-CREAM entities with rich properties"
+    },
+    "relationships": {
+      "path": "o-cream",
+      "name": "O-CREAM Relationships",
+      "description": "Extract O-CREAM relationships"
+    }
+  },
+  "overrides": {
+    "entities": {},
+    "relationships": {}
+  },
+  "metadata": {
+    "lastExtraction": "2024-07-03T10:00:00Z",
+    "sourceVersion": "2.0.0",
+    "localVersion": "1.0.0"
+  }
+} 

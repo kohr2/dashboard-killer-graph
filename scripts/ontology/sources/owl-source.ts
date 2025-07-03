@@ -19,6 +19,8 @@ export class OwlSource implements OntologySource {
 
   async parse(content: string): Promise<ParsedOntology> {
     try {
+      // Sanitize invalid XML entities before parsing
+      content = this.sanitizeXmlEntities(content);
       const parser = new xml2js.Parser({
         explicitArray: false,
         mergeAttrs: false
@@ -326,5 +328,37 @@ export class OwlSource implements OntologySource {
     }
     
     return properties;
+  }
+
+  /**
+   * Replace or remove invalid XML entities that break xml2js parsing.
+   * Only allow a whitelist of standard XML entities (&amp;, &lt;, &gt;, &apos;, &quot;).
+   * Remove or replace all others.
+   */
+  private sanitizeXmlEntities(xml: string): string {
+    // Replace known problematic entities with their Unicode equivalents or remove them
+    // Allow only &amp;, &lt;, &gt;, &apos;, &quot;
+    return xml.replace(/&([a-zA-Z0-9]+);/g, (match, entity) => {
+      switch (entity) {
+        case 'amp':
+        case 'lt':
+        case 'gt':
+        case 'apos':
+        case 'quot':
+          return match;
+        // Add common HTML entities if needed
+        case 'nbsp': return ' ';
+        case 'mdash': return '-';
+        case 'ndash': return '-';
+        case 'hellip': return '...';
+        case 'lsquo': return '‘';
+        case 'rsquo': return '’';
+        case 'ldquo': return '“';
+        case 'rdquo': return '”';
+        default:
+          // Remove unknown/invalid entities
+          return '';
+      }
+    });
   }
 } 

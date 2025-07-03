@@ -1,0 +1,30 @@
+{
+  "name": "fibo",
+  "source": {
+    "url": "https://spec.edmcouncil.org/fibo/ontology/FND/Accounting/AccountingEquity.rdf",
+    "type": "owl",
+    "version": "2024-01",
+    "description": "Financial Industry Business Ontology (FIBO) - AccountingEquity module from EDM Council"
+  },
+  "extraction": {
+    "entities": {
+      "path": "fibo",
+      "name": "FIBO Entities",
+      "description": "Extract FIBO entities with rich properties"
+    },
+    "relationships": {
+      "path": "fibo",
+      "name": "FIBO Relationships",
+      "description": "Extract FIBO relationships"
+    }
+  },
+  "overrides": {
+    "entities": {},
+    "relationships": {}
+  },
+  "metadata": {
+    "lastExtraction": "2024-01-15T10:00:00Z",
+    "sourceVersion": "2024-01",
+    "localVersion": "1.0.0"
+  }
+} 
