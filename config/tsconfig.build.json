@@ -12,13 +12,20 @@
     "../build/**/*.ts",
     "../config/ontology/**/*.ts",
     "../config/ontology/**/*.json",
-    "../src/register-ontologies.ts"
+    "../src/register-ontologies.ts",
+    "../codegen/generated/**/*.ts",
+    "../scripts/pipeline/email-ingestion.ts",
+    "../scripts/pipeline/generic-ingestion-pipeline.ts",
+    "../scripts/database/reset-neo4j.ts"
   ],
   "exclude": [
     "../**/__tests__/**",
     "../**/test/**",
     "../test/**",
-    "../scripts/**",
+    "../scripts/codegen/**",
+    "../scripts/demo/**",
+    "../scripts/maintenance/**",
+    "../scripts/ontology/**",
     "../docs/**",
     "../node_modules",
     "../dist"

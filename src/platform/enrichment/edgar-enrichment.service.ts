@@ -39,7 +39,7 @@ export class EdgarEnrichmentService implements IEnrichmentService {
       return {};
     }
 
-    const cleanedName = entity.name.replace(/[.,]$/, '').toUpperCase();
+    const cleanedName = entity.name?.replace(/[.,]$/, '').toUpperCase() || '';
     const cik = this.cikMap!.get(cleanedName);
 
     if (!cik) {

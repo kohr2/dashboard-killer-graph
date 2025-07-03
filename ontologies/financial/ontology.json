@@ -1,132 +1,336 @@
 {
   "name": "financial",
+  "version": "Q2 2025 Release",
+  "repo": "https://github.com/edmcouncil/fibo",
   "source": "https://spec.edmcouncil.org/fibo/",
-  "dependencies": ["crm"],
+  "dependencies": [
+    "crm"
+  ],
   "entities": {
-    "Investor": {
-      "description": "A party that owns some stake in an organization by way of investment. This is regardless of whether the investor is also a constitutional owner (e.g., shareholder) in the entity. Based on FIBO definition.",
+    "LegalEntity": {
+      "description": "A legal entity as defined in FIBO BE. An organization or person that has legal standing.",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalEntity",
       "properties": {
-        "name": { "type": "string", "description": "Investor name" },
-        "type": { "type": "string", "description": "Type of investor (PE, VC, etc.)" },
-        "aum": { "type": "number", "description": "Assets under management" }
-      }
+        "name": {
+          "type": "string",
+          "description": "The legal name of the entity"
+        },
+        "legalIdentifier": {
+          "type": "string",
+          "description": "Official legal identifier (e.g., EIN, SSN, registration number)"
+        },
+        "jurisdiction": {
+          "type": "string",
+          "description": "The legal jurisdiction where the entity is registered"
+        },
+        "incorporationDate": {
+          "type": "date",
+          "description": "Date when the entity was incorporated or established"
+        }
+      },
+      "keyProperties": [
+        "name",
+        "legalIdentifier"
+      ],
+      "vectorIndex": true
     },
-    "Fund": {
-      "description": "A collective investment vehicle (CIV) consisting of a pool of funds from multiple investors, managed by a professional firm. Examples include private equity funds, hedge funds, or mutual funds. Based on FIBO's concept of an Investment Fund."
-    },
-    "Deal": {
-      "keyProperties": ["dealType", "sector", "purpose"],
-      "vectorIndex": true,
-      "description": "A specific business or financial transaction that is proposed, under negotiation, or completed. It represents an opportunity for investment, acquisition, or partnership between parties, aligned with the FIBO concept of a financial transaction.",
+    "Organization": {
+      "description": "A group of people organized for a particular purpose, such as a business or government department.",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/Organization",
       "properties": {
-        "dealSize": { "type": "number", "description": "The size of the deal in currency units" },
-        "sector": { "type": "string", "description": "The industry sector of the target company" },
-        "dealType": { "type": "string", "description": "Type of deal (M&A, LBO, Growth, etc.)" },
-        "purpose": { "type": "string", "description": "Purpose of the investment" },
-        "status": { "type": "string", "description": "Current status of the deal" }
-      }
+        "name": {
+          "type": "string",
+          "description": "The official name of the organization"
+        },
+        "organizationType": {
+          "type": "string",
+          "description": "Type of organization (e.g., Corporation, Partnership, LLC)"
+        },
+        "industry": {
+          "type": "string",
+          "description": "Primary industry or sector"
+        },
+        "size": {
+          "type": "string",
+          "description": "Organization size category (Small, Medium, Large)"
+        },
+        "website": {
+          "type": "string",
+          "description": "Official website URL"
+        }
+      },
+      "keyProperties": [
+        "name",
+        "organizationType"
+      ],
+      "vectorIndex": true
     },
-    "TargetCompany": {
-      "keyProperties": ["industry", "website"],
-      "vectorIndex": true,
-      "description": "The legal entity (e.g., corporation, partnership) that is the subject of a deal, such as an acquisition, merger, or investment. It is the company being acquired, invested in, or partnered with. Aligned with FIBO's concept of a 'Contractually Capable Entity'."
-    },
-    "Sector": {
-      "vectorIndex": true,
-      "description": "An industry sector or sub-sector used to classify a company based on its primary business activities. Aligned with FIBO's 'Industry Sector Classifier' and typically based on a standard like GICS (Global Industry Classification Standard)."
-    },
-    "GeographicRegion": {
-      "keyProperties": ["country"],
-      "description": "A geographic or geopolitical area, such as a country, state, or city, relevant to a deal or an entity's operations. Aligned with FIBO's 'Geographic Region' and 'Geopolitical Entity' concepts from its Locations ontology."
-    },
-    "Mandate": {
-      "description": "A set of rules, policies, and objectives that govern an investment fund's strategy. It defines constraints such as asset classes, geographic focus, sector focus, and deal size. Aligned with FIBO's 'Fund Portfolio Investment Policy' concept."
-    },
-    "Sponsor": {
-      "description": "The entity, typically a private equity firm, that initiates, manages, and promotes a specific fund or deal. Aligned with FIBO's 'Fund Management Company' concept, which is also referred to as 'fund sponsor'."
-    },
-    "Relationship": {
-      "description": "A documented connection between two or more legal entities, such as co-investors, a sponsor and a target company, or past employment. Aligned with FIBO's concept of a 'Relationship Record' used for describing relationships between legal entities."
-    },
-    "Event": {
-      "description": "A point-in-time happening relevant to a deal or entity, such as a bid, investment, exit, or due diligence process. Aligned with FIBO's general concept of an 'Occurrence' (or 'Event'), often specializing as a 'Transaction Event'."
-    },
-    "MonetaryAmount": {
-      "isProperty": true,
-      "description": "An amount of money, typically associated with a deal size, fund size, or transaction value. To be used as a property of another entity."
-    },
-    "Date": {
-      "isProperty": true,
-      "description": "A specific point in time, such as a deadline, closing date, or event date. To be used as a property of another entity."
-    },
-    "Percent": {
-      "isProperty": true,
-      "description": "A percentage value, such as an interest rate, ownership stake, or deal likelihood. To be used as a property of another entity."
-    },
-    "Time": {
-      "isProperty": true,
-      "description": "A specific time of day, often associated with an event or deadline. To be used as a property of another entity."
-    },
-    "Document": {
-      "description": "A piece of written, printed, or electronic matter that provides information or evidence related to a financial context, such as an NDA, CIM, or legal agreement. Aligned with FIBO's concept of a 'Legal Document' or 'Contractual Document'."
-    },
-    "Process": {
-      "description": "A series of actions or steps taken to achieve a financial outcome, such as a due diligence process, a bidding process, or an underwriting process. Aligned with FIBO's 'Business Process' concept."
-    },
-    "LegalDocument": {
-      "parent": "Document",
-      "description": "A document with legal significance within a financial context, such as a merger agreement, NDA, or credit agreement. Aligned with FIBO's 'Legal Document' concept."
-    },
-    "RegulatoryInformation": {
-      "description": "Information related to regulatory filings, such as SEC filings (e.g., 10-K, 8-K) or other disclosures to a regulatory authority. This entity can be linked to a company or a deal to provide context on compliance and regulatory events."
-    },
-    "Communication": {
-      "description": "Email or other communication related to deals and investments",
+    "Person": {
+      "description": "A human being as defined in FIBO FND.",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/AgentsAndPeople/Person",
       "properties": {
-        "subject": { "type": "string", "description": "Communication subject" },
-        "date": { "type": "date", "description": "Communication date" },
-        "type": { "type": "string", "description": "Type of communication" },
-        "participants": { "type": "array", "description": "Communication participants" }
-      }
+        "firstName": {
+          "type": "string",
+          "description": "First name of the person"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name of the person"
+        },
+        "dateOfBirth": {
+          "type": "date",
+          "description": "Date of birth"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "Nationality or citizenship"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number"
+        }
+      },
+      "keyProperties": [
+        "firstName",
+        "lastName"
+      ],
+      "vectorIndex": true
+    },
+    "Account": {
+      "description": "A financial account as defined in FIBO FBC.",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/Account",
+      "properties": {
+        "accountNumber": {
+          "type": "string",
+          "description": "Unique account identifier"
+        },
+        "accountType": {
+          "type": "string",
+          "description": "Type of account (e.g., Checking, Savings, Investment)"
+        },
+        "balance": {
+          "type": "number",
+          "description": "Current account balance"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Currency code (e.g., USD, EUR)"
+        },
+        "openingDate": {
+          "type": "date",
+          "description": "Date when account was opened"
+        },
+        "status": {
+          "type": "string",
+          "description": "Account status (e.g., Active, Closed, Suspended)"
+        }
+      },
+      "keyProperties": [
+        "accountNumber",
+        "accountType"
+      ],
+      "vectorIndex": false
+    },
+    "FinancialInstrument": {
+      "description": "A financial instrument as defined in FIBO FBC.",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/FinancialInstrument",
+      "properties": {
+        "instrumentId": {
+          "type": "string",
+          "description": "Unique instrument identifier"
+        },
+        "instrumentType": {
+          "type": "string",
+          "description": "Type of financial instrument"
+        },
+        "faceValue": {
+          "type": "number",
+          "description": "Face value of the instrument"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Currency of the instrument"
+        },
+        "issueDate": {
+          "type": "date",
+          "description": "Date when instrument was issued"
+        },
+        "maturityDate": {
+          "type": "date",
+          "description": "Date when instrument matures"
+        }
+      },
+      "keyProperties": [
+        "instrumentId",
+        "instrumentType"
+      ],
+      "vectorIndex": false
+    },
+    "Security": {
+      "description": "A security as defined in FIBO SEC.",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/Securities/Security",
+      "properties": {
+        "securityId": {
+          "type": "string",
+          "description": "Unique security identifier (e.g., ISIN, CUSIP)"
+        },
+        "securityType": {
+          "type": "string",
+          "description": "Type of security (e.g., Stock, Bond, Option)"
+        },
+        "tickerSymbol": {
+          "type": "string",
+          "description": "Trading symbol"
+        },
+        "exchange": {
+          "type": "string",
+          "description": "Trading exchange"
+        },
+        "currentPrice": {
+          "type": "number",
+          "description": "Current market price"
+        },
+        "volume": {
+          "type": "number",
+          "description": "Trading volume"
+        }
+      },
+      "keyProperties": [
+        "securityId",
+        "tickerSymbol"
+      ],
+      "vectorIndex": false
+    },
+    "Agreement": {
+      "description": "A legal agreement or contract as defined in FIBO FND.",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Agreements/Agreement",
+      "properties": {
+        "agreementId": {
+          "type": "string",
+          "description": "Unique agreement identifier"
+        },
+        "agreementType": {
+          "type": "string",
+          "description": "Type of agreement"
+        },
+        "parties": {
+          "type": "string[]",
+          "description": "Parties to the agreement"
+        },
+        "effectiveDate": {
+          "type": "date",
+          "description": "Date when agreement becomes effective"
+        },
+        "expirationDate": {
+          "type": "date",
+          "description": "Date when agreement expires"
+        },
+        "status": {
+          "type": "string",
+          "description": "Agreement status"
+        }
+      },
+      "keyProperties": [
+        "agreementId",
+        "agreementType"
+      ],
+      "vectorIndex": true
     }
   },
   "relationships": {
-    "INVESTED_IN": { "domain": "Investor", "range": "Deal", "description": "Historical or active participation" },
-    "MANAGES": { "domain": "Investor", "range": "Fund", "description": "Investor manages Fund X" },
-    "HAS_MANDATE": { "domain": "Fund", "range": "Mandate", "description": "Fund strategy constraints" },
-    "TARGETS": { "domain": "Deal", "range": "TargetCompany", "description": "Entity targeted in the deal" },
-    "OPERATES_IN": { "domain": "TargetCompany", "range": ["Sector", "GeographicRegion"], "description": "Sector classification" },
-    "HAS_PROCESS_TYPE": { "domain": "Deal", "range": "string", "description": "e.g., auction, bilateral" },
-    "BID_ON": { "domain": "Investor", "range": "Deal", "description": "Investor participated in bid" },
-    "HAS_RELATIONSHIP_WITH": { "domain": "Investor", "range": ["Sponsor", "TargetCompany"], "description": "Past interaction or deal co-participation" },
-    "EXITED": { "domain": "Investor", "range": "Deal", "description": "Indicates past divestment" },
-    "HAS_INTEREST_IN": { "domain": "Investor", "range": "Sector", "description": "Indicates an investor's interest in a specific market sector." },
-    "HAS_DOCUMENT": { "domain": "Deal", "range": "Document", "description": "Associates a deal with a related document, such as an NDA or CIM." },
-    "FOLLOWS_PROCESS": { "domain": "Deal", "range": "Process", "description": "Describes the process a deal is following, such as an auction or a proprietary sourcing method." },
-    "INVESTS_IN": {
-      "domain": "Investor",
-      "range": "Deal",
-      "description": "Investment relationship"
+    "hasLegalAddress": {
+      "description": "Relationship between a legal entity and its legal address",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalEntities/hasLegalAddress",
+      "source": "LegalEntity",
+      "target": "Address"
     },
-    "TARGETS": {
-      "domain": "Deal",
-      "range": "Organization",
-      "description": "Target company relationship"
+    "hasRegisteredAddress": {
+      "description": "Relationship between a legal entity and its registered address",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalEntities/hasRegisteredAddress",
+      "source": "LegalEntity",
+      "target": "Address"
     },
-    "OWNS": {
-      "domain": "Fund",
-      "range": "Deal",
-      "description": "Fund ownership of deal"
+    "hasBusinessIdentifier": {
+      "description": "Relationship between a legal entity and its business identifier",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalEntities/hasBusinessIdentifier",
+      "source": "LegalEntity",
+      "target": "BusinessIdentifier"
     },
-    "INVOLVES": {
-      "domain": "Organization",
-      "range": "Deal",
-      "description": "Organization involvement in deal"
+    "isOwnedBy": {
+      "description": "Relationship indicating ownership between entities",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalEntities/isOwnedBy",
+      "source": "LegalEntity",
+      "target": "LegalEntity"
     },
-    "CONTAINS_ENTITY": {
-      "domain": "Communication",
-      "range": ["Organization", "Deal", "Fund", "Investor"],
-      "description": "Communication contains entity mention"
+    "hasSubsidiary": {
+      "description": "Relationship between a parent entity and its subsidiary",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalEntities/hasSubsidiary",
+      "source": "LegalEntity",
+      "target": "LegalEntity"
+    },
+    "hasParent": {
+      "description": "Relationship between a subsidiary and its parent entity",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalEntities/hasParent",
+      "source": "LegalEntity",
+      "target": "LegalEntity"
+    },
+    "hasShareholder": {
+      "description": "Relationship between an entity and its shareholders",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalEntities/hasShareholder",
+      "source": "LegalEntity",
+      "target": "Person"
+    },
+    "isShareholderOf": {
+      "description": "Relationship between a person and entities they have shares in",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalEntities/isShareholderOf",
+      "source": "Person",
+      "target": "LegalEntity"
+    },
+    "hasAccount": {
+      "description": "Relationship between an entity and its financial accounts",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/hasAccount",
+      "source": "LegalEntity",
+      "target": "Account"
+    },
+    "isAccountOf": {
+      "description": "Relationship between an account and its owner",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/isAccountOf",
+      "source": "Account",
+      "target": "LegalEntity"
+    },
+    "hasFinancialInstrument": {
+      "description": "Relationship between an entity and its financial instruments",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/hasFinancialInstrument",
+      "source": "LegalEntity",
+      "target": "FinancialInstrument"
+    },
+    "hasIssuer": {
+      "description": "Relationship between a security and its issuer",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/Securities/hasIssuer",
+      "source": "Security",
+      "target": "LegalEntity"
+    },
+    "isIssuedBy": {
+      "description": "Relationship between an issuer and its securities",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/Securities/isIssuedBy",
+      "source": "LegalEntity",
+      "target": "Security"
+    },
+    "hasContract": {
+      "description": "Relationship between an entity and its contracts",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Agreements/hasContract",
+      "source": "LegalEntity",
+      "target": "Agreement"
+    },
+    "isPartyTo": {
+      "description": "Relationship between an entity and agreements it is party to",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Agreements/isPartyTo",
+      "source": "LegalEntity",
+      "target": "Agreement"
     }
   },
   "reasoning": {
@@ -135,27 +339,36 @@
         "name": "similarity_scoring",
         "description": "Calculate similarity between deals based on sector, dealType, and purpose",
         "entityType": "Deal",
-        "factors": ["sector", "dealType", "purpose"],
-        "weights": [0.5, 0.3, 0.2],
+        "factors": [
+          "sector",
+          "dealType",
+          "purpose"
+        ],
+        "weights": [
+          0.5,
+          0.3,
+          0.2
+        ],
         "threshold": 0.5,
         "relationshipType": "DEAL_SIMILARITY"
       },
       "risk_assessment": {
         "name": "risk_assessment",
-        "description": "Assess risk based on investor failure rate and sector volatility",
-        "entityType": "Deal",
-        "factors": ["investor_failure_rate", "sector_volatility"],
-        "weights": [0.6, 0.4],
-        "threshold": 0.7
-      },
-      "pattern_detection": {
-        "name": "pattern_detection",
-        "description": "Detect successful deal patterns",
-        "entityType": "Deal",
-        "pattern": "e.status = 'CLOSED' AND e.dealSize > 1000000",
-        "patternName": "large_successful_deal",
-        "relationshipType": "FOLLOWS_PATTERN"
+        "description": "Assess risk based on entity relationships and financial indicators",
+        "entityType": "LegalEntity",
+        "factors": [
+          "financialHealth",
+          "regulatoryCompliance",
+          "marketPosition"
+        ],
+        "weights": [
+          0.4,
+          0.3,
+          0.3
+        ],
+        "threshold": 0.7,
+        "relationshipType": "RISK_ASSESSMENT"
       }
     }
   }
-} 
+}

@@ -3,15 +3,16 @@
  */
 
 // Core types
-export * from './core/types/data-source.interface';
-export * from './core/types/normalized-data.interface';
+export * from './types/data-source.interface';
+export * from './types/normalized-data.interface';
+export type { IngestionPipeline as IIngestionPipeline, ProcessingResult, PipelineMetrics, ProcessingError } from './types/pipeline.interface';
 
 // Core components
-export * from './core/pipeline/ingestion-pipeline';
+export { IngestionPipeline } from './pipeline/ingestion-pipeline';
 
 // Sources
-export * from './sources/email/email-source';
+export * from './sources/email-source';
 
 // Intelligence
-export * from './intelligence/nlp/entity-extractor';
-export type { EntityExtractor as IEntityExtractor, EntityExtraction } from './intelligence/entity-extractor.interface';
+export * from './entity-extractor';
+export type { EntityExtractor as IEntityExtractor, EntityExtraction } from './entity-extractor.interface';

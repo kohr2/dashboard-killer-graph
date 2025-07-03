@@ -9,17 +9,26 @@
     "Person": {
       "parent": "Party",
       "vectorIndex": true,
-      "keyProperties": ["email", "title"],
+      "keyProperties": [
+        "email",
+        "title"
+      ],
       "description": "Represents a legal entity or a formal group of people with a particular purpose, such as a company, institution, or association. In the CRM context, it is typically the entity managing customer relationships or a business customer itself. Based on the O-CREAM concept of an enterprise or actor involved in business activities."
     },
     "Organization": {
       "parent": "Party",
       "vectorIndex": true,
-      "keyProperties": ["legalName", "industry"],
+      "keyProperties": [
+        "legalName",
+        "industry"
+      ],
       "description": "Represents a legal entity or a formal group of people with a particular purpose, such as a company, institution, or association. In the CRM context, it is typically the entity managing customer relationships or a business customer itself. Based on the O-CREAM concept of an enterprise or actor involved in business activities.",
       "enrichment": {
         "service": "EDGAR",
-        "properties": ["name", "website"]
+        "properties": [
+          "name",
+          "website"
+        ]
       },
       "properties": {
         "name": {
@@ -184,11 +193,17 @@
           "description": "Contact preferences and settings."
         }
       },
-      "keyProperties": ["id", "email"],
+      "keyProperties": [
+        "id",
+        "email"
+      ],
       "vectorIndex": true,
       "enrichment": {
         "service": "contact-enrichment",
-        "properties": ["email", "name"]
+        "properties": [
+          "email",
+          "name"
+        ]
       }
     },
     "Location": {
@@ -219,11 +234,17 @@
     },
     "PART_OF": {
       "domain": "Communication",
-      "range": ["Person", "Organization"],
+      "range": [
+        "Person",
+        "Organization"
+      ],
       "description": "An entity mentioned in or part of a communication."
     },
     "HAS_ADDRESS": {
-      "domain": ["Person", "Organization"],
+      "domain": [
+        "Person",
+        "Organization"
+      ],
       "range": "Location",
       "description": "Links an entity to its address location."
     },
@@ -233,4 +254,4 @@
       "description": "Indicates that an organization is a subsidiary or division of another."
     }
   }
-} 
+}

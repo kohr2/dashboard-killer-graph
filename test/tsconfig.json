@@ -9,5 +9,5 @@
   },
   "references": [
   ],
-  "include": ["./**/*.ts", "../scripts/**/*.ts", "../src/**/*.ts", "../types/**/*.d.ts"]
+  "include": ["./**/*.ts", "../scripts/**/*.ts", "../src/**/*.ts", "../types/**/*.d.ts", "../codegen/**/*.ts"]
 }

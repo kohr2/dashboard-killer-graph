@@ -36,7 +36,7 @@ describe('Gotham Entity Linking - Integration Test', () => {
   });
 
   it('should create a WORKS_ON relationship between "Rick" and "Project Gotham"', async () => {
-    const emailPath = path.join(process.cwd(), 'test-emails', '17-gotham-diligence-kickoff.eml');
+    const emailPath = path.join(process.cwd(), 'test', 'fixtures', 'emails', '17-gotham-diligence-kickoff.eml');
     const emailContent = fs.readFileSync(emailPath, 'utf-8');
 
     const nlpResponse: LlmGraphResponse = {

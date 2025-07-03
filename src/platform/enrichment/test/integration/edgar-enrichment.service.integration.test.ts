@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 import { join } from 'path';
 import { promises as fs } from 'fs';
 import { EdgarEnrichmentService } from '@platform/enrichment';
-import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
+import { OrganizationDTO } from '@generated/crm/Organization.dto';
 import { container } from 'tsyringe';
 import { CacheService } from '@platform/cache/cache.service';
 

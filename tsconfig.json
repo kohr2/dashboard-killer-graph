@@ -14,10 +14,11 @@
       "@financial/*": ["ontologies/financial/*"],
       "@procurement/*": ["ontologies/procurement/*"],
       "@shared/*": ["src/shared/*"],
-      "@src/*": ["src/*"]
+      "@src/*": ["src/*"],
+      "@generated/*": ["codegen/generated/*"]
     },
     "typeRoots": ["node_modules/@types", "src/types"]
   },
-  "include": ["src/**/*.ts", "src/**/*.json", "ontologies/**/*.ts", "config/**/*.ts", "test/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.json", "ontologies/**/*.ts", "config/**/*.ts", "test/**/*.ts", "codegen/**/*.ts"],
   "exclude": ["node_modules", "dist", "scripts"]
 }

@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { SalesforceEnrichmentService } from '../../salesforce-enrichment.service';
-import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
+import { OrganizationDTO, createOrganizationDTO } from '@generated/crm';
 import { IEnrichmentService, EnrichableEntity } from '@platform/enrichment';
 
 describe('SalesforceEnrichmentService', () => {
@@ -16,25 +16,28 @@ describe('SalesforceEnrichmentService', () => {
   });
 
   it('should not enrich an entity without an external identifier', async () => {
-    const entity: OrganizationDTO = {
+    const entity = createOrganizationDTO({
       id: 'org-1',
       name: 'No ID Corp',
+      type: 'Organization',
       label: 'Organization',
       legalName: 'No ID Corp Inc.',
-    };
+    });
     const result = await service.enrich(entity);
     expect(result).toBeNull();
   });
 
   it('should enrich an entity that has a CIK in its metadata', async () => {
-    const entity: OrganizationDTO = {
+    const entity = createOrganizationDTO({
       id: 'org-2',
       name: 'Has CIK Corp',
+      type: 'Organization',
       label: 'Organization',
       legalName: 'Has CIK Corp LLC',
-      metadata: {
-        cik: '12345',
-      },
+    });
+    // Add metadata as a property on the entity
+    (entity as any).metadata = {
+      cik: '12345',
     };
 
     const result = await service.enrich(entity);
@@ -49,14 +52,16 @@ describe('SalesforceEnrichmentService', () => {
   it('should return null if the API call (simulated) fails', async () => {
     // In a real scenario, we would mock the Salesforce client (e.g., jsforce)
     // For now, we can add a special case in the service logic for testing failures.
-    const entity: OrganizationDTO = {
+    const entity = createOrganizationDTO({
       id: 'org-fail',
       name: 'Fail Corp',
+      type: 'Organization',
       label: 'Organization',
       legalName: 'Failure Corporation',
-      metadata: {
-        cik: 'FAIL-TRIGGER', // Special CIK to trigger a simulated failure
-      },
+    });
+    // Add metadata as a property on the entity
+    (entity as any).metadata = {
+      cik: 'FAIL-TRIGGER', // Special CIK to trigger a simulated failure
     };
 
     const result = await service.enrich(entity);

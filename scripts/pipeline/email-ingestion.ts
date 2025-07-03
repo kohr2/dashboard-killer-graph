@@ -18,6 +18,27 @@ interface ParsedEmailWithSource extends ParsedMail {
   sourceFile: string;
 }
 
+/**
+ * Separates entities into property and non-property groups based on ontology property types
+ */
+export function separatePropertyEntities(
+  entities: any[],
+  propertyEntityTypes: string[]
+): { propertyEntities: any[]; nonPropertyEntities: any[] } {
+  const propertyEntities: any[] = [];
+  const nonPropertyEntities: any[] = [];
+
+  for (const entity of entities) {
+    if (propertyEntityTypes.includes(entity.type)) {
+      propertyEntities.push(entity);
+    } else {
+      nonPropertyEntities.push(entity);
+    }
+  }
+
+  return { propertyEntities, nonPropertyEntities };
+}
+
 async function demonstrateSpacyEmailIngestionPipeline() {
   console.log('📧 Refactored Email Ingestion Pipeline Demo');
   console.log('='.repeat(100));
@@ -72,7 +93,7 @@ async function demonstrateSpacyEmailIngestionPipeline() {
     console.log('📧 Email Ingestion Pipeline Demo - Using Generic Pipeline');
     console.log('='.repeat(100));
 
-    const testEmailsDir = join(process.cwd(), 'test-emails');
+    const testEmailsDir = join(process.cwd(), 'test', 'fixtures', 'emails');
     const allFiles = await fs.readdir(testEmailsDir);
     const emailFiles = allFiles.filter(f => f.endsWith('.eml')).sort();
     const filesToProcess = emailFiles;

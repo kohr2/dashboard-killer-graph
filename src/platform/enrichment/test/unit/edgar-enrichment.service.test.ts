@@ -2,7 +2,7 @@ import axios from 'axios';
 import { promises as fs } from 'fs';
 import { EdgarEnrichmentService } from '@platform/enrichment';
 import { IEnrichmentService, EnrichableEntity } from '@platform/enrichment';
-import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
+import { OrganizationDTO, createOrganizationDTO } from '@generated/crm';
 
 jest.mock('axios');
 jest.mock('fs', () => ({
@@ -41,13 +41,12 @@ describe('EdgarEnrichmentService', () => {
       sicDescription: 'Test Industry',
       addresses: { business: { street1: '123 Test St', city: 'Testville', stateOrCountry: 'TS', zipCode: '12345' } },
     };
-    const baseEntity: OrganizationDTO = {
+    const baseEntity = createOrganizationDTO({
         id: 'org-1',
         name: 'Enrichment Corp',
         type: 'Organization',
         label: 'Organization',
-        enrichedData: '',
-    };
+    });
 
     it('should return enriched data for a known organization', async () => {
       mockedFs.readFile.mockRejectedValue(new Error('Cache miss'));
@@ -64,13 +63,12 @@ describe('EdgarEnrichmentService', () => {
 
     it('should return an empty object for an unknown organization', async () => {
       mockedFs.readFile.mockResolvedValue(JSON.stringify(mockCikData));
-      const unknownEntity: OrganizationDTO = {
+      const unknownEntity = createOrganizationDTO({
         id: 'org-2',
         name: 'Unknown LLC',
         type: 'Organization',
         label: 'Organization',
-        enrichedData: '',
-      };
+      });
       const result = await service.enrich(unknownEntity);
       expect(result).toEqual({});
     });

@@ -10,6 +10,16 @@ Handlebars.registerHelper('replaceType', function(type: string) {
   return type.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 });
 
+// Register Handlebars helper to lookup properties
+Handlebars.registerHelper('lookup', function(obj: any, key: string) {
+  return obj && obj[key] !== undefined;
+});
+
+// Register Handlebars helper to check if key properties exist
+Handlebars.registerHelper('hasValidKeyProperties', function(keyProperties: string[], properties: Record<string, any>) {
+  return keyProperties.some(key => properties && properties[key] !== undefined);
+});
+
 /**
  * Ontology Code Generator
  *
@@ -149,6 +159,34 @@ class OntologyGeneratorImpl implements OntologyGenerator {
   }
 
   /**
+   * Get all properties for an entity including inherited ones
+   */
+  private getAllEntityProperties(entityName: string, entityConfig: OntologyEntity, ontology: OntologyConfig): Record<string, string> {
+    const properties: Record<string, string> = {};
+    
+    // Add properties from parent entities (recursive)
+    if (entityConfig.parent) {
+      const parentConfig = ontology.entities[entityConfig.parent];
+      if (parentConfig) {
+        const parentProperties = this.getAllEntityProperties(entityConfig.parent, parentConfig, ontology);
+        Object.assign(properties, parentProperties);
+      }
+    }
+    
+    // Add properties from current entity
+    if (entityConfig.properties) {
+      const reservedKeys = ['id', 'type', 'label', 'createdAt', 'updatedAt', 'enrichedData'];
+      for (const [key, prop] of Object.entries(entityConfig.properties)) {
+        if (reservedKeys.includes(key)) continue; // avoid duplicates
+        const tsType = this.getTypeScriptType(prop.type);
+        properties[key] = tsType;
+      }
+    }
+    
+    return properties;
+  }
+
+  /**
    * Generate entities from ontology config
    */
   generateEntities(ontology: OntologyConfig): void {
@@ -159,20 +197,10 @@ class OntologyGeneratorImpl implements OntologyGenerator {
     this.ensureDirectory(ontologyDir);
 
     for (const [entityName, entityConfig] of Object.entries(ontology.entities)) {
-      // Convert properties to the format expected by the template
-      const properties: Record<string, string> = {};
-      if (entityConfig.properties) {
-        const reservedKeys = ['id', 'type', 'label', 'createdAt', 'updatedAt', 'enrichedData'];
-        logger.info(`Processing properties for ${entityName}:`, Object.keys(entityConfig.properties));
-        for (const [key, prop] of Object.entries(entityConfig.properties)) {
-          if (reservedKeys.includes(key)) continue; // avoid duplicates
-          const tsType = this.getTypeScriptType(prop.type);
-          properties[key] = tsType;
-          logger.info(`  ${key}: ${prop.type} -> ${tsType}`);
-        }
-      } else {
-        logger.info(`No properties found for ${entityName}`);
-      }
+      // Get all properties including inherited ones
+      const properties = this.getAllEntityProperties(entityName, entityConfig, ontology);
+      
+      logger.info(`Processing properties for ${entityName}:`, Object.keys(properties));
 
       const entityData = {
         entityName,
@@ -203,10 +231,16 @@ class OntologyGeneratorImpl implements OntologyGenerator {
     this.ensureDirectory(ontologyDir);
 
     for (const [entityName, entityConfig] of Object.entries(ontology.entities)) {
+      // Get all properties including inherited ones
+      const properties = this.getAllEntityProperties(entityName, entityConfig, ontology);
+      // Only generate findBy... if all key properties exist
+      const keyProperties = (entityConfig.keyProperties || []).filter(key => properties[key] !== undefined);
+      const hasAllKeyProperties = keyProperties.length === (entityConfig.keyProperties || []).length && keyProperties.length > 0;
       const entityData = {
         entityName,
-        keyProperties: entityConfig.keyProperties || [],
-        vectorIndex: entityConfig.vectorIndex || false
+        keyProperties: hasAllKeyProperties ? keyProperties : [],
+        vectorIndex: entityConfig.vectorIndex || false,
+        properties
       };
 
       const generatedCode = template(entityData);
@@ -228,10 +262,16 @@ class OntologyGeneratorImpl implements OntologyGenerator {
     this.ensureDirectory(ontologyDir);
 
     for (const [entityName, entityConfig] of Object.entries(ontology.entities)) {
+      // Get all properties including inherited ones
+      const properties = this.getAllEntityProperties(entityName, entityConfig, ontology);
+      // Only generate findBy... if all key properties exist
+      const keyProperties = (entityConfig.keyProperties || []).filter(key => properties[key] !== undefined);
+      const hasAllKeyProperties = keyProperties.length === (entityConfig.keyProperties || []).length && keyProperties.length > 0;
       const entityData = {
         entityName,
-        keyProperties: entityConfig.keyProperties || [],
-        vectorIndex: entityConfig.vectorIndex || false
+        keyProperties: hasAllKeyProperties ? keyProperties : [],
+        vectorIndex: entityConfig.vectorIndex || false,
+        properties
       };
 
       const generatedCode = template(entityData);

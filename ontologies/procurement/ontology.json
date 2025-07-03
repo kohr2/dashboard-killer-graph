@@ -1,99 +1,106 @@
 {
   "name": "ProcurementOntology",
   "source": "https://eprocurementontology.github.io/",
-  "dependencies": ["crm"],
+  "dependencies": [
+    "crm"
+  ],
   "entities": {
     "ProcurementProcedure": {
-      "description": "A series of activities leading to the conclusion of a public contract. Based on ePO."
+      "description": "A series of activities leading to the conclusion of a public contract. Based on ePO.",
+      "documentation": "https://eprocurementontology.github.io/"
     },
     "Contract": {
-      "description": "The awarded contract resulting from a procurement procedure. Based on ePO."
+      "description": "The awarded contract resulting from a procurement procedure. Based on ePO.",
+      "documentation": "https://eprocurementontology.github.io/"
     },
     "Tender": {
       "description": "A formal invitation to bid for a contract",
       "properties": {
-        "title": { "type": "string", "description": "Tender title" },
-        "value": { "type": "number", "description": "Estimated contract value" },
-        "deadline": { "type": "date", "description": "Submission deadline" },
-        "category": { "type": "string", "description": "Procurement category" }
-      }
+        "title": {
+          "type": "string",
+          "description": "Tender title"
+        },
+        "value": {
+          "type": "number",
+          "description": "Estimated contract value"
+        },
+        "deadline": {
+          "type": "date",
+          "description": "Submission deadline"
+        },
+        "category": {
+          "type": "string",
+          "description": "Procurement category"
+        }
+      },
+      "documentation": "https://eprocurementontology.github.io/"
     },
     "ProcuringEntity": {
       "description": "The organization conducting the procurement procedure. Based on ePO.",
-      "parent": "Organization"
+      "parent": "Organization",
+      "documentation": "https://eprocurementontology.github.io/"
     },
     "EconomicOperator": {
       "description": "An organisation that can be a tenderer or sub-contractor. Based on ePO.",
-      "parent": "Organization"
+      "parent": "Organization",
+      "documentation": "https://eprocurementontology.github.io/"
     },
     "Lot": {
       "description": "A subdivision of a tender",
       "properties": {
-        "name": { "type": "string", "description": "Lot name" },
-        "description": { "type": "string", "description": "Lot description" },
-        "value": { "type": "number", "description": "Lot value" },
-        "category": { "type": "string", "description": "Lot category" }
-      }
+        "name": {
+          "type": "string",
+          "description": "Lot name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Lot description"
+        },
+        "value": {
+          "type": "number",
+          "description": "Lot value"
+        },
+        "category": {
+          "type": "string",
+          "description": "Lot category"
+        }
+      },
+      "documentation": "https://eprocurementontology.github.io/"
     },
     "Criterion": {
       "description": "A condition used for evaluation in a procurement procedure (e.g., award, selection, exclusion).",
       "properties": {
-        "id": { "type": "string", "isId": true, "description": "Unique identifier for the criterion." },
-        "name": { "type": "string", "description": "The name or title of the criterion." },
-        "description": { "type": "string", "description": "A detailed description of the criterion." },
-        "type": { "type": "string", "description": "The type of criterion (e.g., Award, Selection, Exclusion)." },
-        "weight": { "type": "number", "description": "The weight of the criterion in the evaluation process, if applicable." }
-      }
-    },
-    "Supplier": {
-      "description": "A company that can bid on tenders",
-      "properties": {
-        "name": { "type": "string", "description": "Supplier name" },
-        "specialization": { "type": "string", "description": "Main specialization" },
-        "size": { "type": "string", "description": "Company size" }
-      }
+        "id": {
+          "type": "string",
+          "isId": true,
+          "description": "Unique identifier for the criterion."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name or title of the criterion."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the criterion."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of criterion (e.g., Award, Selection, Exclusion)."
+        },
+        "weight": {
+          "type": "number",
+          "description": "The weight of the criterion in the evaluation process, if applicable."
+        }
+      },
+      "documentation": "https://eprocurementontology.github.io/"
     }
   },
   "relationships": {
-    "HAS_TENDER": {
-      "domain": "ProcurementProcedure",
-      "range": "Tender",
-      "description": "Links a procurement procedure to the tenders submitted for it."
-    },
-    "SUBMITTED_BY": {
-      "domain": "Tender",
-      "range": "EconomicOperator",
-      "description": "Links a tender to the economic operator that submitted it."
-    },
-    "MANAGED_BY": {
-      "domain": "ProcurementProcedure",
-      "range": "ProcuringEntity",
-      "description": "Links a procurement procedure to the entity managing it."
-    },
-    "HAS_LOT": {
-      "domain": "ProcurementProcedure",
-      "range": "Lot",
-      "description": "Links a procurement procedure to its constituent lots."
-    },
-    "APPLIES_TO_LOT": {
-      "domain": "Tender",
-      "range": "Lot",
-      "description": "Links a tender to a specific lot it applies to."
-    },
-    "HAS_CRITERION": {
-      "domain": ["ProcurementProcedure", "Lot"],
-      "range": "Criterion",
-      "description": "Links a procurement procedure or a lot to its evaluation criteria."
-    },
     "CONTAINS": {
       "domain": "Tender",
       "range": "Lot",
-      "description": "Tender contains lots"
-    },
-    "BIDS_ON": {
-      "domain": "Supplier",
-      "range": "Lot",
-      "description": "Supplier bids on lot"
+      "description": "Tender contains lots",
+      "documentation": "https://eprocurementontology.github.io/"
     }
   },
   "reasoning": {
@@ -102,8 +109,14 @@
         "name": "lot_similarity",
         "description": "Calculate similarity between lots based on category and value",
         "entityType": "Lot",
-        "factors": ["category", "value"],
-        "weights": [0.6, 0.4],
+        "factors": [
+          "category",
+          "value"
+        ],
+        "weights": [
+          0.6,
+          0.4
+        ],
         "threshold": 0.6,
         "relationshipType": "LOT_SIMILARITY"
       },
@@ -119,8 +132,14 @@
         "name": "risk_assessment",
         "description": "Assess tender risk based on deadline and value",
         "entityType": "Tender",
-        "factors": ["deadline_proximity", "value_complexity"],
-        "weights": [0.4, 0.6],
+        "factors": [
+          "deadline_proximity",
+          "value_complexity"
+        ],
+        "weights": [
+          0.4,
+          0.6
+        ],
         "threshold": 0.5
       }
     }
@@ -131,11 +150,26 @@
       "range": "Lot",
       "description": "Similarity relationship between lots based on category and value",
       "properties": {
-        "score": { "type": "float", "description": "Similarity score between 0 and 1" },
-        "factors": { "type": "array", "description": "List of factors used in similarity calculation" },
-        "calculatedAt": { "type": "datetime", "description": "When the similarity was calculated" },
-        "algorithm": { "type": "string", "description": "Algorithm used for similarity calculation" },
-        "metadata": { "type": "object", "description": "Additional metadata about the similarity" }
+        "score": {
+          "type": "float",
+          "description": "Similarity score between 0 and 1"
+        },
+        "factors": {
+          "type": "array",
+          "description": "List of factors used in similarity calculation"
+        },
+        "calculatedAt": {
+          "type": "datetime",
+          "description": "When the similarity was calculated"
+        },
+        "algorithm": {
+          "type": "string",
+          "description": "Algorithm used for similarity calculation"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional metadata about the similarity"
+        }
       },
       "enabled": true,
       "algorithms": [
@@ -227,4 +261,4 @@
     "contextRules": {},
     "enrichment": {}
   }
-} 
+}

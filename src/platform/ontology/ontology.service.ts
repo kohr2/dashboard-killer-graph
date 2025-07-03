@@ -5,8 +5,16 @@ import * as glob from 'glob';
 import { singleton } from 'tsyringe';
 import { z } from 'zod';
 import { logger } from '@shared/utils/logger';
-import { OrganizationDTO } from '@generated/crm/OrganizationDTO';
 import { OntologyPlugin } from '@platform/ontology/ontology.plugin';
+
+// Local interface for testing - matches the generated DTO structure
+interface OrganizationDTO {
+  id: string;
+  type: string;
+  label?: string | null;
+  name?: string;
+  [key: string]: any;
+}
 
 // Zod Schemas for validation
 const OntologyPropertySchema = z.object({
@@ -210,6 +218,14 @@ export class OntologyService {
     return parts.join('\n');
   }
 
+  /**
+   * Returns the enrichment service name for a given entity.
+   * This method extracts the entity type from the entity's label property
+   * and looks up the enrichment service configuration in the ontology.
+   * 
+   * @param entity The entity to get enrichment service for
+   * @returns The enrichment service name if configured, undefined otherwise
+   */
   public getEnrichmentServiceName(entity: OrganizationDTO): string | undefined {
     const entityType = 'label' in entity ? entity.label : undefined;
     if (!entityType) return undefined;
