@@ -1,8 +1,5 @@
-#!/usr/bin/env ts-node
-
 import * as fs from 'fs';
 import * as path from 'path';
-import fetch from 'node-fetch';
 import * as xml2js from 'xml2js';
 
 interface OntologyEntity {
@@ -29,215 +26,82 @@ interface Ontology {
   advancedRelationships?: Record<string, any>;
 }
 
-async function entityExistsInSource(entity: string, source: string): Promise<string | undefined> {
-  // Heuristic: Try to find the entity in the FIBO ontology by searching for its name in the HTML/text
-  // For FIBO, try to find a matching page in the ontology viewer
-  // Returns the documentation URL if found, else undefined
-  try {
-    // Try FIBO ontology viewer direct URL pattern
-    const domains = [
-      'BE', 'FBC', 'FND', 'BP', 'CAE', 'DER', 'IND', 'LOAN', 'MD', 'SEC'
-    ];
-    for (const domain of domains) {
-      const url = `${source}/ontology/${domain}`;
-      const res = await fetch(url);
-      if (!res.ok) continue;
-      const html = await res.text();
-      // Look for the entity name in the HTML (case-insensitive)
-      const regex = new RegExp(entity, 'i');
-      if (regex.test(html)) {
-        // Try to construct a direct link (best effort)
-        return `${url}`;
-      }
-    }
-    // Fallback: try searching the homepage
-    const res = await fetch(source);
-    if (res.ok) {
-      const html = await res.text();
-      const regex = new RegExp(entity, 'i');
-      if (regex.test(html)) {
-        return source;
-      }
-    }
-  } catch (e) {
-    // Ignore errors, treat as not found
-  }
-  return undefined;
+// Generic ontology source interface
+interface OntologySource {
+  name: string;
+  canHandle(source: string): boolean;
+  extractEntities(source: string): Promise<Record<string, any>>;
+  extractRelationships(source: string): Promise<Record<string, any>>;
+  validateEntity(entityName: string, source: string): Promise<{ found: boolean; documentation?: string }>;
+  validateRelationship(relationshipName: string, source: string): Promise<{ found: boolean; documentation?: string }>;
 }
 
-async function getOcreamV2LocalNames(): Promise<Set<string>> {
-  // Download and parse the O-CREAM OWL file from the main branch
-  const owlUrl = 'https://raw.githubusercontent.com/meaningfy-ws/o-cream-ontology/main/o-cream.owl';
-  const res = await fetch(owlUrl);
-  if (!res.ok) throw new Error('Failed to fetch O-CREAM OWL');
-  const owlText = await res.text();
-  const parser = new xml2js.Parser();
-  const owl = await parser.parseStringPromise(owlText);
-  const classes = new Set<string>();
-  // Find all owl:Class elements and extract their rdf:about or rdf:ID local name
-  const owlClasses = owl['rdf:RDF']['owl:Class'] || [];
-  for (const cls of owlClasses) {
-    let uri = cls['$']['rdf:about'] || cls['$']['rdf:ID'];
-    if (uri) {
-      // Get local name (after last # or /)
-      const match = uri.match(/[#\/](\w+)$/);
-      if (match) {
-        classes.add(match[1]);
-      } else {
-        classes.add(uri);
-      }
-    }
-  }
-  return classes;
-}
+// Generic text-based source handler
+class GenericTextSource implements OntologySource {
+  name = 'Generic Text Source';
 
-async function getFiboLocalNames(): Promise<Set<string>> {
-  // FIBO is distributed across multiple domain ontologies
-  // We'll fetch the main FIBO domains to get a comprehensive list of classes
-  const fiboDomains = [
-    'https://spec.edmcouncil.org/fibo/ontology/BE/',
-    'https://spec.edmcouncil.org/fibo/ontology/FBC/',
-    'https://spec.edmcouncil.org/fibo/ontology/FND/',
-    'https://spec.edmcouncil.org/fibo/ontology/BP/',
-    'https://spec.edmcouncil.org/fibo/ontology/CAE/',
-    'https://spec.edmcouncil.org/fibo/ontology/DER/',
-    'https://spec.edmcouncil.org/fibo/ontology/IND/',
-    'https://spec.edmcouncil.org/fibo/ontology/LOAN/',
-    'https://spec.edmcouncil.org/fibo/ontology/MD/',
-    'https://spec.edmcouncil.org/fibo/ontology/SEC/'
-  ];
-  
-  const classes = new Set<string>();
-  
-  for (const domainUrl of fiboDomains) {
+  canHandle(source: string): boolean {
+    return source.startsWith('http') || source.startsWith('https');
+  }
+
+  async extractEntities(source: string): Promise<Record<string, any>> {
+    console.log(`Extracting entities from generic source: ${source}`);
+    return {};
+  }
+
+  async extractRelationships(source: string): Promise<Record<string, any>> {
+    console.log(`Extracting relationships from generic source: ${source}`);
+    return {};
+  }
+
+  async validateEntity(entityName: string, source: string): Promise<{ found: boolean; documentation?: string }> {
     try {
-      const res = await fetch(domainUrl);
-      if (!res.ok) continue;
-      const text = await res.text();
+      const res = await fetch(source);
+      if (!res.ok) return { found: false };
       
-      // Parse the ontology file (could be RDF/XML, Turtle, or other formats)
-      // For now, we'll do a simple extraction of class names from the content
-      // This is a simplified approach - in production you'd want proper RDF parsing
+      const content = await res.text();
+      const found = content.toLowerCase().includes(entityName.toLowerCase());
       
-      // Look for class definitions in various formats
-      const classPatterns = [
-        /owl:Class[^>]*rdf:about="[^"]*#([^"]+)"/g,
-        /owl:Class[^>]*rdf:ID="([^"]+)"/g,
-        /rdfs:Class[^>]*rdf:about="[^"]*#([^"]+)"/g,
-        /rdfs:Class[^>]*rdf:ID="([^"]+)"/g
-      ];
-      
-      for (const pattern of classPatterns) {
-        let match;
-        while ((match = pattern.exec(text)) !== null) {
-          classes.add(match[1]);
-        }
-      }
+      return {
+        found,
+        documentation: found ? `${source}#entity-${entityName}` : undefined
+      };
     } catch (e) {
-      // Skip domains that fail to load
-      continue;
+      return { found: false };
     }
   }
-  
-  return classes;
-}
 
-async function getFiboEntityDetails(entityName: string, source: string): Promise<{
-  properties: Record<string, { type: string; description: string }>;
-  keyProperties: string[];
-  vectorIndex: boolean;
-} | null> {
-  // Try to fetch FIBO ontology files and extract entity details
-  const fiboDomains = [
-    'BE', 'FBC', 'FND', 'BP', 'CAE', 'DER', 'IND', 'LOAN', 'MD', 'SEC'
-  ];
-  
-  for (const domain of fiboDomains) {
+  async validateRelationship(relationshipName: string, source: string): Promise<{ found: boolean; documentation?: string }> {
     try {
-      // Try different file formats
-      const formats = ['.ttl', '.owl', '.rdf'];
-      for (const format of formats) {
-        const url = `${source}/ontology/${domain}/${domain}${format}`;
-        const res = await fetch(url);
-        if (!res.ok) continue;
-        
-        const content = await res.text();
-        
-        // Look for the entity definition and extract its properties
-        const entityPattern = new RegExp(`owl:Class[^>]*rdf:about="[^"]*${entityName}"[^>]*>([\\s\\S]*?)</owl:Class>`, 'i');
-        const match = content.match(entityPattern);
-        
-        if (match) {
-          const entityContent = match[1];
-          
-          // Extract properties (data properties)
-          const properties: Record<string, { type: string; description: string }> = {};
-          const keyProperties: string[] = [];
-          
-          // Look for data properties
-          const dataPropertyPattern = /owl:DatatypeProperty[^>]*rdf:about="[^"]*#([^"]+)"[^>]*>/g;
-          let propMatch;
-          while ((propMatch = dataPropertyPattern.exec(content)) !== null) {
-            const propName = propMatch[1];
-            // Check if this property is used by our entity
-            const propUsagePattern = new RegExp(`<${propName}[^>]*>([^<]+)</${propName}>`, 'i');
-            if (propUsagePattern.test(entityContent)) {
-              properties[propName] = {
-                type: 'string', // Default type, could be enhanced with range detection
-                description: `Property from FIBO ${domain} domain`
-              };
-              // Consider common identifiers as key properties
-              if (propName.toLowerCase().includes('id') || propName.toLowerCase().includes('name')) {
-                keyProperties.push(propName);
-              }
-            }
-          }
-          
-          // Determine if vectorIndex should be true (for searchable entities)
-          const vectorIndex = !entityName.toLowerCase().includes('id') && 
-                             !entityName.toLowerCase().includes('amount') &&
-                             !entityName.toLowerCase().includes('date');
-          
-          return {
-            properties,
-            keyProperties: keyProperties.length > 0 ? keyProperties : ['name'],
-            vectorIndex
-          };
-        }
-      }
+      const res = await fetch(source);
+      if (!res.ok) return { found: false };
+      
+      const content = await res.text();
+      const found = content.toLowerCase().includes(relationshipName.toLowerCase());
+      
+      return {
+        found,
+        documentation: found ? `${source}#relationship-${relationshipName}` : undefined
+      };
     } catch (e) {
-      continue;
+      return { found: false };
     }
   }
-  
-  return null;
 }
 
-async function extractFiboOntology(source: string): Promise<{
-  entities: Record<string, any>;
-  relationships: Record<string, any>;
-}> {
-  console.log('Extracting FIBO ontology from FIBO Vocabulary Viewer...');
-  
-  // Use the FIBO Vocabulary Viewer as the source
-  const fiboViewerUrl = 'https://spec.edmcouncil.org/fibo/ontology/master/latest/index.html';
-  
-  try {
-    const res = await fetch(fiboViewerUrl);
-    if (!res.ok) {
-      throw new Error('Failed to fetch FIBO Vocabulary Viewer');
-    }
-    const content = await res.text();
-    console.log('Successfully fetched FIBO Vocabulary Viewer');
+// FIBO-specific source handler
+class FiboSource implements OntologySource {
+  name = 'FIBO';
+
+  canHandle(source: string): boolean {
+    return source.includes('edmcouncil.org/fibo') || source.includes('fibo');
+  }
+
+  async extractEntities(source: string): Promise<Record<string, any>> {
+    console.log('Extracting FIBO entities...');
     
-    // Extract entities and relationships from the viewer content
-    // This is a simplified approach - in practice, you'd need to parse the actual viewer structure
-    const allEntities: Record<string, any> = {};
-    const allRelationships: Record<string, any> = {};
-    
-    // For now, let's use a curated set of actual FIBO entities based on the viewer
+    // Use curated FIBO entities based on the FIBO Vocabulary Viewer
     const fiboEntities = {
-      // Business Entities (BE)
       "LegalEntity": {
         description: "A legal entity as defined in FIBO BE. An organization or person that has legal standing.",
         documentation: "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalEntity",
@@ -322,7 +186,6 @@ async function extractFiboOntology(source: string): Promise<{
         keyProperties: ["firstName", "lastName"],
         vectorIndex: true
       },
-      // Financial Business & Commerce (FBC)
       "Account": {
         description: "A financial account as defined in FIBO FBC.",
         documentation: "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/Account",
@@ -387,7 +250,6 @@ async function extractFiboOntology(source: string): Promise<{
         keyProperties: ["instrumentId", "instrumentType"],
         vectorIndex: false
       },
-      // Securities (SEC)
       "Security": {
         description: "A security as defined in FIBO SEC.",
         documentation: "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/Securities/Security",
@@ -420,7 +282,6 @@ async function extractFiboOntology(source: string): Promise<{
         keyProperties: ["securityId", "tickerSymbol"],
         vectorIndex: false
       },
-      // Foundations (FND)
       "Agreement": {
         description: "A legal agreement or contract as defined in FIBO FND.",
         documentation: "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Agreements/Agreement",
@@ -455,8 +316,13 @@ async function extractFiboOntology(source: string): Promise<{
       }
     };
     
+    return fiboEntities;
+  }
+
+  async extractRelationships(source: string): Promise<Record<string, any>> {
+    console.log('Extracting FIBO relationships...');
+    
     const fiboRelationships = {
-      // Business Entities relationships
       "hasLegalAddress": {
         description: "Relationship between a legal entity and its legal address",
         documentation: "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalEntities/hasLegalAddress",
@@ -505,7 +371,6 @@ async function extractFiboOntology(source: string): Promise<{
         source: "Person",
         target: "LegalEntity"
       },
-      // Financial relationships
       "hasAccount": {
         description: "Relationship between an entity and its financial accounts",
         documentation: "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/hasAccount",
@@ -524,7 +389,6 @@ async function extractFiboOntology(source: string): Promise<{
         source: "LegalEntity",
         target: "FinancialInstrument"
       },
-      // Security relationships
       "hasIssuer": {
         description: "Relationship between a security and its issuer",
         documentation: "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/Securities/hasIssuer",
@@ -537,7 +401,6 @@ async function extractFiboOntology(source: string): Promise<{
         source: "LegalEntity",
         target: "Security"
       },
-      // Agreement relationships
       "hasContract": {
         description: "Relationship between an entity and its contracts",
         documentation: "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Agreements/hasContract",
@@ -552,144 +415,272 @@ async function extractFiboOntology(source: string): Promise<{
       }
     };
     
-    console.log(`Extracted ${Object.keys(fiboEntities).length} entities and ${Object.keys(fiboRelationships).length} relationships from FIBO`);
-    return { entities: fiboEntities, relationships: fiboRelationships };
+    return fiboRelationships;
+  }
+
+  async validateEntity(entityName: string, source: string): Promise<{ found: boolean; documentation?: string }> {
+    // For FIBO, we have a curated list of entities
+    const entities = await this.extractEntities(source);
+    const found = entityName in entities;
     
-  } catch (e) {
-    console.log('Error extracting from FIBO Vocabulary Viewer:', (e as Error).message);
-    return { entities: {}, relationships: {} };
+    return {
+      found,
+      documentation: found ? entities[entityName].documentation : undefined
+    };
+  }
+
+  async validateRelationship(relationshipName: string, source: string): Promise<{ found: boolean; documentation?: string }> {
+    // For FIBO, we have a curated list of relationships
+    const relationships = await this.extractRelationships(source);
+    const found = relationshipName in relationships;
+    
+    return {
+      found,
+      documentation: found ? relationships[relationshipName].documentation : undefined
+    };
   }
 }
 
-async function processOntologyFile(ontologyPath: string, ocreamLocalNames: Set<string>, fiboLocalNames: Set<string>) {
+// O-CREAM specific source handler
+class OcreamSource implements OntologySource {
+  name = 'O-CREAM';
+
+  canHandle(source: string): boolean {
+    return source.includes('o-cream-ontology');
+  }
+
+  async extractEntities(source: string): Promise<Record<string, any>> {
+    console.log('Extracting O-CREAM entities...');
+    
+    try {
+      const owlUrl = 'https://raw.githubusercontent.com/meaningfy-ws/o-cream-ontology/main/o-cream.owl';
+      const res = await fetch(owlUrl);
+      if (!res.ok) {
+        console.log('Could not fetch O-CREAM OWL file');
+        return {};
+      }
+      
+      const owlText = await res.text();
+      const parser = new xml2js.Parser();
+      const owl = await parser.parseStringPromise(owlText);
+      
+      const entities: Record<string, any> = {};
+      
+      // Extract classes from OWL
+      if (owl.rdf && owl.rdf.Class) {
+        const classes = Array.isArray(owl.rdf.Class) ? owl.rdf.Class : [owl.rdf.Class];
+        
+        for (const cls of classes) {
+          if (cls.$ && cls.$.rdf_about) {
+            const className = cls.$.rdf_about.split('#')[1];
+            if (className && !className.includes('Thing') && !className.includes('Nothing')) {
+              entities[className] = {
+                description: `${className} as defined in O-CREAM ontology`,
+                documentation: `${source}#class-${className}`,
+                properties: {},
+                keyProperties: ['name'],
+                vectorIndex: true
+              };
+            }
+          }
+        }
+      }
+      
+      return entities;
+    } catch (e) {
+      console.log('Error extracting O-CREAM entities:', (e as Error).message);
+      return {};
+    }
+  }
+
+  async extractRelationships(source: string): Promise<Record<string, any>> {
+    console.log('Extracting O-CREAM relationships...');
+    
+    try {
+      const owlUrl = 'https://raw.githubusercontent.com/meaningfy-ws/o-cream-ontology/main/o-cream.owl';
+      const res = await fetch(owlUrl);
+      if (!res.ok) {
+        console.log('Could not fetch O-CREAM OWL file');
+        return {};
+      }
+      
+      const owlText = await res.text();
+      const parser = new xml2js.Parser();
+      const owl = await parser.parseStringPromise(owlText);
+      
+      const relationships: Record<string, any> = {};
+      
+      // Extract object properties from OWL
+      if (owl.rdf && owl.rdf.ObjectProperty) {
+        const props = Array.isArray(owl.rdf.ObjectProperty) ? owl.rdf.ObjectProperty : [owl.rdf.ObjectProperty];
+        
+        for (const prop of props) {
+          if (prop.$ && prop.$.rdf_about) {
+            const propName = prop.$.rdf_about.split('#')[1];
+            if (propName && !propName.includes('Property')) {
+              relationships[propName] = {
+                description: `${propName} relationship from O-CREAM ontology`,
+                documentation: `${source}#objectproperty-${propName}`,
+                source: "Entity",
+                target: "Entity"
+              };
+            }
+          }
+        }
+      }
+      
+      return relationships;
+    } catch (e) {
+      console.log('Error extracting O-CREAM relationships:', (e as Error).message);
+      return {};
+    }
+  }
+
+  async validateEntity(entityName: string, source: string): Promise<{ found: boolean; documentation?: string }> {
+    const entities = await this.extractEntities(source);
+    const found = entityName in entities;
+    
+    return {
+      found,
+      documentation: found ? entities[entityName].documentation : undefined
+    };
+  }
+
+  async validateRelationship(relationshipName: string, source: string): Promise<{ found: boolean; documentation?: string }> {
+    const relationships = await this.extractRelationships(source);
+    const found = relationshipName in relationships;
+    
+    return {
+      found,
+      documentation: found ? relationships[relationshipName].documentation : undefined
+    };
+  }
+}
+
+// Ontology source registry
+class OntologySourceRegistry {
+  private sources: OntologySource[] = [
+    new FiboSource(),
+    new OcreamSource(),
+    new GenericTextSource()
+  ];
+
+  registerSource(source: OntologySource): void {
+    this.sources.unshift(source); // Add to beginning for priority
+  }
+
+  getSource(sourceUrl: string): OntologySource {
+    for (const source of this.sources) {
+      if (source.canHandle(sourceUrl)) {
+        return source;
+      }
+    }
+    return new GenericTextSource(); // Default fallback
+  }
+}
+
+// Main processing function
+async function processOntologyFile(ontologyPath: string, registry: OntologySourceRegistry) {
   const data = fs.readFileSync(ontologyPath, 'utf8');
   const ontology: Ontology = JSON.parse(data);
+  
   if (!ontology.source) {
     console.warn(`No source field in ${ontologyPath}, skipping.`);
     return;
   }
+  
   const source = ontology.source;
-  const isOcream = source.includes('o-cream-ontology');
-  const isFibo = source.includes('edmcouncil.org/fibo');
-
-  if (isFibo) {
-    // For FIBO, extract the complete ontology from source
-    console.log(`Extracting complete FIBO ontology for ${ontology.name}...`);
-    const fiboOntology = await extractFiboOntology(source);
-    
-    // Replace the entire entities and relationships with FIBO-extracted ones
-    ontology.entities = fiboOntology.entities;
-    ontology.relationships = fiboOntology.relationships;
-    
-    console.log(`Updated ${ontology.name} with ${Object.keys(fiboOntology.entities).length} entities and ${Object.keys(fiboOntology.relationships).length} relationships from FIBO`);
-  } else if (isOcream) {
-    // For O-CREAM, use prefix-agnostic matching
-    const newEntities: Record<string, OntologyEntity> = {};
-    for (const [entity, def] of Object.entries(ontology.entities)) {
-      process.stdout.write(`Checking entity '${entity}' in ${ontology.name}... `);
-      const found = ocreamLocalNames.has(entity);
-      if (found) {
-        process.stdout.write('FOUND\n');
-        newEntities[entity] = {
-          ...def,
-          documentation: source + '#class-' + entity
-        };
-      } else {
-        process.stdout.write('NOT FOUND (will remove)\n');
-      }
-    }
-    ontology.entities = newEntities;
-
-    if (ontology.relationships) {
-      const newRelationships: Record<string, any> = {};
-      for (const [relationship, def] of Object.entries(ontology.relationships)) {
-        process.stdout.write(`Checking relationship '${relationship}' in ${ontology.name}... `);
-        const found = ocreamLocalNames.has(relationship);
-        if (found) {
-          process.stdout.write('FOUND\n');
-          newRelationships[relationship] = {
-            ...def,
-            documentation: source + '#objectproperty-' + relationship
-          };
-        } else {
-          process.stdout.write('NOT FOUND (will remove)\n');
-        }
-      }
-      ontology.relationships = newRelationships;
-    }
+  const ontologySource = registry.getSource(source);
+  
+  console.log(`Processing ${ontology.name} with ${ontologySource.name} handler...`);
+  
+  // Extract complete ontology if the source supports it
+  const extractedEntities = await ontologySource.extractEntities(source);
+  const extractedRelationships = await ontologySource.extractRelationships(source);
+  
+  if (Object.keys(extractedEntities).length > 0) {
+    // Replace with extracted entities
+    ontology.entities = extractedEntities;
+    console.log(`Updated ${ontology.name} with ${Object.keys(extractedEntities).length} entities from ${ontologySource.name}`);
   } else {
-    // For other sources, use the original validation logic
+    // Validate existing entities
     const newEntities: Record<string, OntologyEntity> = {};
     for (const [entity, def] of Object.entries(ontology.entities)) {
       process.stdout.write(`Checking entity '${entity}' in ${ontology.name}... `);
-      const docUrl = await entityExistsInSource(entity, source);
-      const found = !!docUrl;
-      if (found) {
+      const result = await ontologySource.validateEntity(entity, source);
+      
+      if (result.found) {
         process.stdout.write('FOUND\n');
         newEntities[entity] = {
           ...def,
-          documentation: docUrl
+          documentation: result.documentation
         };
       } else {
         process.stdout.write('NOT FOUND (will remove)\n');
       }
     }
     ontology.entities = newEntities;
-
-    if (ontology.relationships) {
-      const newRelationships: Record<string, any> = {};
-      for (const [relationship, def] of Object.entries(ontology.relationships)) {
-        process.stdout.write(`Checking relationship '${relationship}' in ${ontology.name}... `);
-        const docUrl = await entityExistsInSource(relationship, source);
-        const found = !!docUrl;
-        if (found) {
-          process.stdout.write('FOUND\n');
-          newRelationships[relationship] = {
-            ...def,
-            documentation: docUrl
-          };
-        } else {
-          process.stdout.write('NOT FOUND (will remove)\n');
-        }
-      }
-      ontology.relationships = newRelationships;
-    }
   }
-
+  
+  if (Object.keys(extractedRelationships).length > 0) {
+    // Replace with extracted relationships
+    ontology.relationships = extractedRelationships;
+    console.log(`Updated ${ontology.name} with ${Object.keys(extractedRelationships).length} relationships from ${ontologySource.name}`);
+  } else if (ontology.relationships) {
+    // Validate existing relationships
+    const newRelationships: Record<string, any> = {};
+    for (const [relationship, def] of Object.entries(ontology.relationships)) {
+      process.stdout.write(`Checking relationship '${relationship}' in ${ontology.name}... `);
+      const result = await ontologySource.validateRelationship(relationship, source);
+      
+      if (result.found) {
+        process.stdout.write('FOUND\n');
+        newRelationships[relationship] = {
+          ...def,
+          documentation: result.documentation
+        };
+      } else {
+        process.stdout.write('NOT FOUND (will remove)\n');
+      }
+    }
+    ontology.relationships = newRelationships;
+  }
+  
   fs.writeFileSync(ontologyPath, JSON.stringify(ontology, null, 2));
   console.log(`Updated ${ontologyPath}`);
 }
 
+// Main function
 async function main() {
-  // Find all ontology.json files in ontologies/*/
-  const ontologiesDir = path.join(process.cwd(), 'ontologies');
-  const subdirs = fs.readdirSync(ontologiesDir, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name);
-  let ocreamLocalNames: Set<string> = new Set();
-  let fiboLocalNames: Set<string> = new Set();
+  const registry = new OntologySourceRegistry();
   
-  // Pre-fetch O-CREAM local names
-  try {
-    ocreamLocalNames = await getOcreamV2LocalNames();
-  } catch (e) {
-    console.warn('Could not fetch O-CREAM local names:', e);
-  }
+  // Find all ontology files
+  const ontologyDir = path.join(process.cwd(), 'ontologies');
+  const ontologyFiles: string[] = [];
   
-  // Pre-fetch FIBO local names
-  try {
-    fiboLocalNames = await getFiboLocalNames();
-    console.log(`Loaded ${fiboLocalNames.size} FIBO classes`);
-  } catch (e) {
-    console.warn('Could not fetch FIBO local names:', e);
-  }
-  
-  for (const subdir of subdirs) {
-    const ontologyPath = path.join(ontologiesDir, subdir, 'ontology.json');
-    if (fs.existsSync(ontologyPath)) {
-      await processOntologyFile(ontologyPath, ocreamLocalNames, fiboLocalNames);
+  function findOntologyFiles(dir: string) {
+    const files = fs.readdirSync(dir);
+    for (const file of files) {
+      const filePath = path.join(dir, file);
+      const stat = fs.statSync(filePath);
+      if (stat.isDirectory()) {
+        findOntologyFiles(filePath);
+      } else if (file === 'ontology.json') {
+        ontologyFiles.push(filePath);
+      }
     }
   }
+  
+  findOntologyFiles(ontologyDir);
+  
+  console.log(`Found ${ontologyFiles.length} ontology files`);
+  
+  // Process each ontology file
+  for (const ontologyPath of ontologyFiles) {
+    await processOntologyFile(ontologyPath, registry);
+  }
+  
+  console.log('Ontology processing complete!');
 }
 
 if (require.main === module) {
