@@ -50,16 +50,16 @@ The system is composed of a central **Platform** and multiple **Extensions**.
       | (Framework, Tooling)    |
       +-----------+-------------+
                   |
-+-----------------+-----------------+
-|                 |                 |
-+-----------------+-------+ +-------+-----------------+
-|   CRM Ontology Extension  | | Financial Ontology Ext. |
-| (Contacts, Orgs)        | | (Deals, Investments)    |
-+-------------------------+ +-------------------------+
++-----------------+-----------------+-----------------+
+|                 |                 |                 |
++-----------------+-------+ +-------+-------+ +-------+-----------------+
+|   CRM Ontology Extension  | | Financial Ontology Ext. | | Procurement Ontology Ext. |
+| (Contacts, Orgs)        | | (Deals, Investments)    | | (Contracts, Tenders)      |
++-------------------------+ +-------------------------+ +-------------------------+
 ```
 
 -   **Platform Core**: Provides the essential services: extension loading, knowledge graph connection (Neo4j), conversational interface, and shared tools. It is domain-agnostic.
--   **Ontology Extensions**: Self-contained modules that define a specific business domain (e.g., CRM, Finance). Each extension contributes its own data model (`ontology.json`), business logic, and services to the platform.
+-   **Ontology Extensions**: Self-contained modules that define a specific business domain (e.g., CRM, Finance, Procurement). Each extension contributes its own data model (`ontology.json`), business logic, and services to the platform. Extensions are automatically discovered and loaded by the plugin registry.
 
 This modular design allows new capabilities to be added without modifying the core platform.
 
@@ -99,12 +99,15 @@ The system includes a fully functional conversational interface that:
 ### ✅ Completed
 -   [x] **Platform Core**: Modular framework for extension loading and orchestration.
 -   [x] **Ontology-Driven Design**: Extensions are built around a central `ontology.json` file.
+-   [x] **Plugin Architecture**: Dynamic plugin discovery and registration system.
 -   [x] **Chat Interface**: Fully functional conversational UI with natural language processing.
 -   [x] **Query Translation**: OpenAI-powered translation from natural language to structured queries.
 -   [x] **Knowledge Graph Integration**: Real-time queries to Neo4j database.
 -   [x] **Multi-language Support**: Works in English, French, and other languages.
 -   [x] **MCP Server**: Integration with Claude Desktop for AI-powered assistance.
 -   [x] **CRM & Financial Extensions**: Foundational extensions for CRM and Finance domains.
+-   [x] **Procurement Extension**: Public procurement ontology with 148 entities and 395 relationships.
+-   [x] **Automated Code Generation**: Ontology-to-code generation with plugin templates.
 -   [x] **TDD Foundation**: Comprehensive test structure with Jest.
 
 ### 📋 Next Steps

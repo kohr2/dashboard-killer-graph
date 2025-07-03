@@ -160,6 +160,16 @@ npm test
                                 │
                                 ▼
                        ┌─────────────────┐
+                       │   Plugin        │
+                       │   Registry      │
+                       ├─────────────────┤
+                       │ • Auto-discovery│
+                       │ • Dynamic loading│
+                       │ • Configuration │
+                       └─────────────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
                        │   Reasoning     │
                        │   Engine        │
                        ├─────────────────┤
@@ -207,11 +217,12 @@ scripts/
    - **Database**: Neo4j connection management
    - **Enrichment**: Entity enrichment services (EDGAR, Salesforce)
 
-2. **Domain Ontologies** (`src/ontologies/`)
+2. **Domain Ontologies** (`ontologies/`)
    - **Core**: Generic entities (Communication, Fund, Sponsor, Event, Document, Process)
    - **CRM**: Customer relationship management (Contact, Organization)
    - **Financial**: Financial domain entities (Investor, Deal, MonetaryAmount, etc.)
    - **Procurement**: Procurement and supply chain (148 entities, 395 relationships)
+   - **Plugin Registry**: Automatic discovery and loading of ontology plugins
 
 3. **Ontology Builder** (`scripts/ontology/`)
    - **Ontology-Agnostic CLI**: Plugin-based architecture for any ontology source
@@ -269,6 +280,40 @@ POST /chat/message
 ```http
 GET /health
 ```
+
+## Plugin Registration System
+
+The platform uses a dynamic plugin registry that automatically discovers and loads ontology plugins from the `ontologies/` directory.
+
+### Key Features
+- **Auto-Discovery**: Automatically finds ontology plugins in the `ontologies/` directory
+- **Dynamic Loading**: Loads plugins without requiring manual registration
+- **Runtime Management**: Enable/disable plugins without restarting the application
+- **Error Resilience**: Continues operation even if some plugins fail to load
+- **Configuration Management**: Supports custom plugin configurations
+
+### Plugin Status
+| Plugin | Status | Entities | Relationships | Auto-Discovery |
+|--------|--------|----------|---------------|----------------|
+| Core | ✅ Enabled | 3 | 0 | ✅ |
+| CRM | ✅ Enabled | 15+ | 20+ | ✅ |
+| Financial | ✅ Enabled | 25+ | 30+ | ✅ |
+| Procurement | ✅ Enabled | 148 | 395 | ✅ |
+
+### Plugin Management
+```typescript
+import { getEnabledPlugins, getPluginSummary } from '../config/ontology/plugins.config';
+
+// Get plugin status
+const summary = getPluginSummary();
+console.log('Enabled plugins:', summary.enabled);
+
+// Load plugins into ontology service
+const enabledPlugins = getEnabledPlugins();
+ontologyService.loadFromPlugins(enabledPlugins);
+```
+
+For detailed information, see [Plugin Registration System](./architecture/plugin-registration-system.md).
 
 ## Ontologies
 
