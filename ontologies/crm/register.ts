@@ -1,35 +1,37 @@
 import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { createContactDTO } from '@platform/enrichment/dto-aliases';
-import { SpacyEntityExtractionService } from './application/services/spacy-entity-extraction.service';
-import { Neo4jContactRepository } from './infrastructure/repositories/neo4j-contact-repository';
 import { logger } from '@shared/utils/logger';
-import { Neo4jOrganizationRepository } from './infrastructure/repositories/neo4j-organization-repository';
-import { CreateOrganizationUseCase } from './application/use-cases/organization/create-organization.use-case';
+import { 
+  ContactService, 
+  OrganizationService, 
+  PersonService,
+  ContactPointService,
+  EmailService,
+  PhoneNumberService,
+  ActivityService,
+  LocationService
+} from '../../../codegen/generated/crm';
 
 export function registerCrm() {
-  // Register repositories
-  container.register('ContactRepository', {
-    useClass: Neo4jContactRepository,
-  });
-
-  container.register('IOrganizationRepository', {
-    useClass: Neo4jOrganizationRepository,
-  });
-
-  // Register use cases
-  container.register(CreateOrganizationUseCase, {
-    useClass: CreateOrganizationUseCase,
-  });
+  // Register generated services
+  container.register('ContactService', { useClass: ContactService });
+  container.register('OrganizationService', { useClass: OrganizationService });
+  container.register('PersonService', { useClass: PersonService });
+  container.register('ContactPointService', { useClass: ContactPointService });
+  container.register('EmailService', { useClass: EmailService });
+  container.register('PhoneNumberService', { useClass: PhoneNumberService });
+  container.register('ActivityService', { useClass: ActivityService });
+  container.register('LocationService', { useClass: LocationService });
 
   const ontologyService = container.resolve(OntologyService);
 
   ontologyService.registerEntityType(
-    'OCreamContact',
+    'Contact',
     createContactDTO,
   );
 
   // TODO: Register Organization entity once it is defined.
   
-  logger.info('✅ CRM extension registered.');
-} 
+  logger.info('✅ CRM extension registered with generated services.');
+}

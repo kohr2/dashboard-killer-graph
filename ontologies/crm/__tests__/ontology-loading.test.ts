@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { OntologyService } from '../../../platform/ontology/ontology.service';
-import { registerAllOntologies } from '../../../register-ontologies';
+import { OntologyService } from '@platform/ontology/ontology.service';
+import { registerAllOntologies } from '@src/register-ontologies';
 
 // Mock ontology files
 const mockCrmOntology = {
@@ -26,4 +26,4 @@ describe('Ontology Loading', () => {
   it('should be true', () => {
     expect(true).toBe(true);
   });
-}); 
+});
