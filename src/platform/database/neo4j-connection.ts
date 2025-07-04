@@ -3,7 +3,7 @@
 
 import neo4j, { Driver, Session } from 'neo4j-driver';
 import { config } from 'dotenv';
-import { logger } from '@shared/utils/logger';
+import { logger } from '@common/utils/logger';
 import { container, singleton } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
 
@@ -21,7 +21,7 @@ export class Neo4jConnection {
     this.uri = process.env.NEO4J_URI!;
     this.user = process.env.NEO4J_USERNAME!;
     this.pass = process.env.NEO4J_PASSWORD!;
-    this.database = process.env.NEO4J_DATABASE || 'neo4j';
+    this.database = process.env.NEO4J_DATABASE!;
   }
 
   public async connect(): Promise<void> {

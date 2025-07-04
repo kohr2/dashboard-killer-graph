@@ -36,7 +36,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ConcessionContract"
     },
     "Winner": {
@@ -68,7 +68,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Winner"
     },
     "OfflineAccessProvider": {
@@ -96,7 +96,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#OfflineAccessProvider"
     },
     "DirectAwardTerm": {
@@ -124,7 +124,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#DirectAwardTerm"
     },
     "Estimate": {
@@ -152,7 +152,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Estimate"
     },
     "ConcessionEstimate": {
@@ -180,7 +180,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ConcessionEstimate"
     },
     "ProfessionalSuitabilitySummary": {
@@ -212,7 +212,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ProfessionalSuitabilitySummary"
     },
     "ReviewInformation": {
@@ -232,7 +232,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewInformation"
     },
     "Buyer": {
@@ -260,7 +260,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Buyer"
     },
     "CentralPurchasingBody": {
@@ -324,7 +324,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#CatalogueReceiver"
     },
     "SubmissionTerm": {
@@ -356,7 +356,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#SubmissionTerm"
     },
     "QualificationCriterion": {
@@ -388,7 +388,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#QualificationCriterion"
     },
     "OfferIssuer": {
@@ -420,7 +420,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#OfferIssuer"
     },
     "ExclusionGround": {
@@ -452,7 +452,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ExclusionGround"
     },
     "OpeningTerm": {
@@ -484,7 +484,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#OpeningTerm"
     },
     "ProcurementElement": {
@@ -508,7 +508,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementElement"
     },
     "TenderReceiver": {
@@ -536,7 +536,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#TenderReceiver"
     },
     "TaxDocumentation": {
@@ -560,7 +560,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#TaxDocumentation"
     },
     "Documentation": {
@@ -580,7 +580,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Documentation"
     },
     "Fund": {
@@ -640,7 +640,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#SelectionCriteriaSummary"
     },
     "Lot": {
@@ -672,7 +672,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Lot"
     },
     "Certifier": {
@@ -700,7 +700,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Certifier"
     },
     "ExclusionGroundsSummary": {
@@ -732,7 +732,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ExclusionGroundsSummary"
     },
     "DesignContestRegimeTerm": {
@@ -764,7 +764,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#DesignContestRegimeTerm"
     },
     "JuryMember": {
@@ -796,7 +796,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#JuryMember"
     },
     "ReviewRequester": {
@@ -828,7 +828,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewRequester"
     },
     "Certificate": {
@@ -860,7 +860,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Certificate"
     },
     "AwardEvaluationTerm": {
@@ -884,7 +884,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#AwardEvaluationTerm"
     },
     "ReviewProcedureInformationProvider": {
@@ -912,7 +912,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewProcedureInformationProvider"
     },
     "MultipleStageProcedureTerm": {
@@ -944,7 +944,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#MultipleStageProcedureTerm"
     },
     "CleanVehicleDirectiveInformation": {
@@ -976,7 +976,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#CleanVehicleDirectiveInformation"
     },
     "FrameworkAgreementTechnique": {
@@ -1064,7 +1064,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementDocument"
     },
     "SecurityClearanceTerm": {
@@ -1096,7 +1096,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#SecurityClearanceTerm"
     },
     "CatalogueProvider": {
@@ -1128,7 +1128,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#CatalogueProvider"
     },
     "AwardCriterion": {
@@ -1156,7 +1156,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#AwardCriterion"
     },
     "StrategicProcurement": {
@@ -1216,7 +1216,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#MonetaryValue"
     },
     "EvaluationTerm": {
@@ -1248,7 +1248,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#EvaluationTerm"
     },
     "ProcurementProcedureInformationProvider": {
@@ -1276,7 +1276,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementProcedureInformationProvider"
     },
     "LeadBuyer": {
@@ -1308,7 +1308,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#LeadBuyer"
     },
     "Mediator": {
@@ -1372,7 +1372,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Candidate"
     },
     "AgentInRole": {
@@ -1396,7 +1396,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#AgentInRole"
     },
     "ParticipationRequestTerm": {
@@ -1424,7 +1424,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ParticipationRequestTerm"
     },
     "ReliedUponEntity": {
@@ -1452,7 +1452,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ReliedUponEntity"
     },
     "ContractTerm": {
@@ -1484,7 +1484,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ContractTerm"
     },
     "ProcurementServiceProvider": {
@@ -1544,7 +1544,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#GreenProcurement"
     },
     "AcquiringParty": {
@@ -1572,7 +1572,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#AcquiringParty"
     },
     "NonDisclosureAgreementTerm": {
@@ -1604,7 +1604,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#NonDisclosureAgreementTerm"
     },
     "ParticipationRequestReceiver": {
@@ -1632,7 +1632,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ParticipationRequestReceiver"
     },
     "TechnicalSpecification": {
@@ -1660,7 +1660,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#TechnicalSpecification"
     },
     "DynamicPurchaseSystemTechnique": {
@@ -1692,7 +1692,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#DynamicPurchaseSystemTechnique"
     },
     "SocialProcurement": {
@@ -1748,7 +1748,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#SubcontractingEstimate"
     },
     "UniqueResponsibleOfTheProcurement": {
@@ -1772,7 +1772,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#UniqueResponsibleOfTheProcurement"
     },
     "AwardCriteriaSummary": {
@@ -1804,7 +1804,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#AwardCriteriaSummary"
     },
     "TaxInformationProvider": {
@@ -1828,7 +1828,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#TaxInformationProvider"
     },
     "Project": {
@@ -1876,7 +1876,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#EnvironmentalDocumentation"
     },
     "ProcessPlanningTerm": {
@@ -1904,7 +1904,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcessPlanningTerm"
     },
     "AwardingCentralPurchasingBody": {
@@ -1964,7 +1964,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#FrameworkAgreementTerm"
     },
     "MaskableObject": {
@@ -1984,7 +1984,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#MaskableObject"
     },
     "EmploymentInformationProvider": {
@@ -2008,7 +2008,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#EmploymentInformationProvider"
     },
     "NoticeAwardInformation": {
@@ -2036,7 +2036,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#NoticeAwardInformation"
     },
     "DirectContract": {
@@ -2068,7 +2068,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#DirectContract"
     },
     "Notice": {
@@ -2096,7 +2096,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Notice"
     },
     "SelectedCandidateList": {
@@ -2124,7 +2124,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#SelectedCandidateList"
     },
     "EAuctionTechnique": {
@@ -2156,7 +2156,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#EAuctionTechnique"
     },
     "AdHocChannel": {
@@ -2188,7 +2188,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#AdHocChannel"
     },
     "ProcurementObject": {
@@ -2212,7 +2212,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementObject"
     },
     "Reviewer": {
@@ -2244,7 +2244,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Reviewer"
     },
     "PlannedProcurementPart": {
@@ -2276,7 +2276,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#PlannedProcurementPart"
     },
     "StatisticalInformation": {
@@ -2308,7 +2308,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#StatisticalInformation"
     },
     "ParticipationRequestProcessor": {
@@ -2336,7 +2336,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ParticipationRequestProcessor"
     },
     "ElectronicSignature": {
@@ -2364,7 +2364,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ElectronicSignature"
     },
     "ProcurementCriteriaSummary": {
@@ -2396,7 +2396,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementCriteriaSummary"
     },
     "ProcurementCriterion": {
@@ -2428,7 +2428,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementCriterion"
     },
     "LotAwardOutcome": {
@@ -2456,7 +2456,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#LotAwardOutcome"
     },
     "Procedure": {
@@ -2488,7 +2488,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Procedure"
     },
     "PaymentExecutor": {
@@ -2516,7 +2516,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#PaymentExecutor"
     },
     "BudgetProvider": {
@@ -2544,7 +2544,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#BudgetProvider"
     },
     "ParticipationCondition": {
@@ -2576,7 +2576,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ParticipationCondition"
     },
     "LotGroupAwardInformation": {
@@ -2604,7 +2604,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#LotGroupAwardInformation"
     },
     "SubcontractTerm": {
@@ -2632,7 +2632,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#SubcontractTerm"
     },
     "FrameworkAgreement": {
@@ -2664,7 +2664,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#FrameworkAgreement"
     },
     "EconomicStandingSummary": {
@@ -2696,7 +2696,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#EconomicStandingSummary"
     },
     "Subcontractor": {
@@ -2728,7 +2728,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Subcontractor"
     },
     "SelectionCriterion": {
@@ -2760,7 +2760,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#SelectionCriterion"
     },
     "Technique": {
@@ -2788,7 +2788,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Technique"
     },
     "EnvironmentalProtectionInformationProvider": {
@@ -2812,7 +2812,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#EnvironmentalProtectionInformationProvider"
     },
     "ParticipationConditionsSummary": {
@@ -2844,7 +2844,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ParticipationConditionsSummary"
     },
     "OriginatorRequest": {
@@ -2872,7 +2872,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#OriginatorRequest"
     },
     "Awarder": {
@@ -2900,7 +2900,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Awarder"
     },
     "CertificationLabel": {
@@ -2932,7 +2932,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#CertificationLabel"
     },
     "PlannedProcurement": {
@@ -2956,7 +2956,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#PlannedProcurement"
     },
     "AwardDecision": {
@@ -2984,7 +2984,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#AwardDecision"
     },
     "Quantity": {
@@ -3008,7 +3008,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Quantity"
     },
     "Document": {
@@ -3036,7 +3036,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Document"
     },
     "TenderProcessor": {
@@ -3064,7 +3064,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#TenderProcessor"
     },
     "AwardOutcome": {
@@ -3096,7 +3096,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#AwardOutcome"
     },
     "System": {
@@ -3128,7 +3128,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#System"
     },
     "AccessTerm": {
@@ -3160,7 +3160,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#AccessTerm"
     },
     "EmploymentDocumentation": {
@@ -3184,7 +3184,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#EmploymentDocumentation"
     },
     "Term": {
@@ -3208,7 +3208,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Term"
     },
     "OrganisationGroup": {
@@ -3240,7 +3240,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#OrganisationGroup"
     },
     "ProcedureTerm": {
@@ -3268,7 +3268,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcedureTerm"
     },
     "TenderAwardOutcome": {
@@ -3292,7 +3292,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#TenderAwardOutcome"
     },
     "ProcurementProcessInformation": {
@@ -3320,7 +3320,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementProcessInformation"
     },
     "ReviewDecision": {
@@ -3344,7 +3344,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewDecision"
     },
     "TechnicalAbilitySummary": {
@@ -3376,7 +3376,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#TechnicalAbilitySummary"
     },
     "QualificationCriteriaSummary": {
@@ -3408,7 +3408,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#QualificationCriteriaSummary"
     },
     "ReviewRequestSummary": {
@@ -3436,7 +3436,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewRequestSummary"
     },
     "MiniCompetitionAwardOutcome": {
@@ -3468,7 +3468,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#MiniCompetitionAwardOutcome"
     },
     "SubmissionStatisticalInformation": {
@@ -3496,7 +3496,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#SubmissionStatisticalInformation"
     },
     "SelectionEvaluationTerm": {
@@ -3524,7 +3524,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#SelectionEvaluationTerm"
     },
     "ContextDescription": {
@@ -3548,7 +3548,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ContextDescription"
     },
     "ReviewRequest": {
@@ -3576,7 +3576,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewRequest"
     },
     "Purpose": {
@@ -3604,7 +3604,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Purpose"
     },
     "ContextualProjection": {
@@ -3628,7 +3628,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ContextualProjection"
     },
     "LotGroup": {
@@ -3652,7 +3652,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#LotGroup"
     },
     "EnergyEfficiencyInformation": {
@@ -3676,7 +3676,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#EnergyEfficiencyInformation"
     },
     "AuxiliaryParty": {
@@ -3704,7 +3704,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#AuxiliaryParty"
     },
     "ReviewTerm": {
@@ -3736,7 +3736,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewTerm"
     },
     "Tenderer": {
@@ -3768,7 +3768,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Tenderer"
     },
     "LocalLegalBasisInformation": {
@@ -3788,7 +3788,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#LocalLegalBasisInformation"
     },
     "Offer": {
@@ -3816,7 +3816,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Offer"
     },
     "OfferingParty": {
@@ -3844,7 +3844,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#OfferingParty"
     },
     "Contractor": {
@@ -3876,7 +3876,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Contractor"
     },
     "Business": {
@@ -3908,7 +3908,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Business"
     },
     "NonPublishedInformation": {
@@ -3936,7 +3936,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#NonPublishedInformation"
     },
     "Prize": {
@@ -3964,7 +3964,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Prize"
     },
     "Tender": {
@@ -3996,7 +3996,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Tender"
     },
     "InternationalProcurementInstrumentMeasuresInformation": {
@@ -4020,7 +4020,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#InternationalProcurementInstrumentMeasuresInformation"
     },
     "AcquiringCentralPurchasingBody": {
@@ -4052,7 +4052,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#AcquiringCentralPurchasingBody"
     },
     "ContractLotCompletionInformation": {
@@ -4080,7 +4080,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ContractLotCompletionInformation"
     },
     "ChangeInformation": {
@@ -4108,7 +4108,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ChangeInformation"
     },
     "ReviewIrregularitySummary": {
@@ -4136,7 +4136,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewIrregularitySummary"
     },
     "InnovativeProcurement": {
@@ -4164,7 +4164,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#InnovativeProcurement"
     },
     "Contract": {
@@ -4192,7 +4192,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Contract"
     },
     "TenderGroup": {
@@ -4216,7 +4216,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#TenderGroup"
     },
     "SpecificationInformation": {
@@ -4236,7 +4236,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#SpecificationInformation"
     },
     "ExpressionOfInterest": {
@@ -4264,7 +4264,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ExpressionOfInterest"
     }
   },
@@ -9012,7 +9012,7 @@
   },
   "metadata": {
     "sourceUrl": "https://raw.githubusercontent.com/OP-TED/ePO/master/implementation/ePO_core/owl_ontology/ePO_core.rdf",
-    "extractionDate": "2025-07-04T15:24:38.395Z",
+    "extractionDate": "2025-07-04T18:19:53.066Z",
     "sourceVersion": "2024.06",
     "entityCount": 148,
     "relationshipCount": 395

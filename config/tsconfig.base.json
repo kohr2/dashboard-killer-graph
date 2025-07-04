@@ -23,10 +23,13 @@
       "@crm/*": ["ontologies/crm/*"],
       "@financial/*": ["ontologies/financial/*"],
       "@procurement/*": ["ontologies/procurement/*"],
+      "@shared/utils/logger": ["src/common/utils/logger.ts"],
+      "@common/*": ["src/common/*"],
       "@shared/*": ["src/shared/*"],
       "@mcp/*": ["src/mcp/*"],
       "@generated/*": ["codegen/generated/*"],
-      "@codegen/generated/*": ["codegen/generated/*"]
+      "@codegen/generated/*": ["codegen/generated/*"],
+      "@ingestion/*": ["src/ingestion/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

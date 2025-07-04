@@ -7,13 +7,13 @@ import { EmailProcessor, EmailProcessingResult } from '../email-processor';
 import { AttachmentProcessingService } from '@platform/processing/attachment-processing.service';
 import { EmailParsingService } from '@platform/processing/email-parsing.service';
 import { EmailAttachment } from '@platform/processing/email-parsing.service';
-import { logger } from '@shared/utils/logger';
+import { logger } from '@common/utils/logger';
 import * as fs from 'fs';
 
 // Mock the platform services
 jest.mock('@platform/processing/email-parsing.service');
 jest.mock('@platform/processing/attachment-processing.service');
-jest.mock('@shared/utils/logger', () => ({
+jest.mock('@common/utils/logger', () => ({
   logger: {
     info: jest.fn(),
     warn: jest.fn(),

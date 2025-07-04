@@ -1,0 +1,20 @@
+{
+  "name": "financial",
+  "source": {
+    "url": "",
+    "type": "manual",
+    "version": "1.0.0",
+    "description": "Auto-generated source ontology for financial"
+  },
+  "entities": [],
+  "relationships": [],
+  "metadata": {
+    "sourceUrl": "",
+    "extractionDate": "2025-07-04T16:44:06.309Z",
+    "sourceVersion": "1.0.0",
+    "entityCount": 0,
+    "relationshipCount": 0
+  },
+  "ignoredEntities": [],
+  "ignoredRelationships": []
+}

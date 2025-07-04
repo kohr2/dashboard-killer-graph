@@ -1,12 +1,12 @@
 import { BaseEntity } from '@shared/types/base-entity';
 
-export interface {{entityName}} extends BaseEntity {
+export interface {{toValidIdentifier entityName}} extends BaseEntity {
   {{#each properties}}
   {{@key}}: {{{replaceType this}}};
   {{/each}}
 }
 
-export class {{entityName}}Entity implements {{entityName}} {
+export class {{toValidIdentifier entityName}}Entity implements {{toValidIdentifier entityName}} {
   id?: string;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -14,7 +14,7 @@ export class {{entityName}}Entity implements {{entityName}} {
   {{@key}}!: {{{replaceType this}}};
   {{/each}}
 
-  constructor(data: Partial<{{entityName}}>) {
+  constructor(data: Partial<{{toValidIdentifier entityName}}>) {
     Object.assign(this, data);
   }
 
@@ -44,13 +44,13 @@ export class {{entityName}}Entity implements {{entityName}} {
       {{#if (lookup properties "type")}}
         return `${this.type}:${this.name}`;
       {{else}}
-        return `{{entityName}}:${this.name}`;
+        return `{{toValidIdentifier entityName}}:${this.name}`;
       {{/if}}
     {{else}}
       {{#if (lookup properties "type")}}
         return `${this.type}:${this.id || 'unknown'}`;
       {{else}}
-        return `{{entityName}}:${this.id || 'unknown'}`;
+        return `{{toValidIdentifier entityName}}:${this.id || 'unknown'}`;
       {{/if}}
     {{/if}}
   }

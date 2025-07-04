@@ -4,8 +4,11 @@ import { container } from 'tsyringe';
 import { singleton } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { logger } from '@shared/utils/logger';
+import { logger } from '@common/utils/logger';
 import { flattenEnrichmentData } from './utils/enrichment.utils';
+import { ContentProcessingService } from './content-processing.service';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export interface IngestionEntity {
   id: string;
@@ -46,35 +49,60 @@ export class Neo4jIngestionService {
 
   async initialize(): Promise<void> {
     await this.neo4jConnection.connect();
-    this.session = this.neo4jConnection.getDriver().session();
+    this.session = this.neo4jConnection.getSession();
     
     if (!this.session) {
       throw new Error('Failed to create Neo4j session.');
     }
 
-    this.indexableLabels = this.ontologyService.getIndexableEntityTypes();
+    // Get the ontology path and create vector indexes only for entities with vectorIndex: true
+    // For now, use a hardcoded path to the procurement ontology
+    const ontologyPath = path.join(process.cwd(), 'ontologies', 'procurement', 'ontology.json');
+    await this.createVectorIndexesFromOntology(ontologyPath);
+  }
+
+  /**
+   * Create vector indexes only for labels with vectorIndex: true in the ontology
+   */
+  private async createVectorIndexesFromOntology(ontologyPath: string): Promise<void> {
+    if (!this.session) {
+      throw new Error('Neo4j session not initialized');
+    }
     
-    // Create Vector Index for all relevant labels
-    logger.info('Creating vector indexes for indexable labels...');
-    for (const label of this.indexableLabels) {
+    // Load the ontology JSON
+    const ontology = JSON.parse(fs.readFileSync(ontologyPath, 'utf-8'));
+    const entities = ontology.entities || {};
+    // Find all entity names with vectorIndex: true
+    const indexableLabels = Object.entries(entities)
+      .filter(([_, entity]: [string, any]) => entity.vectorIndex)
+      .map(([name]) => name);
+    if (indexableLabels.length === 0) {
+      logger.info('No vector indexes to create (no entities with vectorIndex: true)');
+      return;
+    }
+    for (const label of indexableLabels) {
       const indexName = `${label.toLowerCase()}_embeddings`;
-      await this.session.run(`DROP INDEX ${indexName} IF EXISTS`);
-      const query = `CREATE VECTOR INDEX ${indexName} IF NOT EXISTS FOR (n:${label}) ON (n.embedding) OPTIONS {indexConfig: { \`vector.dimensions\`: 384, \`vector.similarity_function\`: 'cosine' }}`;
+      await this.session.run(`DROP INDEX \`${indexName}\` IF EXISTS`);
+      const query = `CREATE VECTOR INDEX \`${indexName}\` IF NOT EXISTS FOR (n:\`${label}\`) ON (n.embedding) OPTIONS {indexConfig: {\`vector.dimensions\`: 384, \`vector.similarity_function\`: 'cosine'}}`;
       await this.session.run(query);
       logger.info(`Vector index '${indexName}' is ready for label '${label}'.`);
     }
   }
 
   private getLabelInfo(entity: IngestionEntity, validOntologyTypes: string[]): { primary: string; candidates: string[] } {
-    const primaryLabel = entity.getOntologicalType ? entity.getOntologicalType() : entity.type;
+    // Delegate normalisation logic to ContentProcessingService so we keep it in one place.
+    const primaryLabel: string = ContentProcessingService.normaliseEntityType(
+      entity.getOntologicalType ? entity.getOntologicalType() : entity.type,
+    );
 
-    if (!validOntologyTypes.includes(primaryLabel)) {
-      logger.warn(`[Label Validation] Received type "${primaryLabel}" is not a registered ontology type. Defaulting to 'Thing'.`);
-      return { primary: 'Thing', candidates: ['Thing'] };
+    if (primaryLabel === 'Thing' && !validOntologyTypes.includes('Thing')) {
+      logger.warn(`[Label Validation] Received unknown type; defaulting to Thing.`);
     }
     
+    // Get indexable labels from ontology service instead of this.indexableLabels
+    const indexableLabels = this.ontologyService.getIndexableEntityTypes();
     const candidateLabels = [primaryLabel]
-      .filter(l => this.indexableLabels.includes(l));
+      .filter(l => indexableLabels.includes(l));
 
     return { primary: primaryLabel, candidates: [...new Set(candidateLabels)] };
   }
@@ -149,7 +177,7 @@ export class Neo4jIngestionService {
         logger.info(`Skipping unrecognized entity '${entity.name}'.`);
         continue;
       }
-      if (!entity.embedding && !this.indexableLabels.includes(primaryLabel)) {
+      if (!entity.embedding && !this.ontologyService.getIndexableEntityTypes().includes(primaryLabel)) {
         logger.info(`Skipping entity '${entity.name}' (type: ${primaryLabel}) because it has no embedding and is not an indexed type.`);
         continue;
       }
@@ -158,10 +186,22 @@ export class Neo4jIngestionService {
       if (entity.embedding && candidateLabels.length > 0 && primaryLabel !== 'Thing') {
         for (const label of candidateLabels) {
           const indexName = `${label.toLowerCase()}_embeddings`;
-          const searchResult = await this.session.run(
-            `CALL db.index.vector.queryNodes($indexName, $limit, $embedding) YIELD node, score`,
-            { indexName, limit: 1, embedding: entity.embedding }
-          );
+          let searchResult;
+          try {
+            searchResult = await this.session.run(
+              `CALL db.index.vector.queryNodes($indexName, $limit, $embedding) YIELD node, score`,
+              { indexName, limit: 1, embedding: entity.embedding }
+            );
+          } catch (err: any) {
+            // Neo4j will throw if the requested index doesn't exist (for instance if the label
+            // wasn't flagged with vectorIndex: true). We skip vector matching in that case and
+            // continue as if no match was found rather than aborting the entire ingestion.
+            if (err.code === 'Neo.ClientError.Procedure.ProcedureCallFailed') {
+              logger.warn(`Vector search skipped for label '${label}' – index '${indexName}' not found.`);
+              continue;
+            }
+            throw err; // propagate unexpected errors
+          }
 
           if (searchResult.records.length > 0 && searchResult.records[0].get('score') > 0.92) {
             const existingNode = searchResult.records[0].get('node');
@@ -177,7 +217,7 @@ export class Neo4jIngestionService {
       if (!foundExistingNode) {
         // Create new entity
         const allLabels = [primaryLabel];
-        const labelsCypher = allLabels.map(l => `\`${l}\``).join(':');
+        const labelsCypher = allLabels.map(l => '\`' + l + '\`').join(':');
 
         // Prepare properties
         const entityProperties = propertyRelationships.get(entity.id) || new Map();
@@ -344,7 +384,7 @@ export class Neo4jIngestionService {
     await this.session.run(
       `
       MERGE (c:Communication {id: $id})
-      ON CREATE SET c.subject = $subject, c.from = $from, c.date = datetime($date), c.sourceFile = $sourceFile
+      ON CREATE SET c.subject = $subject, c.from = $from, c.date = datetime($date), c.sourceFile = $sourceFile, c.createdAt = $createdAt
     `,
       {
         id: communicationId,
@@ -352,6 +392,7 @@ export class Neo4jIngestionService {
         from: 'Unknown Sender',
         date: new Date().toISOString(),
         sourceFile: 'email',
+        createdAt: new Date().toISOString(),
       },
     );
     logger.info('Merged Communication node.');
@@ -361,7 +402,7 @@ export class Neo4jIngestionService {
       if (entity.resolvedId) {
         const entityInfo = entityMap.get(entity.name);
         const labels = entityInfo.labels;
-        const labelsCypher = labels.map((l: string) => `\`${l}\``).join(':');
+        const labelsCypher = labels.map((l: string) => '\`' + l + '\`').join(':');
 
         await this.session.run(
           `
@@ -389,8 +430,8 @@ export class Neo4jIngestionService {
       if (sourceEntity && sourceEntity.resolvedId && targetEntity && targetEntity.resolvedId) {
         const sourceInfo = entityMap.get(sourceEntity.name);
         const targetInfo = entityMap.get(targetEntity.name);
-        const sourceLabelsCypher = sourceInfo.labels.map((l: string) => `\`${l}\``).join(':');
-        const targetLabelsCypher = targetInfo.labels.map((l: string) => `\`${l}\``).join(':');
+        const sourceLabelsCypher = sourceInfo.labels.map((l: string) => '\`' + l + '\`').join(':');
+        const targetLabelsCypher = targetInfo.labels.map((l: string) => '\`' + l + '\`').join(':');
         const relType = rel.type.replace(/ /g, '_').toUpperCase();
 
         await this.session.run(
@@ -408,6 +449,10 @@ export class Neo4jIngestionService {
     }
     logger.info(`Merged ${nonPropertyRelationships.length} non-property relationships between entities.`);
     logger.info('Neo4j ingestion complete.');
+  }
+
+  getSession(): Session | null {
+    return this.session;
   }
 
   async close(): Promise<void> {

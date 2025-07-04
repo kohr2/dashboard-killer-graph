@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { logger } from '@shared/utils/logger';
+import { logger } from '@common/utils/logger';
 import { EnrichmentOrchestratorService } from '@platform/enrichment';
-import { OrganizationDTO } from '@platform/enrichment/dto-aliases';
+import { container } from 'tsyringe';
+import { OntologyService } from '@platform/ontology/ontology.service';
 
 export interface LlmGraphEntity {
   value: string;
@@ -93,29 +94,12 @@ export class ContentProcessingService {
         if (entity.type === 'Organization') {
           logger.info(`      -> Auto-enriching Organization: ${entity.name}`);
           try {
-            const orgDTO: OrganizationDTO = {
-              id: entity.id,
-              name: entity.name,
+            const orgDTO = {
               type: 'Organization',
-              label: entity.label || 'Organization',
-              enrichedData: entity.properties.enrichedData || '',
-              legalName: entity.properties.legalName || '',
-              industry: entity.properties.industry || '',
-              website: entity.properties.website || '',
-              description: entity.properties.description || '',
-              size: entity.properties.size || '',
-              foundedYear: entity.properties.foundedYear || '',
-              headquarters: entity.properties.headquarters || '',
-              address: entity.properties.address || '',
-              phone: entity.properties.phone || '',
-              email: entity.properties.email || '',
-              parentOrganizationId: entity.properties.parentOrganizationId || '',
-              activities: entity.properties.activities || '',
-              knowledgeElements: entity.properties.knowledgeElements || '',
-              validationStatus: entity.properties.validationStatus || 'VALID',
-              createdAt: entity.properties.createdAt || new Date().toISOString(),
-              updatedAt: entity.properties.updatedAt || new Date().toISOString(),
-              preferences: entity.properties.preferences || '',
+              name: entity.name,
+              id: entity.id,
+              label: entity.type,
+              properties: entity.properties || {}
             };
             const enrichedOrg = await this.enrichmentOrchestrator.enrich(orgDTO);
             if (enrichedOrg) {
@@ -191,5 +175,25 @@ export class ContentProcessingService {
       }
       return [];
     }
+  }
+
+  /**
+   * Normalise a raw entity type emitted by the LLM to the canonical ontology entity name.
+   * – Case-insensitive
+   * – Ignores whitespace, dashes, underscores
+   * Falls back to `Thing` if no match is found.
+   */
+  public static normaliseEntityType(rawType: string): string {
+    const ontologyService = container.resolve(OntologyService);
+    const validTypes = ontologyService.getAllEntityTypes();
+
+    if (validTypes.includes(rawType)) {
+      return rawType;
+    }
+
+    const cleanedRaw = rawType.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const match = validTypes.find(t => t.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanedRaw);
+
+    return match || 'Thing';
   }
 } 

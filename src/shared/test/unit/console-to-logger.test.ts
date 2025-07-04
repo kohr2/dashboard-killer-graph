@@ -1,6 +1,6 @@
-import { logger } from '../../logger';
+import { logger } from '@common/utils/logger';
 
-import '../../console-to-logger';
+import '@common/utils/console-to-logger';
 
 describe('console-to-logger redirect', () => {
   it('should call logger.info when console.log is used', () => {

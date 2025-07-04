@@ -1,0 +1,19 @@
+{
+  "extends": "../../config/tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "../../dist/ingestion",
+    "rootDir": "../",
+    "rootDirs": [".", "../shared", "../platform", "../common"],
+    "baseUrl": "../..",
+    "paths": {
+      "@ingestion/*": ["src/ingestion/*"],
+      "@shared/*": ["src/shared/*"],
+      "@platform/*": ["src/platform/*"],
+      "@common/*": ["src/common/*"],
+      "@src/*": ["src/*"]
+    }
+  },
+  "include": ["**/*.ts", "../shared/**/*.ts", "../common/**/*.ts"],
+  "exclude": ["**/*.test.ts"]
+} 

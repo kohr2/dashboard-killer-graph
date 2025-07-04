@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as glob from 'glob';
 import { singleton } from 'tsyringe';
 import { z } from 'zod';
-import { logger } from '@shared/utils/logger';
+import { logger } from '@common/utils/logger';
 import { OntologyPlugin } from '@platform/ontology/ontology.plugin';
 
 // Local interface for testing - matches the generated DTO structure
@@ -23,7 +23,13 @@ const OntologyPropertySchema = z.object({
 });
 
 const OntologyEntitySchema = z.object({
-  description: z.string().optional(),
+  description: z.union([
+    z.string(),
+    z.object({
+      _: z.string(),
+      $: z.record(z.any()).optional()
+    })
+  ]).optional(),
   values: z.array(z.string()).optional(),
   parent: z.string().optional(),
   isProperty: z.boolean().optional(),
@@ -37,10 +43,22 @@ const OntologyEntitySchema = z.object({
     .optional(),
 });
 
+// Updated to handle both formats: domain/range and source/target
 const OntologyRelationshipSchema = z.object({
-  domain: z.union([z.string(), z.array(z.string())]),
-  range: z.union([z.string(), z.array(z.string())]),
-  description: z.string().optional(),
+  // Expected format (domain/range)
+  domain: z.union([z.string(), z.array(z.string())]).optional(),
+  range: z.union([z.string(), z.array(z.string())]).optional(),
+  // Actual format used in ontology files (source/target)
+  source: z.union([z.string(), z.array(z.string())]).optional(),
+  target: z.union([z.string(), z.array(z.string())]).optional(),
+  // Handle both string and object descriptions
+  description: z.union([
+    z.string(),
+    z.object({
+      _: z.string(),
+      $: z.record(z.any()).optional()
+    })
+  ]).optional(),
 });
 
 const OntologyReasoningSchema = z.object({
@@ -59,8 +77,35 @@ const OntologyReasoningSchema = z.object({
 
 const OntologySchemaValidator = z.object({
   name: z.string(),
-  entities: z.record(OntologyEntitySchema),
-  relationships: z.record(OntologyRelationshipSchema).optional(),
+  entities: z.union([
+    z.record(OntologyEntitySchema),
+    z.array(z.object({
+      name: z.string(),
+      description: z.union([z.string(), z.object({ _: z.string(), $: z.record(z.any()).optional() })]).optional(),
+      properties: z.record(z.any()).optional(),
+      keyProperties: z.array(z.string()).optional(),
+      vectorIndex: z.boolean().optional(),
+      documentation: z.string().optional(),
+    }))
+  ]),
+  relationships: z.union([
+    z.record(OntologyRelationshipSchema),
+    z.array(z.object({
+      name: z.string(),
+      description: z.union([
+        z.string(),
+        z.object({
+          _: z.string(),
+          $: z.record(z.any()).optional()
+        })
+      ]).optional(),
+      source: z.union([z.string(), z.array(z.string())]).optional(),
+      target: z.union([z.string(), z.array(z.string())]).optional(),
+      domain: z.union([z.string(), z.array(z.string())]).optional(),
+      range: z.union([z.string(), z.array(z.string())]).optional(),
+      documentation: z.string().optional(),
+    }))
+  ]).optional(),
   reasoning: OntologyReasoningSchema.optional(),
 });
 
@@ -71,6 +116,11 @@ export type EntityFactory<T> = (data: unknown) => T;
 interface InternalOntologySchema {
     entities: { [key: string]: z.infer<typeof OntologyEntitySchema> };
     relationships: { [key: string]: z.infer<typeof OntologyRelationshipSchema> };
+}
+
+// Add a type guard for object descriptions
+function hasUnderscoreProp(obj: unknown): obj is { _: string } {
+  return typeof obj === 'object' && obj !== null && '_' in obj && typeof (obj as any)._ === 'string';
 }
 
 @singleton()
@@ -98,12 +148,82 @@ export class OntologyService {
         // Validate each object against the schema
         const validatedOntology = OntologySchemaValidator.parse(ontology);
         
-        this.ontologies.push(validatedOntology);
-        if (validatedOntology.entities) {
-            Object.assign(this.schema.entities, validatedOntology.entities);
+        // Normalize entities from array to object format
+        const normalizedEntities = Array.isArray(validatedOntology.entities) ?
+          Object.fromEntries(
+            (validatedOntology.entities as any[]).map((entity: any) => [
+              entity.name,
+              {
+                ...entity,
+                description: typeof entity.description === 'string'
+                  ? entity.description
+                  : (hasUnderscoreProp(entity.description)
+                      ? entity.description._
+                      : ''),
+              }
+            ])
+          ) :
+          Object.fromEntries(
+            Object.entries(validatedOntology.entities as Record<string, any>).map(([name, entity]: [string, any]) => [
+              name,
+              {
+                ...entity,
+                description: typeof entity.description === 'string'
+                  ? entity.description
+                  : (hasUnderscoreProp(entity.description)
+                      ? entity.description._
+                      : ''),
+              }
+            ])
+          );
+        
+        // Normalize relationships from array to object format and from source/target to domain/range
+        const normalizedRelationships = validatedOntology.relationships ? 
+          (Array.isArray(validatedOntology.relationships) ?
+            Object.fromEntries(
+              (validatedOntology.relationships as any[]).map((rel: any) => [
+                rel.name,
+                {
+                  ...rel,
+                  domain: rel.domain || rel.source,
+                  range: rel.range || rel.target,
+                  description: typeof rel.description === 'string'
+                    ? rel.description
+                    : (hasUnderscoreProp(rel.description)
+                        ? rel.description._
+                        : ''),
+                }
+              ])
+            ) :
+            Object.fromEntries(
+              Object.entries(validatedOntology.relationships as Record<string, any>).map(([name, rel]: [string, any]) => [
+                name,
+                {
+                  ...rel,
+                  domain: rel.domain || rel.source,
+                  range: rel.range || rel.target,
+                  description: typeof rel.description === 'string'
+                    ? rel.description
+                    : (hasUnderscoreProp(rel.description)
+                        ? rel.description._
+                        : ''),
+                }
+              ])
+            )
+          ) : {};
+        
+        const normalizedOntology = {
+          ...validatedOntology,
+          entities: normalizedEntities,
+          relationships: normalizedRelationships
+        };
+        
+        this.ontologies.push(normalizedOntology);
+        if (normalizedOntology.entities) {
+            Object.assign(this.schema.entities, normalizedOntology.entities);
         }
-        if (validatedOntology.relationships) {
-            Object.assign(this.schema.relationships, validatedOntology.relationships);
+        if (normalizedOntology.relationships) {
+            Object.assign(this.schema.relationships, normalizedOntology.relationships);
         }
       } catch (error) {
         if (error instanceof z.ZodError) {

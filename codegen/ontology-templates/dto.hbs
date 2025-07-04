@@ -1,9 +1,9 @@
 /**
- * {{entityName}}DTO - generated from ontology.json
+ * {{toValidIdentifier entityName}}DTO - generated from ontology.json
  * DO NOT EDIT MANUALLY. Changes will be overwritten.
  */
 
-export interface {{entityName}}DTO {
+export interface {{toValidIdentifier entityName}}DTO {
   id: string;
   type: string;
   label: string;
@@ -15,18 +15,18 @@ export interface {{entityName}}DTO {
   updatedAt?: Date | string;
 }
 
-export function is{{entityName}}DTO(obj: any): obj is {{entityName}}DTO {
+export function is{{toValidIdentifier entityName}}DTO(obj: any): obj is {{toValidIdentifier entityName}}DTO {
   return obj && 
          typeof obj.id === 'string' && 
          typeof obj.type === 'string' && 
          typeof obj.label === 'string';
 }
 
-export function create{{entityName}}DTO(data: Partial<{{entityName}}DTO>): {{entityName}}DTO {
+export function create{{toValidIdentifier entityName}}DTO(data: Partial<{{toValidIdentifier entityName}}DTO>): {{toValidIdentifier entityName}}DTO {
   return {
     id: data.id || '',
-    type: data.type || '{{entityName}}',
-    label: data.label || '{{entityName}}',
+    type: data.type || '{{toValidIdentifier entityName}}',
+    label: data.label || '{{toValidIdentifier entityName}}',
     {{#each properties}}
     {{@key}}: data.{{@key}},
     {{/each}}

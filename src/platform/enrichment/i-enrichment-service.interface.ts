@@ -1,6 +1,4 @@
-import { OrganizationDTO, PersonDTO, ContactDTO } from './dto-aliases';
-
-export type EnrichableEntity = OrganizationDTO | PersonDTO | ContactDTO;
+import { GenericEntity, EnrichmentResult } from './dto-aliases';
 
 /**
  * Defines the contract for an enrichment service.
@@ -20,5 +18,5 @@ export interface IEnrichmentService {
    * @param entity The entity to enrich.
    * @returns A promise that resolves to a record containing the enriched data.
    */
-  enrich(entity: EnrichableEntity): Promise<Record<string, any> | null>;
+  enrich(entity: GenericEntity): Promise<EnrichmentResult>;
 } 

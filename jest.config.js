@@ -15,6 +15,7 @@ module.exports = {
     '^@financial/(.*)$': '<rootDir>/ontologies/financial/$1',
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',
     '^@mcp/(.*)$': '<rootDir>/src/mcp/$1',
+    '^@common/(.*)$': '<rootDir>/src/common/$1',
     '^@procurement/(.*)$': '<rootDir>/ontologies/procurement/$1',
     '^@generated/(.*)$': '<rootDir>/codegen/generated/$1',
     '^@codegen/generated/(.*)$': '<rootDir>/codegen/generated/$1',
@@ -25,7 +26,7 @@ module.exports = {
 
   globalSetup: '<rootDir>/test/global-setup.ts',
   setupFilesAfterEnv: ['jest-extended/all', './test/setup.ts'],
-  testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/scripts/**/*.test.ts'],
+  testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/scripts/**/*.test.ts', '<rootDir>/test/**/*.test.ts'],
   globals: {
     'ts-jest': {
       tsconfig: 'test/tsconfig.json'

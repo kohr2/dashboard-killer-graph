@@ -1,85 +1,70 @@
 import { IEnrichmentService } from './i-enrichment-service.interface';
-import { OrganizationDTO, PersonDTO, ContactDTO } from './dto-aliases';
-import { logger } from '@shared/utils/logger';
-import { OntologyService } from '@platform/ontology/ontology.service';
+import { GenericEntity, EnrichmentResult } from './dto-aliases';
+import { logger } from '@common/utils/logger';
 
+/**
+ * Enrichment Orchestrator Service
+ * Coordinates multiple enrichment services (ontology-agnostic)
+ */
 export class EnrichmentOrchestratorService {
-  private services: Map<string, IEnrichmentService> = new Map();
+  private readonly services: IEnrichmentService[];
 
-  constructor(private ontologyService: OntologyService = OntologyService.getInstance()) {}
-
-  /**
-   * Registers a new enrichment service.
-   * @param service The enrichment service to register.
-   */
-  public register(service: IEnrichmentService): void {
-    if (this.services.has(service.name)) {
-      logger.warn(
-        `Enrichment service '${service.name}' is already registered. Overwriting.`,
-      );
-    }
-    this.services.set(service.name, service);
-    logger.info(`Enrichment service '${service.name}' registered.`);
+  constructor(services: IEnrichmentService[] = []) {
+    this.services = services;
   }
 
   /**
-   * Returns a list of all registered enrichment services.
-   * @returns An array of IEnrichmentService.
+   * Add an enrichment service
    */
-  public getServices(): IEnrichmentService[] {
-    return Array.from(this.services.values());
+  public addService(service: IEnrichmentService): void {
+    this.services.push(service);
   }
 
   /**
-   * Sequentially calls registered enrichment services for an entity.
+   * Enrich an entity using all available services
    */
-  public async enrich(entity: OrganizationDTO | PersonDTO | ContactDTO): Promise<OrganizationDTO | PersonDTO | ContactDTO> {
-    for (const service of this.services.values()) {
+  public async enrich(entity: GenericEntity): Promise<EnrichmentResult[]> {
+    const results: EnrichmentResult[] = [];
+
+    for (const service of this.services) {
       try {
-        const enrichmentData = await service.enrich(entity);
-
-        // Skip if the service could not enrich the entity (null or empty object)
-        if (enrichmentData && Object.keys(enrichmentData).length > 0) {
-          if (!(entity as any).enrichedData) {
-            (entity as any).enrichedData = {};
-          }
-
-          // Some services might already return a structure like { enrichedData: { SERVICE: {...} } }
-          const dataToMerge =
-            'enrichedData' in enrichmentData
-              ? (enrichmentData as any).enrichedData
-              : { [service.name]: enrichmentData };
-
-          // Merge the new data while preserving existing entries
-          (entity as any).enrichedData = {
-            ...(entity as any).enrichedData,
-            ...dataToMerge,
-          };
-
-          // If the enrichment returned top-level metadata, merge it into the entity's metadata as a convenience
-          const maybeMetadata =
-            (enrichmentData as any).metadata ??
-            (dataToMerge[service.name] as any)?.metadata;
-
-          if (maybeMetadata && typeof maybeMetadata === 'object') {
-            (entity as any).metadata = {
-              ...((entity as any).metadata ?? {}),
-              ...maybeMetadata,
-            };
-          }
-
-          logger.info(
-            `Successfully enriched entity '${entity.id}' with service '${service.name}'.`,
-          );
+        logger.debug(`Enriching entity ${entity.id} with service ${service.name}`);
+        const result = await service.enrich(entity);
+        results.push(result);
+        
+        if (result.success) {
+          logger.info(`✅ Enriched entity ${entity.id} with ${service.name}`);
+        } else {
+          logger.warn(`⚠️ Failed to enrich entity ${entity.id} with ${service.name}: ${result.error}`);
         }
       } catch (error) {
-        logger.error(
-          `Error during enrichment with service '${service.name}':`,
-          error,
-        );
+        logger.error(`❌ Error enriching entity ${entity.id} with ${service.name}:`, error);
+        results.push({
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+          metadata: {
+            service: service.name,
+            entityType: entity.type,
+            entityId: entity.id
+          }
+        });
       }
     }
 
-    return entity;
+    return results;
+  }
+
+  /**
+   * Get all available enrichment services
+   */
+  public getServices(): IEnrichmentService[] {
+    return [...this.services];
+  }
+
+  /**
+   * Get service by name
+   */
+  public getService(name: string): IEnrichmentService | undefined {
+    return this.services.find(service => service.name === name);
   }
 }

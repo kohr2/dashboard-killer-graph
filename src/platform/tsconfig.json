@@ -4,15 +4,21 @@
     "composite": true,
     "outDir": "../../dist/platform",
     "rootDir": ".",
-    "rootDirs": [".", "../ontologies"],
+    "rootDirs": [".", "../ontologies", "../ingestion"],
     "baseUrl": "../..",
     "paths": {
+      "@src/*": ["src/*"],
       "@crm/*": ["src/ontologies/crm/*"],
       "@financial/*": ["src/ontologies/financial/*"],
       "@platform/*": ["src/platform/*"],
-      "@shared/*": ["src/shared/*"]
+      "@shared/*": ["src/shared/*"],
+      "@ingestion/*": ["src/ingestion/*"],
+      "@common/*": ["src/common/*"]
     }
   },
   "include": ["**/*.ts"],
+  "references": [
+    { "path": "../ingestion" }
+  ],
   "exclude": ["**/*.test.ts"]
 } 

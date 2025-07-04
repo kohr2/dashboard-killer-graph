@@ -6,9 +6,9 @@
  * src/ontologies/crm/application/services/email-processing.service.ts
  */
 
-import { logger } from '@shared/utils/logger';
-import { EmailParsingService, ParsedEmailData } from '@platform/processing/email-parsing.service';
-import { AttachmentProcessingService, AttachmentProcessingResult } from '@platform/processing/attachment-processing.service';
+import { logger } from '@common/utils/logger';
+import type { IEmailParsingService, ParsedEmailDataMinimal as ParsedEmailData } from '@common/interfaces/email-parsing.interface';
+import type { IAttachmentProcessingService, AttachmentProcessingResultMinimal as AttachmentProcessingResult } from '@common/interfaces/attachment-processing.interface';
 import { EmailAttachment, ExtractedEntity } from '../types/email.interface';
 
 // Imports will be updated during architecture refactoring
@@ -27,8 +27,8 @@ export interface EmailProcessingResult {
 
 export class EmailProcessor {
   constructor(
-    private emailParsingService: EmailParsingService,
-    private attachmentProcessingService: AttachmentProcessingService,
+    private emailParsingService: IEmailParsingService,
+    private attachmentProcessingService: IAttachmentProcessingService,
     // TODO: Inject unified services
     // private entityExtractor: EntityExtractor,
     // private storageManager: StorageManager

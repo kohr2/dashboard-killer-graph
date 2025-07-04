@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { logger } from '@shared/logger';
-import '../console-to-logger';
+import { logger } from '@common/utils/logger';
+import '@common/utils/console-to-logger';
 
 describe('console-to-logger redirect', () => {
   const originalConsoleLog = console.log;

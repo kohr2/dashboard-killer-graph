@@ -1,20 +1,20 @@
 import { singleton } from 'tsyringe';
-import { {{entityName}} } from './{{entityName}}.entity';
-import { I{{entityName}}Repository } from './{{entityName}}.repository';
+import { {{toValidIdentifier entityName}} } from './{{toValidIdentifier entityName}}.entity';
+import { I{{toValidIdentifier entityName}}Repository } from './{{toValidIdentifier entityName}}.repository';
 import { logger } from '@shared/utils/logger';
 
 @singleton()
-export class {{entityName}}Service {
-  constructor(private repository: I{{entityName}}Repository) {}
+export class {{toValidIdentifier entityName}}Service {
+  constructor(private repository: I{{toValidIdentifier entityName}}Repository) {}
 
   /**
    * Find entity by ID
    */
-  async findById(id: string): Promise<{{entityName}} | null> {
+  async findById(id: string): Promise<{{toValidIdentifier entityName}} | null> {
     try {
       return await this.repository.findById(id);
     } catch (error) {
-      logger.error(`Error finding {{entityName}} by ID ${id}:`, error);
+      logger.error(`Error finding {{toValidIdentifier entityName}} by ID ${id}:`, error);
       return null;
     }
   }
@@ -22,11 +22,11 @@ export class {{entityName}}Service {
   /**
    * Get all entities
    */
-  async findAll(): Promise<{{entityName}}[]> {
+  async findAll(): Promise<{{toValidIdentifier entityName}}[]> {
     try {
       return await this.repository.findAll();
     } catch (error) {
-      logger.error('Error finding all {{entityName}} entities:', error);
+      logger.error('Error finding all {{toValidIdentifier entityName}} entities:', error);
       return [];
     }
   }
@@ -34,11 +34,11 @@ export class {{entityName}}Service {
   /**
    * Create new entity
    */
-  async create(entity: {{entityName}}): Promise<{{entityName}} | null> {
+  async create(entity: {{toValidIdentifier entityName}}): Promise<{{toValidIdentifier entityName}} | null> {
     try {
       return await this.repository.create(entity);
     } catch (error) {
-      logger.error('Error creating {{entityName}}:', error);
+      logger.error('Error creating {{toValidIdentifier entityName}}:', error);
       return null;
     }
   }
@@ -46,11 +46,11 @@ export class {{entityName}}Service {
   /**
    * Update existing entity
    */
-  async update(id: string, entity: Partial<{{entityName}}>): Promise<{{entityName}} | null> {
+  async update(id: string, entity: Partial<{{toValidIdentifier entityName}}>): Promise<{{toValidIdentifier entityName}} | null> {
     try {
       return await this.repository.update(id, entity);
     } catch (error) {
-      logger.error(`Error updating {{entityName}} ${id}:`, error);
+      logger.error(`Error updating {{toValidIdentifier entityName}} ${id}:`, error);
       return null;
     }
   }
@@ -63,7 +63,7 @@ export class {{entityName}}Service {
       await this.repository.delete(id);
       return true;
     } catch (error) {
-      logger.error(`Error deleting {{entityName}} ${id}:`, error);
+      logger.error(`Error deleting {{toValidIdentifier entityName}} ${id}:`, error);
       return false;
     }
   }
@@ -72,11 +72,11 @@ export class {{entityName}}Service {
   /**
    * Find entity by key properties
    */
-  async findBy{{#each keyProperties}}{{#if @first}}{{this}}{{else}}And{{this}}{{/if}}{{/each}}({{#each keyProperties}}{{this}}: string{{#unless @last}}, {{/unless}}{{/each}}): Promise<{{entityName}} | null> {
+  async findBy{{#each keyProperties}}{{#if @first}}{{this}}{{else}}And{{this}}{{/if}}{{/each}}({{#each keyProperties}}{{this}}: string{{#unless @last}}, {{/unless}}{{/each}}): Promise<{{toValidIdentifier entityName}} | null> {
     try {
       return await this.repository.findBy{{#each keyProperties}}{{#if @first}}{{this}}{{else}}And{{this}}{{/if}}{{/each}}({{#each keyProperties}}{{this}}{{#unless @last}}, {{/unless}}{{/each}});
     } catch (error) {
-      logger.error(`Error finding {{entityName}} by key properties:`, error);
+      logger.error(`Error finding {{toValidIdentifier entityName}} by key properties:`, error);
       return null;
     }
   }
@@ -86,11 +86,11 @@ export class {{entityName}}Service {
   /**
    * Find similar entities
    */
-  async findSimilar(entity: {{entityName}}, limit?: number): Promise<{{entityName}}[]> {
+  async findSimilar(entity: {{toValidIdentifier entityName}}, limit?: number): Promise<{{toValidIdentifier entityName}}[]> {
     try {
       return await this.repository.findSimilar(entity, limit);
     } catch (error) {
-      logger.error('Error finding similar {{entityName}} entities:', error);
+      logger.error('Error finding similar {{toValidIdentifier entityName}} entities:', error);
       return [];
     }
   }

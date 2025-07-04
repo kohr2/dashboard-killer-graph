@@ -8,10 +8,10 @@
 import { DataSource, SourceType } from '../types/data-source.interface';
 import { IngestionPipeline as IPipeline, ProcessingResult, PipelineMetrics, ProcessingError } from '../types/pipeline.interface';
 import { NormalizedData } from '../types/normalized-data.interface';
-import { logger } from '@shared/utils/logger';
+import { logger } from '@common/utils/logger';
 import type { EntityExtractor, EntityExtraction } from '../entity-extractor.interface';
-import { OntologyDrivenAdvancedGraphService } from '@platform/processing/ontology-driven-advanced-graph.service';
-import { OntologyService } from '@platform/ontology/ontology.service';
+import type { IAdvancedGraphService } from '@common/interfaces/advanced-graph.interface';
+import type { IOntologyService } from '@common/interfaces/ontology.interface';
 
 export class IngestionPipeline implements IPipeline {
   readonly id: string;
@@ -20,8 +20,8 @@ export class IngestionPipeline implements IPipeline {
 
   constructor(
     private extractor: EntityExtractor = { extract: async () => ({ entities: [], relationships: [] }) },
-    private advancedGraphService?: OntologyDrivenAdvancedGraphService,
-    private ontologyService?: OntologyService,
+    private advancedGraphService?: IAdvancedGraphService,
+    private ontologyService?: IOntologyService,
   ) {
     // Generate unique ID using counter + timestamp for uniqueness
     IngestionPipeline.counter++;

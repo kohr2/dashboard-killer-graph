@@ -36,6 +36,19 @@ Handlebars.registerHelper('pascalCase', function(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 });
 
+// Register Handlebars helper to convert entity names to valid TypeScript identifiers
+Handlebars.registerHelper('toValidIdentifier', function(str: string) {
+  // Replace hyphens and other invalid characters with underscores, then convert to PascalCase
+  // But preserve the original casing for the first character of each word
+  return str
+    .replace(/[^a-zA-Z0-9_]/g, '_') // Replace invalid chars with underscores
+    .replace(/_+/g, '_') // Replace multiple underscores with single
+    .replace(/^_|_$/g, '') // Remove leading/trailing underscores
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Preserve original casing
+    .join('');
+});
+
 /**
  * Ontology Code Generator
  *
@@ -93,6 +106,8 @@ interface SourceOntology {
     entityCount: number;
     relationshipCount: number;
   };
+  ignoredEntities?: string[];
+  ignoredRelationships?: string[];
 }
 
 interface FinalOntology {
@@ -112,6 +127,8 @@ interface FinalOntology {
     entityCount: number;
     relationshipCount: number;
   };
+  ignoredEntities?: string[];
+  ignoredRelationships?: string[];
 }
 
 interface OntologyConfig {
@@ -122,6 +139,8 @@ interface OntologyConfig {
   relationships?: Record<string, OntologyRelationship>;
   source: any;
   metadata: any;
+  ignoredEntities?: string[];
+  ignoredRelationships?: string[];
 }
 
 interface OntologyGenerator {
@@ -145,6 +164,41 @@ class OntologyGeneratorImpl implements OntologyGenerator {
   }
 
   /**
+   * Create a minimal source ontology if it doesn't exist
+   */
+  private createMinimalSourceOntology(ontologyName: string, sourcePath: string): SourceOntology {
+    const minimalSource: SourceOntology = {
+      name: ontologyName,
+      source: {
+        url: '',
+        type: 'manual',
+        version: '1.0.0',
+        description: `Auto-generated source ontology for ${ontologyName}`
+      },
+      entities: [],
+      relationships: [],
+      metadata: {
+        sourceUrl: '',
+        extractionDate: new Date().toISOString(),
+        sourceVersion: '1.0.0',
+        entityCount: 0,
+        relationshipCount: 0
+      },
+      ignoredEntities: [],
+      ignoredRelationships: []
+    };
+
+    // Ensure directory exists
+    this.ensureDirectory(path.dirname(sourcePath));
+    
+    // Write the minimal source ontology
+    fs.writeFileSync(sourcePath, JSON.stringify(minimalSource, null, 2));
+    logger.info(`Created minimal source ontology: ${sourcePath}`);
+    
+    return minimalSource;
+  }
+
+  /**
    * Load and validate ontology configuration from the new JSON format
    */
   private loadOntologyConfig(ontologyName: string): OntologyConfig {
@@ -158,7 +212,7 @@ class OntologyGeneratorImpl implements OntologyGenerator {
       const sourceData = fs.readFileSync(sourcePath, 'utf8');
       sourceOntology = JSON.parse(sourceData) as SourceOntology;
     } else {
-      throw new Error(`Source ontology not found: ${sourcePath}`);
+      sourceOntology = this.createMinimalSourceOntology(ontologyName, sourcePath);
     }
 
     // Load final ontology (with overrides)
@@ -167,18 +221,64 @@ class OntologyGeneratorImpl implements OntologyGenerator {
       const finalData = fs.readFileSync(finalPath, 'utf8');
       finalOntology = JSON.parse(finalData) as FinalOntology;
     } else {
-      throw new Error(`Final ontology not found: ${finalPath}`);
+      // Create a minimal final ontology based on the source
+      finalOntology = {
+        name: sourceOntology.name,
+        source: {
+          url: sourceOntology.source.url,
+          type: sourceOntology.source.type,
+          version: sourceOntology.source.version,
+          description: sourceOntology.source.description
+        },
+        entities: {},
+        relationships: {},
+        metadata: sourceOntology.metadata,
+        ignoredEntities: sourceOntology.ignoredEntities || [],
+        ignoredRelationships: sourceOntology.ignoredRelationships || []
+      };
+      
+      // Write the minimal final ontology
+      fs.writeFileSync(finalPath, JSON.stringify(finalOntology, null, 2));
+      logger.info(`Created minimal final ontology: ${finalPath}`);
+    }
+
+    // Get ignored entities and relationships from source ontology
+    const ignoredEntities = sourceOntology.ignoredEntities || [];
+    const ignoredRelationships = sourceOntology.ignoredRelationships || [];
+
+    // Filter out ignored entities
+    const filteredEntities: Record<string, OntologyEntity> = {};
+    for (const [entityName, entityConfig] of Object.entries(finalOntology.entities)) {
+      if (!ignoredEntities.includes(entityName)) {
+        filteredEntities[entityName] = entityConfig;
+      } else {
+        logger.info(`Skipping ignored entity: ${entityName}`);
+      }
+    }
+
+    // Filter out ignored relationships
+    const filteredRelationships: Record<string, OntologyRelationship> = {};
+    if (finalOntology.relationships) {
+      for (const [relationshipName, relationshipConfig] of Object.entries(finalOntology.relationships)) {
+        if (!ignoredRelationships.includes(relationshipName)) {
+          filteredRelationships[relationshipName] = relationshipConfig;
+        } else {
+          logger.info(`Skipping ignored relationship: ${relationshipName}`);
+        }
+      }
     }
 
     // Merge source and final ontologies, with final taking precedence
     const config: OntologyConfig = {
       name: finalOntology.name,
-      version: finalOntology.source.version,
-      description: finalOntology.source.description,
-      entities: finalOntology.entities,
-      relationships: finalOntology.relationships,
-      source: finalOntology.source,
-      metadata: finalOntology.metadata
+      version: (finalOntology.source && finalOntology.source.version) || sourceOntology.source.version || '1.0.0',
+      description: (finalOntology.source && finalOntology.source.description) || sourceOntology.source.description || '',
+      entities: filteredEntities,
+      relationships: Object.keys(filteredRelationships).length > 0 ? filteredRelationships : undefined,
+      source: finalOntology.source || sourceOntology.source,
+      metadata: finalOntology.metadata || sourceOntology.metadata,
+      ignoredEntities,
+      ignoredRelationships
     };
 
     // Basic validation
@@ -186,7 +286,7 @@ class OntologyGeneratorImpl implements OntologyGenerator {
       throw new Error(`Invalid ontology config: ${ontologyName}`);
     }
 
-    logger.info(`Loaded ontology: ${config.name} with ${Object.keys(config.entities).length} entities`);
+    logger.info(`Loaded ontology: ${config.name} with ${Object.keys(config.entities).length} entities (${ignoredEntities.length} ignored)`);
     return config;
   }
 

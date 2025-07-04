@@ -1,27 +1,31 @@
 /**
- * Entity Mappers for EDGAR Enrichment Service Migration
- * 
- * This file provides mappers to convert between legacy domain entities
- * and the new generated DTOs during the incremental migration process.
+ * Entity Mappers - Convert between different entity formats
+ * Now completely ontology-agnostic using the generic entity system
  */
 
-import { OrganizationDTO } from '@generated/crm/Organization.dto';
-import { PersonDTO } from '@generated/crm/Person.dto';
-import { ContactDTO } from '@generated/crm/Contact.dto';
-import { EnrichableEntity, isOrganizationDTO, isPersonDTO, isContactDTO } from './dto-aliases';
+import { GenericEntity, mapToGenericEntity, mapFromGenericEntity } from './dto-aliases';
 
 /**
- * Maps any entity to its corresponding DTO
+ * Map any entity to a generic entity
  */
-export function mapEntityToDTO(entity: EnrichableEntity): OrganizationDTO | PersonDTO | ContactDTO {
-  if (isOrganizationDTO(entity)) {
-    return entity;
-  }
-  if (isPersonDTO(entity)) {
-    return entity;
-  }
-  if (isContactDTO(entity)) {
-    return entity;
-  }
-  throw new Error('Unsupported entity type');
-} 
+export function mapEntityToGenericEntity(entity: any): GenericEntity {
+  return mapToGenericEntity(entity);
+}
+
+/**
+ * Map any entity to a generic entity with specific type
+ */
+export function mapEntityToGenericEntityWithType(entity: any, type: string): GenericEntity {
+  return mapToGenericEntity(entity, type);
+}
+
+/**
+ * Map generic entity back to plain object
+ */
+export function mapGenericEntityToPlain(entity: GenericEntity): Record<string, any> {
+  return mapFromGenericEntity(entity);
+}
+
+// Backward compatibility exports - all use the same generic functions
+export const mapEntityToDTO = mapEntityToGenericEntity;
+export const mapDTOToEntity = mapGenericEntityToPlain; 

@@ -6,6 +6,7 @@ import { Config } from './config';
 import * as fs from 'fs';
 import * as path from 'path';
 import { EntityImportanceAnalyzer } from './entity-importance-analyzer';
+import { EntityImportanceAnalysis } from './entity-importance-analyzer';
 
 interface BuildOptions {
   configPath?: string;
@@ -67,6 +68,8 @@ async function buildOntology(options: BuildOptions = {}) {
     if (options.topEntities || options.topRelationships) {
       console.log('⚙️  Applying importance-based (LLM) filters...');
       const analyzer = new EntityImportanceAnalyzer();
+      let entityAnalysis: EntityImportanceAnalysis[] = [];
+      
       if (options.topEntities && result.sourceOntology) {
         // Prepare entity data for analysis
         const entityInputs = result.sourceOntology.entities.map(e => ({
@@ -75,7 +78,7 @@ async function buildOntology(options: BuildOptions = {}) {
           properties: e.properties || {}
         }));
         // Analyze importance
-        const entityAnalysis = await analyzer.analyzeEntityImportance(entityInputs, undefined, options.topEntities);
+        entityAnalysis = await analyzer.analyzeEntityImportance(entityInputs, undefined, options.topEntities);
         // Keep only the top entities by importance
         const topEntityNames = new Set(entityAnalysis.slice(0, options.topEntities).map(e => e.entityName));
         const allEntityNames = new Set(result.sourceOntology.entities.map(e => e.name));
@@ -99,6 +102,35 @@ async function buildOntology(options: BuildOptions = {}) {
         const ignoredRelationships = Array.from(allRelNames).filter(name => !topRelNames.has(name));
         result.sourceOntology.ignoredRelationships = ignoredRelationships;
         result.sourceOntology.relationships = result.sourceOntology.relationships.filter(r => topRelNames.has(r.name));
+      }
+      
+      // Add vectorIndex property based on importance analysis
+      if (entityAnalysis.length > 0 && result.finalOntology) {
+        console.log('🔍 Determining vectorIndex properties based on importance analysis...');
+        
+        // Create a map of entity names to their importance scores
+        const importanceScores = new Map<string, number>();
+        entityAnalysis.forEach(analysis => {
+          importanceScores.set(analysis.entityName, analysis.importanceScore);
+        });
+        
+        // Update each entity in the final ontology
+        for (const [entityName, entity] of Object.entries(result.finalOntology.entities)) {
+          const hasNameProperty = entity.properties && Object.keys(entity.properties).some(propName => 
+            propName.toLowerCase() === 'name' || propName.toLowerCase() === 'label'
+          );
+          const importanceScore = importanceScores.get(entityName) || 0;
+          const isVeryImportant = importanceScore >= 0.8;
+          
+          // Set vectorIndex based on the rule: has 'name' or 'label' property AND is very important
+          entity.vectorIndex = hasNameProperty && isVeryImportant;
+          
+          if (entity.vectorIndex) {
+            console.log(`  ✅ ${entityName}: vectorIndex = true (has name/label property, importance: ${importanceScore.toFixed(2)})`);
+          } else {
+            console.log(`  ❌ ${entityName}: vectorIndex = false (${!hasNameProperty ? 'no name/label property' : 'not very important (score: ' + importanceScore.toFixed(2) + ')'})`);
+          }
+        }
       }
     }
 

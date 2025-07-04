@@ -1,10 +1,10 @@
 import { AdvancedGraphService, TemporalRelationship, HierarchicalRelationship, SimilarityRelationship, ComplexRelationship, GraphPattern } from '../advanced-graph.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
-import { logger } from '@shared/utils/logger';
+import { logger } from '@common/utils/logger';
 
 // Mock external dependencies
 jest.mock('@platform/database/neo4j-connection');
-jest.mock('@shared/utils/logger', () => ({
+jest.mock('@common/utils/logger', () => ({
   logger: {
     info: jest.fn(),
     warn: jest.fn(),

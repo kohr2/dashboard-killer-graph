@@ -1,40 +1,40 @@
 /**
- * I{{entityName}}Repository - generated from ontology.json
+ * I{{toValidIdentifier entityName}}Repository - generated from ontology.json
  * DO NOT EDIT MANUALLY. Changes will be overwritten.
  */
 
-import { {{entityName}} } from './{{entityName}}.entity';
+import { {{toValidIdentifier entityName}} } from './{{toValidIdentifier entityName}}.entity';
 
-export interface I{{entityName}}Repository {
-  findById(id: string): Promise<{{entityName}} | null>;
-  findAll(): Promise<{{entityName}}[]>;
-  create(entity: {{entityName}}): Promise<{{entityName}}>;
-  update(id: string, entity: Partial<{{entityName}}>): Promise<{{entityName}}>;
+export interface I{{toValidIdentifier entityName}}Repository {
+  findById(id: string): Promise<{{toValidIdentifier entityName}} | null>;
+  findAll(): Promise<{{toValidIdentifier entityName}}[]>;
+  create(entity: {{toValidIdentifier entityName}}): Promise<{{toValidIdentifier entityName}}>;
+  update(id: string, entity: Partial<{{toValidIdentifier entityName}}>): Promise<{{toValidIdentifier entityName}}>;
   delete(id: string): Promise<void>;
   {{#if keyProperties.length}}
-  findBy{{#each keyProperties}}{{#if @first}}{{this}}{{else}}And{{this}}{{/if}}{{/each}}({{#each keyProperties}}{{this}}: string{{#unless @last}}, {{/unless}}{{/each}}): Promise<{{entityName}} | null>;
+  findBy{{#each keyProperties}}{{#if @first}}{{this}}{{else}}And{{this}}{{/if}}{{/each}}({{#each keyProperties}}{{this}}: string{{#unless @last}}, {{/unless}}{{/each}}): Promise<{{toValidIdentifier entityName}} | null>;
   {{/if}}
   {{#if vectorIndex}}
-  findSimilar(entity: {{entityName}}, limit?: number): Promise<{{entityName}}[]>;
+  findSimilar(entity: {{toValidIdentifier entityName}}, limit?: number): Promise<{{toValidIdentifier entityName}}[]>;
   {{/if}}
 }
 
-export abstract class Base{{entityName}}Repository implements I{{entityName}}Repository {
-  abstract findById(id: string): Promise<{{entityName}} | null>;
-  abstract findAll(): Promise<{{entityName}}[]>;
-  abstract create(entity: {{entityName}}): Promise<{{entityName}}>;
-  abstract update(id: string, entity: Partial<{{entityName}}>): Promise<{{entityName}}>;
+export abstract class Base{{toValidIdentifier entityName}}Repository implements I{{toValidIdentifier entityName}}Repository {
+  abstract findById(id: string): Promise<{{toValidIdentifier entityName}} | null>;
+  abstract findAll(): Promise<{{toValidIdentifier entityName}}[]>;
+  abstract create(entity: {{toValidIdentifier entityName}}): Promise<{{toValidIdentifier entityName}}>;
+  abstract update(id: string, entity: Partial<{{toValidIdentifier entityName}}>): Promise<{{toValidIdentifier entityName}}>;
   abstract delete(id: string): Promise<void>;
   
   {{#if keyProperties.length}}
-  async findBy{{#each keyProperties}}{{#if @first}}{{this}}{{else}}And{{this}}{{/if}}{{/each}}({{#each keyProperties}}{{this}}: string{{#unless @last}}, {{/unless}}{{/each}}): Promise<{{entityName}} | null> {
+  async findBy{{#each keyProperties}}{{#if @first}}{{this}}{{else}}And{{this}}{{/if}}{{/each}}({{#each keyProperties}}{{this}}: string{{#unless @last}}, {{/unless}}{{/each}}): Promise<{{toValidIdentifier entityName}} | null> {
     const all = await this.findAll();
     return all.find(entity => {{#each keyProperties}}entity.{{this}} === {{this}}{{#unless @last}} && {{/unless}}{{/each}}) || null;
   }
   {{/if}}
 
   {{#if vectorIndex}}
-  async findSimilar(entity: {{entityName}}, limit: number = 10): Promise<{{entityName}}[]> {
+  async findSimilar(entity: {{toValidIdentifier entityName}}, limit: number = 10): Promise<{{toValidIdentifier entityName}}[]> {
     // Implementation would depend on vector similarity algorithm
     const all = await this.findAll();
     return all.filter(e => e.id !== entity.id).slice(0, limit);

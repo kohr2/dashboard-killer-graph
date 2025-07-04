@@ -1,9 +1,9 @@
-import { ContentProcessingService } from '@platform/processing/content-processing.service';
+import type { IContentProcessingService } from '@common/interfaces/content-processing.interface';
 
 // Removed tsyringe dependency
 export class EmailIngestionService {
   constructor(
-    private readonly contentProcessingService: ContentProcessingService = new ContentProcessingService(),
+    private readonly contentProcessingService: IContentProcessingService,
   ) {}
 
   /**

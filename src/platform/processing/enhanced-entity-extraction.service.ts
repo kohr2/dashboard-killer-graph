@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { OntologyService } from '../ontology/ontology.service';
-import { logger } from '@shared/utils/logger';
+import { logger } from '@common/utils/logger';
 
 export interface ExtractedEntity {
   id: string;

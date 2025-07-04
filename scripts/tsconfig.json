@@ -9,7 +9,9 @@
       "@platform/*": ["src/platform/*"],
       "@crm/*": ["ontologies/crm/*"],
       "@financial/*": ["ontologies/financial/*"],
+      "@common/*": ["src/common/*"],
       "@shared/*": ["src/shared/*"],
+      "@ingestion/*": ["src/ingestion/*"],
       "@generated/*": ["codegen/generated/*"],
       "@generated/*/*DTO": ["codegen/generated/*/*.dto.ts"],
       "@generated/*/*Dto": ["codegen/generated/*/*.dto.ts"]

@@ -5,7 +5,7 @@ import OpenAI from 'openai';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
-import { logger } from '@shared/utils/logger';
+import { logger } from '@common/utils/logger';
 
 /**
  * Centralized bootstrap for scripts, tests and the API.  

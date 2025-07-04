@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { logger } from '@shared/utils/logger';
+import { logger } from '@common/utils/logger';
 import type { StructuredQuery, ConversationTurn } from './query-translator.types';
 
 // Removed tsyringe dependency
