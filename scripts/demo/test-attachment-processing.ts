@@ -18,7 +18,7 @@ async function testAttachmentProcessing() {
   const emailParsingService = new EmailParsingService();
   const attachmentProcessingService = new AttachmentProcessingService();
   const emailProcessor = new EmailProcessor(emailParsingService, attachmentProcessingService);
-  const testEmailsDir = join(__dirname, '../../test/fixtures/emails');
+  const testEmailsDir = join(__dirname, '../../test/fixtures/financial/emails');
   
   // Get all .eml files
   const emlFiles = readdirSync(testEmailsDir)
