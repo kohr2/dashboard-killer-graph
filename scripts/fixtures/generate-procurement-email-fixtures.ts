@@ -63,7 +63,11 @@ async function buildEmailBodyWithLLM(vendor: string, category: string, poNumber:
     temperature: 0.8,
   });
 
-  return completion.choices[0].message.content.trim();
+  const content = completion.choices[0].message.content;
+  if (!content) {
+    throw new Error('OpenAI API returned empty content');
+  }
+  return content.trim();
 }
 
 /** Basic slugifier for filenames */
