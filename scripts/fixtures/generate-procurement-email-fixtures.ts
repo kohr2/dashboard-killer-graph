@@ -19,9 +19,49 @@
 
 import { promises as fs } from 'fs';
 import { join } from 'path';
+import OpenAI from 'openai';
 
 const FIXTURE_ROOT = join(__dirname, '../../test/fixtures/procurement/emails');
-const EMAIL_COUNT = 100;
+const DEFAULT_EMAIL_COUNT = 100;
+
+// ----------------------- CLI OPTIONS -------------------------
+const argvFlags = process.argv.slice(2);
+const USE_LLM = argvFlags.includes('--llm');
+const COUNT_ARG = argvFlags.find((arg) => arg.startsWith('--count='));
+const EMAIL_COUNT_OVERRIDE = COUNT_ARG ? parseInt(COUNT_ARG.split('=')[1], 10) : undefined;
+
+// Warn if LLM requested but no API key
+if (USE_LLM && !process.env.OPENAI_API_KEY) {
+  // eslint-disable-next-line no-console
+  console.warn('⚠️  --llm flag provided but OPENAI_API_KEY is not set. Falling back to template generation.');
+}
+
+// -------------------- LLM HELPER FUNCTION --------------------
+const openai = USE_LLM && process.env.OPENAI_API_KEY ? new OpenAI() : null;
+
+async function buildEmailBodyWithLLM(vendor: string, category: string, poNumber: string, amount: string, currency: string): Promise<string> {
+  if (!openai) {
+    // Fallback plain-text template (similar to previous)
+    return `Dear ${vendor},\n\nWe are pleased to inform you that your tender for ${category} has been accepted.\nThe Purchase Order number is ${poNumber} with a total value of ${amount} ${currency}.\n\nPlease confirm receipt of this Contract Award within two business days and provide an estimated delivery schedule.\n\nBest regards,\nProcurement Department`;
+  }
+
+  const prompt = `You are a procurement department representative. Draft a concise, professional contract award email informing a vendor that their tender for ${category} has been accepted. Include the purchase order number ${poNumber} and total value ${amount} ${currency}. End with a polite request for confirmation and delivery schedule.`;
+
+  const completion = await openai!.chat.completions.create({
+    model: 'gpt-3.5-turbo',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a helpful assistant writing business procurement emails.',
+      },
+      { role: 'user', content: prompt },
+    ],
+    max_tokens: 180,
+    temperature: 0.8,
+  });
+
+  return completion.choices[0].message.content.trim();
+}
 
 /** Basic slugifier for filenames */
 function slugify(text: string): string {
@@ -106,12 +146,12 @@ ${body}`;
 async function main() {
   await fs.mkdir(FIXTURE_ROOT, { recursive: true });
 
-  const tasks = Array.from({ length: EMAIL_COUNT }, (_, i) => buildEmail(i + 1))
+  const tasks = Array.from({ length: EMAIL_COUNT_OVERRIDE || DEFAULT_EMAIL_COUNT }, (_, i) => buildEmail(i + 1))
     .map(({ filename, content }) => fs.writeFile(join(FIXTURE_ROOT, filename), content, 'utf8'));
 
   await Promise.all(tasks);
   // eslint-disable-next-line no-console
-  console.log(`✅ Generated ${EMAIL_COUNT} procurement email fixtures in ${FIXTURE_ROOT}`);
+  console.log(`✅ Generated ${EMAIL_COUNT_OVERRIDE || DEFAULT_EMAIL_COUNT} procurement email fixtures in ${FIXTURE_ROOT}`);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
