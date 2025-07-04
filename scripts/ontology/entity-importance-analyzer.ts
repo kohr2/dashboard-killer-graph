@@ -175,6 +175,8 @@ When analyzing entities, prioritize CORE BUSINESS CONCEPTS over administrative, 
 - Administrative: Registration, Identifier, Address, Date, Time, Documentation, Metadata
 - Regulatory: Compliance, Regulation, Authority, License, Certificate, Permit
 - Peripheral: History, Note, Record, File, Status, Version, Reference
+- **Second-Level Descriptive Entities**: Entities that primarily describe or classify other entities rather than being core business concepts themselves. These should be deprioritized:
+  - Examples: MaturityLevel, EntityStatus, TechnicalAbilitySummary, ContractTerm, FundType, InvestmentFund, HedgeFund, MutualFund
 
 **Analysis Criteria (in order of importance):**
 1. **Core Business Relevance**: Is this entity fundamental to the domain's primary business operations and value creation?
@@ -188,6 +190,7 @@ When analyzing entities, prioritize CORE BUSINESS CONCEPTS over administrative, 
 - **0.7-0.8**: Important operational entities (Branch, Objective, Investment, Deal)
 - **0.5-0.6**: Supporting business entities (Supplier, Customer, Account)
 - **0.3-0.4**: Administrative or regulatory entities (Registration, Identifier, Compliance)
+- **0.2-0.3**: Second-level descriptive entities (MaturityLevel, EntityStatus, TechnicalAbilitySummary)
 - **0.1-0.2**: Peripheral or metadata entities (Documentation, History, Note)
 
 **Entities to Analyze:**
@@ -200,7 +203,8 @@ ${entities.map((entity, index) => `\n${index + 1}. **${entity.name}**\n   Descri
 - Provide clear reasoning focusing on business operations and value creation
 - Select the top ${maxEntities} most important entities
 - Consider the context and business use cases if provided
-- **AVOID** prioritizing administrative, regulatory, or peripheral entities over core business concepts
+- **AVOID** prioritizing administrative, regulatory, peripheral, or second-level descriptive entities over core business concepts
+- **DEPRIORITIZE** entities that primarily describe or classify other entities rather than being core business concepts themselves
 
 **Output Format:**
 Return a JSON array of objects with the following structure:
@@ -301,29 +305,52 @@ Return a JSON array of objects with the following structure:
       
       // Core business entity keywords (high priority)
       const coreBusinessKeywords = [
-        // Primary business entities (highest priority)
-        'project', 'organization', 'person', 'workflow', 'business',
-        'fund', 'corporation', 'branch', 'goal', 'objective', 'investment', 'portfolio', 'deal', 'transaction',
+        // Primary business entities (highest priority - 0.3 boost each)
+        'project', 'organization', 'person', 'workflow', 'business', 'fund', 'program', 'law',
+        // Secondary business entities (high priority - 0.2 boost each)
+        'corporation', 'branch', 'goal', 'objective', 'investment', 'portfolio', 'deal', 'transaction',
         'contract', 'supplier', 'tender', 'purchase', 'order', 'agreement', 'vendor',
         'customer', 'lead', 'opportunity', 'account', 'contact', 'sale',
         'patient', 'treatment', 'diagnosis', 'provider', 'facility', 'medication',
         'company', 'enterprise', 'firm', 'entity',
-        // Direct connections to core concepts
+        'termsheet', 'claim', 'commitment', 'duty', 'regulation', 'owner',
+        // Direct connections to core concepts (medium priority - 0.15 boost each)
         'manager', 'owner', 'stakeholder', 'participant', 'member', 'employee', 'director', 'executive',
         'team', 'department', 'unit', 'division', 'subsidiary', 'partner', 'client', 'investor',
-        'strategy', 'plan', 'initiative', 'program', 'campaign', 'operation', 'process', 'procedure',
+        'strategy', 'plan', 'initiative', 'campaign', 'operation', 'process', 'procedure',
         'activity', 'task', 'milestone', 'deliverable', 'outcome', 'result', 'performance', 'metric'
+      ];
+      
+      // Ultra-high priority keywords (0.4 boost each)
+      const ultraHighPriorityKeywords = [
+        'fund', 'project', 'program', 'person', 'law', 'organization', 'business',
+        'goal', 'termsheet', 'claim', 'commitment', 'agreement', 'duty', 'regulation', 'owner'
       ];
       
       // Administrative/regulatory keywords (lower priority)
       const adminKeywords = [
         'registration', 'identifier', 'address', 'date', 'time', 'compliance', 'regulation', 'authority', 'license',
-        'documentation', 'metadata', 'history', 'note', 'record', 'file', 'certificate', 'permit'
+        'documentation', 'metadata', 'history', 'note', 'record', 'file', 'certificate', 'permit',
+        'religiouscorporation', 'religious', 'church', 'temple', 'mosque', 'synagogue',
+        'commoninterestdevelopmentcorporation'
+      ];
+      
+      // Second-level descriptive entity keywords (deprioritized - 0.3 penalty each)
+      const descriptiveEntityKeywords = [
+        // Common descriptive patterns
+        'level', 'status', 'summary', 'term', 'condition', 'validation', 'overview',
+        // Fund types and classifications
+        'fundtype', 'investmentfund', 'hedgefund', 'mutualfund', 'pensionfund', 'privateequityfund'
       ];
       
       const entityName = entity.name.toLowerCase();
       const description = (entity.description || '').toLowerCase();
       const fullText = `${entityName} ${description}`;
+      
+      // Check for ultra-high priority keywords first
+      const ultraHighMatches = ultraHighPriorityKeywords.filter(keyword => 
+        fullText.includes(keyword)
+      ).length;
       
       // Check for core business keywords
       const coreMatches = coreBusinessKeywords.filter(keyword => 
@@ -335,13 +362,27 @@ Return a JSON array of objects with the following structure:
         fullText.includes(keyword)
       ).length;
       
-      // Score based on keyword matches
+      // Check for descriptive entity keywords (second-level entities)
+      const descriptiveMatches = descriptiveEntityKeywords.filter(keyword => 
+        fullText.includes(keyword)
+      ).length;
+      
+      // Score based on keyword matches with higher weights for core entities
+      if (ultraHighMatches > 0) {
+        score += Math.min(ultraHighMatches * 0.4, 0.6); // High boost for ultra-priority entities
+      }
+      
       if (coreMatches > 0) {
-        score += Math.min(coreMatches * 0.15, 0.4); // Boost for core business entities
+        score += Math.min(coreMatches * 0.15, 0.3); // Boost for core business entities
       }
       
       if (adminMatches > 0) {
-        score -= Math.min(adminMatches * 0.1, 0.3); // Penalty for administrative entities
+        score -= Math.min(adminMatches * 0.15, 0.4); // Higher penalty for administrative entities
+      }
+      
+      // Apply penalty for descriptive entities (second-level entities describing parent entities)
+      if (descriptiveMatches > 0) {
+        score -= Math.min(descriptiveMatches * 0.3, 0.5); // Significant penalty for descriptive entities
       }
       
       // Boost score for entities with more properties (indicates complexity/importance)
@@ -355,16 +396,24 @@ Return a JSON array of objects with the following structure:
       // Cap score at 1.0
       score = Math.min(Math.max(score, 0.1), 1.0);
 
-      const reasoning = `Fallback analysis: ${coreMatches} core business keywords, ${adminMatches} administrative keywords, ${propertyCount} properties, ${descriptionLength} chars description`;
+      const reasoning = `Fallback analysis: ${ultraHighMatches} ultra-high priority keywords, ${coreMatches} core business keywords, ${adminMatches} administrative keywords, ${descriptiveMatches} descriptive entity keywords, ${propertyCount} properties, ${descriptionLength} chars description`;
       
-      const businessRelevance = coreMatches > 0 
+      const businessRelevance = ultraHighMatches > 0 
+        ? `Ultra-high priority entity with ${ultraHighMatches} ultra-high priority keywords - fundamental to domain operations`
+        : coreMatches > 0 
         ? `Core business entity with ${coreMatches} business keywords - fundamental to domain operations`
+        : descriptiveMatches > 0
+        ? `Descriptive entity with ${descriptiveMatches} descriptive keywords - second-level entity describing parent entities, lower business priority`
         : adminMatches > 0 
         ? `Administrative entity with ${adminMatches} admin keywords - lower business priority`
         : 'Standard entity - moderate business relevance';
 
-      const domainSignificance = coreMatches > 0 
+      const domainSignificance = ultraHighMatches > 0 
         ? `Fundamental building block in the conceptual model with strong business connections`
+        : coreMatches > 0 
+        ? `Fundamental building block in the conceptual model with strong business connections`
+        : descriptiveMatches > 0
+        ? `Supporting descriptive entity used to classify or describe other entities`
         : 'Supporting entity in the domain model';
 
       return {
@@ -393,21 +442,41 @@ Return a JSON array of objects with the following structure:
       
       // Core business relationship keywords (high priority)
       const coreBusinessKeywords = [
-        // Primary business relationships (highest priority)
+        // Primary business relationships (highest priority - 0.3 boost each)
         'hasproject', 'managesproject', 'ownsproject', 'participatesinproject', 'leadsproject',
         'hasorganization', 'managesorganization', 'ownsorganization', 'belongsto', 'ispartof',
         'hasperson', 'managesperson', 'reports to', 'supervises', 'collaborateswith',
         'hasworkflow', 'managesworkflow', 'executesworkflow', 'followsworkflow', 'definesworkflow',
-        // Core business operations
-        'hasinvestment', 'managesfund', 'ownscorporation', 'hasgoal', 'hasobjective',
+        'hasfund', 'managesfund', 'ownsfund', 'investsinfund', 'funds',
+        'hasprogram', 'managesprogram', 'ownsprogram', 'participatesinprogram', 'leadsprogram',
+        'haslaw', 'governedbylaw', 'regulatedbylaw', 'complieswithlaw', 'enforceslaw',
+        'hasgoal', 'managesgoal', 'ownsgoal', 'setsgoal', 'achievesgoal',
+        'hastermsheet', 'managestermsheet', 'ownstermsheet', 'createstermsheet', 'approvestermsheet',
+        'hasclaim', 'managesclaim', 'ownsclaim', 'filesclaim', 'processesclaim',
+        'hascommitment', 'managescommitment', 'ownscommitment', 'makescommitment', 'fulfillscommitment',
+        'hasagreement', 'managesagreement', 'ownsagreement', 'signsagreement', 'enforcesagreement',
+        'hasduty', 'managesduty', 'ownsduty', 'imposesduty', 'fulfillsduty',
+        'hasregulation', 'managesregulation', 'ownsregulation', 'enforcesregulation', 'complieswithregulation',
+        'hasowner', 'managesowner', 'ownsowner', 'appointsowner', 'transfersownership',
+        // Core business operations (high priority - 0.2 boost each)
         'awardscontract', 'suppliesto', 'purchasesfrom', 'managessupplier',
         'hascustomer', 'managesaccount', 'createsopportunity', 'closesdeal',
         'treatspatient', 'prescribesmedication', 'operateson', 'diagnosescondition',
-        // Direct business relationships
+        // Direct business relationships (medium priority - 0.15 boost each)
         'manages', 'owns', 'controls', 'operates', 'invests', 'trades', 'sells', 'buys',
         'leads', 'directs', 'supervises', 'coordinates', 'facilitates', 'enables',
         'implements', 'executes', 'performs', 'conducts', 'carriesout', 'delivers',
         'creates', 'develops', 'designs', 'plans', 'strategizes', 'decides', 'approves'
+      ];
+      
+      // Ultra-high priority relationship keywords (0.4 boost each)
+      const ultraHighPriorityKeywords = [
+        'hasproject', 'hasorganization', 'hasperson', 'hasfund', 'hasprogram', 'haslaw',
+        'managesproject', 'managesorganization', 'managesperson', 'managesfund', 'managesprogram',
+        'ownsproject', 'ownsorganization', 'ownsperson', 'ownsfund', 'ownsprogram',
+        'hasgoal', 'hastermsheet', 'hasclaim', 'hascommitment', 'hasagreement', 'hasduty', 'hasregulation', 'hasowner',
+        'managesgoal', 'managestermsheet', 'managesclaim', 'managescommitment', 'managesagreement', 'managesduty', 'managesregulation', 'managesowner',
+        'ownsgoal', 'ownstermsheet', 'ownsclaim', 'ownscommitment', 'ownsagreement', 'ownsduty', 'ownsregulation', 'ownsowner'
       ];
       
       // Administrative/regulatory keywords (lower priority)
@@ -420,6 +489,11 @@ Return a JSON array of objects with the following structure:
       const description = (rel.description || '').toLowerCase();
       const fullText = `${relName} ${description}`;
       
+      // Check for ultra-high priority keywords first
+      const ultraHighMatches = ultraHighPriorityKeywords.filter(keyword => 
+        fullText.includes(keyword)
+      ).length;
+      
       // Check for core business keywords
       const coreMatches = coreBusinessKeywords.filter(keyword => 
         fullText.includes(keyword)
@@ -430,13 +504,17 @@ Return a JSON array of objects with the following structure:
         fullText.includes(keyword)
       ).length;
       
-      // Score based on keyword matches
+      // Score based on keyword matches with higher weights for core relationships
+      if (ultraHighMatches > 0) {
+        score += Math.min(ultraHighMatches * 0.4, 0.6); // High boost for ultra-priority relationships
+      }
+      
       if (coreMatches > 0) {
-        score += Math.min(coreMatches * 0.15, 0.4); // Boost for core business relationships
+        score += Math.min(coreMatches * 0.15, 0.3); // Boost for core business relationships
       }
       
       if (adminMatches > 0) {
-        score -= Math.min(adminMatches * 0.1, 0.3); // Penalty for administrative relationships
+        score -= Math.min(adminMatches * 0.15, 0.4); // Higher penalty for administrative relationships
       }
       
       // Boost score for relationships with longer descriptions (indicates detailed documentation)
@@ -446,9 +524,11 @@ Return a JSON array of objects with the following structure:
       // Cap score at 1.0
       score = Math.min(Math.max(score, 0.1), 1.0);
 
-      const reasoning = `Fallback analysis: ${coreMatches} core business keywords, ${adminMatches} administrative keywords, ${descriptionLength} chars description`;
+      const reasoning = `Fallback analysis: ${ultraHighMatches} ultra-high priority keywords, ${coreMatches} core business keywords, ${adminMatches} administrative keywords, ${descriptionLength} chars description`;
       
-      const businessRelevance = coreMatches > 0 
+      const businessRelevance = ultraHighMatches > 0 
+        ? `Ultra-high priority relationship with ${ultraHighMatches} ultra-high priority keywords - fundamental to domain operations`
+        : coreMatches > 0 
         ? `Core business relationship with ${coreMatches} business keywords - fundamental to domain operations`
         : adminMatches > 0 
         ? `Administrative relationship with ${adminMatches} admin keywords - lower business priority`

@@ -13,6 +13,7 @@ import { OntologyService } from '@platform/ontology/ontology.service';
 import { resetDatabase } from '../database/reset-neo4j';
 import { OntologyDrivenReasoningService } from '@platform/reasoning/ontology-driven-reasoning.service';
 import { logger } from '@shared/utils/logger';
+import { getEnabledPlugins, getPluginSummary, pluginRegistry } from '../../config/ontology/plugins.config';
 
 interface ParsedEmailWithSource extends ParsedMail {
   sourceFile: string;
@@ -51,18 +52,22 @@ Usage: npx ts-node scripts/pipeline/email-ingestion.ts [options]
 Options:
   --folder=<path>     Specify email folder to process (default: emails)
   --database=<name>   Specify database to use (default: neo4j)
+  --ontology=<name>   Specify ontology to use (default: all enabled)
   --reset-db          Reset database before ingestion
   --help, -h          Show this help message
 
 Examples:
-  # Process financial emails with default database
+  # Process financial emails with default database and all ontologies
   npx ts-node scripts/pipeline/email-ingestion.ts --folder=financial/emails
 
-  # Process procurement emails with specific database
-  npx ts-node scripts/pipeline/email-ingestion.ts --folder=procurement/emails --database=procurement
+  # Process procurement emails with specific database and ontology
+  npx ts-node scripts/pipeline/email-ingestion.ts --folder=procurement/emails --database=procurement --ontology=procurement
+
+  # Process emails with specific ontology only
+  npx ts-node scripts/pipeline/email-ingestion.ts --folder=procurement/emails --ontology=crm
 
   # Process emails with database reset
-  npx ts-node scripts/pipeline/email-ingestion.ts --folder=procurement/emails --database=procurement --reset-db
+  npx ts-node scripts/pipeline/email-ingestion.ts --folder=procurement/emails --database=procurement --ontology=procurement --reset-db
 
   # Process default emails folder
   npx ts-node scripts/pipeline/email-ingestion.ts
@@ -84,6 +89,14 @@ Available databases:
   - crm               CRM-specific database
   - [custom]           Any custom database name
 
+Available ontologies:
+  - core               Core ontology (always enabled)
+  - crm                Customer Relationship Management
+  - financial          Financial instruments and deals
+  - procurement        Public procurement procedures
+  - fibo               Financial Industry Business Ontology
+  - all                All enabled ontologies (default)
+
 Requirements:
   - OPENAI_API_KEY in .env file
   - Neo4j database running
@@ -100,12 +113,42 @@ Requirements:
   const argvFlags = process.argv.slice(2);
   const FOLDER_ARG = argvFlags.find((arg) => arg.startsWith('--folder='));
   const DATABASE_ARG = argvFlags.find((arg) => arg.startsWith('--database='));
+  const ONTOLOGY_ARG = argvFlags.find((arg) => arg.startsWith('--ontology='));
   const EMAIL_FOLDER = FOLDER_ARG ? FOLDER_ARG.split('=')[1] : 'emails';
   const DATABASE_NAME = DATABASE_ARG ? DATABASE_ARG.split('=')[1] : 'neo4j';
+  const ONTOLOGY_NAME = ONTOLOGY_ARG ? ONTOLOGY_ARG.split('=')[1] : 'all';
 
   // Set database environment variable
   process.env.NEO4J_DATABASE = DATABASE_NAME;
   console.log(`🗄️ Using database: ${DATABASE_NAME}`);
+
+  // Handle ontology selection
+  console.log(`🏛️ Ontology selection: ${ONTOLOGY_NAME}`);
+  
+  if (ONTOLOGY_NAME !== 'all') {
+    // Enable only the specified ontology
+    const allPlugins = pluginRegistry.getAllPlugins();
+    const availableOntologies = Array.from(allPlugins.keys());
+    
+    if (!availableOntologies.includes(ONTOLOGY_NAME)) {
+      console.error(`❌ Ontology '${ONTOLOGY_NAME}' not found. Available ontologies: ${availableOntologies.join(', ')}`);
+      process.exit(1);
+    }
+    
+    // Disable all ontologies first
+    for (const ontology of availableOntologies) {
+      pluginRegistry.setPluginEnabled(ontology, false);
+    }
+    
+    // Enable only the specified ontology (and core)
+    pluginRegistry.setPluginEnabled('core', true);
+    pluginRegistry.setPluginEnabled(ONTOLOGY_NAME, true);
+    
+    console.log(`✅ Enabled ontology: ${ONTOLOGY_NAME} (plus core)`);
+  } else {
+    // Use all enabled ontologies (default behavior)
+    console.log('✅ Using all enabled ontologies');
+  }
 
   // Check for reset flag
   if (process.argv.includes('--reset-db')) {
@@ -114,13 +157,16 @@ Requirements:
     console.log('✅ Database reset complete.');
   }
 
-  // Initialize ontologies
+  // Initialize ontologies with selected plugins
   registerAllOntologies();
   const ontologyService = container.resolve(OntologyService);
   const validEntityTypes = ontologyService.getAllEntityTypes();
   const propertyEntityTypes = ontologyService.getPropertyEntityTypes();
   const validRelationshipTypes = ontologyService.getAllRelationshipTypes();
 
+  // Show ontology summary
+  const pluginSummary = getPluginSummary();
+  console.log('🏛️ Active Ontologies:', pluginSummary.enabled.join(', '));
   console.log('🏛️ Registered Ontology Types:', validEntityTypes.length);
   console.log('🏠 Registered Property Types:', propertyEntityTypes.length);
   console.log('🔗 Registered Relationship Types:', validRelationshipTypes.length);

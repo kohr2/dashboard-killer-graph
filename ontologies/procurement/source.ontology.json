@@ -9012,9 +9012,11 @@
   ],
   "metadata": {
     "sourceUrl": "https://raw.githubusercontent.com/OP-TED/ePO/master/implementation/ePO_core/owl_ontology/ePO_core.rdf",
-    "extractionDate": "2025-07-03T22:25:47.045Z",
+    "extractionDate": "2025-07-04T15:24:38.395Z",
     "sourceVersion": "2024.06",
     "entityCount": 148,
     "relationshipCount": 395
-  }
+  },
+  "ignoredEntities": [],
+  "ignoredRelationships": []
 }
