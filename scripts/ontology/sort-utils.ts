@@ -29,4 +29,27 @@ export function sortRecord<T>(record: Record<string, T>): Record<string, T> {
       sorted[key] = record[key];
     });
   return sorted;
+}
+
+/**
+ * Deep-sort an ontology entity record. Entities themselves are ordered alphabetically
+ * and each entity's `properties` map is also ordered A-Z.
+ */
+// NOTE: deprecated duplicate, kept commented to avoid redefinition errors
+// function _legacySortEntityProperties<T extends { properties?: Record<string, any> }>(entities: Record<string, T>): Record<string, T> {
+
+export function sortEntityProperties<T extends { properties?: Record<string, any> }>(
+  entities: Record<string, T>
+): Record<string, T> {
+  const sorted: Record<string, T> = {};
+  Object.keys(entities)
+    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+    .forEach((entityName) => {
+      const entity = { ...entities[entityName] };
+      if (entity.properties) {
+        entity.properties = sortRecord(entity.properties);
+      }
+      sorted[entityName] = entity;
+    });
+  return sorted;
 } 
