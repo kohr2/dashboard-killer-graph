@@ -108,7 +108,7 @@ function random<T>(arr: T[]): T {
 }
 
 /** Create a simple RFC-2822 formatted email string */
-function buildEmail(index: number): { filename: string; content: string } {
+async function buildEmail(index: number): Promise<{ filename: string; content: string }> {
   const vendor = random(vendorNames);
   const category = random(categories);
   const amount = (Math.random() * 50000 + 500).toFixed(2);
@@ -119,17 +119,7 @@ function buildEmail(index: number): { filename: string; content: string } {
 
   const date = new Date().toUTCString();
 
-  const body = `Dear ${vendor},
-
-We are pleased to inform you that your tender for ${category} has been accepted.
-The Purchase Order number is ${poNumber} with a total value of ${amount} ${currency}.
-
-Please confirm receipt of this Contract Award within two business days and
-provide an estimated delivery schedule.
-
-Best regards,
-Procurement Department
-`;
+  const body = await buildEmailBodyWithLLM(vendor, category, poNumber, amount, currency);
 
   const messageId = `<${poNumber.toLowerCase()}@procurement.example.com>`;
 
@@ -149,12 +139,21 @@ ${body}`;
 async function main() {
   await fs.mkdir(FIXTURE_ROOT, { recursive: true });
 
-  const tasks = Array.from({ length: EMAIL_COUNT_OVERRIDE || DEFAULT_EMAIL_COUNT }, (_, i) => buildEmail(i + 1))
-    .map(({ filename, content }) => fs.writeFile(join(FIXTURE_ROOT, filename), content, 'utf8'));
+  const emailCount = EMAIL_COUNT_OVERRIDE || DEFAULT_EMAIL_COUNT;
+  const emails = [];
+  
+  for (let i = 0; i < emailCount; i++) {
+    const email = await buildEmail(i + 1);
+    emails.push(email);
+  }
+  
+  const tasks = emails.map(({ filename, content }) => 
+    fs.writeFile(join(FIXTURE_ROOT, filename), content, 'utf8')
+  );
 
   await Promise.all(tasks);
   // eslint-disable-next-line no-console
-  console.log(`✅ Generated ${EMAIL_COUNT_OVERRIDE || DEFAULT_EMAIL_COUNT} procurement email fixtures in ${FIXTURE_ROOT}`);
+  console.log(`✅ Generated ${emailCount} procurement email fixtures in ${FIXTURE_ROOT}`);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
