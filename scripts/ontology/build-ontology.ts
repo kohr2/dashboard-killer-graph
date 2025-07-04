@@ -161,7 +161,18 @@ async function buildOntology(options: BuildOptions = {}) {
     const finalOntology = {
       name: config.name,
       source: config.source,
-      entities: result.finalOntology?.entities ? sortEntityProperties(result.finalOntology.entities) : {},
+      entities: (() => {
+        if (!result.finalOntology?.entities) return {};
+
+        let normalised: Record<string, any> = {};
+        const raw = result.finalOntology.entities as Record<string, any>;
+        for (const [key, val] of Object.entries(raw)) {
+          const entityName = (val as any)?.name || key;
+          const finalKey = /^\d+$/.test(key) ? entityName : key;
+          normalised[finalKey] = val;
+        }
+        return sortEntityProperties(normalised);
+      })(),
       relationships: result.finalOntology?.relationships ? sortRecord(result.finalOntology.relationships) : {},
       metadata: result.metadata
     };
