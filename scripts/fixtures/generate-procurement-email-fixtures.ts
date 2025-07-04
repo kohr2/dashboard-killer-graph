@@ -17,6 +17,9 @@
  * Run with:  `pnpm ts-node scripts/fixtures/generate-procurement-email-fixtures.ts`
  */
 
+import { config } from 'dotenv';
+config(); // Load environment variables from .env file
+
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import OpenAI from 'openai';
