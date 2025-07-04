@@ -14,7 +14,7 @@
  * – No attachments are included; pipelines that require attachments can add
  *   them later.
  *
- * Run with:  `npx ts-node scripts/fixtures/generate-procurement-email-fixtures.ts --ontology=procurement --count=100`
+ * Run with:  `npx ts-node scripts/fixtures/generate-email-fixtures.ts --ontology=procurement --count=100`
  */
 
 import { config } from 'dotenv';
