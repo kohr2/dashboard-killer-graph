@@ -71,9 +71,18 @@ export class Neo4jIngestionService {
     
     // Load the ontology JSON
     const ontology = JSON.parse(fs.readFileSync(ontologyPath, 'utf-8'));
-    const entities = ontology.entities || {};
+    let entityMap: Record<string, any> = {};
+    if (Array.isArray(ontology.entities)) {
+      // Convert array of entities [{ name: ..., ... }, ...] to record keyed by name
+      entityMap = Object.fromEntries(
+        ontology.entities.map((e: any) => [e.name ?? e.label ?? e.id ?? 'Unknown', e])
+      );
+    } else if (ontology.entities && typeof ontology.entities === 'object') {
+      entityMap = ontology.entities as Record<string, any>;
+    }
+
     // Find all entity names with vectorIndex: true
-    const indexableLabels = Object.entries(entities)
+    const indexableLabels = Object.entries(entityMap)
       .filter(([_, entity]: [string, any]) => entity.vectorIndex)
       .map(([name]) => name);
     if (indexableLabels.length === 0) {

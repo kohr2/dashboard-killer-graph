@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { EntityImportanceAnalyzer } from './entity-importance-analyzer';
 import { EntityImportanceAnalysis } from './entity-importance-analyzer';
-import { sortNamedArray, sortRecord } from './sort-utils';
+import { sortNamedArray, sortRecord, sortEntityProperties } from './sort-utils';
 
 interface BuildOptions {
   configPath?: string;
@@ -161,7 +161,7 @@ async function buildOntology(options: BuildOptions = {}) {
     const finalOntology = {
       name: config.name,
       source: config.source,
-      entities: result.finalOntology?.entities ? sortRecord(result.finalOntology.entities) : {},
+      entities: result.finalOntology?.entities ? sortEntityProperties(result.finalOntology.entities) : {},
       relationships: result.finalOntology?.relationships ? sortRecord(result.finalOntology.relationships) : {},
       metadata: result.metadata
     };
