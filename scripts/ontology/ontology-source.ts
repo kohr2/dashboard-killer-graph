@@ -20,6 +20,8 @@ export interface Relationship {
 export interface ParsedOntology {
   entities: Entity[];
   relationships: Relationship[];
+  ignoredEntities?: string[];
+  ignoredRelationships?: string[];
 }
 
 export interface OntologySource {
@@ -34,6 +36,8 @@ export interface OntologySource {
 export interface ExtractionResult {
   entities: Entity[];
   relationships: Relationship[];
+  ignoredEntities?: string[];
+  ignoredRelationships?: string[];
   metadata: {
     sourceUrl: string;
     extractionDate: string;

@@ -107,8 +107,15 @@ In Claude Desktop, you can now ask questions like:
 # Initialize database schema
 npm run db:init
 
-# Process test emails (28 test emails included)
+# Process test emails (100+ test emails available)
 npm run pipeline:email
+
+# Process specific email folders
+npm run pipeline:email -- --folder=procurement/emails
+npm run pipeline:email -- --folder=financial/emails
+
+# Generate new email fixtures
+npx ts-node -P config/tsconfig.base.json scripts/fixtures/generate-email-fixtures.ts --ontology=procurement --count=50
 
 # Test reasoning algorithms
 npm run demo:reasoning
@@ -120,280 +127,100 @@ npm run chat:dev
 npm test
 ```
 
-## System Status
+## Email Fixtures
 
-### ✅ Current Status (Latest Release)
-- **Build**: Zero compilation errors
-- **Tests**: 235/236 passing (99.6% success rate)
-- **Email Pipeline**: Fully functional with 28 test emails
-- **Ontologies**: 4 domains loaded (Core, CRM, Financial, Procurement)
-- **Database**: Neo4j with vector search working
-- **MCP Integration**: Claude Desktop integration active
-- **Ontology Builder**: Ontology-agnostic builder with OWL/RDF support
+The system includes a comprehensive email fixture generation system that creates realistic test emails for different ontologies.
 
-### Recent Improvements
-- **Ontology-Agnostic Builder**: Plugin-based architecture supporting FIBO, O-CREAM, and ePO
-- **Procurement Ontology**: Built complete procurement ontology (148 entities, 395 relationships)
-- **Enhanced Codegen**: Adapted for new JSON format with rich property extraction
-- **Real Source Integration**: OWL/RDF parsing with XML namespace handling
-- **Comprehensive Testing**: Full test suite for ontology builder and parser
-- **Removed Date/Time entities** to prevent conflicts with JavaScript Date type
-- **Enhanced test coverage** with comprehensive mock objects
-- **Fixed AsyncIterable handling** in email source tests
-- **Improved code generation** templates for better entity inheritance
-- **Reorganized test structure** for better maintainability
+### Features
+- **LLM-Powered Generation**: Uses OpenAI GPT-3.5 to generate realistic email content
+- **Fake People Names**: Includes realistic sender and recipient names with professional titles
+- **Multi-Ontology Support**: Supports procurement, financial, CRM, legal, healthcare, and FIBO ontologies
+- **Dynamic Ontology Loading**: Loads entity information from `source.ontology.json` files
+- **Realistic Email Addresses**: Generates vendor-specific email domains
+- **Professional Signatures**: Includes proper business signatures with titles
 
-## Architecture
+### Generating Email Fixtures
 
-### System Overview
+```bash
+# Generate procurement emails (requires OPENAI_API_KEY)
+npx ts-node -P config/tsconfig.base.json scripts/fixtures/generate-email-fixtures.ts --ontology=procurement --count=100
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Data Sources  │    │  Processing     │    │   Knowledge     │
-│                 │    │   Pipeline      │    │     Graph       │
-├─────────────────┤    ├─────────────────┤    ├─────────────────┤
-│ • Email (.eml)  │───▶│ • Entity        │───▶│ • Neo4j         │
-│ • Documents     │    │   Extraction    │    │   Database      │
-│ • APIs          │    │ • Ontology      │    │ • Vector Search │
-│ • Databases     │    │   Mapping       │    │ • Relationships │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                                │
-                                ▼
-                       ┌─────────────────┐
-                       │   Plugin        │
-                       │   Registry      │
-                       ├─────────────────┤
-                       │ • Auto-discovery│
-                       │ • Dynamic loading│
-                       │ • Configuration │
-                       └─────────────────┘
-                                │
-                                ▼
-                       ┌─────────────────┐
-                       │   Reasoning     │
-                       │   Engine        │
-                       ├─────────────────┤
-                       │ • Multi-domain  │
-                       │ • Algorithms    │
-                       │ • API Endpoints │
-                       └─────────────────┘
-                                │
-                                ▼
-                       ┌─────────────────┐
-                       │   MCP Server    │
-                       │ (Claude Desktop)│
-                       └─────────────────┘
+# Generate financial emails
+npx ts-node -P config/tsconfig.base.json scripts/fixtures/generate-email-fixtures.ts --ontology=financial --count=50
+
+# Generate CRM emails
+npx ts-node -P config/tsconfig.base.json scripts/fixtures/generate-email-fixtures.ts --ontology=crm --count=25
+
+# Generate FIBO emails
+npx ts-node -P config/tsconfig.base.json scripts/fixtures/generate-email-fixtures.ts --ontology=fibo --count=30
 ```
 
-### Project Structure
+### Available Ontologies
+- **procurement**: Contract awards, RFQs, purchase orders, supplier evaluations, tender notifications
+- **financial**: Deal announcements, investment updates, fund raising, merger notifications, IPO announcements
+- **crm**: Lead qualification, opportunity updates, customer onboarding, account reviews, sales pitches
+- **legal**: Contract reviews, legal consultations, compliance alerts, litigation updates, regulatory notices
+- **healthcare**: Patient referrals, medical supply orders, clinical trial updates, regulatory approvals, insurance claims
+- **fibo**: Financial instrument trades, risk assessments, compliance reports, market data updates, regulatory filings
+
+### Example Generated Email
 
 ```
-src/
-├── platform/           # Core services (processing, ontology, reasoning)
-├── ingestion/          # Data ingestion pipeline (refactored)
-├── ontologies/         # Domain ontologies (crm, financial, procurement)
-├── mcp/               # MCP server for Claude Desktop integration
-├── shared/             # Shared utilities and logging
-└── types/              # TypeScript types
+From: "Lisa Anderson" <lisa.anderson@company.com>
+To: "David Brown" <david.brown@vertexconstruction.com>
+Subject: RFQ Request for Transport Services from Vertex Construction - Ref: PROCUREMENT-205911
 
-test/
-├── fixtures/           # Test data (emails, documents)
-│   └── emails/         # 28 test email files
-└── setup/              # Test configuration
+Dear David Brown,
 
-scripts/
-├── pipeline/           # Pipeline demo scripts
-├── database/           # Database management scripts
-└── demo/               # Demo and testing scripts
+I hope this message finds you well. We are currently in need of transport services and would like to request a quotation from Vertex Construction. The estimated amount for this service is 40263.45 EUR. Please provide a Professional Suitability Summary along with the Concession Estimate for this Concession Contract. Your prompt response is highly appreciated.
+
+Thank you for your attention to this request.
+
+Best regards,
+Lisa Anderson
+Contract Manager
 ```
 
-### Core Components
+### Processing Email Fixtures
 
-1. **Platform Services** (`src/platform/`)
-   - **Processing**: Content processing and entity extraction
-   - **Ontology**: Ontology management and validation
-   - **Reasoning**: Ontology-driven reasoning algorithms
-   - **Chat**: Natural language interface
-   - **Database**: Neo4j connection management
-   - **Enrichment**: Entity enrichment services (EDGAR, Salesforce)
+```bash
+# Process all email fixtures
+npm run pipeline:email
 
-2. **Domain Ontologies** (`ontologies/`)
-   - **Core**: Generic entities (Communication, Fund, Sponsor, Event, Document, Process)
-   - **CRM**: Customer relationship management (Contact, Organization)
-   - **Financial**: Financial domain entities (Investor, Deal, MonetaryAmount, etc.)
-   - **Procurement**: Procurement and supply chain (148 entities, 395 relationships)
-   - **Plugin Registry**: Automatic discovery and loading of ontology plugins
+# Process specific email folders
+npm run pipeline:email -- --folder=procurement/emails
+npm run pipeline:email -- --folder=financial/emails
+npm run pipeline:email -- --folder=crm/emails
 
-3. **Ontology Builder** (`scripts/ontology/`)
-   - **Ontology-Agnostic CLI**: Plugin-based architecture for any ontology source
-   - **OWL/RDF Support**: FIBO, O-CREAM, ePO ontology parsing
-   - **Real Source Integration**: Live ontology extraction and validation
-   - **Code Generation**: Automatic entity, repository, service, and DTO generation
-
-3. **MCP Server** (`src/mcp/`)
-   - **Claude Desktop Integration**: Direct query access
-   - **Query Translation**: Natural language to Cypher queries
-   - **Schema Exposure**: Dynamic schema representation
-
-4. **Ingestion Pipeline** (`src/ingestion/`)
-   - **Sources**: Data source adapters (email, documents, APIs)
-   - **Pipeline**: Generic ingestion pipeline with ontology support
-   - **Services**: Email ingestion and processing services
-   - **Types**: Data source interfaces and normalized data types
-
-## API Reference
-
-### Base URL
-```
-http://localhost:3001/api
+# Process with database reset
+npm run pipeline:email -- --folder=procurement/emails --reset-db
 ```
 
-### Core Endpoints
+### Fake People Data
 
-#### Email Processing
-```http
-POST /email/process
-{
-  "filePath": "/path/to/email.eml"
-}
-```
+The system includes comprehensive fake people data for each ontology:
 
-#### Reasoning
-```http
-POST /reasoning/execute
-{
-  "ontology": "financial",
-  "algorithm": "identify_investment_opportunities"
-}
-```
+**Procurement Professionals:**
+- Sarah Mitchell (Procurement Manager)
+- Michael Chen (Senior Buyer)
+- Jennifer Rodriguez (Procurement Specialist)
+- David Thompson (Strategic Sourcing Manager)
+- Lisa Anderson (Contract Manager)
+- Robert Williams (Procurement Director)
+- Amanda Garcia (Supplier Relations Manager)
+- James Johnson (Category Manager)
 
-#### Chat Interface
-```http
-POST /chat/message
-{
-  "message": "Show me all investment opportunities",
-  "context": { "sessionId": "uuid" }
-}
-```
+**Financial Professionals:**
+- Alexandra Smith (Investment Manager)
+- Christopher Brown (Portfolio Manager)
+- Victoria Davis (Financial Analyst)
+- Daniel Wilson (Deal Manager)
+- Rachel Taylor (Investment Director)
+- Kevin Martinez (Fund Manager)
+- Nicole Garcia (Financial Controller)
+- Thomas Lee (Investment Analyst)
 
-#### Health Check
-```http
-GET /health
-```
-
-## Plugin Registration System
-
-The platform uses a dynamic plugin registry that automatically discovers and loads ontology plugins from the `ontologies/` directory.
-
-### Key Features
-- **Auto-Discovery**: Automatically finds ontology plugins in the `ontologies/` directory
-- **Dynamic Loading**: Loads plugins without requiring manual registration
-- **Runtime Management**: Enable/disable plugins without restarting the application
-- **Error Resilience**: Continues operation even if some plugins fail to load
-- **Configuration Management**: Supports custom plugin configurations
-
-### Plugin Status
-| Plugin | Status | Entities | Relationships | Auto-Discovery |
-|--------|--------|----------|---------------|----------------|
-| Core | ✅ Enabled | 3 | 0 | ✅ |
-| CRM | ✅ Enabled | 15+ | 20+ | ✅ |
-| Financial | ✅ Enabled | 25+ | 30+ | ✅ |
-| Procurement | ✅ Enabled | 148 | 395 | ✅ |
-
-### Plugin Management
-```typescript
-import { getEnabledPlugins, getPluginSummary } from '../config/ontology/plugins.config';
-
-// Get plugin status
-const summary = getPluginSummary();
-console.log('Enabled plugins:', summary.enabled);
-
-// Load plugins into ontology service
-const enabledPlugins = getEnabledPlugins();
-ontologyService.loadFromPlugins(enabledPlugins);
-```
-
-For detailed information, see [Plugin Registration System](./architecture/plugin-registration-system.md).
-
-## Ontologies
-
-Domain-specific ontologies define entities, relationships, and reasoning algorithms.
-
-### Core Ontology
-The core ontology contains generic entities used across all domains:
-- **Communication**: Generic communication entity with properties like `subject`, `content`, `timestamp`
-- **Fund**: Investment funds and portfolios
-- **Sponsor**: Investment sponsors and firms
-- **Event**: Business events and meetings
-- **Document**: Business documents and files
-- **Process**: Business processes and workflows
-
-### Domain Ontologies
-- **CRM**: Contact, Organization with relationship management
-- **Financial**: Investor, Deal, MonetaryAmount, and financial domain entities
-- **Procurement**: Supplier, Contract, Purchase, Category (disabled by default)
-
-### Ontology Structure
-```json
-{
-  "name": "financial",
-  "source": "https://spec.edmcouncil.org/fibo/",
-  "dependencies": ["crm"],
-  "entities": {
-    "Investor": {
-      "description": "An entity that provides capital for investment purposes",
-      "properties": {
-        "name": "string",
-        "type": "string",
-        "aum": "number",
-        "investmentFocus": "string[]",
-        "geographicFocus": "string[]"
-      },
-      "keyProperties": ["name", "type"],
-      "vectorIndex": true
-    }
-  },
-  "relationships": {
-    "INVESTS_IN": {
-      "description": "Investment relationship between entities",
-      "properties": {
-        "amount": "number",
-        "date": "string",
-        "type": "string"
-      }
-    }
-  }
-}
-```
-
-## Processing Pipeline
-
-### Email Processing
-1. **Parsing**: Extract email content and metadata using mailparser
-2. **Entity Extraction**: AI-powered entity recognition with spaCy integration
-3. **Ontology Mapping**: Map entities to domain ontologies with validation
-4. **Graph Storage**: Store in Neo4j with vector embeddings for similarity search
-
-### Entity Types
-- **Company/Organization**: Business organizations
-- **Person**: Individual people
-- **Location**: Geographic locations
-- **MonetaryAmount**: Financial values and amounts
-- **Deal**: Investment and business deals
-- **Document**: Business documents and communications
-
-## Reasoning Engine
-
-### Algorithm Types
-- **Pattern Recognition**: Find investment patterns and trends
-- **Anomaly Detection**: Identify unusual data patterns
-- **Recommendation Engine**: Suggest similar entities and opportunities
-- **Relationship Analysis**: Analyze entity connections and networks
-
-### Domain-Specific Reasoning
-- **Financial**: Investment opportunities, market analysis, deal flow
-- **CRM**: Lead scoring, relationship analysis, contact management
-- **Procurement**: Supplier analysis, cost optimization, contract management
+Plus similar professional data for CRM, Legal, Healthcare, and FIBO domains.
 
 ## Testing
 

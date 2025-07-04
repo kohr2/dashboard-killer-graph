@@ -78,6 +78,9 @@ async function buildOntology(options: BuildOptions = {}) {
         const entityAnalysis = await analyzer.analyzeEntityImportance(entityInputs, undefined, options.topEntities);
         // Keep only the top entities by importance
         const topEntityNames = new Set(entityAnalysis.slice(0, options.topEntities).map(e => e.entityName));
+        const allEntityNames = new Set(result.sourceOntology.entities.map(e => e.name));
+        const ignoredEntities = Array.from(allEntityNames).filter(name => !topEntityNames.has(name));
+        result.sourceOntology.ignoredEntities = ignoredEntities;
         result.sourceOntology.entities = result.sourceOntology.entities.filter(e => topEntityNames.has(e.name));
       }
       if (options.topRelationships && result.sourceOntology) {
@@ -92,6 +95,9 @@ async function buildOntology(options: BuildOptions = {}) {
         const relAnalysis = await analyzer.analyzeRelationshipImportance(relInputs, undefined, options.topRelationships);
         // Keep only the top relationships by importance
         const topRelNames = new Set(relAnalysis.slice(0, options.topRelationships).map(r => r.relationshipName));
+        const allRelNames = new Set(result.sourceOntology.relationships.map(r => r.name));
+        const ignoredRelationships = Array.from(allRelNames).filter(name => !topRelNames.has(name));
+        result.sourceOntology.ignoredRelationships = ignoredRelationships;
         result.sourceOntology.relationships = result.sourceOntology.relationships.filter(r => topRelNames.has(r.name));
       }
     }
@@ -109,7 +115,9 @@ async function buildOntology(options: BuildOptions = {}) {
       source: config.source,
       entities: result.sourceOntology?.entities || [],
       relationships: result.sourceOntology?.relationships || [],
-      metadata: result.metadata
+      metadata: result.metadata,
+      ignoredEntities: result.sourceOntology?.ignoredEntities || [],
+      ignoredRelationships: result.sourceOntology?.ignoredRelationships || []
     };
     
     fs.writeFileSync(sourceOntologyPath, JSON.stringify(sourceOntology, null, 2));

@@ -9,6 +9,8 @@ interface ProcessingResult {
   sourceOntology?: {
     entities: Entity[];
     relationships: Relationship[];
+    ignoredEntities?: string[];
+    ignoredRelationships?: string[];
   };
   finalOntology?: {
     entities: Record<string, Entity>;
@@ -73,7 +75,9 @@ export class OntologyProcessor {
         success: true,
         sourceOntology: {
           entities: extractionResult.entities,
-          relationships: extractionResult.relationships
+          relationships: extractionResult.relationships,
+          ignoredEntities: extractionResult.ignoredEntities,
+          ignoredRelationships: extractionResult.ignoredRelationships
         },
         finalOntology,
         metadata: extractionResult.metadata

@@ -13,6 +13,8 @@ export class OntologyExtractor {
     return {
       entities,
       relationships,
+      ignoredEntities: parsed.ignoredEntities,
+      ignoredRelationships: parsed.ignoredRelationships,
       metadata: {
         sourceUrl: config.source.url,
         extractionDate,
