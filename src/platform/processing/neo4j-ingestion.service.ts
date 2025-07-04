@@ -233,6 +233,15 @@ export class Neo4jIngestionService {
         const additionalProperties: any = {};
         
         // Handle different property types
+        if (entityProperties.has('name')) {
+          const names = entityProperties.get('name')!;
+          // Prefer the first 'name' property as canonical name, but keep original entity.name as fallback
+          additionalProperties.name = names[0] ?? entity.name;
+          if (names.length > 1) {
+            additionalProperties.alternativeNames = names.slice(1);
+          }
+        }
+        
         if (entityProperties.has('email')) {
           const emails = entityProperties.get('email')!;
           additionalProperties.email = emails[0];
@@ -332,6 +341,14 @@ export class Neo4jIngestionService {
         const entityProperties = propertyRelationships.get(entity.id) || new Map();
         const additionalProps: any = {};
 
+        if (entityProperties.has('name')) {
+          const names = entityProperties.get('name')!;
+          // Prefer the first 'name' property as canonical name, but keep original entity.name as fallback
+          additionalProps.name = names[0] ?? entity.name;
+          if (names.length > 1) {
+            additionalProps.alternativeNames = names.slice(1);
+          }
+        }
         if (entityProperties.has('email')) {
           const emails = entityProperties.get('email')!;
           additionalProps.email = emails[0];
@@ -378,7 +395,10 @@ export class Neo4jIngestionService {
             `MATCH (e {id: $id}) SET e += $props`,
             {
               id: nodeId,
-              props: additionalProps,
+              props: {
+                ...(entity.properties || {}),
+                ...additionalProps,
+              },
             },
           );
           logger.info(`Updated existing node '${entity.name}' with new properties.`);
