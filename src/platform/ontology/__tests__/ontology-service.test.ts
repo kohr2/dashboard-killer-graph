@@ -18,32 +18,32 @@ describe('OntologyService.getSchemaRepresentation', () => {
   });
 
   describe('basic functionality', () => {
-    it('returns a formatted string containing entity and relationship names', () => {
-      // Arrange: create service and load a minimal ontology
-      const testOntology = {
-        name: 'TestOntology',
-        entities: {
-          Person: { description: 'A person entity' },
-          Organization: { description: 'An organization entity' },
+  it('returns a formatted string containing entity and relationship names', () => {
+    // Arrange: create service and load a minimal ontology
+    const testOntology = {
+      name: 'TestOntology',
+      entities: {
+        Person: { description: 'A person entity' },
+        Organization: { description: 'An organization entity' },
+      },
+      relationships: {
+        WORKS_FOR: {
+          domain: 'Person',
+          range: 'Organization',
+          description: 'Employment relationship',
         },
-        relationships: {
-          WORKS_FOR: {
-            domain: 'Person',
-            range: 'Organization',
-            description: 'Employment relationship',
-          },
-        },
+      },
       };
 
-      ontologyService.loadFromObjects([testOntology]);
+    ontologyService.loadFromObjects([testOntology]);
 
       // Act: get the schema representation
-      const schemaStr = ontologyService.getSchemaRepresentation();
+    const schemaStr = ontologyService.getSchemaRepresentation();
 
-      // Assert: the returned string should contain our entity and relationship names
-      expect(schemaStr).toEqual(expect.stringContaining('Person'));
-      expect(schemaStr).toEqual(expect.stringContaining('Organization'));
-      expect(schemaStr).toEqual(expect.stringContaining('WORKS_FOR'));
+    // Assert: the returned string should contain our entity and relationship names
+    expect(schemaStr).toEqual(expect.stringContaining('Person'));
+    expect(schemaStr).toEqual(expect.stringContaining('Organization'));
+    expect(schemaStr).toEqual(expect.stringContaining('WORKS_FOR'));
       expect(schemaStr).toEqual(expect.stringContaining('Employment relationship'));
     });
 

@@ -11,14 +11,19 @@ import { AttachmentProcessingService } from '../../src/platform/processing/attac
 import { EmailParsingService } from '../../src/platform/processing/email-parsing.service';
 import { logger } from '../../src/shared/utils/logger';
 
+// Get folder from command line arguments or default to procurement
+const folderArg = process.argv.find(arg => arg.startsWith('--folder='));
+const folder = folderArg ? folderArg.split('=')[1] : 'procurement/emails';
+
 async function testAttachmentProcessing() {
   console.log('🔧 Testing Email Attachment Processing');
   console.log('====================================\n');
+  console.log(`📂 Processing folder: ${folder}\n`);
 
   const emailParsingService = new EmailParsingService();
   const attachmentProcessingService = new AttachmentProcessingService();
   const emailProcessor = new EmailProcessor(emailParsingService, attachmentProcessingService);
-  const testEmailsDir = join(__dirname, '../../test/fixtures/financial/emails');
+  const testEmailsDir = join(__dirname, '../../test/fixtures', folder);
   
   // Get all .eml files
   const emlFiles = readdirSync(testEmailsDir)

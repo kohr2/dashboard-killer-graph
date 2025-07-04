@@ -5,11 +5,15 @@ import { OwlSource } from './sources/owl-source';
 import { Config } from './config';
 import * as fs from 'fs';
 import * as path from 'path';
+import { EntityImportanceAnalyzer } from './entity-importance-analyzer';
 
 interface BuildOptions {
   configPath?: string;
   ontologyName?: string;
   outputDir?: string;
+  topEntities?: number;
+  topRelationships?: number;
+  includeExternal?: boolean;
 }
 
 async function buildOntology(options: BuildOptions = {}) {
@@ -44,7 +48,8 @@ async function buildOntology(options: BuildOptions = {}) {
     console.log(`📝 Description: ${config.source.description}`);
     
     // Initialize processor with available sources
-    const owlSource = new OwlSource();
+    const ontologyKey = options.ontologyName?.toLowerCase();
+    const owlSource = new OwlSource({ ontologyKey, includeExternalImports: options.includeExternal });
     const processor = new OntologyProcessor([owlSource]);
     
     // Process ontology
@@ -57,8 +62,42 @@ async function buildOntology(options: BuildOptions = {}) {
     }
     
     console.log('✅ Ontology processed successfully!');
-    console.log(`📊 Entities extracted: ${result.metadata?.entityCount || 0}`);
-    console.log(`🔗 Relationships extracted: ${result.metadata?.relationshipCount || 0}`);
+    
+    // Apply optional importance-based filtering
+    if (options.topEntities || options.topRelationships) {
+      console.log('⚙️  Applying importance-based (LLM) filters...');
+      const analyzer = new EntityImportanceAnalyzer();
+      if (options.topEntities && result.sourceOntology) {
+        // Prepare entity data for analysis
+        const entityInputs = result.sourceOntology.entities.map(e => ({
+          name: e.name,
+          description: typeof e.description === 'string' ? e.description : (e.description as any)?._ || e.description || '',
+          properties: e.properties || {}
+        }));
+        // Analyze importance
+        const entityAnalysis = await analyzer.analyzeEntityImportance(entityInputs, undefined, options.topEntities);
+        // Keep only the top entities by importance
+        const topEntityNames = new Set(entityAnalysis.slice(0, options.topEntities).map(e => e.entityName));
+        result.sourceOntology.entities = result.sourceOntology.entities.filter(e => topEntityNames.has(e.name));
+      }
+      if (options.topRelationships && result.sourceOntology) {
+        // Prepare relationship data for analysis
+        const relInputs = result.sourceOntology.relationships.map(r => ({
+          name: r.name,
+          description: typeof r.description === 'string' ? r.description : (r.description as any)?._ || r.description || '',
+          sourceType: r.source || 'Entity',
+          targetType: r.target || 'Entity'
+        }));
+        // Analyze importance
+        const relAnalysis = await analyzer.analyzeRelationshipImportance(relInputs, undefined, options.topRelationships);
+        // Keep only the top relationships by importance
+        const topRelNames = new Set(relAnalysis.slice(0, options.topRelationships).map(r => r.relationshipName));
+        result.sourceOntology.relationships = result.sourceOntology.relationships.filter(r => topRelNames.has(r.name));
+      }
+    }
+
+    console.log(`📊 Entities kept: ${result.sourceOntology?.entities.length || 0}`);
+    console.log(`🔗 Relationships kept: ${result.sourceOntology?.relationships.length || 0}`);
     
     // Determine output directory
     const outputDir = options.outputDir || path.dirname(configPath);
@@ -132,6 +171,15 @@ function parseArgs(): BuildOptions {
       case '--output-dir':
         options.outputDir = args[++i];
         break;
+      case '--top-entities':
+        options.topEntities = parseInt(args[++i], 10);
+        break;
+      case '--top-relationships':
+        options.topRelationships = parseInt(args[++i], 10);
+        break;
+      case '--include-external':
+        options.includeExternal = true;
+        break;
       case '--help':
       case '-h':
         showHelp();
@@ -158,6 +206,9 @@ Options:
   --config-path <path>     Path to the ontology config file
   --ontology-name <name>   Name of ontology (looks for ontologies/<name>/config.json)
   --output-dir <path>      Output directory (defaults to config file directory)
+  --top-entities <n>      Keep only the <n> most popular entities (popularity = number of relationships)
+  --top-relationships <n> Keep only the <n> most popular relationships (simple heuristic)
+  --include-external      Include external imports
   --help, -h              Show this help message
 
 Examples:
