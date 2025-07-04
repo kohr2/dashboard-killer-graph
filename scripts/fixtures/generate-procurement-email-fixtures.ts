@@ -19,7 +19,6 @@
 
 import { promises as fs } from 'fs';
 import { join } from 'path';
-import { format } from 'date-fns';
 
 const FIXTURE_ROOT = join(__dirname, '../../test/fixtures/procurement/emails');
 const EMAIL_COUNT = 100;
@@ -75,7 +74,7 @@ function buildEmail(index: number): { filename: string; content: string } {
 
   const subject = `Contract Award – ${vendor} (${category})`;
 
-  const date = format(new Date(), 'eee, dd LLL yyyy HH:mm:ss xx');
+  const date = new Date().toUTCString();
 
   const body = `Dear ${vendor},
 
