@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { EntityImportanceAnalyzer } from './entity-importance-analyzer';
 import { EntityImportanceAnalysis } from './entity-importance-analyzer';
+import { sortNamedArray, sortRecord } from './sort-utils';
 
 interface BuildOptions {
   configPath?: string;
@@ -145,8 +146,8 @@ async function buildOntology(options: BuildOptions = {}) {
     const sourceOntology = {
       name: config.name,
       source: config.source,
-      entities: result.sourceOntology?.entities || [],
-      relationships: result.sourceOntology?.relationships || [],
+      entities: result.sourceOntology?.entities ? sortNamedArray(result.sourceOntology.entities) : [],
+      relationships: result.sourceOntology?.relationships ? sortNamedArray(result.sourceOntology.relationships) : [],
       metadata: result.metadata,
       ignoredEntities: result.sourceOntology?.ignoredEntities || [],
       ignoredRelationships: result.sourceOntology?.ignoredRelationships || []
@@ -160,8 +161,8 @@ async function buildOntology(options: BuildOptions = {}) {
     const finalOntology = {
       name: config.name,
       source: config.source,
-      entities: result.finalOntology?.entities || {},
-      relationships: result.finalOntology?.relationships || {},
+      entities: result.finalOntology?.entities ? sortRecord(result.finalOntology.entities) : {},
+      relationships: result.finalOntology?.relationships ? sortRecord(result.finalOntology.relationships) : {},
       metadata: result.metadata
     };
     
