@@ -50,15 +50,19 @@ Usage: npx ts-node scripts/pipeline/email-ingestion.ts [options]
 
 Options:
   --folder=<path>     Specify email folder to process (default: emails)
+  --database=<name>   Specify database to use (default: neo4j)
   --reset-db          Reset database before ingestion
   --help, -h          Show this help message
 
 Examples:
-  # Process financial emails
+  # Process financial emails with default database
   npx ts-node scripts/pipeline/email-ingestion.ts --folder=financial/emails
 
-  # Process procurement emails with database reset
-  npx ts-node scripts/pipeline/email-ingestion.ts --folder=procurement/emails --reset-db
+  # Process procurement emails with specific database
+  npx ts-node scripts/pipeline/email-ingestion.ts --folder=procurement/emails --database=procurement
+
+  # Process emails with database reset
+  npx ts-node scripts/pipeline/email-ingestion.ts --folder=procurement/emails --database=procurement --reset-db
 
   # Process default emails folder
   npx ts-node scripts/pipeline/email-ingestion.ts
@@ -72,10 +76,19 @@ Available folders:
   - fibo/emails        FIBO financial emails
   - emails             Default emails (legacy)
 
+Available databases:
+  - neo4j              Default database
+  - test               Test database
+  - procurement        Procurement-specific database
+  - financial          Financial-specific database
+  - crm               CRM-specific database
+  - [custom]           Any custom database name
+
 Requirements:
   - OPENAI_API_KEY in .env file
   - Neo4j database running
   - Python NLP service running (optional)
+  - Database must exist (use create-database.ts script to create)
 `);
     process.exit(0);
   }
@@ -86,7 +99,13 @@ Requirements:
   // Parse command line arguments
   const argvFlags = process.argv.slice(2);
   const FOLDER_ARG = argvFlags.find((arg) => arg.startsWith('--folder='));
+  const DATABASE_ARG = argvFlags.find((arg) => arg.startsWith('--database='));
   const EMAIL_FOLDER = FOLDER_ARG ? FOLDER_ARG.split('=')[1] : 'emails';
+  const DATABASE_NAME = DATABASE_ARG ? DATABASE_ARG.split('=')[1] : 'neo4j';
+
+  // Set database environment variable
+  process.env.NEO4J_DATABASE = DATABASE_NAME;
+  console.log(`🗄️ Using database: ${DATABASE_NAME}`);
 
   // Check for reset flag
   if (process.argv.includes('--reset-db')) {

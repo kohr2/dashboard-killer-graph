@@ -8,6 +8,29 @@
   },
   "entities": [
     {
+      "name": "BoardAgreement",
+      "description": "formal, legally binding agreement between members of the Board of Directors of the organization",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        },
+        "parentClass": {
+          "type": "string",
+          "description": "Parent class in the inheritance hierarchy"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/Corporations/Corporations/BoardAgreement"
+    },
+    {
       "name": "JointStockCompany",
       "description": "for-profit, unincorporated business that has some characteristics of a corporation and some features of a partnership, with ownership interests represented by shares of stock",
       "properties": {
@@ -54,8 +77,8 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/Corporations/Corporations/PrivatelyHeldCompany"
     },
     {
-      "name": "BenefitCorporation",
-      "description": "not-for-profit corporation set up under specific state legislation, typically to provide some social benefit, without an obligation to maximize shareholder return",
+      "name": "ReligiousCorporation",
+      "description": "not-for-profit corporation whose objective is specific to some fundamental set of beliefs and practices generally agreed upon by a number of people, and that is incorporated under the law",
       "properties": {
         "label": {
           "type": "string",
@@ -64,17 +87,13 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/CorporateBodies/BenefitCorporation"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/Corporations/Corporations/ReligiousCorporation"
     },
     {
       "name": "CommonInterestDevelopmentCorporation",
@@ -100,6 +119,44 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/CorporateBodies/CommonInterestDevelopmentCorporation"
     },
     {
+      "name": "Corporation",
+      "description": "formal organization that is a legal entity (artificial person) distinct from its owners, created under the jurisdiction of the laws of a state or nation",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/CorporateBodies/Corporation"
+    },
+    {
+      "name": "ForProfitCorporation",
+      "description": "corporation whose objective is to make money, i.e., to ensure realization of a financial benefit such that the amount of revenue gained from a business activity exceeds the expenses, costs and taxes needed to sustain that activity",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/CorporateBodies/ForProfitCorporation"
+    },
+    {
       "name": "Division",
       "description": "part of an organization, such as a line of business, that may have separate accounting and reporting requirements",
       "properties": {
@@ -123,8 +180,8 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/FormalBusinessOrganizations/Division"
     },
     {
-      "name": "JointVenture",
-      "description": "legal entity that is formed between parties that pool their resources for the purpose of accomplishing a specific task but otherwise retain their distinct identities",
+      "name": "NotForProfitOrganization",
+      "description": "organization that uses its surplus revenues to further achieve its purpose rather than distributing its surplus income to the organization's owners (directors, investors, and equivalents) as profit / dividends",
       "properties": {
         "label": {
           "type": "string",
@@ -133,17 +190,13 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/FormalBusinessOrganizations/JointVenture"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/FormalBusinessOrganizations/NotForProfitOrganization"
     },
     {
       "name": "OrganizationCoveringAgreement",
@@ -167,6 +220,44 @@
       ],
       "vectorIndex": true,
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/FormalBusinessOrganizations/OrganizationCoveringAgreement"
+    },
+    {
+      "name": "BusinessEntity",
+      "description": "entity that is formed and administered as per commercial law in order to engage in business activities",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalPersons/BusinessEntity"
+    },
+    {
+      "name": "LegallyCompetentNaturalPerson",
+      "description": "person who is considered competent, under the circumstances, to enter into a contract, conduct business, or participate in other activities that generally require the mental ability to understand problems and make decisions on his or her own behalf",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalPersons/LegallyCompetentNaturalPerson"
     },
     {
       "name": "NotForProfitObjective",
@@ -215,8 +306,8 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalPersons/ProfitObjective"
     },
     {
-      "name": "PublicPurpose",
-      "description": "objective that reflects values generally thought to be shared by and that is intended to benefit the populace as a whole",
+      "name": "ReligiousObjective",
+      "description": "not-for-profit objective that reflects the religious goals of an organization",
       "properties": {
         "label": {
           "type": "string",
@@ -235,30 +326,7 @@
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalPersons/PublicPurpose"
-    },
-    {
-      "name": "StatutoryBody",
-      "description": "legal entity established by a government to consider evidence and make judgements in some field of activity",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalPersons/StatutoryBody"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalPersons/ReligiousObjective"
     },
     {
       "name": "VariableInterestEntity",
@@ -289,8 +357,8 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LegalPersons/VariableInterestEntity"
     },
     {
-      "name": "Price",
-      "description": "amount of money, goods, or services requested, expected, required, or given in exchange for something else",
+      "name": "Goal",
+      "description": "desired result that a party envisions, plans, and to which it commits, in order to achieve a desired state",
       "properties": {
         "label": {
           "type": "string",
@@ -299,109 +367,13 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Accounting/CurrencyAmount/Price"
-    },
-    {
-      "name": "UnitOfAccount",
-      "description": "nominal monetary unit of measure used to represent the real value (or cost) of any economic item; i.e. goods, services, assets, liabilities, income, expenses",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Accounting/CurrencyAmount/UnitOfAccount"
-    },
-    {
-      "name": "BusinessObjective",
-      "description": "objective that reflects the strategic goals and direction of a business within a time frame and available resources",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/GoalsAndObjectives/Objectives/BusinessObjective"
-    },
-    {
-      "name": "DistributionStrategy",
-      "description": "strategy for making a product or service available, or for distributing funds, such as in the form of a dividend or coupon",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/GoalsAndObjectives/Objectives/DistributionStrategy"
-    },
-    {
-      "name": "FinancialObjective",
-      "description": "objective that reflects the strategic financial goals and direction of a party within a time frame and available resources",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/GoalsAndObjectives/Objectives/FinancialObjective"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/GoalsAndObjectives/Objectives/Goal"
     },
     {
       "name": "InvestmentObjective",
@@ -427,6 +399,25 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/GoalsAndObjectives/Objectives/InvestmentObjective"
     },
     {
+      "name": "Objective",
+      "description": "short-term, quantitative, measurable result that a party seeks to attain in order to achieve its long-term goals",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/GoalsAndObjectives/Objectives/Objective"
+    },
+    {
       "name": "SalesStrategy",
       "description": "strategy for selling something, including allocating resources to the sales process, reducing costs, and optimizing revenues",
       "properties": {
@@ -450,8 +441,8 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/GoalsAndObjectives/Objectives/SalesStrategy"
     },
     {
-      "name": "Module",
-      "description": "classifier used to indicate a category used to modularize something based on principles of the model driven architecture methodology (MDA), including but not limited to separation of concerns, coherence, and establishing clear logical boundaries in order to increase reusability and maintainability",
+      "name": "FunctionalBusinessEntity",
+      "description": "functional entity defined in terms of the nature of the commercial activity it conducts",
       "properties": {
         "label": {
           "type": "string",
@@ -460,21 +451,22 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Utilities/AnnotationVocabulary/Module"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/FunctionalEntities/FunctionalEntities/FunctionalBusinessEntity"
     },
     {
-      "name": "BranchOfGovernment",
-      "description": "division of the government of a state, with separate and independent powers and areas of responsibility so that the powers of one branch are not in conflict with the powers associated with the other branches",
+      "name": "SyndicateMember",
+      "description": {
+        "_": "role of an individual or organization that is a member of an alliance set up to pool resources and share risk with respect to a large transaction",
+        "$": {
+          "xml:lang": "en"
+        }
+      },
       "properties": {
         "label": {
           "type": "string",
@@ -483,21 +475,17 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/GovernmentEntities/GovernmentEntities/BranchOfGovernment"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/FunctionalEntities/FunctionalEntities/SyndicateMember"
     },
     {
-      "name": "DevolvedGovernment",
-      "description": "government and the politicians that that run a subnational territory with powers that may be temporary and reversible, ultimately residing with the central government",
+      "name": "GovernmentBody",
+      "description": "formal organization that is an agency, instrumentality, or other body of a supranational, national, federal, state, or local government, including certain multijurisdictional agencies and departments that carry out the business of government",
       "properties": {
         "label": {
           "type": "string",
@@ -506,21 +494,17 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/GovernmentEntities/GovernmentEntities/DevolvedGovernment"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/GovernmentEntities/GovernmentEntities/GovernmentBody"
     },
     {
-      "name": "ExecutiveBranch",
-      "description": "the branch of government that is authorized and responsible for the daily administration of the government",
+      "name": "TribalEntity",
+      "description": "legal entity that represents fundamental unit of sovereign tribal (indigenous) government",
       "properties": {
         "label": {
           "type": "string",
@@ -529,63 +513,13 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/GovernmentEntities/GovernmentEntities/ExecutiveBranch"
-    },
-    {
-      "name": "Legislature",
-      "description": "the law-making body of a political unit, usually a national government, that has power to enact, amend, and repeal public policy",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/GovernmentEntities/GovernmentEntities/Legislature"
-    },
-    {
-      "name": "TribalArea",
-      "description": "designation for geographic region administered by a group of indigenous people rather than by a sovereign state or regional governmental entity",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/GovernmentEntities/GovernmentEntities/TribalArea"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/GovernmentEntities/GovernmentEntities/TribalEntity"
     },
     {
       "name": "ArticlesOfIncorporation",
@@ -611,8 +545,27 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/ArticlesOfIncorporation"
     },
     {
-      "name": "Auditor",
-      "description": "party qualified and authorized to review and verify the accuracy of financial records and ensure that companies comply with tax laws",
+      "name": "BoardMembership",
+      "description": "situation relating an individual member of the board of directors to the organization",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/BoardMembership"
+    },
+    {
+      "name": "Bylaws",
+      "description": "written rules for conduct of a corporation, association, partnership or any organization",
       "properties": {
         "label": {
           "type": "string",
@@ -631,7 +584,26 @@
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/Auditor"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/Bylaws"
+    },
+    {
+      "name": "ChiefExecutiveOfficer",
+      "description": "top corporate officer responsible for an organization's overall operations and performance",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/ChiefExecutiveOfficer"
     },
     {
       "name": "ChiefFinancialOfficer",
@@ -657,52 +629,6 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/ChiefFinancialOfficer"
     },
     {
-      "name": "CompanyLaw",
-      "description": "legislation under which the formation, registration or incorporation, governance, and dissolution of a firm is administered and controlled",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/CompanyLaw"
-    },
-    {
-      "name": "CompanySecretary",
-      "description": "corporate officer appointed by the directors of an organization, responsible for ensuring compliance with legal obligations related to corporate governance",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/CompanySecretary"
-    },
-    {
       "name": "NonExecutiveBoardMember",
       "description": "member of the board of directors of an organization that has no executive responsibilities towards the running of that organization",
       "properties": {
@@ -726,8 +652,8 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/NonExecutiveBoardMember"
     },
     {
-      "name": "EmancipatedMinor",
-      "description": "a minor who is allowed to conduct a business or any other occupation on his or her own behalf or for their own account outside the control of a parent or guardian",
+      "name": "PrincipalParty",
+      "description": "controlling party that is responsible for the management of daily business operations of an organization",
       "properties": {
         "label": {
           "type": "string",
@@ -736,21 +662,17 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/AgentsAndPeople/People/EmancipatedMinor"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/PrincipalParty"
     },
     {
-      "name": "IncapacitatedAdult",
-      "description": "an adult who is legally identified as not having legal capacity, typically as a result of some inherent physical or mental incapacity or as a result of having contracted some illness which temporarily deprives them of such capacity",
+      "name": "Signatory",
+      "description": "responsible party authorized to sign agreements on behalf of themselves, another person, or an organization",
       "properties": {
         "label": {
           "type": "string",
@@ -759,17 +681,13 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/AgentsAndPeople/People/IncapacitatedAdult"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/Signatory"
     },
     {
       "name": "LegallyCapableAdult",
@@ -795,55 +713,9 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/AgentsAndPeople/People/LegallyCapableAdult"
     },
     {
-      "name": "Minor",
-      "description": "a person under a certain age, usually the age of majority in a given jurisdiction, which legally demarcates childhood from adulthood",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/AgentsAndPeople/People/Minor"
-    },
-    {
-      "name": "CourtOfLaw",
-      "description": "person or body of persons having judicial authority to hear and resolve disputes on the basis of statutes or the common law",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Law/LegalCore/CourtOfLaw"
-    },
-    {
-      "name": "CloseOutNettingProvision",
+      "name": "ContractMilestone",
       "description": {
-        "_": "netting provision that may be triggered when a counterparty defaults, leading to the termination of all outstanding transactions between the parties",
+        "_": "classifier for an event (milestone), or set of events related to the status or level of completion of a designated activity, task, or segment of work required for contract fulfillment",
         "$": {
           "xml:lang": "en"
         }
@@ -856,21 +728,17 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/CloseOutNettingProvision"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/ContractMilestone"
     },
     {
-      "name": "ContractPrincipal",
-      "description": "party that originates a contract and is identified as the first party to that contract, in the event that the contract distinguishes any party as such",
+      "name": "MilestoneEvent",
+      "description": "event related to the status or level of completion of a designated activity, task, or segment of work required for contract fulfillment",
       "properties": {
         "label": {
           "type": "string",
@@ -879,21 +747,17 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/ContractPrincipal"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/MilestoneEvent"
     },
     {
-      "name": "ContractualDefinition",
-      "description": "contractual element that specifies the meaning of a term in a legal document, whose definition is substitutable for the term whenever it occurs in the body of that document",
+      "name": "TermSheet",
+      "description": "nonbinding agreement setting forth the basic terms and conditions under which a proposed business deal may be made",
       "properties": {
         "label": {
           "type": "string",
@@ -902,226 +766,13 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/ContractualDefinition"
-    },
-    {
-      "name": "DisclosureProvision",
-      "description": "contractual provision that outlines the requirements and responsibilities of one or both parties to reveal certain information to each other",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/DisclosureProvision"
-    },
-    {
-      "name": "NettingProvision",
-      "description": {
-        "_": "contractual element that specifies the method of reducing credit, settlement and other risks by aggregating (combining) two or more obligations to achieve a reduced net obligation",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/NettingProvision"
-    },
-    {
-      "name": "NonTransferableContract",
-      "description": "contract between whose individual rights and obligations are not transferable to another party without prior written permission",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/NonTransferableContract"
-    },
-    {
-      "name": "NovateableContract",
-      "description": "contract that may be replaced by another contract, and in that event, extinguishes the rights and obligations in effect under the original contract with those in the new agreement",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/NovateableContract"
-    },
-    {
-      "name": "NovationNettingProvision",
-      "description": {
-        "_": "contractual element that specifies what should be done with respect to netting when a given contract is replaced with another",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/NovationNettingProvision"
-    },
-    {
-      "name": "PaymentNettingProvision",
-      "description": {
-        "_": "netting provision that specifies the way in which all payments in a single currency owed between parties will be aggregated for each traded currency per value date and within the larger aggregate obligation",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/PaymentNettingProvision"
-    },
-    {
-      "name": "Representation",
-      "description": {
-        "_": "contractual element that is a statement made by a party to the contract, before or at the time of making the contract, in regard to some fact, circumstance, or state of affairs pertinent to the contract, which the counterparty(ies) rely on, or is influential in bringing about the contract",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/Representation"
-    },
-    {
-      "name": "TerminationProvision",
-      "description": {
-        "_": "contractual element that specifies the circumstances under which the parties can dissolve their legal relationship and discontinue the fulfillment of their obligations under the contract",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/TerminationProvision"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/TermSheet"
     },
     {
       "name": "UseOfProceedsProvision",
@@ -1147,29 +798,6 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/UseOfProceedsProvision"
     },
     {
-      "name": "PredirectionalSymbol",
-      "description": "geographic directional symbol that occurs after the primary street number but before the street name in a street address",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Addresses/PredirectionalSymbol"
-    },
-    {
       "name": "AccountingFramework",
       "description": "framework, including policies, methods, rules, and processes, used to measure, recognize, present, and disclose the information appearing in an entity's financial statements, and, from a legal ownership perspective, that is applied for accounting consolidation determination",
       "properties": {
@@ -1193,8 +821,8 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LEIEntities/AccountingFramework"
     },
     {
-      "name": "RelationshipPeriodQualifier",
-      "description": "a classifier that qualifies something about the reporting period specified, such as that the date period reflects an accounting or document filing period",
+      "name": "ContractuallyCapableEntity",
+      "description": "a unique entity that is legally or financially responsible for the performance of financial transactions, or has the legal right in its jurisdiction to enter independently into legal contracts, regardless of whether it is incorporated or constituted in some other way (e.g. trust, partnership, contractual). This excludes natural persons, but includes governmental organizations and supranationals.",
       "properties": {
         "label": {
           "type": "string",
@@ -1203,21 +831,17 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LEIEntities/RelationshipPeriodQualifier"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LEIEntities/ContractuallyCapableEntity"
     },
     {
-      "name": "RelationshipQualifier",
-      "description": "a classifier that qualifies something about the relationship between consolidated entities during the reporting period, such as the accounting framework used",
+      "name": "Policy",
+      "description": "system of principles, rules and guidelines, adopted by an organization to guide decision making with respect to particular situations and implemented via procedures or protocols to achieve stated goals",
       "properties": {
         "label": {
           "type": "string",
@@ -1226,201 +850,13 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LEIEntities/RelationshipQualifier"
-    },
-    {
-      "name": "RelationshipStatus",
-      "description": "a classifier that specifies the status of the relationship between consolidated entities during the reporting period (active or inactive)",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LEIEntities/RelationshipStatus"
-    },
-    {
-      "name": "CommitmentAtLarge",
-      "description": "commitment made by some party without direct involvement from the potential beneficiaries of that commitment",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Agreements/CommitmentAtLarge"
-    },
-    {
-      "name": "UnilateralCommitment",
-      "description": "commitment (promise or obligation) made by one party without requiring a reciprocal promise from another party",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Agreements/UnilateralCommitment"
-    },
-    {
-      "name": "Claim",
-      "description": "demand or assertion made by one party on another, based on facts that, taken together, give rise to a legally enforceable right or judicial action",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Law/LegalCapacity/Claim"
-    },
-    {
-      "name": "ContractualOption",
-      "description": "contractual right that may be exercised at some point in the future, such as an option to extend a contract, or other available but not obligatory rights as defined in the contract",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Law/LegalCapacity/ContractualOption"
-    },
-    {
-      "name": "DelegatedLegalAuthority",
-      "description": "institutionalized and legal power inherent in a particular job, function, or position that is meant to enable its holder to successfully carry out his or her responsibilities, where such power has been delegated through some formal means",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Law/LegalCapacity/DelegatedLegalAuthority"
-    },
-    {
-      "name": "LegalCapacity",
-      "description": "the capability to carry out certain actions or to have certain rights together with the resources to do so",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Law/LegalCapacity/LegalCapacity"
-    },
-    {
-      "name": "Right",
-      "description": "entitlement (not) to perform certain actions, or (not) to be in certain states; or entitlement that others (not) perform certain actions or (not) be in certain states",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Law/LegalCapacity/Right"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Law/LegalCapacity/Policy"
     },
     {
       "name": "SignatoryCapacity",
@@ -1469,6 +905,44 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/ControlParties/MajorityControllingParty"
     },
     {
+      "name": "EntityOwner",
+      "description": "owner (person, group of people, or other business entity) that owns, or holds an ownership interest in, a formal business organization",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/OwnershipParties/EntityOwner"
+    },
+    {
+      "name": "EntityOwnership",
+      "description": "ownership by some party of an interest in some non-governmental formal organization",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/OwnershipParties/EntityOwnership"
+    },
+    {
       "name": "ForeignBranchOwnership",
       "description": "ownership by some party of some formal organization or organizational sub-unit that is a foreign affiliate and legally part of the owning entity",
       "properties": {
@@ -1490,6 +964,44 @@
       ],
       "vectorIndex": true,
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/OwnershipParties/ForeignBranchOwnership"
+    },
+    {
+      "name": "InvestmentEquity",
+      "description": "equity that represents an ownership interest in some entity, but may or may not take the form of shareholders's equity",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/OwnershipParties/InvestmentEquity"
+    },
+    {
+      "name": "InvestorContract",
+      "description": "Contract setting out the terms under which some investor invests in the entity and setting out the rights which are conferred on that investor.",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/OwnershipParties/InvestorContract"
     },
     {
       "name": "UltimateConsolidation",
@@ -1515,8 +1027,8 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/OwnershipParties/UltimateConsolidation"
     },
     {
-      "name": "DomesticUltimateParent",
-      "description": "party that is recognized as the ultimate parent of a given organization within the country or jurisdiction of incorporation or organization",
+      "name": "Employee",
+      "description": "person in the service of another under any contract of hire, express or implied, oral or written, where the employer has the right to control and direct that person in the material details of how the work is to be performed",
       "properties": {
         "label": {
           "type": "string",
@@ -1525,21 +1037,17 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/CorporateControl/DomesticUltimateParent"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Organizations/FormalOrganizations/Employee"
     },
     {
-      "name": "SignificantShareholder",
-      "description": "party that owns a significant voting stake in an organization that is less than 50 percent but greater than some threshold",
+      "name": "GeneralPartner",
+      "description": "partner and part-owner that is responsible for managing the day to day operations of the partnership and that may be jointly and severally liable for the obligations of the partnership",
       "properties": {
         "label": {
           "type": "string",
@@ -1548,922 +1056,16 @@
         "definition": {
           "type": "string",
           "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
         }
       },
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/CorporateControl/SignificantShareholder"
-    },
-    {
-      "name": "LimitedLiabilityLimitedPartnership",
-      "description": "limited partnership that consists of one or more general partners who are liable for the obligations of the entity as well as one or more protected limited liability partners",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/Partnerships/Partnerships/LimitedLiabilityLimitedPartnership"
-    },
-    {
-      "name": "LimitedPartner",
-      "description": "partner whose liabilities are limited to the extent of their investment or guarantees and that has no involvement in the day to day operations of the partnership",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/Partnerships/Partnerships/LimitedPartner"
-    },
-    {
-      "name": "ManagerManagedLimitedLiabilityCompany",
-      "description": "limited liability company in which the members appoint one or more managers to handle the daily operations and administrative responsibilities of the organization",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/PrivateLimitedCompanies/PrivateLimitedCompanies/ManagerManagedLimitedLiabilityCompany"
-    },
-    {
-      "name": "PrivateLimitedCompany",
-      "description": "private limited company whose shareholders' liability is limited to the capital they originally invested",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/PrivateLimitedCompanies/PrivateLimitedCompanies/PrivateLimitedCompany"
-    },
-    {
-      "name": "IrrevocableTrust",
-      "description": "trust that cannot be modified, amended or terminated except under certain legal circumstances and typically not without the permission of the grantor's named beneficiary or beneficiaries",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/Trusts/Trusts/IrrevocableTrust"
-    },
-    {
-      "name": "LivingTrust",
-      "description": "trust created during an individual's lifetime where a designated person, the trustee, is given responsibility for managing that individual's assets for the benefit of the eventual beneficiary",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/Trusts/Trusts/LivingTrust"
-    },
-    {
-      "name": "RevocableTrust",
-      "description": "trust in which legal ownership of the trust property is transferred to the trustee, but the trustor retains full power to revoke, modify or amend the trust",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/Trusts/Trusts/RevocableTrust"
-    },
-    {
-      "name": "BusinessStrategyClassifier",
-      "description": {
-        "_": "classifier of corporate actions that involve improving liquidity or changing the overall structure of the organization through diversification, combining and closing parts of the business, etc, to increase long-term profitability",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/CAE/CorporateEvents/CorporateActions/BusinessStrategyClassifier"
-    },
-    {
-      "name": "ChangeAction",
-      "description": {
-        "_": "corporate action to disseminate information regarding a change further described in the corporate action details",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/CAE/CorporateEvents/CorporateActions/ChangeAction"
-    },
-    {
-      "name": "ConsentSolicitation",
-      "description": {
-        "_": "corporate action that is a procedure that aims to obtain consent of holder to a proposal by the issuer or a third party without convening a meeting",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/CAE/CorporateEvents/CorporateActions/ConsentSolicitation"
-    },
-    {
-      "name": "CorporateAction",
-      "description": {
-        "_": "action carried out by or specifically relating to a legal entity that may affect the securities it issues and may have a material impact on its stakeholders, such as shareholders and creditors",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/CAE/CorporateEvents/CorporateActions/CorporateAction"
-    },
-    {
-      "name": "DisclosureAction",
-      "description": {
-        "_": "corporate action involving a request for holders or beneficial owners to disclose their name, location and holdings of any issue to the issuer",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/CAE/CorporateEvents/CorporateActions/DisclosureAction"
-    },
-    {
-      "name": "Liquidation",
-      "description": {
-        "_": "corporate action related to winding up a business, including but not limited to distribution of cash, assets, or both",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/CAE/CorporateEvents/CorporateActions/Liquidation"
-    },
-    {
-      "name": "MandatoryWithChoiceCorporateAction",
-      "description": {
-        "_": "mandatory corporate action where shareholders are given an opportunity to choose among several options",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/CAE/CorporateEvents/CorporateActions/MandatoryWithChoiceCorporateAction"
-    },
-    {
-      "name": "MarketAction",
-      "description": {
-        "_": "action that is initiated by a market, such as a securities exchange, that affects a legal entity or the securities it issues and may have a material impact on that entity's stakeholders, such as shareholders and creditors",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/CAE/CorporateEvents/CorporateActions/MarketAction"
-    },
-    {
-      "name": "Notification",
-      "description": {
-        "_": "corporate action involving information provided by the issuer having no accounting/financial impact on the holder",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/CAE/CorporateEvents/CorporateActions/Notification"
-    },
-    {
-      "name": "PriorityIssue",
-      "description": {
-        "_": "corporate action that is a public offer where, due to a limited amount of securities available, priority is given to existing shareholders",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/CAE/CorporateEvents/CorporateActions/PriorityIssue"
-    },
-    {
-      "name": "RegulatoryAction",
-      "description": {
-        "_": "action initiated by a regulatory agency that affects a legal entity or the securities it issues and may have a material impact on that entity's stakeholders, such as shareholders and creditors",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/CAE/CorporateEvents/CorporateActions/RegulatoryAction"
-    },
-    {
-      "name": "SpinOff",
-      "description": {
-        "_": "corporate action involving the distribution of subsidiary stock to the shareholders of the parent company without a surrender of shares",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/CAE/CorporateEvents/CorporateActions/SpinOff"
-    },
-    {
-      "name": "VoluntaryCorporateAction",
-      "description": {
-        "_": "event in which the shareholders elect to participate and must respond in order for the issuer to process the action",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/CAE/CorporateEvents/CorporateActions/VoluntaryCorporateAction"
-    },
-    {
-      "name": "PromissoryNote",
-      "description": "debt instrument that is a written promise by one party to another that commits that party to pay a specified sum on demand or within a specified time frame under specified terms",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/PromissoryNote"
-    },
-    {
-      "name": "CalculationAgent",
-      "description": {
-        "_": "party that is responsible for determining the value of an instrument and in some cases, determines how much the parties owe one another",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/CalculationAgent"
-    },
-    {
-      "name": "CashInstrument",
-      "description": "financial instrument whose value is determined by the market and that is readily transferable (highly liquid)",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/CashInstrument"
-    },
-    {
-      "name": "Future",
-      "description": "derivative instrument that obligates the buyer to receive and the seller to deliver the assets specified at an agreed price, at some later point in time",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/Future"
-    },
-    {
-      "name": "Option",
-      "description": "derivative instrument that grants to the holder either the privilege to purchase or the privilege to sell the assets specified at a predetermined price or formula at or within a time period in the future",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/Option"
-    },
-    {
-      "name": "RedemptionProvision",
-      "description": "contract provision enabling the issuer (writer) to regain possession through repayment of some stipulated price",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/RedemptionProvision"
-    },
-    {
-      "name": "StandardizedTerms",
-      "description": "contract terms that, grouped together, that are generally and consistently reused across many contracts, published by some organization, and capable of being incorporated into a contract by reference",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/StandardizedTerms"
-    },
-    {
-      "name": "Underlier",
-      "description": "something that can be assigned a value in the marketplace that forms the basis for a derivative or pool-backed instrument",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/Underlier"
-    },
-    {
-      "name": "AssetBackedCreditDefaultSwap",
-      "description": {
-        "_": "credit default swap whose underlying reference obligation is an asset-backed security rather than corporate credit",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/DER/CreditDerivatives/CreditDefaultSwaps/AssetBackedCreditDefaultSwap"
-    },
-    {
-      "name": "BasketCreditDefaultSwap",
-      "description": {
-        "_": "credit default swap that references a bespoke, synthetic portfolio of underlying assets whose components have been agreed to for a specific OTC derivative by the parties to the transaction",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/DER/CreditDerivatives/CreditDefaultSwaps/BasketCreditDefaultSwap"
-    },
-    {
-      "name": "IndexCreditDefaultSwap",
-      "description": {
-        "_": "credit default swap that references a family of standardized credit derivative indices, where the underlying reference entities are a defined basket of credit from a particular geographic region (e.g. Asia, North America, Europe), and/or credit rating level (e.g. emerging markets, high yield, investment grade)",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/DER/CreditDerivatives/CreditDefaultSwaps/IndexCreditDefaultSwap"
-    },
-    {
-      "name": "IndexTrancheCreditDefaultSwap",
-      "description": {
-        "_": "credit default swap that references a synthetic collateralized debt obligation (CDO) based on a credit index where each tranche references a different segment of the loss distribution of the underlying index",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/DER/CreditDerivatives/CreditDefaultSwaps/IndexTrancheCreditDefaultSwap"
-    },
-    {
-      "name": "LoanCreditDefaultSwap",
-      "description": {
-        "_": "credit default swap whose underlying reference obligation is limited strictly to syndicated secured loans, rather than any type of corporate debt",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/DER/CreditDerivatives/CreditDefaultSwaps/LoanCreditDefaultSwap"
-    },
-    {
-      "name": "NonDepositoryInstitution",
-      "description": "financial institution that does not have a full banking license and typically is not supervised by a national or international banking regulatory agency",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FunctionalEntities/FinancialServicesEntities/NonDepositoryInstitution"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/Partnerships/Partnerships/GeneralPartner"
     }
   ],
   "relationships": [
-    {
-      "name": "hasDateOfRegistration",
-      "description": "indicates the date on which the corporation has registered in some jurisdiction for regulatory and / or for tax purposes",
-      "source": "Entity",
-      "target": "ExplicitDate",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/Corporations/Corporations/hasDateOfRegistration"
-    },
-    {
-      "name": "hasRegisteredAddress",
-      "description": "identifies an address that is officially recorded with some government authority and at which legal papers may be served",
-      "source": "Party",
-      "target": "ConventionalStreetAddress",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/FormalBusinessOrganizations/hasRegisteredAddress"
-    },
-    {
-      "name": "hasBaseCurrency",
-      "description": "specifies a unit of currency representing R units of the dealt currency, where R is the exchange rate value, in an exchange rate",
-      "source": "Entity",
-      "target": "Currency",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Accounting/CurrencyAmount/hasBaseCurrency"
-    },
     {
       "name": "hasDealtCurrency",
       "description": "specifies a unit of currency representing the exchanged (target) currency in an exchange rate; R units of this currency represent one unit of the base currency",
@@ -2472,11 +1074,11 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Accounting/CurrencyAmount/hasDealtCurrency"
     },
     {
-      "name": "hasMonetaryAmount",
-      "description": "specifies a value for something in terms of an amount of money and the currency in which it is denoted",
+      "name": "hasGoal",
+      "description": "relates something to a long-term, desired outcome",
       "source": "Entity",
-      "target": "MonetaryAmount",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Accounting/CurrencyAmount/hasMonetaryAmount"
+      "target": "Goal",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/GoalsAndObjectives/Objectives/hasGoal"
     },
     {
       "name": "hasObjective",
@@ -2493,11 +1095,11 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Relations/Relations/causes"
     },
     {
-      "name": "embodies",
-      "description": "is an expression of, gives a tangible or visible form to (an idea, quality, or feeling), makes concrete and perceptible",
+      "name": "controls",
+      "description": "exercises authority or influence over",
       "source": "Entity",
       "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Relations/Relations/embodies"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Relations/Relations/controls"
     },
     {
       "name": "holds",
@@ -2514,27 +1116,6 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Relations/Relations/isCausedBy"
     },
     {
-      "name": "isConferredBy",
-      "description": "a relationship between a right or obligation and the vehicle, such as an agreement or contract, that vests (or confers) said right or obligation",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Relations/Relations/isConferredBy"
-    },
-    {
-      "name": "isHeldBy",
-      "description": "indicates the party that possesses and has at least partial control of something, regardless of ownership",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Relations/Relations/isHeldBy"
-    },
-    {
-      "name": "isIssuedBy",
-      "description": "indicates a functional entity or party responsible for circulating, distributing, or publishing something",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Relations/Relations/isIssuedBy"
-    },
-    {
       "name": "isProducedBy",
       "description": "identifies the producer that fabricates, manufactures or otherwise creates something through some production process",
       "source": "Entity",
@@ -2542,18 +1123,18 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Relations/Relations/isProducedBy"
     },
     {
-      "name": "mandates",
-      "description": "relates something to a commitment, contract, law, obligation, requirement, regulation, or similar concept that requires it",
+      "name": "manages",
+      "description": "manages relationship",
       "source": "Entity",
       "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Relations/Relations/mandates"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Relations/Relations/manages"
     },
     {
-      "name": "isPublishedBy",
-      "description": "identifies the independent party (i.e., the individual or organization) that disseminates the material",
-      "source": "Publication",
-      "target": "Party",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/FunctionalEntities/Publishers/isPublishedBy"
+      "name": "produces",
+      "description": "creates through a fabrication, manufacturing or production process",
+      "source": "Entity",
+      "target": "Entity",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Relations/Relations/produces"
     },
     {
       "name": "hasFullSovereigntyOver",
@@ -2563,32 +1144,11 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/GovernmentEntities/GovernmentEntities/hasFullSovereigntyOver"
     },
     {
-      "name": "hasJurisdiction",
-      "description": "relates a polity or government entity to one or more jurisdictions, over which it has some level of legal authority",
-      "source": "Entity",
-      "target": "Jurisdiction",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/GovernmentEntities/GovernmentEntities/hasJurisdiction"
-    },
-    {
-      "name": "hasSharedSovereigntyOver",
-      "description": "relates a polity to a geopolitical entity where the polity exercises shared dominion and authority of a political state",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/GovernmentEntities/GovernmentEntities/hasSharedSovereigntyOver"
-    },
-    {
-      "name": "hasSovereigntyOver",
-      "description": "relates a polity to a geopolitical entity where the polity exercises dominion and authority of a political state",
-      "source": "Polity",
-      "target": "GeopoliticalEntity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/GovernmentEntities/GovernmentEntities/hasSovereigntyOver"
-    },
-    {
-      "name": "isJurisdictionOf",
-      "description": "relates a jurisdiction to a polity or other government entity or court that has some level of legal authority over it",
-      "source": "Jurisdiction",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/GovernmentEntities/GovernmentEntities/isJurisdictionOf"
+      "name": "authorizes",
+      "description": "endorses, enables, empowers, or gives permission to",
+      "source": "AuthorizingParty",
+      "target": "AuthorizedParty",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/authorizes"
     },
     {
       "name": "authorizesThrough",
@@ -2598,149 +1158,11 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/authorizesThrough"
     },
     {
-      "name": "hasAuthorizedParty",
-      "description": "indicates the party that is endorsed, enabled, empowered, or otherwise permitted to do something in the situation",
+      "name": "hasAuthorizingParty",
+      "description": "indicates the party that endorses, enables, empowers, or gives permission in the situation",
       "source": "Authorization",
-      "target": "AuthorizedParty",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/hasAuthorizedParty"
-    },
-    {
-      "name": "hasResponsibleParty",
-      "description": "identifies a party that has some assignment, commitment or obligation with respect to the formal organization",
-      "source": "FormalOrganization",
-      "target": "ResponsibleParty",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/hasResponsibleParty"
-    },
-    {
-      "name": "hasSigningAuthorityFor",
-      "description": "indicates the party for which a signatory has the ability to sign agreements, access accounts and perform related tasks",
-      "source": "Signatory",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/hasSigningAuthorityFor"
-    },
-    {
-      "name": "isOfficerOf",
-      "description": "indicates the organization that the person has some authority over and managerial responsibility for",
-      "source": "CorporateOfficer",
-      "target": "ControlledParty",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/isOfficerOf"
-    },
-    {
-      "name": "hasAgeOfMajority",
-      "description": "relates someone to the age required to attain the capacity to engage in certain transactions or be treated legally as an adult in some jurisdiction",
-      "source": "Entity",
-      "target": "AgeOfMajority",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/AgentsAndPeople/People/hasAgeOfMajority"
-    },
-    {
-      "name": "hasInForce",
-      "description": "relates a jurisdiction or situation to a rule, regulation or law (collectively \"law\") that is currently in force in that situation or jurisdiction",
-      "source": "Entity",
-      "target": "Law",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Law/LegalCore/hasInForce"
-    },
-    {
-      "name": "hasBeneficiary",
-      "description": "party that receives some benefit or advantage or profits from something as specified in the agreement",
-      "source": "Entity",
-      "target": "Beneficiary",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/hasBeneficiary"
-    },
-    {
-      "name": "hasContractDuration",
-      "description": "indicates the period of time during which a contract is intended to be in force once it has been executed",
-      "source": "Contract",
-      "target": "Duration",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/hasContractDuration"
-    },
-    {
-      "name": "hasContractParty",
-      "description": "indicates a party that has entered into a binding agreement, accepting and conceding obligations, responsibilities, and benefits as specified",
-      "source": "Contract",
-      "target": "ContractParty",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/hasContractParty"
-    },
-    {
-      "name": "hasExecutionDateTimeStamp",
-      "description": "indicates the date and time, including time zone, a contract has been signed by all the necessary parties",
-      "source": "Entity",
-      "target": "DateTimeStamp",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/hasExecutionDateTimeStamp"
-    },
-    {
-      "name": "hasMilestoneProvision",
-      "description": "refers to a requirement included in an agreement related to fulfillment as of some point in time in the lifetime of the contract",
-      "source": "Agreement",
-      "target": "ContractMilestone",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/hasMilestoneProvision"
-    },
-    {
-      "name": "hasTerm",
-      "description": {
-        "_": "indicates a fixed or limited period for which something, e.g., a contract, an investment, or an offer, lasts or is intended to last",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Duration",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/hasTerm"
-    },
-    {
-      "name": "hasThirdParty",
-      "description": "identifies a party which is not signatory to the party but has some role in the overall context defined by the contract.",
-      "source": "Contract",
-      "target": "ContractThirdParty",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/hasThirdParty"
-    },
-    {
-      "name": "isSubordinateTo",
-      "description": "indicates the primary contract referenced by a subordinate agreement, such as a collateral agreement",
-      "source": "WrittenContract",
-      "target": "WrittenContract",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Agreements/Contracts/isSubordinateTo"
-    },
-    {
-      "name": "hasMailingAddress",
-      "description": "identifies a physical address where an independent party can receive communications, including letters and packages",
-      "source": "Party",
-      "target": "PhysicalAddress",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Parties/Parties/hasMailingAddress"
-    },
-    {
-      "name": "hasAddress",
-      "description": "indicates a means by which something (in the case of a network address) or some entity may be located or contacted or may receive correspondence",
-      "source": "Entity",
-      "target": "Address",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Addresses/hasAddress"
-    },
-    {
-      "name": "hasIndividualPostcode",
-      "description": "indicates the local or international postcode element of a delivery address as specified by the local postal service",
-      "source": "PhysicalAddress",
-      "target": "Postcode",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Addresses/hasIndividualPostcode"
-    },
-    {
-      "name": "hasPostdirectionalSymbol",
-      "description": "specifies a geographic directional symbol that follows the street name and street suffix in a street address",
-      "source": "StreetAddress",
-      "target": "PostdirectionalSymbol",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Addresses/hasPostdirectionalSymbol"
-    },
-    {
-      "name": "hasPredirectionalSymbol",
-      "description": "specifies a geographic directional symbol that occurs after the primary street number but before the street name in a street address",
-      "source": "StreetAddress",
-      "target": "PredirectionalSymbol",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Addresses/hasPredirectionalSymbol"
-    },
-    {
-      "name": "hasSecondaryUnit",
-      "description": "specifies an individual unit within a larger structure, such as an apartment, office, hangar, slip, mailbox, and so forth, at a given street address",
-      "source": "StreetAddress",
-      "target": "SecondaryUnit",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Addresses/hasSecondaryUnit"
+      "target": "AuthorizingParty",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/Executives/hasAuthorizingParty"
     },
     {
       "name": "hasStreetAddress",
@@ -2750,46 +1172,11 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Addresses/hasStreetAddress"
     },
     {
-      "name": "hasStreetSuffix",
-      "description": "specifies an additional qualifier for a street or other delivery location, such as a dwelling located along a waterway",
-      "source": "StreetAddress",
-      "target": "StreetSuffix",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Addresses/hasStreetSuffix"
-    },
-    {
-      "name": "hasStructureName",
-      "description": "specifies an identifier for a building, house, office complex, shopping center, or other structure or group of structures",
-      "source": "PhysicalAddress",
-      "target": "StructureName",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Places/Addresses/hasStructureName"
-    },
-    {
       "name": "hasLegalAddress",
       "description": "indicates the legal address for the entity, in the jurisdiction in which the entity is established, used for registration purposes with respect to obtaining an LEI",
       "source": "LegalEntity",
       "target": "ConventionalStreetAddress",
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LEIEntities/hasLegalAddress"
-    },
-    {
-      "name": "hasLegalForm",
-      "description": "indicates the nature of the entity as defined from a legal or regulatory perspective in a given jurisdiction",
-      "source": "LegalEntity",
-      "target": "EntityLegalForm",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LEIEntities/hasLegalForm"
-    },
-    {
-      "name": "isConsolidatedBy",
-      "description": "indicates the entity considered the 'end node' or consolidating entity (parent) from an ISO 17442 perspective",
-      "source": "Entity",
-      "target": "LegalEntity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LEIEntities/isConsolidatedBy"
-    },
-    {
-      "name": "isConsolidationOf",
-      "description": "indicates the entity considered the 'start node' or consolidated entity from an ISO 17442 perspective",
-      "source": "Entity",
-      "target": "LegalEntity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LEIEntities/isConsolidationOf"
     },
     {
       "name": "isDirectlyConsolidatedBy",
@@ -2813,25 +1200,11 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/LegalEntities/LEIEntities/isUltimatelyConsolidatedBy"
     },
     {
-      "name": "hasCapacity",
-      "description": "identifies an individual or organization that has some ability and availability to carry out certain actions, or has certain rights or obligations",
-      "source": "Party",
-      "target": "LegalCapacity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Law/LegalCapacity/hasCapacity"
-    },
-    {
-      "name": "implies",
-      "description": "strongly suggests or involves as a logical consequence based on some set of observations, facts, or events",
+      "name": "implements",
+      "description": "carries out or puts into effect, fulfills",
       "source": "Entity",
       "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Law/LegalCapacity/implies"
-    },
-    {
-      "name": "isImpliedBy",
-      "description": "indicates something that is strongly suggested by something else, such as a logical consequence based on some set of observations, facts, or events",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Law/LegalCapacity/isImpliedBy"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Law/LegalCapacity/implements"
     },
     {
       "name": "licenses",
@@ -2841,18 +1214,11 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Law/LegalCapacity/licenses"
     },
     {
-      "name": "isBasedOnInvestmentEquity",
-      "description": "indicates investment-based de facto control, which is is based on the holding of some investment equity by some party",
-      "source": "InvestmentBasedDeFactoControl",
-      "target": "InvestmentEquity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/ControlParties/isBasedOnInvestmentEquity"
-    },
-    {
-      "name": "guarantees",
-      "description": "provides a formal assurance or promise, esp. that certain conditions shall be fulfilled relating to a product, service, or transaction",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/OwnershipParties/guarantees"
+      "name": "hasMajorityControllingParty",
+      "description": "indicates a party that owns a controlling stake (over 50 percent) in the entity",
+      "source": "LegalEntity",
+      "target": "MajorityControllingParty",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/ControlParties/hasMajorityControllingParty"
     },
     {
       "name": "hasInvestmentEntity",
@@ -2862,18 +1228,18 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/OwnershipParties/hasInvestmentEntity"
     },
     {
-      "name": "hasOwnedEntity",
-      "description": "indicates a formal organization, including potentially a sole proprietorship, that is owned by a legal person",
-      "source": "EntityOwnership",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/OwnershipParties/hasOwnedEntity"
+      "name": "hasInvestmentOwnership",
+      "description": "relates a legal person to the context in which it owns a formal organization",
+      "source": "LegalPerson",
+      "target": "EntityOwnership",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/OwnershipParties/hasInvestmentOwnership"
     },
     {
-      "name": "isPartyControlling",
-      "description": "indicates something controlled that a controlling party has some amount of authority or influence over",
-      "source": "ControllingParty",
-      "target": "ControlledThing",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/OwnershipAndControl/Control/isPartyControlling"
+      "name": "hasOwningEntity",
+      "description": "indicates a party that owns a formal organization",
+      "source": "EntityOwnership",
+      "target": "LegalPerson",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/OwnershipParties/hasOwningEntity"
     },
     {
       "name": "hasAffiliate",
@@ -2883,11 +1249,11 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/CorporateControl/hasAffiliate"
     },
     {
-      "name": "hasDomesticUltimateParent",
-      "description": "relates an organization to another recognized as its ultimate parent, within its country or jurisdiction of incorporation, if it has one",
-      "source": "Entity",
-      "target": "DomesticUltimateParent",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/CorporateControl/hasDomesticUltimateParent"
+      "name": "hasSubsidiary",
+      "description": "relates a legal entity to another organization that it owns at least 50 percent of",
+      "source": "LegalEntity",
+      "target": "Subsidiary",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/CorporateControl/hasSubsidiary"
     },
     {
       "name": "isAffiliateOf",
@@ -2897,32 +1263,60 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/CorporateControl/isAffiliateOf"
     },
     {
-      "name": "isSubsidiaryOf",
-      "description": "is controlled directly, or indirectly through one or more intermediaries and owned at least 50 percent by",
-      "source": "Subsidiary",
-      "target": "ControllingAffiliate",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/CorporateControl/isSubsidiaryOf"
+      "name": "isControllingAffiliateOf",
+      "description": "controls directly, or indirectly through one or more intermediaries",
+      "source": "ControllingAffiliate",
+      "target": "ControlledAffiliate",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/CorporateControl/isControllingAffiliateOf"
     },
     {
-      "name": "hasBeneficialOwner",
-      "description": "indicates the party that retains rights in the asset they control in a beneficial ownership situation",
-      "source": "ControlledThing",
-      "target": "BeneficialOwner",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/CorporateOwnership/hasBeneficialOwner"
+      "name": "isParentCompanyOf",
+      "description": "indicates a controlled affiliate that it owns at least 50 percent of",
+      "source": "ControllingAffiliate",
+      "target": "Subsidiary",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/CorporateControl/isParentCompanyOf"
     },
     {
-      "name": "isBeneficialOwnerOf",
-      "description": "indicates an asset in which the beneficial owner holds rights (typically voting rights, management rights, etc.) in a beneficial ownership situation",
-      "source": "BeneficialOwner",
-      "target": "ControlledThing",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/OwnershipAndControl/CorporateOwnership/isBeneficialOwnerOf"
-    },
-    {
-      "name": "hasManagingMember",
-      "description": "indicates a managing member in a controlling role of a limited liability company that has responsibility for the day-to-day business operations",
+      "name": "isOwnedBy",
+      "description": "indicates something that someone owns",
       "source": "Entity",
-      "target": "ManagingMember",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/PrivateLimitedCompanies/PrivateLimitedCompanies/hasManagingMember"
+      "target": "Party",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/OwnershipAndControl/Ownership/isOwnedBy"
+    },
+    {
+      "name": "owns",
+      "description": "indicates something that a party holds title to and may possess",
+      "source": "Party",
+      "target": "Entity",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/OwnershipAndControl/Ownership/owns"
+    },
+    {
+      "name": "ownsAsset",
+      "description": "identifies an asset that an owner owns",
+      "source": "Owner",
+      "target": "Asset",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/OwnershipAndControl/Ownership/ownsAsset"
+    },
+    {
+      "name": "isGeneralPartnerOf",
+      "description": "indicates the organization that the general partner manages",
+      "source": "GeneralPartner",
+      "target": "Partnership",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/BE/Partnerships/Partnerships/isGeneralPartnerOf"
+    },
+    {
+      "name": "isOwnedAndControlledBy",
+      "description": "relates something to the party that owns, influences, manages and directs it",
+      "source": "Entity",
+      "target": "Party",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/OwnershipAndControl/OwnershipAndControl/isOwnedAndControlledBy"
+    },
+    {
+      "name": "ownsAndControls",
+      "description": "directs and exercises authoritative or dominating influence over some thing that is also owned",
+      "source": "Party",
+      "target": "Entity",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/OwnershipAndControl/OwnershipAndControl/ownsAndControls"
     },
     {
       "name": "hasPrincipalExecutiveOfficeAddress",
@@ -2930,74 +1324,6 @@
       "source": "LegalPerson",
       "target": "ConventionalStreetAddress",
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/hasPrincipalExecutiveOfficeAddress"
-    },
-    {
-      "name": "hasRedemptionProvision",
-      "description": "indicates the specific terms related to redemption as specified in the instrument or a related contract document",
-      "source": "Entity",
-      "target": "RedemptionProvision",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/hasRedemptionProvision"
-    },
-    {
-      "name": "hasValueExpressedIn",
-      "description": "relates something, such as an instrument or index, to the currency its value is typically expressed in",
-      "source": "Entity",
-      "target": "Currency",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/hasValueExpressedIn"
-    },
-    {
-      "name": "isLegallyRecordedIn",
-      "description": "jurisdiction (country, county, state, province, city) in which the financial instrument is legally recorded for regulatory and/or tax purposes",
-      "source": "FinancialInstrument",
-      "target": "Jurisdiction",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/FinancialInstruments/isLegallyRecordedIn"
-    },
-    {
-      "name": "hasLifecycle",
-      "description": "relates something, such as a product, trade, or related process, to a lifecycle that characterizes it",
-      "source": "Entity",
-      "target": "Lifecycle",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Arrangements/Lifecycles/hasLifecycle"
-    },
-    {
-      "name": "hasStage",
-      "description": "relates something, such as a product or trade lifecycle or related process, to a phase or stage in that lifecycle",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Arrangements/Lifecycles/hasStage"
-    },
-    {
-      "name": "isStageOf",
-      "description": "relates a stage in a product or trade lifecycle or process to the lifecycle or process that it is a stage of",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Arrangements/Lifecycles/isStageOf"
-    },
-    {
-      "name": "hasInput",
-      "description": "relates something (e.g. an occurrence) to something that is used as an input to some activity or process",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/Occurrences/hasInput"
-    },
-    {
-      "name": "isInputTo",
-      "description": "indicates a precondition, requirement, or other contribution (e.g., data) to some activity, process, system, report, analysis, etc.",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/DatesAndTimes/Occurrences/isInputTo"
-    },
-    {
-      "name": "hasMinimumQuotationAmount",
-      "description": {
-        "_": "indicates a minimum intended threshold amount of outstanding principal balance of the reference obligation for which the quote should be obtained",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "CashSettlementTerms",
-      "target": "MonetaryAmount",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/DER/CreditDerivatives/CreditDefaultSwaps/hasMinimumQuotationAmount"
     },
     {
       "name": "hasQuotationMethod",
@@ -3024,195 +1350,108 @@
       "documentation": "https://spec.edmcouncil.org/fibo/ontology/DER/DerivativesContracts/DerivativesBasics/hasFirstDeliveryDate"
     },
     {
-      "name": "hasLastDeliveryDate",
-      "description": {
-        "_": "specifies the final date in a range of dates by which the underlying asset (or some portion thereof) must be delivered in order for the terms of the contract to be fulfilled",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "SettlementTerms",
-      "target": "ExplicitDate",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/DER/DerivativesContracts/DerivativesBasics/hasLastDeliveryDate"
-    },
-    {
-      "name": "hasFundingLeg",
-      "description": "indicates the leg of a return swap that specifies a set payment rate, typically benchmark based but possibly a fixed rate",
-      "source": "ReturnSwap",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/DER/DerivativesContracts/Swaps/hasFundingLeg"
-    },
-    {
-      "name": "hasDefaultThresholdAmount",
-      "description": {
-        "_": "specifies an amount of money that triggers a failure to pay, repudiation/moratorium or restructuring event",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
+      "name": "operatesInCountry",
+      "description": "indicates the ISO 3166-1 country in which an exchange, data reporting services provider, or crypto asset services provider operates",
       "source": "Entity",
-      "target": "MonetaryAmount",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/CreditEvents/hasDefaultThresholdAmount"
+      "target": "Country",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FunctionalEntities/Markets/operatesInCountry"
     },
     {
-      "name": "hasGracePeriod",
-      "description": {
-        "_": "window following any payment due date during which a party must fulfill its obligations before a failure to pay credit event occurs",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
+      "name": "operatesInMunicipality",
+      "description": "indicates the municipality or business center in which in which an exchange, data reporting services provider, or crypto asset services provider operates",
       "source": "Entity",
-      "target": "DatePeriod",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/CreditEvents/hasGracePeriod"
+      "target": "Municipality",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FunctionalEntities/Markets/operatesInMunicipality"
     },
     {
-      "name": "governsPaymentOf",
-      "description": "links contractual terms embedded in a contract, such as interest or repayment terms to the element those terms apply to",
-      "source": "DebtTerms",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/governsPaymentOf"
-    },
-    {
-      "name": "hasAccrualBasis",
-      "description": "identifies the convention that defines how interest accrues on something, that is the number of days in a month and days in a year that are counted when performing interest accrual calculations",
-      "source": "Entity",
-      "target": "DayCountConvention",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/hasAccrualBasis"
-    },
-    {
-      "name": "hasAmountOfCreditExtended",
-      "description": "specifies the gross amount of credit that has been provided to the borrower as of a given point in time with respect to a specific agreement (e.g. for line of credit)",
+      "name": "facilitates",
+      "description": "acts as an enabler in a situation in which an event, a task, a conversation or something else occurs",
       "source": "Entity",
       "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/hasAmountOfCreditExtended"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/ProductsAndServices/FinancialProductsAndServices/facilitates"
     },
     {
-      "name": "hasBorrower",
-      "description": "relates a contract, such as a debt instrument or credit agreement, to one or more parties that are incurring the debt",
-      "source": "Entity",
-      "target": "Borrower",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/hasBorrower"
+      "name": "buys",
+      "description": "links a party in the role of purchaser to something that they have purchased or plan to purchase",
+      "source": "Buyer",
+      "target": "Product",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/ProductsAndServices/ProductsAndServices/buys"
     },
     {
-      "name": "hasCompoundingFrequency",
-      "description": "the frequency at which interest is added to the principal of the debt over the course of the agreement",
-      "source": "Entity",
-      "target": "RecurrenceInterval",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/hasCompoundingFrequency"
+      "name": "buysFrom",
+      "description": "links a party in the role of purchaser to a party from which they have made or are planning to make a purchase",
+      "source": "Buyer",
+      "target": "Seller",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/ProductsAndServices/ProductsAndServices/buysFrom"
     },
     {
-      "name": "hasInterestRate",
-      "description": "relates something, such as an agreement, or debt instrument, to the rate (typically annual) of interest that is to be paid by the debtor to the creditor on the debt",
-      "source": "Entity",
-      "target": "InterestRate",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/hasInterestRate"
+      "name": "sells",
+      "description": "links a party in the role of broker, dealer, vendor, or merchandiser to something that they make available for sale",
+      "source": "Seller",
+      "target": "Product",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/ProductsAndServices/ProductsAndServices/sells"
     },
     {
-      "name": "hasInterestRateCap",
-      "description": "relates something, such as an agreement, or debt instrument, to the upper bound (ceiling) rate (typically annual) of interest on variable-rate debt that is to be paid by the debtor to the creditor on the debt",
-      "source": "Entity",
-      "target": "InterestRate",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/hasInterestRateCap"
+      "name": "sellsTo",
+      "description": "links a party in the role of broker, dealer, vendor, or merchandiser to a purchaser or potential purchasing party",
+      "source": "Seller",
+      "target": "Buyer",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/ProductsAndServices/ProductsAndServices/sellsTo"
     },
     {
-      "name": "hasLender",
-      "description": "relates a contract, such as a debt instrument or credit agreement, to one or more parties that are financing the debt",
-      "source": "Entity",
-      "target": "Lender",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/hasLender"
+      "name": "regulatesSupplyOf",
+      "description": "relates a regulatory agency to something it controls or supervises the availability of in some market by means of rules and regulations",
+      "source": "RegulatoryAgency",
+      "target": "Entity",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FunctionalEntities/FinancialServicesEntities/regulatesSupplyOf"
     },
     {
-      "name": "hasMaturityDate",
-      "description": "indicates the date on which the principal amount of an instrument is due to be repaid to the investor and interest or coupon payments stop, and/or the date on which the instrument may be redeemed",
-      "source": "Entity",
-      "target": "ExplicitDate",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/hasMaturityDate"
-    },
-    {
-      "name": "hasMaximumAdvanceAmount",
-      "description": "specifies the ceiling on the amount of credit that can be drawn by the borrower in a single request with respect to a specific agreement (e.g. for line of credit) within the specified credit limit",
+      "name": "hasAppraiser",
+      "description": "relates an assessment or report to an agent that conducts the assessment",
       "source": "Entity",
       "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/hasMaximumAdvanceAmount"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Arrangements/Assessments/hasAppraiser"
     },
     {
-      "name": "hasOriginalTimeToMaturity",
-      "description": "indicates the lifespan of credit agreement or offering, from the date of issuance to the scheduled maturity date",
+      "name": "hasFirstTradeSettlementDate",
+      "description": "indicates the date on which the first trade of a newly issued security is settled",
       "source": "Entity",
-      "target": "ExplicitDuration",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/hasOriginalTimeToMaturity"
+      "target": "Date",
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/SEC/Securities/SecuritiesIssuance/hasFirstTradeSettlementDate"
     },
     {
-      "name": "hasOutstandingAmount",
-      "description": "indicates an amount of money representing the principal, interest, or other amount owed at a specific point in time",
+      "name": "hasOrganizationMember",
+      "description": "hasOrganizationMember relationship",
       "source": "Entity",
-      "target": "MonetaryAmount",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/hasOutstandingAmount"
-    },
-    {
-      "name": "hasPrincipal",
-      "description": "indicates the face value of an obligation, such as a bond or loan, that must be repaid at maturity, i.e., the base amount raised by a mortgage or other debt instrument",
-      "source": "Entity",
-      "target": "Principal",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/hasPrincipal"
-    },
-    {
-      "name": "isAmortizationOf",
-      "description": "links the process of reduction of debt or other costs through periodic charges to the relevant asset or liability",
-      "source": "Amortization",
       "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/isAmortizationOf"
-    },
-    {
-      "name": "isPrincipalOf",
-      "description": "links the value of a debt, excluding any interest or other costs of using credit, to the debt that it applies to",
-      "source": "Principal",
-      "target": "Entity",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/DebtAndEquities/Debt/isPrincipalOf"
-    },
-    {
-      "name": "hasRateOfReturn",
-      "description": {
-        "_": "indicates the retrospective rate of return for a given financial instrument over some period of time",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "FinancialInstrument",
-      "target": "RateOfReturn",
-      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstruments/InstrumentPricing/hasRateOfReturn"
+      "documentation": "https://spec.edmcouncil.org/fibo/ontology/FND/Organizations/Organizations/hasOrganizationMember"
     }
   ],
   "metadata": {
     "sourceUrl": "https://raw.githubusercontent.com/edmcouncil/fibo/master/AboutFIBOProd.rdf",
-    "extractionDate": "2025-07-04T14:47:50.237Z",
+    "extractionDate": "2025-07-04T15:01:55.332Z",
     "sourceVersion": "2025-07",
     "entityCount": 2169,
     "relationshipCount": 612
   },
   "ignoredEntities": [
-    "BoardAgreement",
     "PubliclyHeldCompany",
     "RegistrationIdentifier",
     "RegistrationIdentifierScheme",
-    "ReligiousCorporation",
-    "Corporation",
-    "ForProfitCorporation",
+    "BenefitCorporation",
     "IncorporationGuarantee",
     "InstrumentOfIncorporation",
     "NotForProfitCorporation",
     "Branch",
+    "JointVenture",
     "NonGovernmentalOrganization",
-    "NotForProfitOrganization",
     "TaxIdentifier",
-    "BusinessEntity",
     "BusinessLicense",
     "CharteredLegalPerson",
-    "LegallyCompetentNaturalPerson",
     "PowerOfAttorney",
-    "ReligiousObjective",
+    "PublicPurpose",
     "SpecialPurposeVehicle",
+    "StatutoryBody",
     "AmountOfMoney",
     "CalculatedPrice",
     "Currency",
@@ -3226,11 +1465,14 @@
     "MonetaryPrice",
     "PercentageMonetaryAmount",
     "PreciousMetalIdentifier",
+    "Price",
+    "UnitOfAccount",
     "UnitOfAccountIdentifier",
     "UnitPrice",
+    "BusinessObjective",
     "BusinessStrategy",
-    "Goal",
-    "Objective",
+    "DistributionStrategy",
+    "FinancialObjective",
     "Program",
     "ProgramIdentifier",
     "ProgramName",
@@ -3239,17 +1481,16 @@
     "ProjectName",
     "Strategy",
     "MaturityLevel",
+    "Module",
     "Association",
     "CooperativeSociety",
     "FamilyOffice",
-    "FunctionalBusinessEntity",
     "FunctionalEntity",
     "Merchant",
     "MerchantCategoryCode",
     "MerchantCategoryCodeScheme",
     "MerchantIdentifier",
     "Syndicate",
-    "SyndicateMember",
     "OrganizationIdentifier",
     "IndustrySectorClassificationScheme",
     "IndustrySectorClassifier",
@@ -3257,17 +1498,20 @@
     "MarketDataProvider",
     "Publication",
     "Publisher",
+    "BranchOfGovernment",
+    "DevolvedGovernment",
+    "ExecutiveBranch",
     "FederalGovernment",
     "FederatedSovereignty",
     "Government",
     "GovernmentAgency",
     "GovernmentAppointee",
-    "GovernmentBody",
     "GovernmentDepartment",
     "GovernmentMinister",
     "GovernmentOfficial",
     "Instrumentality",
     "Judiciary",
+    "Legislature",
     "MunicipalEntity",
     "MunicipalGovernment",
     "NationalGovernment",
@@ -3276,28 +1520,26 @@
     "RegionalSovereignty",
     "SovereignState",
     "SupranationalEntity",
-    "TribalEntity",
+    "TribalArea",
     "TribalGovernment",
     "NationalIdentificationNumber",
     "VotingShareholder",
+    "Auditor",
     "Authorization",
     "AuthorizedParty",
     "AuthorizingParty",
     "BoardCapacity",
     "BoardCompositionControl",
     "BoardMember",
-    "BoardMembership",
     "BoardOfDirectors",
-    "Bylaws",
-    "ChiefExecutiveOfficer",
+    "CompanyLaw",
+    "CompanySecretary",
     "CorporateBylaws",
     "CorporateOfficer",
     "Executive",
     "ExecutiveBoardMember",
     "LegallyDelegatedAuthority",
-    "PrincipalParty",
     "ResponsibleParty",
-    "Signatory",
     "Adult",
     "AgeOfMajority",
     "BirthCertificateIdentificationScheme",
@@ -3309,9 +1551,12 @@
     "DriversLicense",
     "DriversLicenseIdentificationScheme",
     "DriversLicenseIdentifier",
+    "EmancipatedMinor",
+    "IncapacitatedAdult",
     "LegalAge",
     "LegalWorkingAge",
     "LegalWorkingAgePerson",
+    "Minor",
     "NationalIdentificationNumberScheme",
     "Passport",
     "PassportNumber",
@@ -3320,6 +1565,7 @@
     "PersonName",
     "PlaceOfBirth",
     "Constitution",
+    "CourtOfLaw",
     "Law",
     "StatuteLaw",
     "CapitalSurplus",
@@ -3335,27 +1581,35 @@
     "BilateralNettingProvision",
     "BreachOfContract",
     "BreachOfCovenant",
+    "CloseOutNettingProvision",
     "CollateralAgreement",
     "Contract",
     "ContractDocument",
-    "ContractMilestone",
     "ContractParty",
+    "ContractPrincipal",
     "ContractThirdParty",
     "ContractualCommitment",
+    "ContractualDefinition",
     "ContractualElement",
     "Counterparty",
+    "DisclosureProvision",
     "EarlyTerminationProvision",
     "ExtensionProvision",
     "MasterAgreement",
-    "MilestoneEvent",
     "MilestoneSchedule",
     "MultilateralContract",
     "MultilateralNettingProvision",
     "MutualContractualAgreement",
+    "NettingProvision",
     "NonBindingTerm",
+    "NonTransferableContract",
     "NotificationProvision",
+    "NovateableContract",
+    "NovationNettingProvision",
+    "PaymentNettingProvision",
+    "Representation",
     "SettlementNettingProvision",
-    "TermSheet",
+    "TerminationProvision",
     "TransferableContract",
     "UnilateralContract",
     "VerbalContract",
@@ -3377,6 +1631,7 @@
     "PostOfficeBoxDesignator",
     "Postcode",
     "PostdirectionalSymbol",
+    "PredirectionalSymbol",
     "PrimaryAddressNumber",
     "RegionSpecificIdentifier",
     "SecondaryUnit",
@@ -3390,30 +1645,38 @@
     "SupplementalAddressDesignator",
     "SupplementalAddressUnit",
     "VirtualAddress",
-    "ContractuallyCapableEntity",
     "EntityLegalForm",
     "EntityLegalFormIdentifier",
     "EntityLegalFormScheme",
     "LEIRegisteredEntity",
     "LegalEntityIdentifierScheme",
+    "RelationshipPeriodQualifier",
+    "RelationshipQualifier",
+    "RelationshipStatus",
     "OrganizationName",
     "Agreement",
     "Beneficiary",
     "BilateralAgreement",
     "Commitment",
+    "CommitmentAtLarge",
     "IndividualUnilateralCommitment",
     "MultilateralAgreement",
     "MutualAgreement",
     "MutualCommitment",
     "Obligee",
     "Obligor",
+    "UnilateralCommitment",
+    "Claim",
     "ContingentObligation",
     "ContingentRight",
     "ContractualCapability",
     "ContractualObligation",
+    "ContractualOption",
     "ContractualRight",
+    "DelegatedLegalAuthority",
     "DeliveryObligation",
     "Duty",
+    "LegalCapacity",
     "LegalConstruct",
     "LegalObligation",
     "LegalRight",
@@ -3424,9 +1687,9 @@
     "Licensor",
     "LitigationCapacity",
     "NotificationObligation",
-    "Policy",
     "Regulation",
     "ReportingPolicy",
+    "Right",
     "ContractualControl",
     "ControlledParty",
     "ControllingAlliance",
@@ -3444,12 +1707,7 @@
     "ConstitutionalOwner",
     "ControllingEquity",
     "DirectConsolidation",
-    "EntityOwner",
-    "EntityOwnership",
-    "InvestmentEquity",
     "Investor",
-    "InvestorContract",
-    "Employee",
     "Employer",
     "Employment",
     "FormalOrganization",
@@ -3465,8 +1723,10 @@
     "Affiliation",
     "ControlledAffiliate",
     "ControllingAffiliate",
+    "DomesticUltimateParent",
     "GlobalUltimateParent",
     "JointVenturePartner",
+    "SignificantShareholder",
     "Subsidiary",
     "TotalControllingInterestParty",
     "BeneficialOwner",
@@ -3478,9 +1738,10 @@
     "Owner",
     "Ownership",
     "TangibleAsset",
-    "GeneralPartner",
     "GeneralPartnership",
+    "LimitedLiabilityLimitedPartnership",
     "LimitedLiabilityPartnership",
+    "LimitedPartner",
     "LimitedPartnership",
     "Partner",
     "Partnership",
@@ -3488,11 +1749,16 @@
     "LimitedLiabilityCompany",
     "LimitedLiabilityCompanyMember",
     "LimitedLiabilityCompanyTaxedAsACorporation",
+    "ManagerManagedLimitedLiabilityCompany",
     "ManagingMember",
     "PrivateCompanyWithLimitedLiability",
+    "PrivateLimitedCompany",
     "SoleProprietor",
     "SoleProprietorship",
     "OwnershipControlSituation",
+    "IrrevocableTrust",
+    "LivingTrust",
+    "RevocableTrust",
     "TestamentaryTrust",
     "Trust",
     "TrustAgreement",
@@ -3504,14 +1770,30 @@
     "ActionClassificationScheme",
     "ActionClassifier",
     "ActionStatus",
+    "BusinessStrategyClassifier",
+    "ChangeAction",
     "ClassAction",
+    "ConsentSolicitation",
+    "CorporateAction",
+    "DisclosureAction",
     "Divestiture",
     "IncomeOrientedClassifier",
     "LegalFormChange",
+    "Liquidation",
     "MandatoryCorporateAction",
+    "MandatoryWithChoiceCorporateAction",
+    "MarketAction",
     "MergerAcquisition",
+    "Notification",
     "OrganizationAddressChange",
     "OrganizationNameChange",
+    "PriorityIssue",
+    "RegulatoryAction",
+    "SpinOff",
+    "VoluntaryCorporateAction",
+    "PromissoryNote",
+    "CalculationAgent",
+    "CashInstrument",
     "CommodityInstrument",
     "CurrencyInstrument",
     "DerivativeInstrument",
@@ -3519,11 +1801,16 @@
     "EquityInstrument",
     "ExemptSecurity",
     "FinancialInstrumentIdentifier",
+    "Future",
     "NegotiableSecurity",
     "NonNegotiableSecurity",
+    "Option",
     "PackagedFinancialProduct",
+    "RedemptionProvision",
     "SecuritiesTransaction",
     "SpotContract",
+    "StandardizedTerms",
+    "Underlier",
     "UniqueTransactionIdentifier",
     "Lifecycle",
     "LifecycleEvent",
@@ -3537,6 +1824,8 @@
     "Occurrence",
     "OccurrenceBasedDate",
     "OccurrenceKind",
+    "AssetBackedCreditDefaultSwap",
+    "BasketCreditDefaultSwap",
     "BasketOfCreditDefaultSwaps",
     "CashSettlementMethod",
     "ContingentCreditDefaultSwap",
@@ -3548,6 +1837,9 @@
     "DeliverableObligationBuyer",
     "DeliverableObligationSeller",
     "EscrowAgent",
+    "IndexCreditDefaultSwap",
+    "IndexTrancheCreditDefaultSwap",
+    "LoanCreditDefaultSwap",
     "MultiNameCreditDefaultSwap",
     "NotifyingParty",
     "SettlementAuction",
@@ -4000,6 +2292,7 @@
     "MonetaryAuthority",
     "MoneyServicesBusiness",
     "MortgageCompany",
+    "NonDepositoryInstitution",
     "PaymentService",
     "PayrollService",
     "PrincipalUnderwriter",
@@ -5264,22 +3557,25 @@
   ],
   "ignoredRelationships": [
     "hasDateOfIncorporation",
+    "hasDateOfRegistration",
     "hasIssuedCapital",
     "isConstitutedBy",
     "isIncorporatedIn",
     "hasEquity",
     "hasHeadquartersAddress",
     "hasOperatingAddress",
+    "hasRegisteredAddress",
     "isOrganizedIn",
+    "hasBaseCurrency",
     "hasCurrency",
+    "hasMonetaryAmount",
     "hasNotionalAmount",
     "hasPrice",
     "isPriceFor",
-    "hasGoal",
     "hasStrategy",
     "confers",
-    "controls",
     "designates",
+    "embodies",
     "evaluates",
     "exchanges",
     "exemplifies",
@@ -5287,40 +3583,50 @@
     "governs",
     "hasDesignation",
     "involves",
+    "isConferredBy",
     "isControlledBy",
     "isDesignatedBy",
     "isEvaluatedBy",
     "isExemplifiedBy",
     "isGeneratedBy",
     "isGovernedBy",
+    "isHeldBy",
+    "isIssuedBy",
     "isManagedBy",
     "isMandatedBy",
     "isProvidedBy",
     "issues",
-    "manages",
-    "produces",
+    "mandates",
     "provides",
     "hasPublisher",
+    "isPublishedBy",
     "publishes",
+    "hasJurisdiction",
+    "hasSharedSovereigntyOver",
+    "hasSovereigntyOver",
     "isElectedBy",
     "isInstrumentOf",
+    "isJurisdictionOf",
     "isRepresentedBy",
-    "authorizes",
     "delegatesControlTo",
     "designatesSignatory",
     "elects",
-    "hasAuthorizingParty",
+    "hasAuthorizedParty",
     "hasCorporateOfficer",
     "hasDelegatedControlOf",
     "hasDirector",
     "hasPrincipalManagingParty",
     "hasResponsibility",
+    "hasResponsibleParty",
+    "hasSigningAuthorityFor",
     "hasVestedInIt",
     "isAuthorizedBy",
     "isAuthorizedThrough",
     "isDirectorOf",
+    "isOfficerOf",
     "isPrincipalPartyOf",
     "nominates",
+    "hasAgeOfMajority",
     "hasCitizenship",
     "hasDateOfBirth",
     "hasDateOfDeath",
@@ -5328,46 +3634,68 @@
     "hasPlaceOfBirth",
     "hasPrimaryResidence",
     "hasResidence",
+    "hasInForce",
     "isInForceIn",
     "definesTermsFor",
+    "hasBeneficiary",
+    "hasContractDuration",
+    "hasContractParty",
     "hasContractualElement",
     "hasCounterparty",
     "hasEarlyTerminationDate",
     "hasEffectiveDate",
     "hasEffectiveDateTimeStamp",
     "hasExecutionDate",
+    "hasExecutionDateTimeStamp",
     "hasExtendablePeriod",
     "hasExtensionProvision",
     "hasGoverningJurisdiction",
+    "hasMilestoneProvision",
     "hasNonBindingTerm",
     "hasPrincipalParty",
+    "hasTerm",
+    "hasThirdParty",
     "isBeneficiaryOf",
     "isEvidenceFor",
     "isEvidencedBy",
     "isPrimaryContractFor",
     "isQualifiedBy",
+    "isSubordinateTo",
     "qualifies",
     "supersedes",
+    "hasMailingAddress",
+    "hasAddress",
+    "hasIndividualPostcode",
+    "hasPostdirectionalSymbol",
+    "hasPredirectionalSymbol",
     "hasPrimaryAddressNumber",
+    "hasSecondaryUnit",
     "hasStreetName",
+    "hasStreetSuffix",
+    "hasStructureName",
     "hasTransliteratedAddress",
+    "hasLegalForm",
+    "isConsolidatedBy",
+    "isConsolidationOf",
     "hasObligation",
     "isObligationOf",
-    "implements",
+    "hasCapacity",
+    "implies",
     "isCapacityOf",
     "isConferredOn",
     "isImplementedBy",
+    "isImpliedBy",
     "isLicensedBy",
     "isPredicatedOn",
     "advises",
     "hasControllingOrganizationMember",
-    "hasMajorityControllingParty",
     "isAdvisedBy",
+    "isBasedOnInvestmentEquity",
     "isControllingMemberOf",
+    "guarantees",
     "hasDirectOwnership",
     "hasDirectOwningEntity",
-    "hasInvestmentOwnership",
-    "hasOwningEntity",
+    "hasOwnedEntity",
     "employs",
     "hasEmployedParty",
     "hasEmployee",
@@ -5384,45 +3712,51 @@
     "isControlledThingIn",
     "isControllingPartyIn",
     "isControllingPartyOf",
+    "isPartyControlling",
     "hasControllingAffiliate",
+    "hasDomesticUltimateParent",
     "hasGlobalUltimateParent",
-    "hasSubsidiary",
-    "isControllingAffiliateOf",
-    "isParentCompanyOf",
+    "isSubsidiaryOf",
     "isWhollyOwnedBy",
+    "hasBeneficialOwner",
+    "isBeneficialOwnerOf",
     "hasOwnedAsset",
     "hasOwningParty",
     "isAssetOf",
     "isOwnedAsset",
-    "isOwnedBy",
     "isOwningParty",
-    "owns",
-    "ownsAsset",
     "hasGeneralPartner",
     "hasLimitedPartner",
-    "isGeneralPartnerOf",
     "isLimitedPartnerOf",
+    "hasManagingMember",
     "isManagingMemberOf",
-    "isOwnedAndControlledBy",
-    "ownsAndControls",
     "hasTrustee",
     "isTrusteeOf",
     "hasBuyingCurrency",
     "hasCalculationAgent",
     "hasCommodityValueAsOfExecutionDate",
     "hasNominalValue",
+    "hasRedemptionProvision",
     "hasSellingCurrency",
     "hasShareholder",
     "hasUnderlier",
+    "hasValueExpressedIn",
     "holdsSharesIn",
     "isDenominatedIn",
+    "isLegallyRecordedIn",
+    "hasLifecycle",
+    "hasStage",
     "isLifecycleOf",
+    "isStageOf",
     "hasEventDate",
+    "hasInput",
     "hasOccurrence",
     "hasOutput",
+    "isInputTo",
     "isOutputFrom",
     "isTriggeredBy",
     "hasContractPrice",
+    "hasMinimumQuotationAmount",
     "hasScheduledTerminationDate",
     "hasAccretingNotionalAmount",
     "hasAdditionalCosts",
@@ -5430,18 +3764,27 @@
     "hasConstantNotionalAmount",
     "hasCustomNotionalAmount",
     "hasFirstNoticeDate",
+    "hasLastDeliveryDate",
     "hasLastNoticeDate",
     "hasSettlementTerms",
     "hasTickValue",
     "hasUnderlyingAssetPrice",
     "hasValuationTerms",
     "specifiesValueOf",
+    "hasFundingLeg",
     "hasLeg",
     "hasReturnLeg",
     "hasSwapIdentifier",
     "isLegOf",
     "hasDefaultInterestCompoundingBasis",
+    "hasDefaultThresholdAmount",
+    "hasGracePeriod",
+    "governsPaymentOf",
+    "hasAccrualBasis",
+    "hasAmountOfCreditExtended",
     "hasAvailableAmount",
+    "hasBorrower",
+    "hasCompoundingFrequency",
     "hasCreditLimit",
     "hasDebtAmount",
     "hasDenomination",
@@ -5452,9 +3795,18 @@
     "hasInitialPrincipalPaymentDate",
     "hasInterestPaymentDay",
     "hasInterestPaymentFrequency",
+    "hasInterestRate",
+    "hasInterestRateCap",
+    "hasLender",
+    "hasMaturityDate",
+    "hasMaximumAdvanceAmount",
+    "hasOriginalTimeToMaturity",
+    "hasOutstandingAmount",
+    "hasPrincipal",
     "hasPrincipalPaymentDay",
     "hasPrincipalPaymentFrequency",
     "hasPrincipalRepaymentDate",
+    "isAmortizationOf",
     "isBasedOn",
     "isCollateralizationOf",
     "isCollateralizedBy",
@@ -5462,18 +3814,17 @@
     "isOwed",
     "isOwedBy",
     "isOwedTo",
+    "isPrincipalOf",
     "owes",
     "hasClosingPriceDeterminationMethod",
     "hasPriceDeterminationMethod",
     "hasPricingSource",
+    "hasRateOfReturn",
     "hasTradingDateTime",
     "hasDeliveryMethod",
     "hasPreferredSettlementCurrency",
     "hasSettlementAmount",
     "hasMarketIdentifierCodeStatus",
-    "operatesInCountry",
-    "operatesInMunicipality",
-    "facilitates",
     "hasGeneratingEntity",
     "hasGeneratingEntityIdentifier",
     "hasLegalAgent",
@@ -5505,15 +3856,11 @@
     "hasStub",
     "hasTimeDirection",
     "isRelativeTo",
-    "buys",
-    "buysFrom",
     "hasBuyer",
     "hasSeller",
     "isProvisionedBy",
     "isSuppliedBy",
     "provisions",
-    "sells",
-    "sellsTo",
     "supplies",
     "hasMarketCapitalization",
     "hasMarketCapitalizationValue",
@@ -5549,10 +3896,8 @@
     "hasDateInsured",
     "hasPortfolioCompany",
     "isPortfolioCompanyOf",
-    "regulatesSupplyOf",
     "appliesMethodology",
     "estimatesValueAt",
-    "hasAppraiser",
     "hasDateOfAssessment",
     "hasEstimatedValue",
     "isEstimatedValueOf",
@@ -5657,7 +4002,6 @@
     "hasAnnouncementDate",
     "hasFinancialInstrumentShortName",
     "hasFirstTradeDate",
-    "hasFirstTradeSettlementDate",
     "hasSubscriptionPeriod",
     "isIssuedInForm",
     "isRegisteredWith",
@@ -5735,7 +4079,6 @@
     "rates",
     "usesRatingParty",
     "hasMembership",
-    "hasOrganizationMember",
     "hasSubUnit",
     "isMembershipPartyIn",
     "isOrganizationMember",

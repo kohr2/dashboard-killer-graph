@@ -15,11 +15,13 @@ export class Neo4jConnection {
   private readonly uri: string;
   private readonly user: string;
   private readonly pass: string;
+  private readonly database: string;
 
   constructor() {
     this.uri = process.env.NEO4J_URI!;
     this.user = process.env.NEO4J_USERNAME!;
     this.pass = process.env.NEO4J_PASSWORD!;
+    this.database = process.env.NEO4J_DATABASE || 'neo4j';
   }
 
   public async connect(): Promise<void> {
@@ -33,11 +35,44 @@ export class Neo4jConnection {
     try {
       this.driver = neo4j.driver(this.uri, neo4j.auth.basic(this.user, this.pass));
       await this.driver.verifyConnectivity();
-      logger.info('✅ Successfully connected to Neo4j.');
+      
+      // Ensure database exists
+      await this.ensureDatabaseExists();
+      
+      logger.info(`✅ Successfully connected to Neo4j database: ${this.database}`);
     } catch (error) {
       logger.error('❌ Failed to connect to Neo4j:', error);
       this.driver = null; // Ensure driver is null on failure
       throw new Error(`Neo4j connection failed: ${error}`);
+    }
+  }
+
+  private async ensureDatabaseExists(): Promise<void> {
+    if (this.database === 'neo4j') {
+      // Default database always exists
+      return;
+    }
+
+    const session = this.driver!.session({ database: 'system' });
+    try {
+      // Check if database exists
+      const result = await session.run(
+        'SHOW DATABASES YIELD name WHERE name = $name',
+        { name: this.database }
+      );
+
+      if (result.records.length === 0) {
+        logger.info(`🗄️ Creating database: ${this.database}`);
+        await session.run(`CREATE DATABASE \`${this.database}\``);
+        logger.info(`✅ Database ${this.database} created successfully`);
+      } else {
+        logger.info(`✅ Database ${this.database} already exists`);
+      }
+    } catch (error) {
+      logger.error(`❌ Failed to create database ${this.database}:`, error);
+      throw error;
+    } finally {
+      await session.close();
     }
   }
 
@@ -49,7 +84,11 @@ export class Neo4jConnection {
   }
 
   public getSession(): Session {
-    return this.getDriver().session();
+    return this.getDriver().session({ database: this.database });
+  }
+
+  public getDatabase(): string {
+    return this.database;
   }
 
   public async close(): Promise<void> {
@@ -79,7 +118,7 @@ export class Neo4jConnection {
         await session.run(vectorQuery);
       }
 
-      logger.info(`🏗️ Neo4j schema initialized dynamically for ${entityTypes.length} entity types`);
+      logger.info(`🏗️ Neo4j schema initialized dynamically for ${entityTypes.length} entity types in database: ${this.database}`);
     } catch (error) {
       logger.error('❌ Schema initialization failed:', error);
       throw error;
@@ -93,9 +132,40 @@ export class Neo4jConnection {
     
     try {
       await session.run('MATCH (n) DETACH DELETE n');
-      logger.info('🧹 Database cleared');
+      logger.info(`🧹 Database ${this.database} cleared`);
     } catch (error) {
       logger.error('❌ Failed to clear database:', error);
+      throw error;
+    } finally {
+      await session.close();
+    }
+  }
+
+  async listDatabases(): Promise<string[]> {
+    const session = this.driver!.session({ database: 'system' });
+    try {
+      const result = await session.run('SHOW DATABASES YIELD name');
+      return result.records.map(record => record.get('name'));
+    } catch (error) {
+      logger.error('❌ Failed to list databases:', error);
+      throw error;
+    } finally {
+      await session.close();
+    }
+  }
+
+  async dropDatabase(databaseName: string): Promise<void> {
+    if (databaseName === 'neo4j' || databaseName === 'system') {
+      throw new Error('Cannot drop system databases');
+    }
+
+    const session = this.driver!.session({ database: 'system' });
+    try {
+      logger.info(`🗑️ Dropping database: ${databaseName}`);
+      await session.run(`DROP DATABASE \`${databaseName}\` IF EXISTS`);
+      logger.info(`✅ Database ${databaseName} dropped successfully`);
+    } catch (error) {
+      logger.error(`❌ Failed to drop database ${databaseName}:`, error);
       throw error;
     } finally {
       await session.close();

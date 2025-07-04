@@ -153,21 +153,54 @@ export class EntityImportanceAnalyzer {
 
 ${contextSection}
 
-**Analysis Criteria:**
-1. **Business Relevance**: How critical is this entity for real-world operations, compliance, or decision-making?
-2. **Semantic Significance**: How fundamental is this entity to the conceptual model?
-3. **Operational Impact**: How frequently would this entity be used in real-world scenarios?
-4. **Regulatory/Reporting Importance**: How important is this entity for compliance or reporting?
+**CORE BUSINESS LOGIC PRIORITY:**
+When analyzing entities, prioritize CORE BUSINESS CONCEPTS over administrative, regulatory, or peripheral entities. Core business entities are fundamental to the domain's primary operations and value creation.
+
+**PRIMARY BUSINESS ENTITIES (HIGHEST PRIORITY):**
+- **Project**: Any entity related to projects, initiatives, programs, campaigns, or planned activities
+- **Organization**: Any entity representing organizational structures, companies, corporations, teams, departments
+- **Person**: Any entity representing people, roles, participants, stakeholders, managers, employees
+- **Business Workflow**: Any entity related to business processes, procedures, operations, activities, tasks
+
+**Core Business Entity Examples:**
+- **Project Domain**: Project, Initiative, Program, Campaign, Task, Milestone, Deliverable, Outcome
+- **Organization Domain**: Organization, Corporation, Company, Team, Department, Division, Subsidiary, Branch
+- **Person Domain**: Person, Manager, Employee, Director, Executive, Stakeholder, Participant, Owner
+- **Workflow Domain**: Workflow, Process, Procedure, Activity, Operation, Strategy, Plan, Method
+- **Financial Domain**: Fund, Investment, Portfolio, Deal, Transaction, Goal, Objective
+- **Procurement Domain**: Contract, Supplier, Tender, Purchase, Order, Agreement, Vendor
+- **CRM Domain**: Customer, Lead, Opportunity, Account, Contact, Sale
+
+**Lower Priority Entity Examples:**
+- Administrative: Registration, Identifier, Address, Date, Time, Documentation, Metadata
+- Regulatory: Compliance, Regulation, Authority, License, Certificate, Permit
+- Peripheral: History, Note, Record, File, Status, Version, Reference
+
+**Analysis Criteria (in order of importance):**
+1. **Core Business Relevance**: Is this entity fundamental to the domain's primary business operations and value creation?
+2. **Operational Frequency**: How frequently would this entity be used in real-world business scenarios?
+3. **Decision-Making Impact**: How critical is this entity for business decisions and strategic planning?
+4. **Conceptual Foundation**: Is this entity a building block that other important entities depend on?
+5. **Regulatory/Compliance Importance**: How important is this entity for compliance or reporting? (Lower priority)
+
+**Priority Scoring Guidelines:**
+- **0.9-1.0**: Core business entities fundamental to domain operations (Fund, Corporation, Goal, Project)
+- **0.7-0.8**: Important operational entities (Branch, Objective, Investment, Deal)
+- **0.5-0.6**: Supporting business entities (Supplier, Customer, Account)
+- **0.3-0.4**: Administrative or regulatory entities (Registration, Identifier, Compliance)
+- **0.1-0.2**: Peripheral or metadata entities (Documentation, History, Note)
 
 **Entities to Analyze:**
 ${entities.map((entity, index) => `\n${index + 1}. **${entity.name}**\n   Description: ${entity.description}\n   Properties: ${Object.keys(entity.properties).join(', ') || 'None'}\n`).join('')}
 
 **Instructions:**
-- Analyze each entity based on the criteria above
+- **PRIORITIZE CORE BUSINESS LOGIC**: Focus on entities that are fundamental to the domain's primary operations
+- Analyze each entity based on the criteria above, with emphasis on core business relevance
 - Assign an importance score from 0.0 to 1.0 (1.0 = most important)
-- Provide clear reasoning for each score
+- Provide clear reasoning focusing on business operations and value creation
 - Select the top ${maxEntities} most important entities
 - Consider the context and business use cases if provided
+- **AVOID** prioritizing administrative, regulatory, or peripheral entities over core business concepts
 
 **Output Format:**
 Return a JSON array of objects with the following structure:
@@ -175,9 +208,9 @@ Return a JSON array of objects with the following structure:
   {
     "entityName": "EntityName",
     "importanceScore": 0.95,
-    "reasoning": "Detailed explanation of why this entity is important",
-    "businessRelevance": "Specific business use cases and impact",
-    "domainSignificance": "Role in the conceptual model and relationships"
+    "reasoning": "Detailed explanation focusing on core business relevance and operational importance",
+    "businessRelevance": "Specific business use cases, operations, and value creation impact",
+    "domainSignificance": "Role as a fundamental building block in the conceptual model"
   }
 ]`;
   }
@@ -195,20 +228,54 @@ Return a JSON array of objects with the following structure:
 
 ${contextSection}
 
-**Analysis Criteria:**
-1. **Business Relevance**: How critical is this relationship for real-world operations, compliance, or decision-making?
-2. **Semantic Significance**: How fundamental is this relationship to the conceptual model?
-3. **Operational Impact**: How frequently would this relationship be used in real-world scenarios?
+**CORE BUSINESS LOGIC PRIORITY:**
+When analyzing relationships, prioritize CORE BUSINESS RELATIONSHIPS over administrative, regulatory, or peripheral relationships. Core business relationships connect fundamental business entities and represent key operational flows.
+
+**PRIMARY BUSINESS RELATIONSHIPS (HIGHEST PRIORITY):**
+- **Project Relationships**: Any relationship involving projects, initiatives, programs, tasks, milestones, deliverables
+- **Organization Relationships**: Any relationship involving organizational structures, management, ownership, membership
+- **Person Relationships**: Any relationship involving people, roles, reporting, collaboration, participation
+- **Business Workflow Relationships**: Any relationship involving processes, procedures, operations, activities, execution
+
+**Core Business Relationship Examples:**
+- **Project Domain**: hasProject, managesProject, ownsProject, participatesInProject, leadsProject, hasTask, hasMilestone
+- **Organization Domain**: hasOrganization, managesOrganization, ownsOrganization, belongsTo, isPartOf, hasDepartment
+- **Person Domain**: hasPerson, managesPerson, reportsTo, supervises, collaboratesWith, hasRole, hasStakeholder
+- **Workflow Domain**: hasWorkflow, managesWorkflow, executesWorkflow, followsWorkflow, definesWorkflow, hasProcess
+- **Financial Domain**: hasInvestment, managesFund, ownsCorporation, hasGoal, hasObjective
+- **Procurement Domain**: awardsContract, suppliesTo, purchasesFrom, managesSupplier
+- **CRM Domain**: hasCustomer, managesAccount, createsOpportunity, closesDeal
+
+**Lower Priority Relationship Examples:**
+- Administrative: hasRegistration, hasIdentifier, hasAddress, hasDate, hasDocumentation
+- Regulatory: compliesWith, regulatedBy, licensedBy, authorizedBy, hasCertificate
+- Peripheral: hasMetadata, hasHistory, hasNote, hasRecord, hasFile, hasStatus
+
+**Analysis Criteria (in order of importance):**
+1. **Core Business Relevance**: Does this relationship connect fundamental business entities and represent key operational flows?
+2. **Operational Frequency**: How frequently would this relationship be used in real-world business scenarios?
+3. **Decision-Making Impact**: How critical is this relationship for business decisions and strategic planning?
+4. **Conceptual Foundation**: Is this relationship a building block that other important relationships depend on?
+5. **Regulatory/Compliance Importance**: How important is this relationship for compliance or reporting? (Lower priority)
+
+**Priority Scoring Guidelines:**
+- **0.9-1.0**: Core business relationships fundamental to domain operations (hasInvestment, managesFund, hasGoal)
+- **0.7-0.8**: Important operational relationships (ownsCorporation, hasObjective, hasProject)
+- **0.5-0.6**: Supporting business relationships (suppliesTo, hasCustomer, managesAccount)
+- **0.3-0.4**: Administrative or regulatory relationships (hasRegistration, compliesWith)
+- **0.1-0.2**: Peripheral or metadata relationships (hasDocumentation, hasHistory)
 
 **Relationships to Analyze:**
 ${relationships.map((rel, index) => `\n${index + 1}. **${rel.name}**\n   Description: ${rel.description}\n   Source Type: ${rel.sourceType}\n   Target Type: ${rel.targetType}\n`).join('')}
 
 **Instructions:**
-- Analyze each relationship based on the criteria above
+- **PRIORITIZE CORE BUSINESS LOGIC**: Focus on relationships that connect fundamental business entities and represent key operational flows
+- Analyze each relationship based on the criteria above, with emphasis on core business relevance
 - Assign an importance score from 0.0 to 1.0 (1.0 = most important)
-- Provide clear reasoning for each score
+- Provide clear reasoning focusing on business operations and value creation
 - Select the top ${maxRelationships} most important relationships
 - Consider the context and business use cases if provided
+- **AVOID** prioritizing administrative, regulatory, or peripheral relationships over core business concepts
 
 **Output Format:**
 Return a JSON array of objects with the following structure:
@@ -216,8 +283,8 @@ Return a JSON array of objects with the following structure:
   {
     "relationshipName": "RelationshipName",
     "importanceScore": 0.95,
-    "reasoning": "Detailed explanation of why this relationship is important",
-    "businessRelevance": "Specific business use cases and impact"
+    "reasoning": "Detailed explanation focusing on core business relevance and operational importance",
+    "businessRelevance": "Specific business use cases, operations, and value creation impact"
   }
 ]`;
   }
@@ -230,26 +297,82 @@ Return a JSON array of objects with the following structure:
     logger.warn('Using fallback entity analysis due to LLM service unavailability');
 
     const analysis: EntityImportanceAnalysis[] = entities.map(entity => {
-      // Basic scoring based on property count and description length
       let score = 0.5; // Base score
       
-      // Boost score for entities with more properties
-      const propertyCount = Object.keys(entity.properties || {}).length;
-      score += Math.min(propertyCount * 0.05, 0.2);
+      // Core business entity keywords (high priority)
+      const coreBusinessKeywords = [
+        // Primary business entities (highest priority)
+        'project', 'organization', 'person', 'workflow', 'business',
+        'fund', 'corporation', 'branch', 'goal', 'objective', 'investment', 'portfolio', 'deal', 'transaction',
+        'contract', 'supplier', 'tender', 'purchase', 'order', 'agreement', 'vendor',
+        'customer', 'lead', 'opportunity', 'account', 'contact', 'sale',
+        'patient', 'treatment', 'diagnosis', 'provider', 'facility', 'medication',
+        'company', 'enterprise', 'firm', 'entity',
+        // Direct connections to core concepts
+        'manager', 'owner', 'stakeholder', 'participant', 'member', 'employee', 'director', 'executive',
+        'team', 'department', 'unit', 'division', 'subsidiary', 'partner', 'client', 'investor',
+        'strategy', 'plan', 'initiative', 'program', 'campaign', 'operation', 'process', 'procedure',
+        'activity', 'task', 'milestone', 'deliverable', 'outcome', 'result', 'performance', 'metric'
+      ];
       
-      // Boost score for entities with longer descriptions
+      // Administrative/regulatory keywords (lower priority)
+      const adminKeywords = [
+        'registration', 'identifier', 'address', 'date', 'time', 'compliance', 'regulation', 'authority', 'license',
+        'documentation', 'metadata', 'history', 'note', 'record', 'file', 'certificate', 'permit'
+      ];
+      
+      const entityName = entity.name.toLowerCase();
+      const description = (entity.description || '').toLowerCase();
+      const fullText = `${entityName} ${description}`;
+      
+      // Check for core business keywords
+      const coreMatches = coreBusinessKeywords.filter(keyword => 
+        fullText.includes(keyword)
+      ).length;
+      
+      // Check for administrative keywords
+      const adminMatches = adminKeywords.filter(keyword => 
+        fullText.includes(keyword)
+      ).length;
+      
+      // Score based on keyword matches
+      if (coreMatches > 0) {
+        score += Math.min(coreMatches * 0.15, 0.4); // Boost for core business entities
+      }
+      
+      if (adminMatches > 0) {
+        score -= Math.min(adminMatches * 0.1, 0.3); // Penalty for administrative entities
+      }
+      
+      // Boost score for entities with more properties (indicates complexity/importance)
+      const propertyCount = Object.keys(entity.properties || {}).length;
+      score += Math.min(propertyCount * 0.03, 0.15);
+      
+      // Boost score for entities with longer descriptions (indicates detailed documentation)
       const descriptionLength = entity.description?.length || 0;
-      score += Math.min(descriptionLength / 1000, 0.1);
+      score += Math.min(descriptionLength / 2000, 0.1);
       
       // Cap score at 1.0
-      score = Math.min(score, 1.0);
+      score = Math.min(Math.max(score, 0.1), 1.0);
+
+      const reasoning = `Fallback analysis: ${coreMatches} core business keywords, ${adminMatches} administrative keywords, ${propertyCount} properties, ${descriptionLength} chars description`;
+      
+      const businessRelevance = coreMatches > 0 
+        ? `Core business entity with ${coreMatches} business keywords - fundamental to domain operations`
+        : adminMatches > 0 
+        ? `Administrative entity with ${adminMatches} admin keywords - lower business priority`
+        : 'Standard entity - moderate business relevance';
+
+      const domainSignificance = coreMatches > 0 
+        ? `Fundamental building block in the conceptual model with strong business connections`
+        : 'Supporting entity in the domain model';
 
       return {
         entityName: entity.name,
         importanceScore: score,
-        reasoning: `Fallback analysis based on property count (${propertyCount}) and description length (${descriptionLength})`,
-        businessRelevance: 'Fallback analysis - business relevance not determined',
-        domainSignificance: 'Fallback analysis - domain significance not determined'
+        reasoning,
+        businessRelevance,
+        domainSignificance
       };
     });
 
@@ -266,21 +389,76 @@ Return a JSON array of objects with the following structure:
     logger.warn('Using fallback relationship analysis due to LLM service unavailability');
 
     const analysis: RelationshipImportanceAnalysis[] = relationships.map(rel => {
-      // Basic scoring based on description length
       let score = 0.5; // Base score
       
-      // Boost score for relationships with longer descriptions
+      // Core business relationship keywords (high priority)
+      const coreBusinessKeywords = [
+        // Primary business relationships (highest priority)
+        'hasproject', 'managesproject', 'ownsproject', 'participatesinproject', 'leadsproject',
+        'hasorganization', 'managesorganization', 'ownsorganization', 'belongsto', 'ispartof',
+        'hasperson', 'managesperson', 'reports to', 'supervises', 'collaborateswith',
+        'hasworkflow', 'managesworkflow', 'executesworkflow', 'followsworkflow', 'definesworkflow',
+        // Core business operations
+        'hasinvestment', 'managesfund', 'ownscorporation', 'hasgoal', 'hasobjective',
+        'awardscontract', 'suppliesto', 'purchasesfrom', 'managessupplier',
+        'hascustomer', 'managesaccount', 'createsopportunity', 'closesdeal',
+        'treatspatient', 'prescribesmedication', 'operateson', 'diagnosescondition',
+        // Direct business relationships
+        'manages', 'owns', 'controls', 'operates', 'invests', 'trades', 'sells', 'buys',
+        'leads', 'directs', 'supervises', 'coordinates', 'facilitates', 'enables',
+        'implements', 'executes', 'performs', 'conducts', 'carriesout', 'delivers',
+        'creates', 'develops', 'designs', 'plans', 'strategizes', 'decides', 'approves'
+      ];
+      
+      // Administrative/regulatory keywords (lower priority)
+      const adminKeywords = [
+        'hasregistration', 'hasidentifier', 'hasaddress', 'hasdate', 'complieswith', 'regulatedby', 'licensedby', 'authorizedby',
+        'hasdocumentation', 'hasmetadata', 'hashistory', 'hasnote', 'hasrecord', 'hasfile'
+      ];
+      
+      const relName = rel.name.toLowerCase();
+      const description = (rel.description || '').toLowerCase();
+      const fullText = `${relName} ${description}`;
+      
+      // Check for core business keywords
+      const coreMatches = coreBusinessKeywords.filter(keyword => 
+        fullText.includes(keyword)
+      ).length;
+      
+      // Check for administrative keywords
+      const adminMatches = adminKeywords.filter(keyword => 
+        fullText.includes(keyword)
+      ).length;
+      
+      // Score based on keyword matches
+      if (coreMatches > 0) {
+        score += Math.min(coreMatches * 0.15, 0.4); // Boost for core business relationships
+      }
+      
+      if (adminMatches > 0) {
+        score -= Math.min(adminMatches * 0.1, 0.3); // Penalty for administrative relationships
+      }
+      
+      // Boost score for relationships with longer descriptions (indicates detailed documentation)
       const descriptionLength = rel.description?.length || 0;
-      score += Math.min(descriptionLength / 500, 0.2);
+      score += Math.min(descriptionLength / 1000, 0.15);
       
       // Cap score at 1.0
-      score = Math.min(score, 1.0);
+      score = Math.min(Math.max(score, 0.1), 1.0);
+
+      const reasoning = `Fallback analysis: ${coreMatches} core business keywords, ${adminMatches} administrative keywords, ${descriptionLength} chars description`;
+      
+      const businessRelevance = coreMatches > 0 
+        ? `Core business relationship with ${coreMatches} business keywords - fundamental to domain operations`
+        : adminMatches > 0 
+        ? `Administrative relationship with ${adminMatches} admin keywords - lower business priority`
+        : 'Standard relationship - moderate business relevance';
 
       return {
         relationshipName: rel.name,
         importanceScore: score,
-        reasoning: `Fallback analysis based on description length (${descriptionLength})`,
-        businessRelevance: 'Fallback analysis - business relevance not determined'
+        reasoning,
+        businessRelevance
       };
     });
 

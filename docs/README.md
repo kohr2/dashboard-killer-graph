@@ -54,22 +54,194 @@ npm run dev
 
 ### Ontology Management
 
-The system includes an ontology-agnostic builder for managing domain ontologies:
+The system includes an ontology-agnostic builder for managing domain ontologies with advanced filtering and importance-based selection.
+
+#### Basic Ontology Building
 
 ```bash
 # Build procurement ontology from ePO source
-npx ts-node scripts/ontology/build-ontology.ts procurement
+npx ts-node scripts/ontology/build-ontology.ts --ontology-name procurement
 
 # Build any ontology by name
-npx ts-node scripts/ontology/build-ontology.ts <ontology-name>
+npx ts-node scripts/ontology/build-ontology.ts --ontology-name <ontology-name>
 
 # Build from specific config file
-npx ts-node scripts/ontology/build-ontology.ts --config path/to/config.json
+npx ts-node scripts/ontology/build-ontology.ts --config-path path/to/config.json
 
 # Generate code from ontologies
 npx ts-node scripts/codegen/generate-ontologies.ts procurement
 npx ts-node scripts/codegen/generate-ontologies.ts  # Generate all ontologies
 ```
+
+#### Advanced Ontology Processing with Importance-Based Filtering
+
+The ontology builder now supports intelligent filtering based on business relevance and semantic significance:
+
+```bash
+# Build FIBO ontology with 50 most important entities and relationships
+npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo --top-entities 50 --top-relationships 50
+
+# Build with 100 limits for more comprehensive coverage
+npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo --top-entities 100 --top-relationships 100
+
+# Include external imports (not recommended for production)
+npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo --top-entities 50 --include-external
+
+# Custom output directory
+npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo --top-entities 50 --output-dir ./custom-output
+```
+
+#### Importance-Based Filtering Features
+
+**LLM-Powered Analysis:**
+- Uses AI to analyze entity and relationship importance
+- Considers business relevance, semantic significance, and operational impact
+- Falls back to heuristic analysis when LLM endpoints unavailable
+
+**Transparency and Tracking:**
+- `ignoredEntities`: Array of filtered-out entity names
+- `ignoredRelationships`: Array of filtered-out relationship names
+- Full visibility into what was excluded during processing
+
+**Output Files:**
+- `source.ontology.json`: Raw extraction with ignored items lists
+- `ontology.json`: Final processed ontology with overrides applied
+
+#### Supported Ontologies
+
+**FIBO (Financial Industry Business Ontology):**
+```bash
+# Process full FIBO ontology with intelligent filtering
+npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo --top-entities 100 --top-relationships 100
+```
+- **Source**: EDM Council GitHub repository
+- **Coverage**: Legal entities, corporations, financial instruments, bonds, shares
+- **Features**: Recursive import processing, namespace-agnostic parsing
+- **Output**: 100 most important entities and relationships from 612 total
+
+**Procurement (ePO):**
+```bash
+# Process procurement ontology
+npx ts-node scripts/ontology/build-ontology.ts --ontology-name procurement
+```
+- **Source**: European Procurement Ontology
+- **Coverage**: Contracts, tenders, suppliers, awards
+- **Features**: Multi-language support, regulatory compliance
+
+**Financial:**
+```bash
+# Process financial ontology
+npx ts-node scripts/ontology/build-ontology.ts --ontology-name financial
+```
+- **Source**: Custom financial domain ontology
+- **Coverage**: Deals, investments, portfolios, transactions
+
+**CRM:**
+```bash
+# Process CRM ontology
+npx ts-node scripts/ontology/build-ontology.ts --ontology-name crm
+```
+- **Source**: Customer relationship management ontology
+- **Coverage**: Leads, opportunities, accounts, contacts
+
+#### Ontology Processing Pipeline
+
+1. **Source Fetching**: Downloads ontology files from configured sources
+2. **Import Resolution**: Recursively processes owl:imports for comprehensive coverage
+3. **Entity Extraction**: Parses OWL classes and RDF descriptions
+4. **Relationship Extraction**: Processes OWL object properties
+5. **Importance Analysis**: Uses LLM or heuristics to rank by business relevance
+6. **Filtering**: Keeps top N entities and relationships based on importance
+7. **Deduplication**: Removes duplicate entities and relationships by name
+8. **Output Generation**: Creates source and final ontology files
+
+#### Configuration Options
+
+**Command Line Arguments:**
+- `--ontology-name`: Name of ontology to process
+- `--config-path`: Path to custom configuration file
+- `--top-entities`: Number of most important entities to keep
+- `--top-relationships`: Number of most important relationships to keep
+- `--include-external`: Include external imports (default: false)
+- `--output-dir`: Custom output directory
+
+**Configuration File Structure:**
+```json
+{
+  "name": "ontology-name",
+  "source": {
+    "url": "https://example.com/ontology.rdf",
+    "type": "owl",
+    "version": "1.0.0",
+    "description": "Ontology description"
+  },
+  "extraction": {
+    "entities": {
+      "path": "//owl:Class",
+      "name": "@rdf:about",
+      "description": "//rdfs:comment/text()"
+    },
+    "relationships": {
+      "path": "//owl:ObjectProperty",
+      "name": "@rdf:about",
+      "description": "//rdfs:comment/text()"
+    }
+  },
+  "overrides": {
+    "entities": {},
+    "relationships": {}
+  },
+  "metadata": {
+    "lastExtraction": "2024-01-01T00:00:00.000Z",
+    "sourceVersion": "1.0.0",
+    "localVersion": "1.0.0"
+  }
+}
+```
+
+#### Example: Processing FIBO with 100 Limits
+
+```bash
+# Process FIBO ontology with comprehensive coverage
+npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo --top-entities 100 --top-relationships 100
+```
+
+**Output:**
+- **Entities kept**: 100 (from 612 total)
+- **Relationships kept**: 100 (from 612 total)
+- **Entities ignored**: 512 (listed in source.ontology.json)
+- **Relationships ignored**: 512 (listed in source.ontology.json)
+
+**Sample Extracted Content:**
+- **Entities**: JointStockCompany, PrivatelyHeldCompany, BenefitCorporation, Bond, Share, etc.
+- **Relationships**: hasDateOfRegistration, hasRegisteredAddress, hasBaseCurrency, etc.
+
+#### Troubleshooting Ontology Processing
+
+**Common Issues:**
+```bash
+# Check if ontology config exists
+ls ontologies/<ontology-name>/config.json
+
+# Verify source URL accessibility
+curl -I <ontology-source-url>
+
+# Check TypeScript compilation
+npx tsc --noEmit scripts/ontology/build-ontology.ts
+
+# Run with debug logging
+DEBUG=* npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo
+```
+
+**LLM Service Issues:**
+- System gracefully falls back to heuristic analysis
+- No LLM service required for basic functionality
+- Check logs for fallback warnings
+
+**Import Processing:**
+- Large ontologies may take time to process
+- Monitor memory usage for very large imports
+- Use `--include-external` sparingly to avoid processing irrelevant imports
 
 ### MCP Server Setup (Claude Desktop Integration)
 
@@ -415,10 +587,12 @@ git commit -m "feat(domain): add new feature"
 ## Recent Changes
 
 ### Latest Release (Current)
-- **Removed Date/Time entities** from financial ontology to prevent conflicts
-- **Enhanced test coverage** with comprehensive mock objects
-- **Fixed AsyncIterable handling** in email source tests
-- **Improved code generation** templates for better entity inheritance
-- **Reorganized test structure** for better maintainability
-- **Updated build configuration** for better TypeScript support
-- **Enhanced documentation** with current system status and improvements 
+- **Enhanced ontology generation** with importance-based filtering and LLM-powered analysis
+- **Added FIBO ontology support** with comprehensive processing from EDM Council repository
+- **Implemented ignored items tracking** for transparency in ontology filtering
+- **Extended ontology interfaces** to support ignored entities and relationships throughout pipeline
+- **Added fallback heuristics** when LLM endpoints unavailable for ontology analysis
+- **Processed FIBO with 100 entity/relationship limits** for comprehensive financial domain coverage
+- **Enhanced documentation** with detailed ontology processing guides and troubleshooting
+- **Improved test coverage** with comprehensive mock objects and TDD approach
+- **Updated build configuration** for better TypeScript support and error handling 
