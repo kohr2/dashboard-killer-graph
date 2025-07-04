@@ -43,6 +43,11 @@ async function demonstrateSpacyEmailIngestionPipeline() {
   console.log('📧 Refactored Email Ingestion Pipeline Demo');
   console.log('='.repeat(100));
 
+  // Parse command line arguments
+  const argvFlags = process.argv.slice(2);
+  const FOLDER_ARG = argvFlags.find((arg) => arg.startsWith('--folder='));
+  const EMAIL_FOLDER = FOLDER_ARG ? FOLDER_ARG.split('=')[1] : 'emails';
+
   // Check for reset flag
   if (process.argv.includes('--reset-db')) {
     console.log('🔄 --reset-db flag found. Resetting database before ingestion...');
@@ -93,12 +98,12 @@ async function demonstrateSpacyEmailIngestionPipeline() {
     console.log('📧 Email Ingestion Pipeline Demo - Using Generic Pipeline');
     console.log('='.repeat(100));
 
-    const testEmailsDir = join(process.cwd(), 'test', 'fixtures', 'emails');
+    const testEmailsDir = join(process.cwd(), 'test', 'fixtures', EMAIL_FOLDER);
     const allFiles = await fs.readdir(testEmailsDir);
     const emailFiles = allFiles.filter(f => f.endsWith('.eml')).sort();
     const filesToProcess = emailFiles;
 
-    console.log(`\n📂 Found ${emailFiles.length} email files, parsing all of them before batch processing in '${testEmailsDir}'`);
+    console.log(`\n📂 Found ${emailFiles.length} email files, parsing all of them before batch processing in '${testEmailsDir}' (folder: ${EMAIL_FOLDER})`);
 
     const emailInputs: IngestionInput[] = [];
     const parsedEmails: ParsedEmailWithSource[] = [];
