@@ -1,17 +1,17 @@
 {
   "name": "fibo",
   "source": {
-    "url": "https://spec.edmcouncil.org/fibo/ontology/FND/Accounting/AccountingEquity.rdf",
-    "type": "owl",
-    "version": "2024-01",
-    "description": "Financial Industry Business Ontology (FIBO) - AccountingEquity module from EDM Council"
+    "url": "https://raw.githubusercontent.com/edmcouncil/fibo/master/AboutFIBOProd.rdf",
+    "type": "rdf",
+    "version": "2025-07",
+    "description": "Financial Industry Business Ontology (FIBO) - Full production RDF from EDM Council GitHub repository"
   },
   "entities": [],
   "relationships": [],
   "metadata": {
-    "sourceUrl": "https://spec.edmcouncil.org/fibo/ontology/FND/Accounting/AccountingEquity.rdf",
-    "extractionDate": "2025-07-03T22:36:02.955Z",
-    "sourceVersion": "2024-01",
+    "sourceUrl": "https://raw.githubusercontent.com/edmcouncil/fibo/master/AboutFIBOProd.rdf",
+    "extractionDate": "2025-07-04T12:43:01.735Z",
+    "sourceVersion": "2025-07",
     "entityCount": 0,
     "relationshipCount": 0
   }

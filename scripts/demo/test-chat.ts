@@ -3,13 +3,15 @@ import 'dotenv/config';
 import { container } from 'tsyringe';
 import readline from 'readline';
 import { ChatService } from '@src/platform/chat/application/services/chat.service';
+import { QueryTranslator } from '@src/platform/chat/application/services/query-translator.service';
+import { AccessControlService } from '@src/platform/security/application/services/access-control.service';
 import { User } from '@platform/security/domain/user';
 import { ADMIN_ROLE, ANALYST_ROLE } from '@platform/security/domain/role';
 import { registerAllOntologies } from '@src/register-ontologies';
 import { Neo4jConnection } from '@src/platform/database/neo4j-connection';
-import { ConversationTurn } from '@platform/chat/application/services/query-translator.service';
+import { ConversationTurn } from '@platform/chat/application/services/query-translator.types';
 import { OntologyService } from '@src/platform/ontology/ontology.service';
-import { Logger } from '@src/shared/utils/logger';
+import { logger } from '@src/shared/utils/logger';
 
 // --- User Simulation ---
 const adminUser: User = { id: 'admin-cli', username: 'CLI Admin', roles: [ADMIN_ROLE] };
@@ -43,7 +45,13 @@ function displayPrompt() {
         }
 
         try {
-            const chatService = container.resolve(ChatService);
+            // Create services manually since they don't use DI anymore
+            const neo4jConnection = container.resolve(Neo4jConnection);
+            const ontologyService = OntologyService.getInstance();
+            const accessControlService = container.resolve(AccessControlService);
+            const queryTranslator = new QueryTranslator(ontologyService);
+            const chatService = new ChatService(neo4jConnection, ontologyService, accessControlService, queryTranslator);
+            
             const response = await chatService.handleQuery(currentUser, query);
             console.log("\n--- Chat Response ---");
             console.log(response);
@@ -75,11 +83,13 @@ async function start() {
     registerAllOntologies();
     console.log('✅ Services initialized.');
     
-    // Quick test to ensure service is available
+    // Quick test to ensure services are available
     try {
-        container.resolve(ChatService);
+        const ontologyService = OntologyService.getInstance();
+        const accessControlService = container.resolve(AccessControlService);
+        console.log('✅ All required services available.');
     } catch(e) {
-        console.error("Failed to resolve ChatService. Check dependency injection setup.", e);
+        console.error("Failed to resolve required services. Check dependency injection setup.", e);
         process.exit(1);
     }
 

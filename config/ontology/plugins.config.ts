@@ -84,7 +84,7 @@ class PluginRegistry {
       // Default configuration - can be overridden by config files
       const defaultConfig: PluginConfig = {
         name: ontologyName,
-        enabled: ontologyName === 'crm' || ontologyName === 'financial' || ontologyName === 'procurement', // Enable core ontologies by default
+        enabled: ontologyName === 'crm' || ontologyName === 'financial' || ontologyName === 'procurement' || ontologyName === 'fibo', // Enable core ontologies by default
         plugin: plugin,
         description: `${ontologyName.charAt(0).toUpperCase() + ontologyName.slice(1)} ontology`
       };

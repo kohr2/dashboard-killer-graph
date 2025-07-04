@@ -6,16 +6,19 @@
 import 'reflect-metadata';
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
-import { EmailProcessor } from '../../src/ingestion/sources/email/processors/email-processor';
+import { EmailProcessor } from '../../src/ingestion/sources/processors/email-processor';
 import { AttachmentProcessingService } from '../../src/platform/processing/attachment-processing.service';
+import { EmailParsingService } from '../../src/platform/processing/email-parsing.service';
 import { logger } from '../../src/shared/utils/logger';
 
 async function testAttachmentProcessing() {
   console.log('🔧 Testing Email Attachment Processing');
   console.log('====================================\n');
 
-  const emailProcessor = new EmailProcessor();
-  const testEmailsDir = join(__dirname, '../../test-emails');
+  const emailParsingService = new EmailParsingService();
+  const attachmentProcessingService = new AttachmentProcessingService();
+  const emailProcessor = new EmailProcessor(emailParsingService, attachmentProcessingService);
+  const testEmailsDir = join(__dirname, '../../test/fixtures/emails');
   
   // Get all .eml files
   const emlFiles = readdirSync(testEmailsDir)
@@ -70,7 +73,9 @@ async function testAttachmentProcessing() {
       console.log(`🔍 Entities extracted: ${result.entities.length}`);
       if (result.entities.length > 0) {
         result.entities.slice(0, 3).forEach((entity, i) => {
-          console.log(`   ${i + 1}. "${entity.name}" (${entity.type}) - confidence: ${entity.confidence}`);
+          // Handle both platform and ingestion entity types
+          const entityName = 'name' in entity ? entity.name : entity.text;
+          console.log(`   ${i + 1}. "${entityName}" (${entity.type}) - confidence: ${entity.confidence}`);
         });
         if (result.entities.length > 3) {
           console.log(`   ... and ${result.entities.length - 3} more`);
@@ -184,7 +189,9 @@ async function testSpecificCases() {
   console.log('\n🧪 Testing Specific Attachment Cases');
   console.log('===================================\n');
 
-  const emailProcessor = new EmailProcessor();
+  const emailParsingService = new EmailParsingService();
+  const attachmentProcessingService = new AttachmentProcessingService();
+  const emailProcessor = new EmailProcessor(emailParsingService, attachmentProcessingService);
 
   // Test case 1: Email with mock PDF attachment
   console.log('1. Testing email with mock PDF attachment');
@@ -205,7 +212,7 @@ Content-Type: application/pdf; name="financial-report.pdf"
 Content-Disposition: attachment; filename="financial-report.pdf"
 Content-Transfer-Encoding: base64
 
-JVBERi0xLjQKJcOkw7zDtsOmCjIgMCBvYmoKPDwKL0xlbmd0aCAzIDA
+JVBERi0xLjQKJcOkw7zDtsOmCjIgMCJvYmoKPDwKL0xlbmd0aCAzIDA
 --boundary123--`;
 
   // Write mock email to temporary file

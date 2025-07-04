@@ -1,6 +1,8 @@
 import { OntologySource, ParsedOntology, Entity, Relationship } from '../ontology-source';
 import { ExtractionRule } from '../config';
 import * as xml2js from 'xml2js';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export class OwlSource implements OntologySource {
   name = 'OWL Source';
@@ -10,11 +12,40 @@ export class OwlSource implements OntologySource {
   }
 
   async fetch(url: string): Promise<string> {
+    // Check if URL is local file
+    if (url.startsWith('file://') || url.startsWith('./') || url.startsWith('/')) {
+      return fs.readFileSync(url.replace('file://', ''), 'utf-8');
+    }
+
+    // For online URLs, check cache first
+    const cachePath = this.getCachePath(url);
+    
+    // Check if file exists in cache
+    if (fs.existsSync(cachePath)) {
+      console.log(`📁 Using cached file: ${cachePath}`);
+      return fs.readFileSync(cachePath, 'utf-8');
+    }
+
+    // Download and cache the file
+    console.log(`🌐 Downloading: ${url}`);
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
     }
-    return response.text();
+    
+    const content = await response.text();
+    
+    // Ensure cache directory exists
+    const cacheDir = path.dirname(cachePath);
+    if (!fs.existsSync(cacheDir)) {
+      fs.mkdirSync(cacheDir, { recursive: true });
+    }
+    
+    // Save to cache
+    fs.writeFileSync(cachePath, content);
+    console.log(`💾 Cached to: ${cachePath}`);
+    
+    return content;
   }
 
   async parse(content: string): Promise<ParsedOntology> {
@@ -360,5 +391,17 @@ export class OwlSource implements OntologySource {
           return '';
       }
     });
+  }
+
+  /**
+   * Returns the cache path for a given ontology URL.
+   * The cache path is cache/ontologies/<ontology-filename> (e.g., cache/ontologies/FND-Accounting.owl)
+   */
+  private getCachePath(url: string): string {
+    // Extract the file name from the URL (after last / or \\)
+    const fileName = url.split(/[\\/]/).pop() || 'ontology.owl';
+    // Remove query params/fragments and sanitize
+    const cleanFileName = fileName.split('?')[0].split('#')[0].replace(/[^a-zA-Z0-9._-]/g, '_');
+    return path.join('cache', 'ontologies', cleanFileName);
   }
 } 

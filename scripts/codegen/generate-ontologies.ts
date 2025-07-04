@@ -408,7 +408,8 @@ class OntologyGeneratorImpl implements OntologyGenerator {
     logger.info(`Generating plugin for ontology: ${ontology.name}`);
     
     const template = this.loadTemplate('plugin');
-    const ontologyDir = path.join(this.generatedDir, ontology.name.toLowerCase().replace('ontology', ''));
+    // Write plugin file directly to the ontology directory for automatic discovery
+    const ontologyDir = path.join(this.ontologiesDir, ontology.name.toLowerCase().replace('ontology', ''));
     this.ensureDirectory(ontologyDir);
 
     const pluginData = {
