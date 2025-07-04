@@ -40,6 +40,46 @@ export function separatePropertyEntities(
 }
 
 async function demonstrateSpacyEmailIngestionPipeline() {
+  // Check for help flag
+  if (process.argv.includes('--help') || process.argv.includes('-h')) {
+    console.log(`
+📧 Email Ingestion Pipeline - Help
+==================================
+
+Usage: npx ts-node scripts/pipeline/email-ingestion.ts [options]
+
+Options:
+  --folder=<path>     Specify email folder to process (default: emails)
+  --reset-db          Reset database before ingestion
+  --help, -h          Show this help message
+
+Examples:
+  # Process financial emails
+  npx ts-node scripts/pipeline/email-ingestion.ts --folder=financial/emails
+
+  # Process procurement emails with database reset
+  npx ts-node scripts/pipeline/email-ingestion.ts --folder=procurement/emails --reset-db
+
+  # Process default emails folder
+  npx ts-node scripts/pipeline/email-ingestion.ts
+
+Available folders:
+  - financial/emails    Financial domain emails
+  - procurement/emails  Procurement domain emails
+  - crm/emails         CRM domain emails
+  - legal/emails       Legal domain emails
+  - healthcare/emails  Healthcare domain emails
+  - fibo/emails        FIBO financial emails
+  - emails             Default emails (legacy)
+
+Requirements:
+  - OPENAI_API_KEY in .env file
+  - Neo4j database running
+  - Python NLP service running (optional)
+`);
+    process.exit(0);
+  }
+
   console.log('📧 Refactored Email Ingestion Pipeline Demo');
   console.log('='.repeat(100));
 
