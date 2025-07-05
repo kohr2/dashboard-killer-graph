@@ -66,11 +66,18 @@ class OntologyUpdateRequest(BaseModel):
     entity_types: List[str]
     relationship_types: List[str]
     property_types: List[str] = []
+    entity_descriptions: Dict[str, str] | None = None
+    relationship_descriptions: Dict[str, str] | None = None
 
 # --- Global State ---
 VALID_ONTOLOGY_TYPES: List[str] = []
 VALID_RELATIONSHIP_TYPES: List[str] = []
 PROPERTY_ENTITY_TYPES: List[str] = []
+
+# -------------------------------------------
+# Global ontology schema context (populated via /ontologies)
+ENTITY_DESCRIPTIONS: Dict[str, str] = {}
+RELATIONSHIP_DESCRIPTIONS: Dict[str, str] = {}
 
 # --- Entity Extractor Class (adapted from the original script) ---
 class SpacyEntityExtractor:
@@ -125,8 +132,16 @@ async def extract_graph_with_llm_async(text: str) -> Dict[str, Any]:
     # Core entity types are all types that are NOT property-like types.
     core_entity_types = [t for t in VALID_ONTOLOGY_TYPES if t not in PROPERTY_ENTITY_TYPES]
 
+    # Build short schema excerpt (max 40 items to keep token count reasonable)
+    schema_excerpt = "\n".join(
+        [f"- {name}: {ENTITY_DESCRIPTIONS.get(name,'')[:80]}" for name in core_entity_types[:40]]
+    )
+
     prompt = f"""
     You are an expert financial analyst creating a knowledge graph from a text. Your goal is to extract entities and relationships to build a graph. Your final output must be a single JSON object with "entities" and "relationships" keys.
+
+    **Ontology Schema (excerpt):**
+    {schema_excerpt}
 
     **Instructions & Rules:**
 
@@ -230,8 +245,15 @@ def extract_graph_with_llm(text: str) -> Dict[str, Any]:
     # Core entity types are all types that are NOT property-like types.
     core_entity_types = [t for t in VALID_ONTOLOGY_TYPES if t not in PROPERTY_ENTITY_TYPES]
 
+    schema_excerpt = "\n".join(
+        [f"- {name}: {ENTITY_DESCRIPTIONS.get(name,'')[:80]}" for name in core_entity_types[:40]]
+    )
+
     prompt = f"""
     You are an expert financial analyst creating a knowledge graph from a text. Your goal is to extract entities and relationships to build a graph. Your final output must be a single JSON object with "entities" and "relationships" keys.
+
+    **Ontology Schema (excerpt):**
+    {schema_excerpt}
 
     **Instructions & Rules:**
 
@@ -464,14 +486,23 @@ async def embed_endpoint(request: EmbeddingRequest):
 @app.post("/ontologies", status_code=204, summary="Update the list of valid ontology types")
 async def update_ontologies(request: OntologyUpdateRequest):
     """
-    Receives the latest ontology from the TypeScript backend to ensure the LLM
-    uses the correct entity and relationship types for extraction.
+    Receives the latest ontology from the TypeScript backend including optional
+    descriptions so the LLM can leverage richer schema context.
     """
     global VALID_ONTOLOGY_TYPES, VALID_RELATIONSHIP_TYPES, PROPERTY_ENTITY_TYPES
+    global ENTITY_DESCRIPTIONS, RELATIONSHIP_DESCRIPTIONS
+
     VALID_ONTOLOGY_TYPES = request.entity_types
     VALID_RELATIONSHIP_TYPES = request.relationship_types
     PROPERTY_ENTITY_TYPES = request.property_types
-    print(f"✅ Ontology updated with {len(VALID_ONTOLOGY_TYPES)} entity types, {len(PROPERTY_ENTITY_TYPES)} property types, and {len(VALID_RELATIONSHIP_TYPES)} relationship types.")
+    ENTITY_DESCRIPTIONS = request.entity_descriptions or {}
+    RELATIONSHIP_DESCRIPTIONS = request.relationship_descriptions or {}
+    print(
+        f"✅ Ontology updated: {len(VALID_ONTOLOGY_TYPES)} entities, "
+        f"{len(PROPERTY_ENTITY_TYPES)} property types, "
+        f"{len(VALID_RELATIONSHIP_TYPES)} relationships, "
+        f"{len(ENTITY_DESCRIPTIONS)} descriptions"
+    )
 
 @app.post("/batch-extract-graph", response_model=List[GraphResponse], summary="Batch Extract Graphs from Multiple Texts")
 async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
