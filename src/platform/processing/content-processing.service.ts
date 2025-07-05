@@ -190,10 +190,19 @@ export function buildCompactOntologySyncPayload(
     }
   }
 
+  // Sort entities and relationship patterns alphabetically for deterministic output
+  const sortedEntities = Array.from(entityTypes).sort((a, b) => a.localeCompare(b));
+
+  relationshipPatterns.sort((a, b) => {
+    if (a[0] !== b[0]) return a[0].localeCompare(b[0]);
+    if (a[1] !== b[1]) return a[1].localeCompare(b[1]);
+    return a[2].localeCompare(b[2]);
+  });
+
   return {
     ontologyName,
     compact_ontology: {
-      e: Array.from(entityTypes),
+      e: sortedEntities,
       r: relationshipPatterns
     }
   };
