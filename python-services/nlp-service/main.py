@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 import json
 from sentence_transformers import SentenceTransformer
 import asyncio # Import asyncio
+from pathlib import Path  # Added for prompt debugging persistence
 
 # --- Environment and API Key Setup ---
 load_dotenv()
@@ -194,6 +195,17 @@ async def extract_graph_with_llm_async(text: str) -> Dict[str, Any]:
     ---
     """
     
+    # --- DEBUG: Persist prompt to disk (optional) ---
+    try:
+        debug_dir = Path(os.getenv("PROMPT_DEBUG_DIR", "/tmp/llm-prompts"))
+        debug_dir.mkdir(parents=True, exist_ok=True)
+        ts = int(time.time() * 1000)
+        debug_file = debug_dir / f"prompt-{ts}.txt"
+        debug_file.write_text(prompt)
+    except Exception as e:
+        # Non-fatal: if we cannot write the prompt we just continue
+        print(f"⚠️  Failed to write LLM prompt for debugging: {e}")
+
     try:
         llm_start_time = time.time()
 
