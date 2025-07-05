@@ -108,7 +108,7 @@ The system includes a fully functional conversational interface that:
 -   [x] **MCP Server**: Integration with Claude Desktop for AI-powered assistance.
 -   [x] **CRM & Financial Extensions**: Foundational extensions for CRM and Finance domains.
 -   [x] **Procurement Extension**: Public procurement ontology with 227 entities and 595 relationships.
--   [x] **Compact Ontology & Prompt Partitioning**: New compact ontology format (≈ 98 % size reduction) and partitioned prompt generation for efficient LLM interaction.
+-   [x] **Compact Ontology & Prompt Partitioning**: New compact ontology format (≈ 98 % size reduction) and partitioned prompt generation for efficient LLM interaction. Entity (`e`) and relationship (`r`) lists are now alphabetically sorted for deterministic diffing.
 -   [x] **Automated Code Generation**: Ontology-to-code generation with plugin templates.
 -   [x] **TDD Foundation**: Comprehensive test structure with Jest.
 
@@ -133,6 +133,30 @@ npm run lint:ontology:financial
 # Test chat functionality
 npm run chat:test
 ```
+
+## 🐞 Prompt & Ontology Debugging
+
+The NLP micro-service can optionally persist every prompt it sends to OpenAI, along with the compact ontology JSON, to help you inspect and fine-tune the extraction pipeline.
+
+| Environment Variable      | Default                | Description                                                       |
+| ------------------------- | ---------------------- | ----------------------------------------------------------------- |
+| `ENABLE_PROMPT_DEBUG`     | `0`                    | Set to `1` to enable writing prompt and ontology files to disk.    |
+| `PROMPT_DEBUG_DIR`        | `/tmp/llm-prompts`     | Directory where files are written. Can be absolute or relative.    |
+
+Example:
+
+```bash
+# Enable prompt debugging in your terminal before starting the NLP service
+export ENABLE_PROMPT_DEBUG=1
+export PROMPT_DEBUG_DIR="$(pwd)/debug-prompts"
+uvicorn python-services/nlp-service.main:app --host 0.0.0.0 --port 8000
+
+# After running an ingestion you will find files like:
+#   debug-prompts/compact-ontology-<timestamp>.json
+#   debug-prompts/prompt-<timestamp>.txt
+```
+
+Disable by leaving `ENABLE_PROMPT_DEBUG` unset or set to `0` (the default).
 
 ## 🛠️ Tech Stack
 
