@@ -107,7 +107,8 @@ The system includes a fully functional conversational interface that:
 -   [x] **Multi-language Support**: Works in English, French, and other languages.
 -   [x] **MCP Server**: Integration with Claude Desktop for AI-powered assistance.
 -   [x] **CRM & Financial Extensions**: Foundational extensions for CRM and Finance domains.
--   [x] **Procurement Extension**: Public procurement ontology with 148 entities and 395 relationships.
+-   [x] **Procurement Extension**: Public procurement ontology with 227 entities and 595 relationships.
+-   [x] **Compact Ontology & Prompt Partitioning**: New compact ontology format (≈ 98 % size reduction) and partitioned prompt generation for efficient LLM interaction.
 -   [x] **Automated Code Generation**: Ontology-to-code generation with plugin templates.
 -   [x] **TDD Foundation**: Comprehensive test structure with Jest.
 

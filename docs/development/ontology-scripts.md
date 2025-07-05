@@ -242,8 +242,8 @@ The procurement ontology demonstrates the full capabilities of the system:
 ### Results
 
 The procurement ontology build process successfully extracted:
-- **148 Entities** with rich descriptions and properties
-- **395 Relationships** with domain/range information
+- **227 Entities** with rich descriptions and properties
+- **595 Relationships** with domain/range information
 - **Rich Metadata** including definitions, documentation links, and version history
 - **Complete Code Generation** with entities, repositories, services, and DTOs
 
