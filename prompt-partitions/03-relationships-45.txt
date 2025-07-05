@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- SupportedValue-providesValueFor->InformationConcept
+- Format-published_in_format->Format

@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Format-rightsholder_agent->Agent
+- Participation-role->Concept

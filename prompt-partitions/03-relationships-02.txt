@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Entity-applies->LegalResource
+- PublicEvent-audience->Concept

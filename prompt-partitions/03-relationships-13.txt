@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- LegalResource-has_another_publication->LegalResource
+- Work-has_member->Work

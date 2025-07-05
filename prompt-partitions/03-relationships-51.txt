@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Asset-sample->Asset
+- Concept-semanticRelation->Concept

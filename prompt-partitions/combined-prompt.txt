@@ -1,0 +1,543 @@
+You are an expert financial analyst creating a knowledge graph from a text. Your goal is to extract entities and relationships to build a graph. Your final output must be a single JSON object with "entities" and "relationships" keys.
+
+**Instructions:**
+1. Analyze the provided text carefully
+2. Extract entities that match the ontology types
+3. Identify relationships between entities using the provided patterns
+4. Return a JSON object with "entities" and "relationships" arrays
+5. Each entity should have: value, type, properties
+6. Each relationship should have: source, target, type
+
+**Output Format:**
+{
+  "entities": [
+    {
+      "value": "entity name",
+      "type": "entity type",
+      "properties": {}
+    }
+  ],
+  "relationships": [
+    {
+      "source": "source entity value",
+      "target": "target entity value", 
+      "type": "relationship type"
+    }
+  ]
+}
+
+You are an expert financial analyst creating a knowledge graph from a text. Your goal is to extract entities and relationships to build a graph. Your final output must be a single JSON object with "entities" and "relationships" keys.
+
+**Instructions:**
+1. Analyze the provided text carefully
+2. Extract entities that match the ontology types
+3. Identify relationships between entities using the provided patterns
+4. Return a JSON object with "entities" and "relationships" arrays
+5. Each entity should have: value, type, properties
+6. Each relationship should have: source, target, type
+
+**Output Format:**
+{
+  "entities": [
+    {
+      "value": "entity name",
+      "type": "entity type",
+      "properties": {}
+    }
+  ],
+  "relationships": [
+    {
+      "source": "source entity value",
+      "target": "target entity value", 
+      "type": "relationship type"
+    }
+  ]
+}
+
+**Ontology Entities:**
+- Communication
+- AccessTerm
+- AccountingDocument
+- AcquiringCentralPurchasingBody
+- AcquiringParty
+- AdHocChannel
+- AdministrativeArea
+- AdminUnit
+- Agent
+- AgentInRole
+- AuxiliaryParty
+- AwardCriteriaSummary
+- AwardCriterion
+- AwardDecision
+- Awarder
+- AwardEvaluationTerm
+- AwardingCentralPurchasingBody
+- AwardOutcome
+- BudgetProvider
+- Business
+- BusinessEvent
+- Buyer
+- Candidate
+- CatalogueProvider
+- CatalogueReceiver
+- CentralPurchasingBody
+- Certificate
+- CertificationLabel
+- Certifier
+- ChangeInformation
+- Channel
+- CleanVehicleDirectiveInformation
+- Collection
+- ComplexWork
+- Concept
+- ConceptScheme
+- ConcessionContract
+- ConcessionEstimate
+- Constraint
+- ContactPoint
+- ContextDescription
+- ContextualProjection
+- Contract
+- ContractLotCompletionInformation
+- Contractor
+- ContractTerm
+- Cost
+- Criterion
+- DateTimeDescription
+- DateTimeInterval
+- DayOfWeek
+- DesignContestRegimeTerm
+- DirectAwardTerm
+- DirectContract
+- Document
+- Documentation
+- Duration
+- DurationDescription
+- DynamicPurchaseSystemTechnique
+- E39_Actor
+- EAuctionTechnique
+- EconomicStandingSummary
+- ElectronicSignature
+- EmploymentDocumentation
+- EmploymentInformationProvider
+- EnergyEfficiencyInformation
+- EnvironmentalDocumentation
+- EnvironmentalProtectionInformationProvider
+- Estimate
+- EvaluationTerm
+- Event
+- Evidence
+- EvidenceType
+- EvidenceTypeList
+- ExclusionGround
+- ExclusionGroundsSummary
+- Expression
+- ExpressionOfInterest
+- F1_Work
+- F10_Person
+- F11_Corporate_Body
+- F22_Self-Contained_Expression
+- F3_Manifestation_Product_Type
+- Format
+- FormatType
+- FrameworkAgreement
+- FrameworkAgreementTechnique
+- FrameworkAgreementTerm
+- Fund
+- GeneralDateTimeDescription
+- GeneralDurationDescription
+- GenericDate
+- GreenProcurement
+- ImageObject
+- InForce
+- InformationConcept
+- InformationRequirement
+- InnovativeProcurement
+- Instant
+- InternationalProcurementInstrumentMeasuresInformation
+- Interval
+- January
+- JuryMember
+- Language
+- LeadBuyer
+- LegalExpression
+- LegalResource
+- LegalResourceSubdivision
+- LegalValue
+- LifeEvent
+- LocalLegalBasisInformation
+- Lot
+- LotAwardOutcome
+- LotGroup
+- LotGroupAwardInformation
+- Manifestation
+- MaskableObject
+- Mediator
+- MiniCompetitionAwardOutcome
+- MonetaryValue
+- MonthOfYear
+- MultipleStageProcedureTerm
+- NonDisclosureAgreementTerm
+- NonPublishedInformation
+- Notice
+- NoticeAwardInformation
+- Offer
+- OfferingParty
+- OfferIssuer
+- OfflineAccessProvider
+- OpeningTerm
+- OrderedCollection
+- OrganisationGroup
+- Organization
+- OriginatorRequest
+- Output
+- Participation
+- ParticipationCondition
+- ParticipationConditionsSummary
+- ParticipationRequestProcessor
+- ParticipationRequestReceiver
+- ParticipationRequestTerm
+- PaymentExecutor
+- Person
+- PlannedProcurement
+- PlannedProcurementPart
+- Prize
+- Procedure
+- ProcedureTerm
+- ProcessPlanningTerm
+- ProcurementCriteriaSummary
+- ProcurementCriterion
+- ProcurementDocument
+- ProcurementElement
+- ProcurementObject
+- ProcurementProcedureInformationProvider
+- ProcurementProcessInformation
+- ProcurementServiceProvider
+- ProfessionalSuitabilitySummary
+- Project
+- ProperInterval
+- PublicEvent
+- PublicOrganisation
+- PurchaseContract
+- Purpose
+- QualificationCriteriaSummary
+- QualificationCriterion
+- Quantity
+- ReferenceFramework
+- ReliedUponEntity
+- Requirement
+- ResourceType
+- ReviewDecision
+- Reviewer
+- ReviewInformation
+- ReviewIrregularitySummary
+- ReviewProcedureInformationProvider
+- ReviewRequest
+- ReviewRequester
+- ReviewRequestSummary
+- ReviewTerm
+- SecurityClearanceTerm
+- SelectedCandidateList
+- SelectionCriteriaSummary
+- SelectionCriterion
+- SelectionEvaluationTerm
+- ServiceConcessionContract
+- SocialProcurement
+- SpecificationInformation
+- StatisticalInformation
+- StrategicProcurement
+- SubcontractingEstimate
+- Subcontractor
+- SubcontractTerm
+- SubdivisionType
+- SubmissionStatisticalInformation
+- SubmissionTerm
+- SupportedValue
+- System
+- TaxDocumentation
+- TaxInformationProvider
+- TechnicalAbilitySummary
+- TechnicalSpecification
+- Technique
+- TemporalDuration
+- TemporalEntity
+- TemporalPosition
+- TemporalUnit
+- Tender
+- TenderAwardOutcome
+- Tenderer
+- TenderGroup
+- TenderProcessor
+- TenderReceiver
+- Term
+- TimePosition
+- TimeZone
+- TRS
+- UniqueResponsibleOfTheProcurement
+- Version
+- Winner
+- Work
+- WorkSubdivision
+- WorkType
+- Year
+
+**Ontology Relationships:**
+- TemporalEntity-after->TemporalEntity
+- LegalResource-applied_by->Entity
+
+**Ontology Relationships:**
+- Entity-applies->LegalResource
+- PublicEvent-audience->Concept
+
+**Ontology Relationships:**
+- Work-based_on->Entity
+- Entity-basis_for->Work
+
+**Ontology Relationships:**
+- TemporalEntity-before->TemporalEntity
+- Person-citizenship->Jurisdiction
+
+**Ontology Relationships:**
+- AdminUnit-code->Concept
+- Evidence-confidentialityLevelType->Concept
+
+**Ontology Relationships:**
+- Constraint-constrains->InformationConcept
+- ContactPoint-contactPage->Document
+
+**Ontology Relationships:**
+- LegalResource-countersigned_by->Agent
+- Person-countryOfBirth->Location
+
+**Ontology Relationships:**
+- Person-countryOfDeath->Location
+- GeneralDateTimeDescription-dayOfWeek->DayOfWeek
+
+**Ontology Relationships:**
+- Manifestation-embodies->Expression
+- Entity-ensures_implementation_of->LegalResource
+
+**Ontology Relationships:**
+- PublicEvent-eventStatus->Concept
+- EvidenceType-evidenceTypeClassification->Concept
+
+**Ontology Relationships:**
+- PublicEvent-format->Concept
+- TemporalEntity-frequency->Concept
+
+**Ontology Relationships:**
+- Person-gender->Concept
+- Geometry-geometryType->Concept
+
+**Ontology Relationships:**
+- LegalResource-has_another_publication->LegalResource
+- Work-has_member->Work
+
+**Ontology Relationships:**
+- Work-has_part->Work
+- LegalExpression-has_translation->LegalExpression
+
+**Ontology Relationships:**
+- TemporalEntity-hasBeginning->Instant
+- Requirement-hasConcept->InformationConcept
+
+**Ontology Relationships:**
+- DateTimeInterval-hasDateTimeDescription->GeneralDateTimeDescription
+- Entity-hasDuration->Duration
+
+**Ontology Relationships:**
+- Entity-hasDurationDescription->GeneralDurationDescription
+- TemporalEntity-hasEnd->Instant
+
+**Ontology Relationships:**
+- Requirement-hasEvidenceTypeList->EvidenceTypeList
+- Requirement-hasQualifiedRelation->Requirement
+
+**Ontology Relationships:**
+- Requirement-hasRequirement->Requirement
+- Requirement-hasSupportingEvidence->Evidence
+
+**Ontology Relationships:**
+- TemporalEntity-hasTemporalDuration->TemporalDuration
+- Entity-hasTime->TemporalEntity
+
+**Ontology Relationships:**
+- ConceptScheme-hasTopConcept->Concept
+- _g_L780C2175-hasTRS->TRS
+
+**Ontology Relationships:**
+- Entity-identifier->Identifier
+- LegalResource-implementation_ensured_by->Entity
+
+**Ontology Relationships:**
+- Entity-in_force->InForce
+- Asset-includedAsset->Asset
+
+**Ontology Relationships:**
+- Instant-inDateTime->GeneralDateTimeDescription
+- Entity-inScheme->ConceptScheme
+
+**Ontology Relationships:**
+- Interval-inside->Instant
+- Instant-inTemporalPosition->TemporalPosition
+
+**Ontology Relationships:**
+- Asset-interoperabilityLevel->Concept
+- ProperInterval-intervalAfter->ProperInterval
+
+**Ontology Relationships:**
+- ProperInterval-intervalBefore->ProperInterval
+- ProperInterval-intervalContains->ProperInterval
+
+**Ontology Relationships:**
+- ProperInterval-intervalDisjoint->ProperInterval
+- ProperInterval-intervalDuring->ProperInterval
+
+**Ontology Relationships:**
+- ProperInterval-intervalEquals->ProperInterval
+- ProperInterval-intervalFinishedBy->ProperInterval
+
+**Ontology Relationships:**
+- ProperInterval-intervalFinishes->ProperInterval
+- ProperInterval-intervalIn->ProperInterval
+
+**Ontology Relationships:**
+- ProperInterval-intervalMeets->ProperInterval
+- ProperInterval-intervalMetBy->ProperInterval
+
+**Ontology Relationships:**
+- ProperInterval-intervalOverlappedBy->ProperInterval
+- ProperInterval-intervalOverlaps->ProperInterval
+
+**Ontology Relationships:**
+- ProperInterval-intervalStartedBy->ProperInterval
+- ProperInterval-intervalStarts->ProperInterval
+
+**Ontology Relationships:**
+- Instant-inTimePosition->TimePosition
+- Work-is_about->Concept
+
+**Ontology Relationships:**
+- LegalResource-is_another_publication_of->LegalResource
+- Expression-is_embodied_by->Manifestation
+
+**Ontology Relationships:**
+- Manifestation-is_exemplified_by->Entity
+- Work-is_member_of->Work
+
+**Ontology Relationships:**
+- Work-is_part_of->Work
+- Work-is_realized_by->Expression
+
+**Ontology Relationships:**
+- LegalExpression-is_translation_of->LegalExpression
+- Requirement-isDerivedFrom->ReferenceFramework
+
+**Ontology Relationships:**
+- Requirement-isRequirementOf->Requirement
+- EvidenceType-isSpecifiedIn->EvidenceTypeList
+
+**Ontology Relationships:**
+- Entity-jurisdiction->AdministrativeArea
+- Expression-language->Language
+
+**Ontology Relationships:**
+- Format-legal_value->LegalValue
+- AdminUnit-level->Concept
+
+**Ontology Relationships:**
+- Collection-member->Entity
+- OrderedCollection-memberList->List
+
+**Ontology Relationships:**
+- GeneralDateTimeDescription-monthOfYear->MonthOfYear
+- LegalResource-passed_by->Agent
+
+**Ontology Relationships:**
+- Person-placeOfBirth->Location
+- Person-placeOfDeath->Location
+
+**Ontology Relationships:**
+- SupportedValue-providesValueFor->InformationConcept
+- Format-published_in_format->Format
+
+**Ontology Relationships:**
+- Entity-publisher_agent->Agent
+- Format-publishes->Format
+
+**Ontology Relationships:**
+- Expression-realizes->Work
+- PublicEvent-registrationPage->Document
+
+**Ontology Relationships:**
+- Entity-relevant_for->AdministrativeArea
+- Entity-representationTechnique->Concept
+
+**Ontology Relationships:**
+- Person-residency->Jurisdiction
+- LegalResource-responsibility_of_agent->Agent
+
+**Ontology Relationships:**
+- Format-rightsholder_agent->Agent
+- Participation-role->Concept
+
+**Ontology Relationships:**
+- Asset-sample->Asset
+- Concept-semanticRelation->Concept
+
+**Ontology Relationships:**
+- Person-sex->Concept
+- EvidenceTypeList-specifiesEvidenceType->EvidenceType
+
+**Ontology Relationships:**
+- Entity-status->Concept
+- Entity-supportedSchema->Asset
+
+**Ontology Relationships:**
+- Evidence-supportsConcept->InformationConcept
+- Evidence-supportsRequirement->Requirement
+
+**Ontology Relationships:**
+- Evidence-supportsValue->SupportedValue
+- GeneralDateTimeDescription-timeZone->TimeZone
+
+**Ontology Relationships:**
+- Concept-topConceptOf->ConceptScheme
+- LegalResource-transposed_by->Entity
+
+**Ontology Relationships:**
+- Entity-transposes->LegalResource
+- LegalResource-type_document->ResourceType
+
+**Ontology Relationships:**
+- WorkSubdivision-type_subdivision->SubdivisionType
+- _g_L1269C3965-unitType->TemporalUnit
+
+**Ontology Relationships:**
+- Evidence-validityPeriod->ProperInterval
+- EvidenceType-validityPeriodConstraint->ProperInterval
+
+**Ontology Relationships:**
+- Entity-version->Version
+- Criterion-weightingType->Concept
+
+**Ontology Relationships:**
+- Work-work_type->WorkType
+
+**Text to Analyze (Part 1/1):**
+---
+Message-ID: <procurement-267274@procurement.company.com>
+From: "Amanda Garcia" <amanda.garcia@company.com>
+To: "Christopher Moore" <christopher.moore@abccorp.com>
+Subject: Contract Award for Raw Materials with Vendor ABC Corp - Reference: PROCUREMENT-267274
+Date: Fri, 04 Jul 2025 22:38:46 GMT
+Content-Type: text/plain; charset="UTF-8"
+
+Dear Christopher Moore,
+
+I am pleased to inform you that we have awarded ABC Corp with a Purchase Contract for raw materials, Reference Number PROCUREMENT-267274, amounting to 15937.86 CAD. This contract is based on the Framework Agreement Technique specified in our procurement strategy. We appreciate ABC Corp's competitive offer and look forward to a successful collaboration.
+
+Best regards,
+Amanda Garcia
+Supplier Relations Manager
+---

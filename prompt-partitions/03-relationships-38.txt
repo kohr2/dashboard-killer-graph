@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- LegalExpression-is_translation_of->LegalExpression
+- Requirement-isDerivedFrom->ReferenceFramework

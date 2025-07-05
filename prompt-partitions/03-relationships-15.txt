@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- TemporalEntity-hasBeginning->Instant
+- Requirement-hasConcept->InformationConcept

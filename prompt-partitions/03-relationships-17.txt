@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Entity-hasDurationDescription->GeneralDurationDescription
+- TemporalEntity-hasEnd->Instant

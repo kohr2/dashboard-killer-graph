@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Manifestation-embodies->Expression
+- Entity-ensures_implementation_of->LegalResource

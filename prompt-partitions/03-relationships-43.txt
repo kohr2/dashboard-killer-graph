@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- GeneralDateTimeDescription-monthOfYear->MonthOfYear
+- LegalResource-passed_by->Agent

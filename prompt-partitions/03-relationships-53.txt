@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Entity-status->Concept
+- Entity-supportedSchema->Asset

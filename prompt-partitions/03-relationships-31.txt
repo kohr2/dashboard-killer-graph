@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- ProperInterval-intervalMeets->ProperInterval
+- ProperInterval-intervalMetBy->ProperInterval

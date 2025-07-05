@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Instant-inDateTime->GeneralDateTimeDescription
+- Entity-inScheme->ConceptScheme

@@ -1,0 +1,30 @@
+{
+  "name": "cidoc-crm",
+  "source": {
+    "url": "https://raw.githubusercontent.com/archesproject/cidoc-crm-ontology/master/cidoc_crm_v6.2.xml",
+    "type": "owl",
+    "version": "6.2",
+    "description": "CIDOC Conceptual Reference Model – cultural heritage information standard"
+  },
+  "extraction": {
+    "entities": {
+      "path": "//owl:Class",
+      "name": "@rdf:about",
+      "description": "//rdfs:comment/text()"
+    },
+    "relationships": {
+      "path": "//owl:ObjectProperty",
+      "name": "@rdf:about",
+      "description": "//rdfs:comment/text()"
+    }
+  },
+  "overrides": {
+    "entities": {},
+    "relationships": {}
+  },
+  "metadata": {
+    "lastExtraction": null,
+    "sourceVersion": "6.2",
+    "localVersion": "0.0.0"
+  }
+} 

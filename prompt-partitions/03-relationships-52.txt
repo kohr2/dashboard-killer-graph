@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Person-sex->Concept
+- EvidenceTypeList-specifiesEvidenceType->EvidenceType

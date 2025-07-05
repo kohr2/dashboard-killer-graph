@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Requirement-hasRequirement->Requirement
+- Requirement-hasSupportingEvidence->Evidence

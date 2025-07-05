@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- TemporalEntity-before->TemporalEntity
+- Person-citizenship->Jurisdiction

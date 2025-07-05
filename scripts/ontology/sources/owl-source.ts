@@ -3,21 +3,23 @@ import { ExtractionRule } from '../config';
 import * as xml2js from 'xml2js';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as rdf from 'rdflib';
+
+// Aliases for well-known RDF namespace IRIs
+const RDF_TYPE = rdf.sym('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+const OWL_CLASS = rdf.sym('http://www.w3.org/2002/07/owl#Class');
+const OWL_OBJECT_PROPERTY = rdf.sym('http://www.w3.org/2002/07/owl#ObjectProperty');
+const RDFS_LABEL = rdf.sym('http://www.w3.org/2000/01/rdf-schema#label');
+const RDFS_DOMAIN = rdf.sym('http://www.w3.org/2000/01/rdf-schema#domain');
+const RDFS_RANGE = rdf.sym('http://www.w3.org/2000/01/rdf-schema#range');
 
 export class OwlSource implements OntologySource {
   name = 'OWL Source';
-
-  /**
-   * Keep track of already-parsed import URLs across the lifetime of this OwlSource instance.
-   * Prevents duplicate parsing when the same file is referenced many times (e.g. Commons vocabularies).
-   */
+  private readonly cache: Map<string, string> = new Map();
   private readonly visited: Set<string> = new Set();
-
-  /** Ontology keyword (e.g. "fibo") used to decide which imports are relevant. */
   private readonly ontologyKey?: string;
-
-  /** When true we also follow imports that do not match the ontologyKey. */
   private readonly includeExternalImports: boolean;
+  private currentUrl?: string; // Track current URL being processed
 
   constructor(options?: { ontologyKey?: string; includeExternalImports?: boolean }) {
     this.ontologyKey = options?.ontologyKey?.toLowerCase();
@@ -29,6 +31,9 @@ export class OwlSource implements OntologySource {
   }
 
   async fetch(url: string): Promise<string> {
+    // Set current URL for debugging
+    this.currentUrl = url;
+    
     // Check if URL is local file
     if (url.startsWith('file://') || url.startsWith('./') || url.startsWith('/')) {
       return fs.readFileSync(url.replace('file://', ''), 'utf-8');
@@ -52,6 +57,33 @@ export class OwlSource implements OntologySource {
     
     const content = await response.text();
     
+    // ------------------------------------------------------------------
+    // Quick fallback: many ePO imports expose Turtle at the bare URL and an
+    // RDF-XML version at the same URL with a ".rdf" suffix.  If the fetched
+    // content looks like Turtle (starts with "@prefix" or "PREFIX " etc.)
+    // we make a second attempt by appending ".rdf" and re-fetching.  This
+    // way we can parse the XML version without having to add a Turtle parser.
+    // ------------------------------------------------------------------
+    const isProbablyTurtle = content.trimStart().startsWith('@prefix') ||
+                             content.trimStart().toLowerCase().startsWith('prefix');
+
+    let finalContent = content;
+    if (isProbablyTurtle && !url.toLowerCase().endsWith('.rdf')) {
+      const rdfUrl = url.endsWith('/') ? `${url}ontology.rdf` : `${url}.rdf`;
+      console.log(`⚠️  Detected Turtle; retrying as RDF-XML: ${rdfUrl}`);
+      try {
+        const rdfResp = await fetch(rdfUrl);
+        if (rdfResp.ok) {
+          finalContent = await rdfResp.text();
+          console.log(`   ✅ Fetched RDF-XML alternative`);
+        } else {
+          console.warn(`   ⚠️  RDF-XML alternative not found (${rdfResp.status}) – keeping Turtle content`);
+        }
+      } catch (e) {
+        console.warn(`   ⚠️  Failed to fetch RDF-XML alternative:`, (e as Error).message);
+      }
+    }
+
     // Ensure cache directory exists
     const cacheDir = path.dirname(cachePath);
     if (!fs.existsSync(cacheDir)) {
@@ -59,26 +91,148 @@ export class OwlSource implements OntologySource {
     }
     
     // Save to cache
-    fs.writeFileSync(cachePath, content);
+    fs.writeFileSync(cachePath, finalContent);
     console.log(`💾 Cached to: ${cachePath}`);
     
-    return content;
+    return finalContent;
   }
 
   async parse(content: string): Promise<ParsedOntology> {
+    // Get caller context to identify which file is being processed
+    const stack = new Error().stack;
+    const callerLine = stack?.split('\n')[2] || 'unknown';
+    console.log(`[DEBUG] === Processing file (caller: ${callerLine}) ===`);
+    console.log(`[DEBUG] File URL: ${this.currentUrl || 'unknown'}`);
+    
+    // ------------------------------------------------------------------
+    // 0) Content validation: skip HTML, error pages, and obviously malformed content
+    // ------------------------------------------------------------------
+    const trimmed = content.trim();
+    
+    // Debug: show first few lines of content being processed
+    const firstLines = trimmed.split('\n').slice(0, 3).join('\n');
+    console.log(`[DEBUG] Processing content (first 3 lines):\n${firstLines}\n---`);
+    
+    // Skip HTML files (error pages, redirects, etc.)
+    if (trimmed.toLowerCase().includes('<!doctype html>') || 
+        trimmed.toLowerCase().includes('<html') ||
+        trimmed.toLowerCase().includes('<!doctype')) {
+      console.warn('⚠️  Skipping HTML content (likely error page)');
+      return { entities: [], relationships: [] };
+    }
+    
+    // Skip empty or very short content
+    if (trimmed.length < 50) {
+      console.warn('⚠️  Skipping very short content (likely error or redirect)');
+      return { entities: [], relationships: [] };
+    }
+
+    // ------------------------------------------------------------------
+    // 1) Improved Turtle/N3 detection: check first 5 non-empty lines for @prefix, PREFIX, or # comment
+    // ------------------------------------------------------------------
+    const lines = trimmed.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    // Check if it's clearly XML first (XML declaration or root element)
+    const looksLikeXml = trimmed.startsWith('<?xml') || 
+                         trimmed.startsWith('<rdf:RDF') || 
+                         trimmed.startsWith('<owl:Ontology') ||
+                         lines.slice(0, 3).some(l => l.startsWith('<') && l.includes('xmlns'));
+    
+    // Only try Turtle if it's NOT XML and has Turtle indicators
+    const hasTurtleIndicators = lines.slice(0, 5).some(l => 
+      l.startsWith('@prefix') || 
+      l.toLowerCase().startsWith('prefix') || 
+      (l.startsWith('#') && !l.includes('xml'))
+    );
+    
+    const looksLikeTurtle = !looksLikeXml && hasTurtleIndicators;
+
+    console.log(`[DEBUG] Detection results: looksLikeXml=${looksLikeXml}, hasTurtleIndicators=${hasTurtleIndicators}, looksLikeTurtle=${looksLikeTurtle}`);
+
+    // Try Turtle parsing first if detected
+    if (looksLikeTurtle) {
+      try {
+        const store = rdf.graph();
+        rdf.parse(trimmed, store, 'http://example.com/', 'text/turtle');
+
+        const entities: Entity[] = [];
+        const relationships: Relationship[] = [];
+
+        // Extract classes
+        const classSubjects = store.each(null, RDF_TYPE, OWL_CLASS);
+        classSubjects.forEach((subject: any) => {
+          if (!subject.value) return;
+          const entityName = this.extractNameFromUri(subject.value);
+          if (!entityName || this.isSystemClass(entityName) || !this.isValidEntityName(entityName)) return;
+          const labelLit = store.any(subject, RDFS_LABEL, null) as any;
+          const description = labelLit ? (labelLit.value as string) : '';
+          entities.push({
+            name: entityName,
+            description,
+            properties: {},
+            keyProperties: [],
+            vectorIndex: false,
+            documentation: subject.value
+          });
+        });
+
+        // Extract object properties
+        const propSubjects = store.each(null, RDF_TYPE, OWL_OBJECT_PROPERTY);
+        propSubjects.forEach((subject: any) => {
+          if (!subject.value) return;
+          const propName = this.extractNameFromUri(subject.value);
+          if (!propName || this.isSystemProperty(propName)) return;
+
+          const labelLit = store.any(subject, RDFS_LABEL, null) as any;
+          const description = labelLit ? (labelLit.value as string) : '';
+
+          const domainNode = store.any(subject, RDFS_DOMAIN, null) as any;
+          const rangeNode = store.any(subject, RDFS_RANGE, null) as any;
+          const domainName = domainNode ? this.extractNameFromUri(domainNode.value) : 'Entity';
+          const rangeName = rangeNode ? this.extractNameFromUri(rangeNode.value) : 'Entity';
+
+          relationships.push({
+            name: propName,
+            description,
+            source: domainName || 'Entity',
+            target: rangeName || 'Entity',
+            documentation: subject.value
+          });
+        });
+
+        return { entities, relationships };
+      } catch (ttlErr) {
+        console.warn('⚠️  Failed to parse Turtle content, falling back to XML parsing:', (ttlErr as Error).message);
+        // Fallthrough to XML path below
+      }
+    }
+
+    // Try XML parsing, fallback to Turtle if it fails
     try {
       // Sanitize invalid XML entities before parsing
-      content = this.sanitizeXmlEntities(content);
+      const sanitizedContent = this.sanitizeXmlEntities(trimmed);
+      console.log(`[DEBUG] After sanitization (first 3 lines):\n${sanitizedContent.split('\n').slice(0, 3).join('\n')}\n---`);
       
       // Pre-process XML to resolve entity references
-      content = this.resolveXmlEntities(content);
+      const resolvedContent = this.resolveXmlEntities(sanitizedContent);
+      console.log(`[DEBUG] After entity resolution (first 3 lines):\n${resolvedContent.split('\n').slice(0, 3).join('\n')}\n---`);
       
       const parser = new xml2js.Parser({
         explicitArray: false,
         mergeAttrs: false,
         explicitRoot: true
       });
-      const xml = await parser.parseStringPromise(content);
+      // Debug: show exact bytes and character codes at the start
+      const firstBytes = resolvedContent.substring(0, 50);
+      const charCodes = Array.from(firstBytes).map(c => c.charCodeAt(0));
+      console.log(`[DEBUG] First 50 chars: "${firstBytes}"`);
+      console.log(`[DEBUG] Character codes: [${charCodes.join(', ')}]`);
+      
+      // Additional debugging for potential hidden characters
+      console.log(`[DEBUG] Raw content length: ${resolvedContent.length}`);
+      console.log(`[DEBUG] First 10 chars raw:`, Array.from(resolvedContent.substring(0, 10)).map(c => `'${c}' (${c.charCodeAt(0)})`));
+      console.log(`[DEBUG] Content starts with XML declaration: ${resolvedContent.trim().startsWith('<?xml')}`);
+      
+      const xml = await parser.parseStringPromise(resolvedContent);
       
       const entities: Entity[] = [];
       const relationships: Relationship[] = [];
@@ -130,12 +284,12 @@ export class OwlSource implements OntologySource {
         if (cls.$ && cls.$['rdf:about']) {
           const className = this.extractNameFromUri(cls.$['rdf:about']);
           console.log(`[OWLSource] Processing class: ${cls.$['rdf:about']} -> ${className}`);
-          if (className && !this.isSystemClass(className)) {
+          if (className && !this.isSystemClass(className) && this.isValidEntityName(className)) {
             const entity = this.buildEntity(cls, className, cls.$['rdf:about'], datatypeProperties);
             entities.push(entity);
             console.log(`[OWLSource] Added entity: ${className}`);
           } else {
-            console.log(`[OWLSource] Skipped class ${className}: isSystemClass=${className ? this.isSystemClass(className) : 'null'}`);
+            console.log(`[OWLSource] Skipped class ${className}: isSystemClass=${className ? this.isSystemClass(className) : 'null'}, isValidName=${className ? this.isValidEntityName(className) : 'null'}`);
           }
         } else {
           console.log(`[OWLSource] Class without rdf:about:`, cls);
@@ -171,12 +325,12 @@ export class OwlSource implements OntologySource {
           if (desc['rdf:type'] && this.isClassType(desc['rdf:type'])) {
             const className = this.extractNameFromUri(uri);
             console.log(`[OWLSource] Processing description class: ${uri} -> ${className}`);
-            if (className && !this.isSystemClass(className)) {
+            if (className && !this.isSystemClass(className) && this.isValidEntityName(className)) {
               const entity = this.buildEntity(desc, className, uri, datatypeProperties);
               entities.push(entity);
               console.log(`[OWLSource] Added entity from description: ${className}`);
             } else {
-              console.log(`[OWLSource] Skipped description class ${className}: isSystemClass=${className ? this.isSystemClass(className) : 'null'}`);
+              console.log(`[OWLSource] Skipped description class ${className}: isSystemClass=${className ? this.isSystemClass(className) : 'null'}, isValidName=${className ? this.isValidEntityName(className) : 'null'}`);
             }
           }
           // Check if it's an object property
@@ -254,21 +408,75 @@ export class OwlSource implements OntologySource {
 
       return { entities: uniqueEntities, relationships: uniqueRelationships };
     } catch (error) {
-      console.error('Error parsing OWL content:', error);
-      return { entities: [], relationships: [] };
+      // If XML parsing fails, try Turtle as a fallback
+      console.warn('⚠️  XML parsing failed, attempting Turtle fallback:', (error as Error).message);
+      try {
+        const store = rdf.graph();
+        rdf.parse(trimmed, store, 'http://example.com/', 'text/turtle');
+        const entities: Entity[] = [];
+        const relationships: Relationship[] = [];
+        const classSubjects = store.each(null, RDF_TYPE, OWL_CLASS);
+        classSubjects.forEach((subject: any) => {
+          if (!subject.value) return;
+          const entityName = this.extractNameFromUri(subject.value);
+          if (!entityName || this.isSystemClass(entityName) || !this.isValidEntityName(entityName)) return;
+          const labelLit = store.any(subject, RDFS_LABEL, null) as any;
+          const description = labelLit ? (labelLit.value as string) : '';
+          entities.push({
+            name: entityName,
+            description,
+            properties: {},
+            keyProperties: [],
+            vectorIndex: false,
+            documentation: subject.value
+          });
+        });
+        const propSubjects = store.each(null, RDF_TYPE, OWL_OBJECT_PROPERTY);
+        propSubjects.forEach((subject: any) => {
+          if (!subject.value) return;
+          const propName = this.extractNameFromUri(subject.value);
+          if (!propName || this.isSystemProperty(propName)) return;
+          const labelLit = store.any(subject, RDFS_LABEL, null) as any;
+          const description = labelLit ? (labelLit.value as string) : '';
+          const domainNode = store.any(subject, RDFS_DOMAIN, null) as any;
+          const rangeNode = store.any(subject, RDFS_RANGE, null) as any;
+          const domainName = domainNode ? this.extractNameFromUri(domainNode.value) : 'Entity';
+          const rangeName = rangeNode ? this.extractNameFromUri(rangeNode.value) : 'Entity';
+          relationships.push({
+            name: propName,
+            description,
+            source: domainName || 'Entity',
+            target: rangeName || 'Entity',
+            documentation: subject.value
+          });
+        });
+        return { entities, relationships };
+      } catch (ttlErr2) {
+        console.error('Error parsing OWL content (Turtle fallback also failed):', ttlErr2);
+        return { entities: [], relationships: [] };
+      }
     }
   }
 
   async extractEntities(config: ExtractionRule, parsed: ParsedOntology): Promise<Entity[]> {
+    // Filter out entities with invalid names first
+    const validEntities = parsed.entities.filter(entity => {
+      const isValid = this.isValidEntityName(entity.name);
+      if (!isValid) {
+        console.log(`[OWLSource] Filtering out invalid entity name: ${entity.name}`);
+      }
+      return isValid;
+    });
+
     // If the config.path contains a specific ontology keyword, filter strictly
     if (config.path.includes('fibo')) {
-      return parsed.entities.filter(entity => entity.documentation?.includes('fibo'));
+      return validEntities.filter(entity => entity.documentation?.includes('fibo'));
     }
     if (config.path.includes('o-cream')) {
-      return parsed.entities.filter(entity => entity.documentation?.includes('o-cream'));
+      return validEntities.filter(entity => entity.documentation?.includes('o-cream'));
     }
-    // Default: include all entities
-    return parsed.entities;
+    // Default: include all valid entities
+    return validEntities;
   }
 
   async extractRelationships(config: ExtractionRule, parsed: ParsedOntology): Promise<Relationship[]> {
@@ -332,6 +540,30 @@ export class OwlSource implements OntologySource {
   private isSystemProperty(name: string): boolean {
     const systemProperties = ['type', 'subClassOf', 'subPropertyOf', 'domain', 'range'];
     return systemProperties.includes(name);
+  }
+
+  private isValidEntityName(name: string): boolean {
+    // Check if the name is a valid TypeScript identifier
+    // Must start with a letter, underscore, or dollar sign
+    // Can contain letters, digits, underscores, or dollar signs
+    if (!name || name.length === 0) return false;
+    
+    // Check if it's purely numeric (which would be invalid)
+    if (/^\d+$/.test(name)) return false;
+    
+    // Check if it starts with a valid character
+    if (!/^[a-zA-Z_$]/.test(name)) return false;
+    
+    // Check if it contains only valid characters
+    if (!/^[a-zA-Z0-9_$]+$/.test(name)) return false;
+    
+    // Check if it's a reserved keyword
+    const reservedKeywords = [
+      'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'enum', 'export', 'extends', 'false', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'let', 'new', 'null', 'return', 'super', 'switch', 'this', 'throw', 'true', 'try', 'typeof', 'var', 'void', 'while', 'with', 'yield'
+    ];
+    if (reservedKeywords.includes(name)) return false;
+    
+    return true;
   }
 
   private isClassType(typeElement: any): boolean {

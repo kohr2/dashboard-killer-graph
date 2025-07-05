@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Entity-relevant_for->AdministrativeArea
+- Entity-representationTechnique->Concept

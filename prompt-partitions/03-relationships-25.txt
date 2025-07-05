@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Interval-inside->Instant
+- Instant-inTemporalPosition->TemporalPosition

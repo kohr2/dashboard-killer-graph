@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- ProperInterval-intervalDisjoint->ProperInterval
+- ProperInterval-intervalDuring->ProperInterval

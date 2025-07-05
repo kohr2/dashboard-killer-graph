@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Entity-identifier->Identifier
+- LegalResource-implementation_ensured_by->Entity

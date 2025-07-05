@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Person-placeOfBirth->Location
+- Person-placeOfDeath->Location

@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Evidence-validityPeriod->ProperInterval
+- EvidenceType-validityPeriodConstraint->ProperInterval

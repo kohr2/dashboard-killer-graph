@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Collection-member->Entity
+- OrderedCollection-memberList->List

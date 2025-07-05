@@ -12,6 +12,7 @@ export interface OntologySyncPayload {
   property_types: string[];
   entity_descriptions?: Record<string, string>;
   relationship_descriptions?: Record<string, string>;
+  relationship_patterns?: string[];
 }
 
 /**
@@ -31,6 +32,7 @@ export function buildOntologySyncPayload(
   const entityTypes = new Set<string>();
   const propertyTypes = new Set<string>();
   const relationshipTypes = new Set<string>();
+  const relationshipPatterns = new Set<string>();
 
   for (const ont of allOntologies) {
     // Filter if the caller asked for a single ontology name
@@ -63,6 +65,11 @@ export function buildOntologySyncPayload(
           const name = rel.name || rel.label || rel.id;
           if (!name) continue;
           relationshipTypes.add(name);
+          const source = Array.isArray(rel.domain) ? rel.domain[0] : rel.domain || rel.source || 'UnknownSource';
+          const target = Array.isArray(rel.range) ? rel.range[0] : rel.range || rel.target || 'UnknownTarget';
+          if (source && target) {
+            relationshipPatterns.add(`${source}-${name}->${target}`);
+          }
           const desc = typeof rel.description === 'string' ? rel.description : rel.description?._;
           if (desc) relationshipDescriptions[name] = desc;
         }
@@ -70,6 +77,11 @@ export function buildOntologySyncPayload(
         for (const [key, rel] of Object.entries(ont.relationships as Record<string, any>)) {
           const name = rel.name || key;
           relationshipTypes.add(name);
+          const source = Array.isArray(rel.domain) ? rel.domain[0] : rel.domain || rel.source || 'UnknownSource';
+          const target = Array.isArray(rel.range) ? rel.range[0] : rel.range || rel.target || 'UnknownTarget';
+          if (source && target) {
+            relationshipPatterns.add(`${source}-${name}->${target}`);
+          }
           const desc = typeof rel.description === 'string' ? rel.description : rel.description?._;
           if (desc) relationshipDescriptions[name] = desc;
         }
@@ -84,6 +96,106 @@ export function buildOntologySyncPayload(
     property_types: Array.from(propertyTypes),
     entity_descriptions: Object.keys(entityDescriptions).length ? entityDescriptions : undefined,
     relationship_descriptions: Object.keys(relationshipDescriptions).length ? relationshipDescriptions : undefined,
+    relationship_patterns: relationshipPatterns.size ? Array.from(relationshipPatterns) : undefined,
+  };
+}
+
+export interface CompactOntologySyncPayload {
+  ontologyName: string | undefined;
+  compact_ontology: {
+    e: string[];
+    r: [string, string, string][];
+  };
+}
+
+export function buildCompactOntologySyncPayload(
+  ontologyService: OntologyService,
+  ontologyName?: string,
+): CompactOntologySyncPayload {
+  const allOntologies = ontologyService.getAllOntologies();
+
+  const entityTypes = new Set<string>();
+  const relationshipPatterns: [string, string, string][] = [];
+
+  for (const ont of allOntologies) {
+    // Filter if the caller asked for a single ontology name
+    if (ontologyName && ont.name.toLowerCase() !== ontologyName.toLowerCase()) {
+      continue;
+    }
+
+    if (Array.isArray(ont.entities)) {
+      for (const ent of ont.entities as any[]) {
+        const name = ent.name || ent.label || ent.id;
+        if (!name) continue;
+        // Skip generic entities
+        if (['Thing', 'Entity', 'UnrecognizedEntity'].includes(name)) continue;
+        if (ent.isProperty) continue; // Skip property types
+        entityTypes.add(name);
+      }
+    } else {
+      for (const [key, ent] of Object.entries(ont.entities as Record<string, any>)) {
+        const name = ent.name || key;
+        // Skip generic entities
+        if (['Thing', 'Entity', 'UnrecognizedEntity'].includes(name)) continue;
+        if (ent.isProperty) continue; // Skip property types
+        entityTypes.add(name);
+      }
+    }
+
+    if (ont.relationships) {
+      if (Array.isArray(ont.relationships)) {
+        for (const rel of ont.relationships as any[]) {
+          const name = rel.name || rel.label || rel.id;
+          if (!name) continue;
+          
+          const source = Array.isArray(rel.domain) ? rel.domain[0] : rel.domain || rel.source || 'UnknownSource';
+          const target = Array.isArray(rel.range) ? rel.range[0] : rel.range || rel.target || 'UnknownTarget';
+          
+          // Skip generic relationships
+          if (['Thing', 'Entity', 'UnrecognizedEntity'].includes(source) || 
+              ['Thing', 'Entity', 'UnrecognizedEntity'].includes(target)) continue;
+          if (source === 'Entity' && target === 'Entity') continue;
+          if (source === target) continue; // Skip self-referential
+          
+          // Skip very generic relationship types
+          const genericTypes = ['hasProperty', 'hasAttribute', 'hasValue', 'hasType', 'hasName', 'hasId'];
+          if (genericTypes.includes(name)) continue;
+          
+          if (source && target && name) {
+            relationshipPatterns.push([source, name, target]);
+          }
+        }
+      } else {
+        for (const [key, rel] of Object.entries(ont.relationships as Record<string, any>)) {
+          const name = rel.name || key;
+          
+          const source = Array.isArray(rel.domain) ? rel.domain[0] : rel.domain || rel.source || 'UnknownSource';
+          const target = Array.isArray(rel.range) ? rel.range[0] : rel.range || rel.target || 'UnknownTarget';
+          
+          // Skip generic relationships
+          if (['Thing', 'Entity', 'UnrecognizedEntity'].includes(source) || 
+              ['Thing', 'Entity', 'UnrecognizedEntity'].includes(target)) continue;
+          if (source === 'Entity' && target === 'Entity') continue;
+          if (source === target) continue; // Skip self-referential
+          
+          // Skip very generic relationship types
+          const genericTypes = ['hasProperty', 'hasAttribute', 'hasValue', 'hasType', 'hasName', 'hasId'];
+          if (genericTypes.includes(name)) continue;
+          
+          if (source && target && name) {
+            relationshipPatterns.push([source, name, target]);
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    ontologyName,
+    compact_ontology: {
+      e: Array.from(entityTypes),
+      r: relationshipPatterns
+    }
   };
 }
 
@@ -137,14 +249,14 @@ export class ContentProcessingService {
     // --- One-time ontology synchronisation with NLP service ---
     if (!this.ontologySynced) {
       const ontologyService = container.resolve(OntologyService);
-      const payload = buildOntologySyncPayload(ontologyService);
+      const payload = buildCompactOntologySyncPayload(ontologyService);
       try {
-        logger.info('   🔄 Syncing ontology schema with NLP service...');
+        logger.info('   🔄 Syncing compact ontology schema with NLP service...');
         await axios.post(`${this.nlpServiceUrl}/ontologies`, payload, { timeout: 30000 });
         this.ontologySynced = true;
-        logger.info('      -> Ontology schema synced');
+        logger.info('      -> Compact ontology schema synced');
       } catch (syncErr) {
-        logger.warn('      ⚠️  Failed to sync ontology schema with NLP service:', (syncErr as any).message);
+        logger.warn('      ⚠️  Failed to sync compact ontology schema with NLP service:', (syncErr as any).message);
       }
     }
 

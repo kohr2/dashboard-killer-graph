@@ -1,0 +1,2 @@
+**Ontology Relationships:**
+- Work-work_type->WorkType

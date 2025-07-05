@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Work-is_part_of->Work
+- Work-is_realized_by->Expression

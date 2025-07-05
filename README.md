@@ -91,6 +91,7 @@ The system includes a fully functional conversational interface that:
 -   [**Extension & Ontology Architecture**](./docs/architecture/ontologies.md) - Guide to create and manage extensions
 -   [**API Reference**](./docs/development/api-reference.md) - Available API endpoints
 -   [**Entity Extraction Guide**](./docs/architecture/entity-extraction-guide.md) - How the NLP pipeline works
+-   [**Logger Guidelines**](./docs/development/logger-guidelines.md) - Using the common logger and console patch
 -   [**Development Roadmap**](./docs/development/roadmap.md) - What's next
 -   [**TDD Approach**](./docs/development/tdd-approach.md) - Test-driven development guidelines
 

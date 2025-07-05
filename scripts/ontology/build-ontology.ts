@@ -143,10 +143,23 @@ async function buildOntology(options: BuildOptions = {}) {
     
     // Save source ontology (raw extraction)
     const sourceOntologyPath = path.join(outputDir, 'source.ontology.json');
+    const isValidEntityName = (name: string) => {
+      // Must start with a letter, underscore, or dollar sign
+      if (!name || name.length === 0) return false;
+      if (/^\d+$/.test(name)) return false;
+      if (!/^[a-zA-Z_$]/.test(name)) return false;
+      if (!/^[a-zA-Z0-9_$]+$/.test(name)) return false;
+      const reservedKeywords = [
+        'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'enum', 'export', 'extends', 'false', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'let', 'new', 'null', 'return', 'super', 'switch', 'this', 'throw', 'true', 'try', 'typeof', 'var', 'void', 'while', 'with', 'yield'
+      ];
+      if (reservedKeywords.includes(name)) return false;
+      return true;
+    };
+    const filteredEntities = result.sourceOntology?.entities ? result.sourceOntology.entities.filter(e => isValidEntityName(e.name)) : [];
     const sourceOntology = {
       name: config.name,
       source: config.source,
-      entities: result.sourceOntology?.entities ? sortNamedArray(result.sourceOntology.entities) : [],
+      entities: sortNamedArray(filteredEntities),
       relationships: result.sourceOntology?.relationships ? sortNamedArray(result.sourceOntology.relationships) : [],
       metadata: result.metadata,
       ignoredEntities: result.sourceOntology?.ignoredEntities || [],
@@ -155,30 +168,6 @@ async function buildOntology(options: BuildOptions = {}) {
     
     fs.writeFileSync(sourceOntologyPath, JSON.stringify(sourceOntology, null, 2));
     console.log(`💾 Source ontology saved to: ${sourceOntologyPath}`);
-    
-    // Save final ontology (with overrides applied)
-    const finalOntologyPath = path.join(outputDir, 'ontology.json');
-    const finalOntology = {
-      name: config.name,
-      source: config.source,
-      entities: (() => {
-        if (!result.finalOntology?.entities) return {};
-
-        let normalised: Record<string, any> = {};
-        const raw = result.finalOntology.entities as Record<string, any>;
-        for (const [key, val] of Object.entries(raw)) {
-          const entityName = (val as any)?.name || key;
-          const finalKey = /^\d+$/.test(key) ? entityName : key;
-          normalised[finalKey] = val;
-        }
-        return sortEntityProperties(normalised);
-      })(),
-      relationships: result.finalOntology?.relationships ? sortRecord(result.finalOntology.relationships) : {},
-      metadata: result.metadata
-    };
-    
-    fs.writeFileSync(finalOntologyPath, JSON.stringify(finalOntology, null, 2));
-    console.log(`💾 Final ontology saved to: ${finalOntologyPath}`);
     
     // Display sample entities
     if (result.sourceOntology?.entities.length) {

@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- PublicEvent-format->Concept
+- TemporalEntity-frequency->Concept

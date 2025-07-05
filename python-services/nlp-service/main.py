@@ -63,11 +63,13 @@ class EmbeddingRequest(BaseModel):
     texts: List[str]
 
 class OntologyUpdateRequest(BaseModel):
-    entity_types: List[str]
-    relationship_types: List[str]
+    entity_types: List[str] = []
+    relationship_types: List[str] = []
     property_types: List[str] = []
     entity_descriptions: Dict[str, str] | None = None
     relationship_descriptions: Dict[str, str] | None = None
+    # New compact ontology format
+    compact_ontology: Dict[str, Any] | None = None
 
 # --- Global State ---
 VALID_ONTOLOGY_TYPES: List[str] = []
@@ -132,65 +134,59 @@ async def extract_graph_with_llm_async(text: str) -> Dict[str, Any]:
     # Core entity types are all types that are NOT property-like types.
     core_entity_types = [t for t in VALID_ONTOLOGY_TYPES if t not in PROPERTY_ENTITY_TYPES]
 
-    # Build short schema excerpt (max 40 items to keep token count reasonable)
-    schema_excerpt = "\n".join(
-        [f"- {name}: {ENTITY_DESCRIPTIONS.get(name,'')[:80]}" for name in core_entity_types[:40]]
-    )
+    # Build compact ontology format for the prompt
+    compact_ontology = {
+        "e": core_entity_types,
+        "r": []  # We'll populate this from VALID_RELATIONSHIP_TYPES if available
+    }
+    
+    # If we have relationship patterns, convert them to compact format
+    if hasattr(globals(), 'RELATIONSHIP_PATTERNS') and 'RELATIONSHIP_PATTERNS' in globals():
+        for pattern in globals()['RELATIONSHIP_PATTERNS']:
+            if '-' in pattern and '->' in pattern:
+                parts = pattern.split('-')
+                if len(parts) >= 2:
+                    source = parts[0]
+                    rest = '-'.join(parts[1:])
+                    if '->' in rest:
+                        rel_type, target = rest.split('->', 1)
+                        compact_ontology["r"].append([source, rel_type, target])
 
     prompt = f"""
     You are an expert financial analyst creating a knowledge graph from a text. Your goal is to extract entities and relationships to build a graph. Your final output must be a single JSON object with "entities" and "relationships" keys.
 
-    **Ontology Schema (excerpt):**
-    {schema_excerpt}
+    **Ontology format:**
+    - "e" is the list of entity types.
+    - "r" is the list of relationships, each as [source_entity, relationship_type, target_entity].
 
-    **Instructions & Rules:**
+    **Ontology:**
+    {json.dumps(compact_ontology, indent=2)}
 
-    1.  **Entity Types:**
-        -   **Core Entities:** You can create nodes for these types: `({', '.join(core_entity_types)})`.
-        -   **Property-like Types:** These types MUST NOT become nodes: `({', '.join(PROPERTY_ENTITY_TYPES)})`.
+    **Instructions:**
+    1. Analyze the provided text carefully
+    2. Extract entities that match the ontology types
+    3. Identify relationships between entities using the provided patterns
+    4. Return a JSON object with "entities" and "relationships" arrays
+    5. Each entity should have: value, type, properties
+    6. Each relationship should have: source, target, type
 
-    2.  **CRITICAL RULE: Handling Properties**
-        -   When you find a value corresponding to a **Property-like Type** (e.g., an email address, a date, a monetary amount), you MUST find the most relevant **Core Entity** it describes and attach it as a key-value pair in its `properties` object.
-        -   Use descriptive camelCase keys (e.g., `email`, `dealSize`, `closingDate`).
-        -   **Never** create a standalone entity for a property-like type.
-
-    3.  **Relationships:**
-        -   Relationships can ONLY exist between **Core Entities**.
-        -   Allowed Relationship Types: `({', '.join(VALID_RELATIONSHIP_TYPES)})`.
-        -   If one organization appears to be a subsidiary or division of another (e.g., 'Morgan Stanley Technology Group' and 'Morgan Stanley'), create a `HAS_PARENT_ORGANIZATION` relationship pointing from the subsidiary to the parent.
-
-    **Example Scenario:**
-    -   **Text:** "David Chen (david.chen@ms.com) from Morgan Stanley Technology Group mentioned the $350M Project Helix deal. We spoke with Morgan Stanley proper about it."
-    -   **Your Logic:**
-        1.  "David Chen" is a `Person` (Core Entity).
-        2.  "david.chen@ms.com" is an `Email` (Property-like). I must attach it to "David Chen".
-        3.  "Morgan Stanley Technology Group" is an `Organization` (Core Entity).
-        4.  "Morgan Stanley" is also an `Organization` (Core Entity).
-        5.  "Morgan Stanley Technology Group" is a part of "Morgan Stanley". I must create a `HAS_PARENT_ORGANIZATION` relationship.
-        6.  "$350M" is a `MonetaryAmount` (Property-like). I must attach it to "Project Helix".
-        7.  "Project Helix" is a `Deal` (Core Entity).
-    -   **Correct JSON Output:**
-        ```json
+    **Output Format:**
+    {{
+      "entities": [
         {{
-          "entities": [
-            {{
-              "type": "Person", "value": "David Chen",
-              "properties": {{"email": "david.chen@ms.com"}}
-            }},
-            {{"type": "Organization", "value": "Morgan Stanley Technology Group"}},
-            {{"type": "Organization", "value": "Morgan Stanley"}},
-            {{
-              "type": "Deal", "value": "Project Helix",
-              "properties": {{"dealSize": "$350M"}}
-            }}
-          ],
-          "relationships": [
-            {{"source": "David Chen", "target": "Morgan Stanley Technology Group", "type": "WORKS_FOR"}},
-            {{"source": "Morgan Stanley Technology Group", "target": "Morgan Stanley", "type": "HAS_PARENT_ORGANIZATION"}},
-            {{"source": "David Chen", "target": "Project Helix", "type": "PARTICIPATES_IN"}}
-          ]
+          "value": "entity name",
+          "type": "entity type",
+          "properties": {{}}
         }}
-        ```
+      ],
+      "relationships": [
+        {{
+          "source": "source entity value",
+          "target": "target entity value", 
+          "type": "relationship type"
+        }}
+      ]
+    }}
 
     **Text to Analyze:**
     ---
@@ -245,64 +241,59 @@ def extract_graph_with_llm(text: str) -> Dict[str, Any]:
     # Core entity types are all types that are NOT property-like types.
     core_entity_types = [t for t in VALID_ONTOLOGY_TYPES if t not in PROPERTY_ENTITY_TYPES]
 
-    schema_excerpt = "\n".join(
-        [f"- {name}: {ENTITY_DESCRIPTIONS.get(name,'')[:80]}" for name in core_entity_types[:40]]
-    )
+    # Build compact ontology format for the prompt
+    compact_ontology = {
+        "e": core_entity_types,
+        "r": []  # We'll populate this from VALID_RELATIONSHIP_TYPES if available
+    }
+    
+    # If we have relationship patterns, convert them to compact format
+    if hasattr(globals(), 'RELATIONSHIP_PATTERNS') and 'RELATIONSHIP_PATTERNS' in globals():
+        for pattern in globals()['RELATIONSHIP_PATTERNS']:
+            if '-' in pattern and '->' in pattern:
+                parts = pattern.split('-')
+                if len(parts) >= 2:
+                    source = parts[0]
+                    rest = '-'.join(parts[1:])
+                    if '->' in rest:
+                        rel_type, target = rest.split('->', 1)
+                        compact_ontology["r"].append([source, rel_type, target])
 
     prompt = f"""
     You are an expert financial analyst creating a knowledge graph from a text. Your goal is to extract entities and relationships to build a graph. Your final output must be a single JSON object with "entities" and "relationships" keys.
 
-    **Ontology Schema (excerpt):**
-    {schema_excerpt}
+    **Ontology format:**
+    - "e" is the list of entity types.
+    - "r" is the list of relationships, each as [source_entity, relationship_type, target_entity].
 
-    **Instructions & Rules:**
+    **Ontology:**
+    {json.dumps(compact_ontology, indent=2)}
 
-    1.  **Entity Types:**
-        -   **Core Entities:** You can create nodes for these types: `({', '.join(core_entity_types)})`.
-        -   **Property-like Types:** These types MUST NOT become nodes: `({', '.join(PROPERTY_ENTITY_TYPES)})`.
+    **Instructions:**
+    1. Analyze the provided text carefully
+    2. Extract entities that match the ontology types
+    3. Identify relationships between entities using the provided patterns
+    4. Return a JSON object with "entities" and "relationships" arrays
+    5. Each entity should have: value, type, properties
+    6. Each relationship should have: source, target, type
 
-    2.  **CRITICAL RULE: Handling Properties**
-        -   When you find a value corresponding to a **Property-like Type** (e.g., an email address, a date, a monetary amount), you MUST find the most relevant **Core Entity** it describes and attach it as a key-value pair in its `properties` object.
-        -   Use descriptive camelCase keys (e.g., `email`, `dealSize`, `closingDate`).
-        -   **Never** create a standalone entity for a property-like type.
-
-    3.  **Relationships:**
-        -   Relationships can ONLY exist between **Core Entities**.
-        -   Allowed Relationship Types: `({', '.join(VALID_RELATIONSHIP_TYPES)})`.
-        -   If one organization appears to be a subsidiary or division of another (e.g., 'Morgan Stanley Technology Group' and 'Morgan Stanley'), create a `HAS_PARENT_ORGANIZATION` relationship pointing from the subsidiary to the parent.
-
-    **Example Scenario:**
-    -   **Text:** "David Chen (david.chen@ms.com) from Morgan Stanley Technology Group mentioned the $350M Project Helix deal. We spoke with Morgan Stanley proper about it."
-    -   **Your Logic:**
-        1.  "David Chen" is a `Person` (Core Entity).
-        2.  "david.chen@ms.com" is an `Email` (Property-like). I must attach it to "David Chen".
-        3.  "Morgan Stanley Technology Group" is an `Organization` (Core Entity).
-        4.  "Morgan Stanley" is also an `Organization` (Core Entity).
-        5.  "Morgan Stanley Technology Group" is a part of "Morgan Stanley". I must create a `HAS_PARENT_ORGANIZATION` relationship.
-        6.  "$350M" is a `MonetaryAmount` (Property-like). I must attach it to "Project Helix".
-        7.  "Project Helix" is a `Deal` (Core Entity).
-    -   **Correct JSON Output:**
-        ```json
+    **Output Format:**
+    {{
+      "entities": [
         {{
-          "entities": [
-            {{
-              "type": "Person", "value": "David Chen",
-              "properties": {{"email": "david.chen@ms.com"}}
-            }},
-            {{"type": "Organization", "value": "Morgan Stanley Technology Group"}},
-            {{"type": "Organization", "value": "Morgan Stanley"}},
-            {{
-              "type": "Deal", "value": "Project Helix",
-              "properties": {{"dealSize": "$350M"}}
-            }}
-          ],
-          "relationships": [
-            {{"source": "David Chen", "target": "Morgan Stanley Technology Group", "type": "WORKS_FOR"}},
-            {{"source": "Morgan Stanley Technology Group", "target": "Morgan Stanley", "type": "HAS_PARENT_ORGANIZATION"}},
-            {{"source": "David Chen", "target": "Project Helix", "type": "PARTICIPATES_IN"}}
-          ]
+          "value": "entity name",
+          "type": "entity type",
+          "properties": {{}}
         }}
-        ```
+      ],
+      "relationships": [
+        {{
+          "source": "source entity value",
+          "target": "target entity value", 
+          "type": "relationship type"
+        }}
+      ]
+    }}
 
     **Text to Analyze:**
     ---
@@ -488,21 +479,43 @@ async def update_ontologies(request: OntologyUpdateRequest):
     """
     Receives the latest ontology from the TypeScript backend including optional
     descriptions so the LLM can leverage richer schema context.
+    Supports both full ontology format and compact format.
     """
     global VALID_ONTOLOGY_TYPES, VALID_RELATIONSHIP_TYPES, PROPERTY_ENTITY_TYPES
     global ENTITY_DESCRIPTIONS, RELATIONSHIP_DESCRIPTIONS
 
-    VALID_ONTOLOGY_TYPES = request.entity_types
-    VALID_RELATIONSHIP_TYPES = request.relationship_types
-    PROPERTY_ENTITY_TYPES = request.property_types
-    ENTITY_DESCRIPTIONS = request.entity_descriptions or {}
-    RELATIONSHIP_DESCRIPTIONS = request.relationship_descriptions or {}
-    print(
-        f"✅ Ontology updated: {len(VALID_ONTOLOGY_TYPES)} entities, "
-        f"{len(PROPERTY_ENTITY_TYPES)} property types, "
-        f"{len(VALID_RELATIONSHIP_TYPES)} relationships, "
-        f"{len(ENTITY_DESCRIPTIONS)} descriptions"
-    )
+    # Handle compact ontology format
+    if request.compact_ontology:
+        compact = request.compact_ontology
+        VALID_ONTOLOGY_TYPES = compact.get('e', [])
+        VALID_RELATIONSHIP_TYPES = []
+        PROPERTY_ENTITY_TYPES = []
+        ENTITY_DESCRIPTIONS = {}
+        RELATIONSHIP_DESCRIPTIONS = {}
+        
+        # Convert compact relationships to relationship types
+        relationships = compact.get('r', [])
+        for rel in relationships:
+            if len(rel) == 3:
+                VALID_RELATIONSHIP_TYPES.append(rel[1])  # rel[1] is the relationship type
+        
+        print(
+            f"✅ Compact ontology updated: {len(VALID_ONTOLOGY_TYPES)} entities, "
+            f"{len(VALID_RELATIONSHIP_TYPES)} relationships"
+        )
+    else:
+        # Handle legacy full ontology format
+        VALID_ONTOLOGY_TYPES = request.entity_types
+        VALID_RELATIONSHIP_TYPES = request.relationship_types
+        PROPERTY_ENTITY_TYPES = request.property_types
+        ENTITY_DESCRIPTIONS = request.entity_descriptions or {}
+        RELATIONSHIP_DESCRIPTIONS = request.relationship_descriptions or {}
+        print(
+            f"✅ Full ontology updated: {len(VALID_ONTOLOGY_TYPES)} entities, "
+            f"{len(PROPERTY_ENTITY_TYPES)} property types, "
+            f"{len(VALID_RELATIONSHIP_TYPES)} relationships, "
+            f"{len(ENTITY_DESCRIPTIONS)} descriptions"
+        )
 
 @app.post("/batch-extract-graph", response_model=List[GraphResponse], summary="Batch Extract Graphs from Multiple Texts")
 async def batch_extract_graph_endpoint(request: BatchExtractionRequest):

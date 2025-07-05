@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- WorkSubdivision-type_subdivision->SubdivisionType
+- _g_L1269C3965-unitType->TemporalUnit

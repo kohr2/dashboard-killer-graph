@@ -1,0 +1,7 @@
+{
+  "ontologyName": "procurement",
+  "emailFile": "test/fixtures/procurement/emails/001-contract-award-abc-corp.eml",
+  "totalSize": 12419,
+  "partitionCount": 64,
+  "generatedAt": "2025-07-05T19:38:21.115Z"
+}

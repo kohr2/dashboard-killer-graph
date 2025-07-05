@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Requirement-hasEvidenceTypeList->EvidenceTypeList
+- Requirement-hasQualifiedRelation->Requirement

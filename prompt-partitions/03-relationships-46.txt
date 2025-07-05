@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Entity-publisher_agent->Agent
+- Format-publishes->Format

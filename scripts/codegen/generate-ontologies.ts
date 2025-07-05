@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as Handlebars from 'handlebars';
-import { logger } from '../../src/shared/utils/logger';
+import { logger } from '@common/utils/logger';
 
 // Register Handlebars helper to fix HTML encoding in types
 Handlebars.registerHelper('replaceType', function(type: string) {
@@ -246,13 +246,26 @@ class OntologyGeneratorImpl implements OntologyGenerator {
     const ignoredEntities = sourceOntology.ignoredEntities || [];
     const ignoredRelationships = sourceOntology.ignoredRelationships || [];
 
-    // Filter out ignored entities
+    // Filter out ignored entities and invalid entity names
+    const isValidEntityName = (name: string) => {
+      // Must start with a letter, underscore, or dollar sign
+      if (!name || name.length === 0) return false;
+      if (/^\d+$/.test(name)) return false;
+      if (!/^[a-zA-Z_$]/.test(name)) return false;
+      if (!/^[a-zA-Z0-9_$]+$/.test(name)) return false;
+      const reservedKeywords = [
+        'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'enum', 'export', 'extends', 'false', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'let', 'new', 'null', 'return', 'super', 'switch', 'this', 'throw', 'true', 'try', 'typeof', 'var', 'void', 'while', 'with', 'yield'
+      ];
+      if (reservedKeywords.includes(name)) return false;
+      return true;
+    };
+
     const filteredEntities: Record<string, OntologyEntity> = {};
     for (const [entityName, entityConfig] of Object.entries(finalOntology.entities)) {
-      if (!ignoredEntities.includes(entityName)) {
+      if (!ignoredEntities.includes(entityName) && isValidEntityName(entityName)) {
         filteredEntities[entityName] = entityConfig;
       } else {
-        logger.info(`Skipping ignored entity: ${entityName}`);
+        logger.info(`Skipping entity: ${entityName} (ignored: ${ignoredEntities.includes(entityName)}, invalid name: ${!isValidEntityName(entityName)})`);
       }
     }
 

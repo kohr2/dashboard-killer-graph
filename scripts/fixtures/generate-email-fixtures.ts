@@ -15,7 +15,7 @@
 import 'reflect-metadata'; // make sure tsyringe & class-decorators work
 import { container } from 'tsyringe';
 import { EmailFixtureGenerationService } from '../../src/platform/fixtures/email-fixture-generation.service';
-import { logger } from '../../src/shared/utils/logger';
+import { logger } from '@common/utils/logger';
 
 // ----------------------- CLI OPTIONS -------------------------
 const argvFlags = process.argv.slice(2);

@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- ProperInterval-intervalStartedBy->ProperInterval
+- ProperInterval-intervalStarts->ProperInterval

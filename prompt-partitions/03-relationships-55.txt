@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Evidence-supportsValue->SupportedValue
+- GeneralDateTimeDescription-timeZone->TimeZone

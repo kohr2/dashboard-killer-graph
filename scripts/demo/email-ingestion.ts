@@ -27,18 +27,26 @@ interface ParsedEmailWithSource extends ParsedMail { sourceFile: string; }
     console.log(`Email-ingestion demo
     --folder=<path>    Folder under test/fixtures (default: emails)
     --database=<name>  Neo4j DB (default: neo4j)
+    --ontology=<name> Limit ontologies to given plugin (always includes core)
     --reset-db         Clear DB before ingesting`);
     process.exit(0);
   }
   const EMAIL_FOLDER = flag('folder', 'emails');
   const DATABASE_NAME = flag('database', 'neo4j');
+  const ONTOLOGY_NAME = flag('ontology');
   const RESET = argvFlags.includes('--reset-db');
 
   process.env.NEO4J_DATABASE = DATABASE_NAME;
   logger.info(`🗄️  Target DB: ${DATABASE_NAME}`);
 
-  // Build ontology (all enabled plugins)
-  registerAllOntologies();
+  // Build ontology set (all enabled plugins or a single selected one)
+  if (ONTOLOGY_NAME) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { registerSelectedOntologies } = require('@src/register-ontologies');
+    registerSelectedOntologies([ONTOLOGY_NAME]);
+  } else {
+    registerAllOntologies();
+  }
   const ontologyService = container.resolve(OntologyService);
   logger.info(`🏛️  Loaded ${ontologyService.getAllEntityTypes().length} entity types.`);
 

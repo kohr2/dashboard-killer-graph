@@ -53,4 +53,26 @@ export function registerAllOntologies() {
   logger.info('Enrichment services registered.');
 
   logger.info('All ontologies registered.');
+}
+
+/**
+ * Registers only the specified ontologies (plus the mandatory `core` ontology).
+ * It resets the plugin registry, enables the requested plugins, then loads them via OntologyService.
+ */
+export function registerSelectedOntologies(ontologyNames: string[]): void {
+  logger.debug(`Registering selected ontologies: ${ontologyNames.join(', ')}`);
+
+  // Reload registry to default state, then enable only core + specified names
+  pluginRegistry.reload();
+
+  // Normalise names for case-insensitive comparison
+  const requested = ontologyNames.map(n => n.toLowerCase());
+
+  for (const { name } of pluginRegistry.getPluginDetails()) {
+    const enable = name === 'core' || requested.includes(name.toLowerCase());
+    pluginRegistry.setPluginEnabled(name, enable);
+  }
+
+  // Finally delegate to the standard loader (which reads the updated registry)
+  registerAllOntologies();
 } 

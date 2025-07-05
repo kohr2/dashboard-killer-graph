@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- Format-legal_value->LegalValue
+- AdminUnit-level->Concept

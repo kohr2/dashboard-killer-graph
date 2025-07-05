@@ -1,0 +1,3 @@
+**Ontology Relationships:**
+- TemporalEntity-hasTemporalDuration->TemporalDuration
+- Entity-hasTime->TemporalEntity
