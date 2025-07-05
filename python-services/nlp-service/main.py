@@ -202,6 +202,8 @@ async def extract_graph_with_llm_async(text: str) -> Dict[str, Any]:
         ts = int(time.time() * 1000)
         debug_file = debug_dir / f"prompt-{ts}.txt"
         debug_file.write_text(prompt)
+        # Log success for easier troubleshooting
+        print(f"📝 Prompt persisted to {debug_file}")
     except Exception as e:
         # Non-fatal: if we cannot write the prompt we just continue
         print(f"⚠️  Failed to write LLM prompt for debugging: {e}")
@@ -424,6 +426,9 @@ async def startup_event():
     print("✅ NLP Service loaded and ready.")
     if client:
         print("✅ OpenAI client configured.")
+    # Log prompt debug directory (if any)
+    debug_dir = os.getenv("PROMPT_DEBUG_DIR", "/tmp/llm-prompts")
+    print(f"🗂️  Prompt debug directory set to: {debug_dir}")
 
 @app.post("/extract-entities", response_model=List[Entity], summary="Raw spaCy Extraction")
 async def extract_entities_endpoint(request: ExtractionRequest):
@@ -515,6 +520,17 @@ async def update_ontologies(request: OntologyUpdateRequest):
             f"✅ Compact ontology updated: {len(VALID_ONTOLOGY_TYPES)} entities, "
             f"{len(VALID_RELATIONSHIP_TYPES)} relationships"
         )
+
+        # --- DEBUG: Persist compact ontology to disk ---
+        try:
+            debug_dir = Path(os.getenv("PROMPT_DEBUG_DIR", "/tmp/llm-prompts"))
+            debug_dir.mkdir(parents=True, exist_ok=True)
+            ts = int(time.time() * 1000)
+            ont_file = debug_dir / f"compact-ontology-{ts}.json"
+            ont_file.write_text(json.dumps(compact, indent=2))
+            print(f"📝 Compact ontology persisted to {ont_file}")
+        except Exception as e:
+            print(f"⚠️  Failed to write compact ontology for debugging: {e}")
     else:
         # Handle legacy full ontology format
         VALID_ONTOLOGY_TYPES = request.entity_types
