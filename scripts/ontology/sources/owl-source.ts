@@ -862,6 +862,16 @@ export class OwlSource implements OntologySource {
    */
   private normalizeEntityName(name: string | null | undefined): string | null {
     if (!name) return null;
-    return name.replace(/^E\d+_/, '');
+    // Remove E###_ prefix first
+    let cleaned = name.replace(/^E\d+_/, '');
+    // Convert underscores or dashes to CamelCase
+    if (cleaned.includes('_') || cleaned.includes('-')) {
+      cleaned = cleaned
+        .split(/[_-]+/)
+        .filter(Boolean)
+        .map(segment => segment.charAt(0).toUpperCase() + segment.slice(1))
+        .join('');
+    }
+    return cleaned;
   }
 } 
