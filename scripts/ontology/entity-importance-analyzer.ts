@@ -376,6 +376,30 @@ Return a JSON array of objects with the following structure:
         score += Math.min(coreMatches * 0.15, 0.3); // Boost for core business entities
       }
       
+      let contextMatches = 0;
+      if (context) {
+        const contextWords = context.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+        contextMatches = contextWords.filter(word => fullText.includes(word)).length;
+        if (contextMatches > 0) {
+          // modest boost — 0.05 per match up to 0.2
+          score += Math.min(contextMatches * 0.05, 0.2);
+        }
+      }
+      
+      // --------------- NEW: Composed-word penalty ----------------
+      // If the entity name looks like multiple concatenated words (camel case or snake case),
+      // give it a small penalty so that simpler atomic concepts rank higher.
+      const spacedName = entity.name.replace(/([a-z])([A-Z])/g, '$1 $2');
+      const wordCount = spacedName.split(/[^A-Za-z0-9]+/).filter(Boolean).length;
+      if (wordCount > 1) {
+        // subtract 0.07 per extra word beyond the first, max 0.3
+        const penalty = Math.min((wordCount - 1) * 0.07, 0.3);
+        score -= penalty;
+      } else {
+        // single word – small bonus (helps Buyer, Bond, Claim, etc.)
+        score += 0.05;
+      }
+      
       if (adminMatches > 0) {
         score -= Math.min(adminMatches * 0.15, 0.4); // Higher penalty for administrative entities
       }
@@ -393,10 +417,10 @@ Return a JSON array of objects with the following structure:
       const descriptionLength = entity.description?.length || 0;
       score += Math.min(descriptionLength / 2000, 0.1);
       
-      // Cap score at 1.0
+      // Cap / floor score to keep within [0.1, 1.0]
       score = Math.min(Math.max(score, 0.1), 1.0);
 
-      const reasoning = `Fallback analysis: ${ultraHighMatches} ultra-high priority keywords, ${coreMatches} core business keywords, ${adminMatches} administrative keywords, ${descriptiveMatches} descriptive entity keywords, ${propertyCount} properties, ${descriptionLength} chars description`;
+      const reasoning = `Fallback analysis: ${ultraHighMatches} ultra-high priority keywords, ${coreMatches} core business keywords, ${adminMatches} admin keywords, ${descriptiveMatches} descriptive keywords, contextMatches=${contextMatches}, wordCount=${wordCount}, properties=${propertyCount}, descLen=${descriptionLength}`;
       
       const businessRelevance = ultraHighMatches > 0 
         ? `Ultra-high priority entity with ${ultraHighMatches} ultra-high priority keywords - fundamental to domain operations`
@@ -521,7 +545,7 @@ Return a JSON array of objects with the following structure:
       const descriptionLength = rel.description?.length || 0;
       score += Math.min(descriptionLength / 1000, 0.15);
       
-      // Cap score at 1.0
+      // Cap / floor score to keep within [0.1, 1.0]
       score = Math.min(Math.max(score, 0.1), 1.0);
 
       const reasoning = `Fallback analysis: ${ultraHighMatches} ultra-high priority keywords, ${coreMatches} core business keywords, ${adminMatches} administrative keywords, ${descriptionLength} chars description`;

@@ -31,8 +31,8 @@ interface ParsedEmailWithSource extends ParsedMail { sourceFile: string; }
     --reset-db         Clear DB before ingesting`);
     process.exit(0);
   }
-  const EMAIL_FOLDER = flag('folder', 'emails');
-  const DATABASE_NAME = flag('database', 'neo4j');
+  const EMAIL_FOLDER = flag('folder', 'emails') as string;
+  const DATABASE_NAME = flag('database', 'neo4j') as string;
   const ONTOLOGY_NAME = flag('ontology');
   const RESET = argvFlags.includes('--reset-db');
 

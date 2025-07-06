@@ -69,6 +69,7 @@ async function buildOntology(options: BuildOptions = {}) {
     if (options.topEntities || options.topRelationships) {
       console.log('⚙️  Applying importance-based (LLM) filters...');
       const analyzer = new EntityImportanceAnalyzer();
+      const contextDescription: string | undefined = typeof config.source?.description === 'string' ? config.source.description : undefined;
       let entityAnalysis: EntityImportanceAnalysis[] = [];
       
       if (options.topEntities && result.sourceOntology) {
@@ -78,8 +79,7 @@ async function buildOntology(options: BuildOptions = {}) {
           description: typeof e.description === 'string' ? e.description : (e.description as any)?._ || e.description || '',
           properties: e.properties || {}
         }));
-        // Analyze importance
-        entityAnalysis = await analyzer.analyzeEntityImportance(entityInputs, undefined, options.topEntities);
+        entityAnalysis = await analyzer.analyzeEntityImportance(entityInputs, contextDescription, options.topEntities);
         // Keep only the top entities by importance
         const topEntityNames = new Set(entityAnalysis.slice(0, options.topEntities).map(e => e.entityName));
         const allEntityNames = new Set(result.sourceOntology.entities.map(e => e.name));
@@ -95,8 +95,7 @@ async function buildOntology(options: BuildOptions = {}) {
           sourceType: r.source || 'Entity',
           targetType: r.target || 'Entity'
         }));
-        // Analyze importance
-        const relAnalysis = await analyzer.analyzeRelationshipImportance(relInputs, undefined, options.topRelationships);
+        const relAnalysis = await analyzer.analyzeRelationshipImportance(relInputs, contextDescription, options.topRelationships);
         // Keep only the top relationships by importance
         const topRelNames = new Set(relAnalysis.slice(0, options.topRelationships).map(r => r.relationshipName));
         const allRelNames = new Set(result.sourceOntology.relationships.map(r => r.name));
@@ -117,20 +116,28 @@ async function buildOntology(options: BuildOptions = {}) {
         
         // Update each entity in the final ontology
         for (const [entityName, entity] of Object.entries(result.finalOntology.entities)) {
-          const hasNameProperty = entity.properties && Object.keys(entity.properties).some(propName => 
+          const hasNameProperty = entity.properties && Object.keys(entity.properties).some(propName =>
             propName.toLowerCase() === 'name' || propName.toLowerCase() === 'label'
           );
           const importanceScore = importanceScores.get(entityName) || 0;
           const isVeryImportant = importanceScore >= 0.8;
-          
-          // Set vectorIndex based on the rule: has 'name' or 'label' property AND is very important
-          entity.vectorIndex = hasNameProperty && isVeryImportant;
-          
-          if (entity.vectorIndex) {
-            console.log(`  ✅ ${entityName}: vectorIndex = true (has name/label property, importance: ${importanceScore.toFixed(2)})`);
-          } else {
-            console.log(`  ❌ ${entityName}: vectorIndex = false (${!hasNameProperty ? 'no name/label property' : 'not very important (score: ' + importanceScore.toFixed(2) + ')'})`);
+
+          // Context relevance: any context keyword present in entity name or description
+          let contextRelevant = false;
+          if (contextDescription) {
+            const contextWords = contextDescription.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+            const fullText = `${entityName.toLowerCase()} ${(typeof entity.description === 'string' ? entity.description : (entity.description as any)?._ || '').toLowerCase()}`;
+            contextRelevant = contextWords.some(w => fullText.includes(w));
           }
+
+          // Set vectorIndex true if entity is very important OR context relevant (and has name/label prop)
+          entity.vectorIndex = hasNameProperty && (isVeryImportant || contextRelevant);
+
+          const reason = entity.vectorIndex
+            ? (isVeryImportant ? 'very important' : 'context match')
+            : (!hasNameProperty ? 'no name/label property' : `low importance (score: ${importanceScore.toFixed(2)})`);
+
+          console.log(`${entity.vectorIndex ? '  ✅' : '  ❌'} ${entityName}: vectorIndex = ${entity.vectorIndex} (${reason})`);
         }
       }
     }
@@ -168,6 +175,9 @@ async function buildOntology(options: BuildOptions = {}) {
     
     fs.writeFileSync(sourceOntologyPath, JSON.stringify(sourceOntology, null, 2));
     console.log(`💾 Source ontology saved to: ${sourceOntologyPath}`);
+    
+    // Removed automatic writing of final ontology (ontology.json).
+    // Only source.ontology.json is generated; copy/paste to ontology.json manually as needed.
     
     // Display sample entities
     if (result.sourceOntology?.entities.length) {
