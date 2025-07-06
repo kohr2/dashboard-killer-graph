@@ -260,6 +260,50 @@ Templates support customization through:
 - **Parallel processing**: Generate multiple ontologies in parallel
 - **Optimization**: Optimize generated code for performance
 
+## 2025-07 Enhancements – Importance-Driven Subset & Vector Index
+
+To manage very large external ontologies (e.g. FIBO) the build tool now supports
+importance-based trimming and smarter `vectorIndex` selection.
+
+### Build-time flags
+```
+--top-entities <n>       Keep only the <n> highest-scoring classes
+--top-relationships <n>  Keep only the <n> highest-scoring relationships
+--include-external       Fetch owl:imports
+```
+
+### Heuristic scoring (used when LLM is offline)
+| Factor | Impact |
+|--------|--------|
+| Ultra-priority keywords (fund, project, **bond**, buyer, claim…) | +0.40 ea (≤ 0.60) |
+| Core business keywords (organization, contract, person…) | +0.15 ea (≤ 0.30) |
+| **Context words** (taken from `config.source.description`) | +0.05 ea (≤ 0.20) |
+| Single-word bonus | +0.05 |
+| Composed-name penalty (Camel/Snake ≥2 words) | −0.07 per extra word (≤ −0.30) |
+| Admin / descriptive keywords | −0.15 / −0.30 |
+| Property count | +0.03 ea (≤ 0.15) |
+| Description length | + up to 0.10 |
+
+### `vectorIndex` rule
+`vectorIndex = true` when the entity
+1. has a `name` or `label` property **and**
+2. (`score ≥ 0.8` **or** it matched at least one context word).
+
+### Relationship pruning
+After entities are filtered the builder removes any relationship whose `source`
+or `target` class is not in the kept set and appends its name to
+`ignoredRelationships`.
+
+Resulting `source.ontology.json` contains:
+```
+entities[]             // kept (alphabetical)
+relationships[]        // kept (alphabetical)
+ignoredEntities[]      // dropped by rules
+ignoredRelationships[] // dropped by rules or missing endpoint
+```
+These changes ensure common atomic concepts (Buyer, Bond, Claim…) remain in
+smaller subsets while verbose helper classes are deprioritised.
+
 ## Conclusion
 
 The JSON-first ontology generation strategy provides a robust foundation for maintaining large, complex ontologies. By centralizing entity definitions in JSON and generating TypeScript code automatically, we ensure consistency, maintainability, and scalability.

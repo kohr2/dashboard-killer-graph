@@ -400,9 +400,9 @@ export class ContentProcessingService {
    * Normalise a raw entity type emitted by the LLM to the canonical ontology entity name.
    * – Case-insensitive
    * – Ignores whitespace, dashes, underscores
-   * Falls back to `Thing` if no match is found.
+   * Returns `undefined` if no match is found (previously "Thing").
    */
-  public static normaliseEntityType(rawType: string): string {
+  public static normaliseEntityType(rawType: string): string | undefined {
     const ontologyService = container.resolve(OntologyService);
     const validTypes = ontologyService.getAllEntityTypes();
 
@@ -413,6 +413,6 @@ export class ContentProcessingService {
     const cleanedRaw = rawType.toLowerCase().replace(/[^a-z0-9]/g, '');
     const match = validTypes.find(t => t.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanedRaw);
 
-    return match || 'Thing';
+    return match; // may be undefined
   }
 } 

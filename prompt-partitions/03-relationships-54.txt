@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Evidence-supportsConcept->InformationConcept
-- Evidence-supportsRequirement->Requirement

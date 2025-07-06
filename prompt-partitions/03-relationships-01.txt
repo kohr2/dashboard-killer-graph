@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- TemporalEntity-after->TemporalEntity
-- LegalResource-applied_by->Entity

@@ -8,30 +8,6 @@
   },
   "entities": [
     {
-      "name": "_g_L1269C3965",
-      "description": "",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "_g_L1269C3965"
-    },
-    {
-      "name": "_g_L508C1090",
-      "description": "",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "_g_L508C1090"
-    },
-    {
-      "name": "_g_L780C2175",
-      "description": "",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "_g_L780C2175"
-    },
-    {
       "name": "AccessTerm",
       "description": {
         "_": "Conditions and stipulations about where and how to access the Procurement Documents.",
@@ -62,14 +38,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AccessTerm"
-    },
-    {
-      "name": "AccountingDocument",
-      "description": "Accounting Document",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/AccountingDocument"
     },
     {
       "name": "AcquiringCentralPurchasingBody",
@@ -162,78 +130,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#AdHocChannel"
-    },
-    {
-      "name": "AdministrativeArea",
-      "description": {
-        "_": "Formally defined as the set of skos:Concept either in concept scheme eli:AdministrativeAreaTable or in concept scheme https://op.europa.eu/en/web/eu-vocabularies/at-dataset/-/resource/dataset/atu (Administrative Territorial Unit table published of the EU Publications Office).",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#AdministrativeArea"
-    },
-    {
-      "name": "AdminUnit",
-      "description": "Administrative Unit",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/AdminUnit"
-    },
-    {
-      "name": "Agent",
-      "description": {
-        "_": "Individual people or groups of people, like an institution with a legal recognition, who have the potential to perform intentional actions for which they can be held responsible.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#Agent"
     },
     {
       "name": "AgentInRole",
@@ -552,14 +448,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#Business"
     },
     {
-      "name": "BusinessEvent",
-      "description": "Business Event",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/BusinessEvent"
-    },
-    {
       "name": "Buyer",
       "description": {
         "_": "A Role of an Agent that awards a Contract and/or purchases items. Additional information: In Public Procurement the Role of Buyer is carried out by the following types of Organisation: Contracting Authority, Contracting Entity, a defense Contractor, an international Organisation, or an organisation awarding a Contract subsidized by a Contracting Authority. In Pre-Award, the Buyer generally awards the Contract, however future purchasers may be foreseen. In Post-Award the buyer generally refers to the purchaser of items.",
@@ -836,14 +724,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#ChangeInformation"
     },
     {
-      "name": "Channel",
-      "description": "Channel",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/Channel"
-    },
-    {
       "name": "CleanVehicleDirectiveInformation",
       "description": {
         "_": "Information related to clean vehicles legislation. Additional information: In the European Union, the legislation concerned is the European Parliament and Council 2009/33/EC (Clean Vehicles Directive – CVD).",
@@ -874,106 +754,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#CleanVehicleDirectiveInformation"
-    },
-    {
-      "name": "Collection",
-      "description": {
-        "_": "A meaningful collection of concepts.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://www.w3.org/2004/02/skos/core/#Collection"
-    },
-    {
-      "name": "ComplexWork",
-      "description": {
-        "_": "Works that have other works as members. The members of a Complex Work may constitute alternatives to or derivatives of other members of the same Complex Work. Typically the members of the complex work represent the successive temporal versions of an act, while the complex work represents the act independantly of one of its version.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#ComplexWork"
-    },
-    {
-      "name": "Concept",
-      "description": {
-        "_": "An idea or notion; a unit of thought.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://www.w3.org/2004/02/skos/core/#Concept"
-    },
-    {
-      "name": "ConceptScheme",
-      "description": {
-        "_": "A set of concepts, optionally including statements about semantic relationships between those concepts.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://www.w3.org/2004/02/skos/core/#ConceptScheme"
     },
     {
       "name": "ConcessionContract",
@@ -1034,22 +814,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ConcessionEstimate"
-    },
-    {
-      "name": "Constraint",
-      "description": "Constraint",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/Constraint"
-    },
-    {
-      "name": "ContactPoint",
-      "description": "Contact Point",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/ContactPoint"
     },
     {
       "name": "ContextDescription",
@@ -1220,46 +984,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#ContractTerm"
     },
     {
-      "name": "Cost",
-      "description": "Cost",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/Cost"
-    },
-    {
-      "name": "Criterion",
-      "description": "Criterion",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/Criterion"
-    },
-    {
-      "name": "DateTimeDescription",
-      "description": "Date-Time description",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#DateTimeDescription"
-    },
-    {
-      "name": "DateTimeInterval",
-      "description": "Date-time interval",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#DateTimeInterval"
-    },
-    {
-      "name": "DayOfWeek",
-      "description": "Day of week",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#DayOfWeek"
-    },
-    {
       "name": "DesignContestRegimeTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of a Design Contest.",
@@ -1400,22 +1124,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#Documentation"
     },
     {
-      "name": "Duration",
-      "description": "Time duration",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#Duration"
-    },
-    {
-      "name": "DurationDescription",
-      "description": "Duration description",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#DurationDescription"
-    },
-    {
       "name": "DynamicPurchaseSystemTechnique",
       "description": {
         "_": "A Technique that allows the selection of Candidates throughout the Procedure via the Qualification Criteria, followed by individual Mini-Competitions for the Award of Purchase Contracts.",
@@ -1446,16 +1154,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#DynamicPurchaseSystemTechnique"
-    },
-    {
-      "name": "E39_Actor",
-      "description": "E39_Actor as defined in OWL ontology",
-      "properties": {},
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://www.cidoc-crm.org/cidoc-crm/E39_Actor"
     },
     {
       "name": "EAuctionTechnique",
@@ -1730,38 +1428,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#EvaluationTerm"
     },
     {
-      "name": "Event",
-      "description": "Event",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/Event"
-    },
-    {
-      "name": "Evidence",
-      "description": "Evidence",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/Evidence"
-    },
-    {
-      "name": "EvidenceType",
-      "description": "Evidence Type",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/EvidenceType"
-    },
-    {
-      "name": "EvidenceTypeList",
-      "description": "Evidence Type List",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/EvidenceTypeList"
-    },
-    {
       "name": "ExclusionGround",
       "description": {
         "_": "Criterion that describes a legal Requirement to be met by the Economic Operator to be a Candidate in the Procurement.",
@@ -1826,34 +1492,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#ExclusionGroundsSummary"
     },
     {
-      "name": "Expression",
-      "description": {
-        "_": "The intellectual realisation of a Work in the form of identifiable immaterial objects, such as, but not limited to, text.\n\nThe substance of Expression is signs.\n\nAn Expression cannot exist without a physical carrier but do not depend on a specific physical carrier and can exist on one or more carriers simultaneously.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#Expression"
-    },
-    {
       "name": "ExpressionOfInterest",
       "description": {
         "_": "Document presenting an Economic Operator's Request to be considered for Procedures covering a specific domain.",
@@ -1880,112 +1518,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ExpressionOfInterest"
-    },
-    {
-      "name": "F1_Work",
-      "description": "F1_Work as defined in OWL ontology",
-      "properties": {},
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://iflastandards.info/ns/fr/frbr/frbroo/F1_Work"
-    },
-    {
-      "name": "F10_Person",
-      "description": "F10_Person as defined in OWL ontology",
-      "properties": {},
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://iflastandards.info/ns/fr/frbr/frbroo/F10_Person"
-    },
-    {
-      "name": "F11_Corporate_Body",
-      "description": "F11_Corporate_Body as defined in OWL ontology",
-      "properties": {},
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://iflastandards.info/ns/fr/frbr/frbroo/F11_Corporate_Body"
-    },
-    {
-      "name": "F22_Self-Contained_Expression",
-      "description": "F22_Self-Contained_Expression as defined in OWL ontology",
-      "properties": {},
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://iflastandards.info/ns/fr/frbr/frbroo/F22_Self-Contained_Expression"
-    },
-    {
-      "name": "F3_Manifestation_Product_Type",
-      "description": "F3_Manifestation_Product_Type as defined in OWL ontology",
-      "properties": {},
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://iflastandards.info/ns/fr/frbr/frbroo/F3_Manifestation_Product_Type"
-    },
-    {
-      "name": "Format",
-      "description": {
-        "_": "The physical embodiment of a legal expression, either on paper or in any electronic format.\nFor example, any electronic or physical format of the legal expression (XML, TIFF, PDF, etc.) ; e.g. PDF version of act 3 of 2005.  (adapted from Akoma Ntoso).\nNote that the notion of Format in ELI is more precise than a FRBR Manifestation in the sense that a Format in ELI can carry a legal value (see the property eli:legal_value).",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#Format"
-    },
-    {
-      "name": "FormatType",
-      "description": {
-        "_": "Formally defined as the set of skos:Concept in concept scheme eli:MediaTypeTable.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#FormatType"
     },
     {
       "name": "FrameworkAgreement",
@@ -2108,30 +1640,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#Fund"
     },
     {
-      "name": "GeneralDateTimeDescription",
-      "description": "Generalized date-time description",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#GeneralDateTimeDescription"
-    },
-    {
-      "name": "GeneralDurationDescription",
-      "description": "Generalized duration description",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#GeneralDurationDescription"
-    },
-    {
-      "name": "GenericDate",
-      "description": "Generic date",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/GenericDate"
-    },
-    {
       "name": "GreenProcurement",
       "description": {
         "_": "Approach whereby Buyers seek to procure with a reduced Environmental Impact. Additional Information: The approach may apply to the complete life cycle. The reduced Environmental Impact is in comparison to goods, services and works with the same primary function that would otherwise be procured. Tightly related are article 68 - Life-cycle costing and article 67 - most economically advantageous Tender (see GPP handbook) https://ec.europa.eu/environment/gpp/pdf/Buying-Green-Handbook-3rd-Edition.pdf An instance of the class GreenProcurement is represented in eForms with the code \"env-imp\" defined in the codelist Strategic-Procurement.Paragraphs) https://ec.europa.eu/environment/gpp/pdf/Buying-Green-Handbook-3rd-Edition.pdf",
@@ -2158,58 +1666,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#GreenProcurement"
-    },
-    {
-      "name": "ImageObject",
-      "description": "Image Object",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/ImageObject"
-    },
-    {
-      "name": "InForce",
-      "description": {
-        "_": "Formally defined as the set of skos:Concept in concept scheme eli:InForceTable",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#InForce"
-    },
-    {
-      "name": "InformationConcept",
-      "description": "Information Concept",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/InformationConcept"
-    },
-    {
-      "name": "InformationRequirement",
-      "description": "Information Requirement",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/InformationRequirement"
     },
     {
       "name": "InnovativeProcurement",
@@ -2240,14 +1696,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#InnovativeProcurement"
     },
     {
-      "name": "Instant",
-      "description": "Time instant",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#Instant"
-    },
-    {
       "name": "InternationalProcurementInstrumentMeasuresInformation",
       "description": {
         "_": "International Procurement Instrument Measures Information",
@@ -2270,22 +1718,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#InternationalProcurementInstrumentMeasuresInformation"
-    },
-    {
-      "name": "Interval",
-      "description": "Time interval",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#Interval"
-    },
-    {
-      "name": "January",
-      "description": "January",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#January"
     },
     {
       "name": "JuryMember",
@@ -2320,38 +1752,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#JuryMember"
     },
     {
-      "name": "Language",
-      "description": {
-        "_": "Formally defined as the set of skos:Concept in concept scheme http://publications.europa.eu/resource/authority/language",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#Language"
-    },
-    {
       "name": "LeadBuyer",
       "description": {
         "_": "A Role of an Agent who is a Buyer and takes the administrative lead of the Procedure.",
@@ -2382,134 +1782,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#LeadBuyer"
-    },
-    {
-      "name": "LegalExpression",
-      "description": {
-        "_": "The intellectual realisation of a legal resource in the form of a \"sequence of signs\" (typically alpha-numeric characters in a legal context).\nFor example, any version of the legal resource whose content is specified and different from others for any reason: language, versions, etc.;\n\nNote that ELI ontology accommodates different point of view on what should be considered a new legal resource, or a new legal expression of the same resource. Typically, a consolidated version can be viewed, in the context of ELI, either as separate legal resource (linked to original version and previous consolidated version using corresponding ELI relations), or as a different legal expression of the same legal resource.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#LegalExpression"
-    },
-    {
-      "name": "LegalResource",
-      "description": {
-        "_": "A work in a legislative corpus. This applies to acts that have been legally enacted (whether or not they are still in force).\nFor example, the abstract concept of the legal resource; e.g. \"act 3 of 2005\" (adapted from Akoma Ntoso)\n\nA legal resource can represent a legal act or any component of a legal act, like an article.  Legal resources can be linked together using properties defined in the model.\n\nNote that ELI ontology accommodates different point of view on what should be considered a new legal resource, or a new legal expression of the same resource. Typically, a consolidated version can be viewed, in the context of ELI, either as separate legal resource (linked to original version and previous consolidated version using corresponding ELI relations), or as a different legal expression of the same legal resource.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#LegalResource"
-    },
-    {
-      "name": "LegalResourceSubdivision",
-      "description": {
-        "_": "A component of a legal act, at an arbitrary level of precision, like a chapter, an article, an alinea, a paragraph or an list item. A subdivision can be linked with its parent and children subdivision using the properties eli:has_part / eli:is_part_of.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#LegalResourceSubdivision"
-    },
-    {
-      "name": "LegalValue",
-      "description": {
-        "_": "Formally defined as the set of skos:Concept in concept scheme eli:LegalValueTable",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#LegalValue"
-    },
-    {
-      "name": "LifeEvent",
-      "description": "Life Event",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/LifeEvent"
     },
     {
       "name": "LocalLegalBasisInformation",
@@ -2644,34 +1916,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#LotGroupAwardInformation"
     },
     {
-      "name": "Manifestation",
-      "description": {
-        "_": "The physical embodiment of an Expression, either on paper or in any electronic format.\n\nThe substance of Manifestation is not only signs, but also the manner in which they are presented to be consumed by users, including the kind of media adopted.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#Manifestation"
-    },
-    {
       "name": "MaskableObject",
       "description": {
         "_": "Maskable Object",
@@ -2786,14 +2030,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#MonetaryValue"
-    },
-    {
-      "name": "MonthOfYear",
-      "description": "Month of year",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#MonthOfYear"
     },
     {
       "name": "MultipleStageProcedureTerm",
@@ -3092,34 +2328,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#OpeningTerm"
     },
     {
-      "name": "OrderedCollection",
-      "description": {
-        "_": "An ordered collection of concepts, where both the grouping and the ordering are meaningful.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://www.w3.org/2004/02/skos/core/#OrderedCollection"
-    },
-    {
       "name": "OrganisationGroup",
       "description": {
         "_": "Agreed collaboration of several Organisations. Additional Information: This concept has been created to fulfill the need to represent a grouping of Organisations that is not necessarily registered i.e, consortia.",
@@ -3152,34 +2360,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#OrganisationGroup"
     },
     {
-      "name": "Organization",
-      "description": {
-        "_": "Institutions or groups of people that have obtained a legal recognition as a group and can act collectively as agents.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#Organization"
-    },
-    {
       "name": "OriginatorRequest",
       "description": {
         "_": "Document in which the Originator describes his needs.",
@@ -3206,22 +2386,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#OriginatorRequest"
-    },
-    {
-      "name": "Output",
-      "description": "Output",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/Output"
-    },
-    {
-      "name": "Participation",
-      "description": "Participation",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/Participation"
     },
     {
       "name": "ParticipationCondition",
@@ -3398,34 +2562,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#PaymentExecutor"
-    },
-    {
-      "name": "Person",
-      "description": {
-        "_": "A real person who live or has lived.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#Person"
     },
     {
       "name": "PlannedProcurement",
@@ -3884,30 +3020,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#Project"
     },
     {
-      "name": "ProperInterval",
-      "description": "Proper interval",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#ProperInterval"
-    },
-    {
-      "name": "PublicEvent",
-      "description": "Public Event",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/PublicEvent"
-    },
-    {
-      "name": "PublicOrganisation",
-      "description": "Public Organisation",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/PublicOrganisation"
-    },
-    {
       "name": "PurchaseContract",
       "description": {
         "_": "A Contract resulting from using a Dynamic Purchasing System Technique or Framework Agreement Technique.",
@@ -4052,14 +3164,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#Quantity"
     },
     {
-      "name": "ReferenceFramework",
-      "description": "Reference Framework",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/ReferenceFramework"
-    },
-    {
       "name": "ReliedUponEntity",
       "description": {
         "_": "Economic Operator (who is not a Subcontractor) on which the Tenderer relies upon, to meet Selection Criteria.",
@@ -4086,42 +3190,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ReliedUponEntity"
-    },
-    {
-      "name": "Requirement",
-      "description": "Requirement",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/Requirement"
-    },
-    {
-      "name": "ResourceType",
-      "description": {
-        "_": "Formally defined as the set of skos:Concept in concept scheme eli:ResourceTypeTable",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#ResourceType"
     },
     {
       "name": "ReviewDecision",
@@ -4528,14 +3596,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#SelectionEvaluationTerm"
     },
     {
-      "name": "ServiceConcessionContract",
-      "description": "Service Concession Contract",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/ServiceConcessionContract"
-    },
-    {
       "name": "SocialProcurement",
       "description": {
         "_": "Approach whereby Buyers seek to procure by fulfilling social objectives. Additional Information: Socially Responsible Public Procurement (SRPP) - ‘SRPP’ means Procurement Operations that take into account one or more of the following social considerations: employment opportunities, decent work, compliance with social and labour rights, social inclusion (including persons with disabilities), equal opportunities, accessibility design for all, taking account of sustainability criteria, including ethical trade issues and wider voluntary compliance with corporate social responsibility (CSR), while observing the principles enshrined in the Treaty for the European Union (TFEU) and the Procurement Directives. See Article 18 and Annex X Directive 2014/24.",
@@ -4732,34 +3792,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#SubcontractTerm"
     },
     {
-      "name": "SubdivisionType",
-      "description": {
-        "_": "Formally defined as the set of skos:Concept in concept scheme eli:SubdivisionTypeTable",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#SubdivisionType"
-    },
-    {
       "name": "SubmissionStatisticalInformation",
       "description": {
         "_": "Statistical information about submissions on a given competition, either at Lot level or Mini-Competition level.",
@@ -4818,14 +3850,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#SubmissionTerm"
-    },
-    {
-      "name": "SupportedValue",
-      "description": "Supported Value",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://data.europa.eu/m8g/SupportedValue"
     },
     {
       "name": "System",
@@ -4994,38 +4018,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Technique"
-    },
-    {
-      "name": "TemporalDuration",
-      "description": "Temporal duration",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#TemporalDuration"
-    },
-    {
-      "name": "TemporalEntity",
-      "description": "Temporal entity",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#TemporalEntity"
-    },
-    {
-      "name": "TemporalPosition",
-      "description": "Temporal position",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#TemporalPosition"
-    },
-    {
-      "name": "TemporalUnit",
-      "description": "Temporal unit",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#TemporalUnit"
     },
     {
       "name": "Tender",
@@ -5220,30 +4212,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#Term"
     },
     {
-      "name": "TimePosition",
-      "description": "Time position",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#TimePosition"
-    },
-    {
-      "name": "TimeZone",
-      "description": "Time Zone",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#TimeZone"
-    },
-    {
-      "name": "TRS",
-      "description": "Temporal Reference System",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#TRS"
-    },
-    {
       "name": "UniqueResponsibleOfTheProcurement",
       "description": {
         "_": "Unique Responsible Of The Procurement",
@@ -5266,34 +4234,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#UniqueResponsibleOfTheProcurement"
-    },
-    {
-      "name": "Version",
-      "description": {
-        "_": "Formally defined as the set of skos:Concept in concept scheme eli:VersionTable",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#Version"
     },
     {
       "name": "Winner",
@@ -5326,94 +4266,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Winner"
-    },
-    {
-      "name": "Work",
-      "description": {
-        "_": "Any distinct intellectual creation (i.e., the intellectual content), in the context of ELI.\n\nThe substance of Work is ideas.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#Work"
-    },
-    {
-      "name": "WorkSubdivision",
-      "description": {
-        "_": "A component of a work, at an arbitrary level of precision. A subdivision can be linked with its parent and children subdivision using eli:has_part / eli:is_part_of.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#WorkSubdivision"
-    },
-    {
-      "name": "WorkType",
-      "description": {
-        "_": "Formally defined as the set of skos:Concept in concept scheme eli:WorkTypeTable",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "parentClass": {
-          "type": "string",
-          "description": "Parent class in the inheritance hierarchy"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/eli/ontology#WorkType"
-    },
-    {
-      "name": "Year",
-      "description": "Year",
-      "properties": {},
-      "keyProperties": [],
-      "vectorIndex": false,
-      "documentation": "http://www.w3.org/2006/time#Year"
     }
   ],
   "relationships": [
@@ -5430,13 +4282,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#actsOnBehalfOf"
     },
     {
-      "name": "after",
-      "description": "after",
-      "source": "TemporalEntity",
-      "target": "TemporalEntity",
-      "documentation": "http://www.w3.org/2006/time#after"
-    },
-    {
       "name": "agreedByBuyer",
       "description": {
         "_": "Accepted by Buyer.",
@@ -5447,30 +4292,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#agreedByBuyer"
-    },
-    {
-      "name": "amended_by",
-      "description": {
-        "_": "Inverse of \"amends\". Indicates a work that introduced legal changes in this resource. For modifications that don’t have a legal impact, use eli:corrected_by.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#amended_by"
-    },
-    {
-      "name": "amends",
-      "description": {
-        "_": "Indicates that this work introduces legal changes in another resource. For modifications that don’t have a legal impact, use eli:corrects.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#amends"
     },
     {
       "name": "amendsContract",
@@ -5653,30 +4474,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#answersReviewRequest"
     },
     {
-      "name": "applied_by",
-      "description": {
-        "_": "Inverse of \"applies\".\n\nNote that this property is expressed on a legal resource, not on one of its language-specific legal expression.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "LegalResource",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#applied_by"
-    },
-    {
-      "name": "applies",
-      "description": {
-        "_": "Indicates that this legislation (or part of a legislation) somehow conforms with another legislation. This is an informative link, and it has no legal value. For legally-binding links of transposition, use the property transposes. This can be used for example : \n  - when a pre-existing law already conforms to a recent european directive (in that case it does not \"transposes\" it strictly speaking);\n  - when non-EU member states make sure their legislation is conformant with EU law without strictly speaking transposing it;\n  - when a legislation from a local authority conforms with a national legislation;\n\nNote that this should point to a LegalResource, not to a language-specific expression.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "LegalResource",
-      "documentation": "http://data.europa.eu/eli/ontology#applies"
-    },
-    {
       "name": "associatedWith",
       "description": {
         "_": "The document to which a document is associated.",
@@ -5699,44 +4496,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#attestedByLabel"
-    },
-    {
-      "name": "audience",
-      "description": "audience",
-      "source": "PublicEvent",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/m8g/audience"
-    },
-    {
-      "name": "based_on",
-      "description": {
-        "_": "Inverse of \"basis_for\". Indicates that thiswork is empowered by another one, typically a constitution, a treaty or an enabling act.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Work",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#based_on"
-    },
-    {
-      "name": "basis_for",
-      "description": {
-        "_": "Indicates that this work or expression empowers another . Typically primary legislation is the basis for secondary legislation.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Work",
-      "documentation": "http://data.europa.eu/eli/ontology#basis_for"
-    },
-    {
-      "name": "before",
-      "description": "before",
-      "source": "TemporalEntity",
-      "target": "TemporalEntity",
-      "documentation": "http://www.w3.org/2006/time#before"
     },
     {
       "name": "bindsBuyer",
@@ -5763,37 +4522,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#bindsContractor"
     },
     {
-      "name": "broader",
-      "description": {
-        "_": "Relates a concept to a concept that is more general in meaning.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#broader"
-    },
-    {
-      "name": "broaderTransitive",
-      "description": "skos:broaderTransitive is a transitive superproperty of skos:broader.",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#broaderTransitive"
-    },
-    {
-      "name": "broadMatch",
-      "description": {
-        "_": "skos:broadMatch is used to state a hierarchical mapping link between two conceptual resources in different concept schemes.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#broadMatch"
-    },
-    {
       "name": "canProvideEvidence",
       "description": {
         "_": "Relation showing that an Organization can supply an Evidence with regard to the payment of social security contributions and taxes.",
@@ -5816,116 +4544,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#canProvideNonDiscriminatoryEvidence"
-    },
-    {
-      "name": "changed_by",
-      "description": {
-        "_": "Inverse of « changes ». Indicates that this work or expression is being legally changed by another. This encompasses the notions of amendment, replacement, repeal, or other types of change.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#changed_by"
-    },
-    {
-      "name": "changes",
-      "description": {
-        "_": "Indicates that this work or expression legally changes another. This encompasses the notions of amendment, replacement, repeal, or other types of change. This may be a direct change (textual or non-textual amendment) or a consequential or indirect change. Note, the property is to be used to express the existence of a change relationship between two acts rather than the existence of a consolidated version of the text that shows the result of the change. For consolidation relationships, use the \"consolidates\" and \"consolidated_by\" properties.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#changes"
-    },
-    {
-      "name": "cited_by",
-      "description": {
-        "_": "Inverse of \"cites\".\nNote that the intended meaning of this link is to indicate that \"something is cited by a legislation\" and not that \"this legislation is cited by something\".",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Thing",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#cited_by"
-    },
-    {
-      "name": "cited_by_case_law",
-      "description": {
-        "_": "Indicates that this LegalResource or LegalExpression is being cited in a case law, identified by a suitable URI. If the case law cannot be identified by a suitable URI, the property \"eli:cited_by_case_law_reference\" can be used with a textual reference to the case law.\n\nThe actual citation link is expressed from the case law to the legislation, but legal portals may use the link from a legislation to a case law to e.g. refer to representative case laws about a legislation.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Thing",
-      "documentation": "http://data.europa.eu/eli/ontology#cited_by_case_law"
-    },
-    {
-      "name": "cites",
-      "description": {
-        "_": "Citation in the text of the legislation. This may be at the legal resource or legal expression level, as required by the implementation context. This includes verbatim citation and citations in referrals.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Thing",
-      "documentation": "http://data.europa.eu/eli/ontology#cites"
-    },
-    {
-      "name": "citizenship",
-      "description": "citizenship",
-      "source": "Person",
-      "target": "Jurisdiction",
-      "documentation": "http://www.w3.org/ns/person#citizenship"
-    },
-    {
-      "name": "closeMatch",
-      "description": {
-        "_": "skos:closeMatch is used to link two concepts that are sufficiently similar that they can be used interchangeably in some information retrieval applications. In order to avoid the possibility of \"compound errors\" when combining mappings across more than two concept schemes, skos:closeMatch is not declared to be a transitive property.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#closeMatch"
-    },
-    {
-      "name": "code",
-      "description": "code",
-      "source": "AdminUnit",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/m8g/code"
-    },
-    {
-      "name": "commenced_by",
-      "description": {
-        "_": "Inverse of \"commences\". Indicates that this legal resource was set in force by another legal resource.\nSituations where a resource enters into force because of more than one resource are explicitely allowed.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#commenced_by"
-    },
-    {
-      "name": "commences",
-      "description": {
-        "_": "Indicates that this legal resource sets another legal resource into force.\nNote the the date of entry into force of the other resource should be modified accordingly.\nNote also that it is not possible to indicate when the entry into force should happen.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#commences"
     },
     {
       "name": "comprisesAwardOutcome",
@@ -6180,13 +4798,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#concernsTender"
     },
     {
-      "name": "confidentialityLevelType",
-      "description": "confidentiality level type",
-      "source": "Evidence",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/m8g/confidentialityLevelType"
-    },
-    {
       "name": "conformsToLegalBasis",
       "description": {
         "_": "The Notice was designed in accordance with the given legal basis. Additional Information: This Notice can be used for Procedures which do not have the same legal basis. This holds for standard forms.",
@@ -6197,51 +4808,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#conformsToLegalBasis"
-    },
-    {
-      "name": "consolidated_by",
-      "description": {
-        "_": "Inverse of \"consolidates\". Indicates that this legal resource or expression is taken into account in a consolidated text (which is usually the product of an editorial process that revises the legislation).",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#consolidated_by"
-    },
-    {
-      "name": "consolidates",
-      "description": {
-        "_": "Indicates that this consolidated legal resource or expression (which is usually the product of an editorial process that revises the legislation) takes into account another one. This property should be used multiple times to refer to both the original version or the previous consolidated version, and to the legislations making the change.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#consolidates"
-    },
-    {
-      "name": "constrains",
-      "description": "constrains",
-      "source": "Constraint",
-      "target": "InformationConcept",
-      "documentation": "http://data.europa.eu/m8g/constrains"
-    },
-    {
-      "name": "contactPage",
-      "description": "contact page",
-      "source": "ContactPoint",
-      "target": "Document",
-      "documentation": "http://data.europa.eu/m8g/contactPage"
-    },
-    {
-      "name": "contactPoint",
-      "description": "contact point",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/contactPoint"
     },
     {
       "name": "containsCandidate",
@@ -6266,70 +4832,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#contextualisedBy"
-    },
-    {
-      "name": "corrected_by",
-      "description": {
-        "_": "Inverse of \"corrects\". Indicates a resource that introduces textual modifications (like correction of spelling mistakes) with no legal change in this work, expression or manifestation; typically corrigenda in EU legislation. For modifications that have a legal impact, use eli:amended_by.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#corrected_by"
-    },
-    {
-      "name": "corrects",
-      "description": {
-        "_": "Indicates that this work introduces textual modifications (like correction of spelling mistakes) with no legal change in another resource, expression or manifestation; typically corrigenda in EU legislation. For modifications that have a legal impact, use eli:amends.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#corrects"
-    },
-    {
-      "name": "countersigned_by",
-      "description": {
-        "_": "A person or organization that countersigned the legislation. Depending on the legal context, a countersignature can indicate that the signed authority undertakes to assume responsibility for texts emanating from a person who is inviolable and irresponsible, (for example a King, Grand Duc or President), or that the authority is in charge of the implementation of the text.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "LegalResource",
-      "target": "Agent",
-      "documentation": "http://data.europa.eu/eli/ontology#countersigned_by"
-    },
-    {
-      "name": "countryOfBirth",
-      "description": "country of birth",
-      "source": "Person",
-      "target": "Location",
-      "documentation": "http://www.w3.org/ns/person#countryOfBirth"
-    },
-    {
-      "name": "countryOfDeath",
-      "description": "country of death",
-      "source": "Person",
-      "target": "Location",
-      "documentation": "http://www.w3.org/ns/person#countryOfDeath"
-    },
-    {
-      "name": "currency",
-      "description": "currency",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/currency"
-    },
-    {
-      "name": "dayOfWeek",
-      "description": "day of week",
-      "source": "GeneralDateTimeDescription",
-      "target": "DayOfWeek",
-      "documentation": "http://www.w3.org/2006/time#dayOfWeek"
     },
     {
       "name": "definesBudgetProvider",
@@ -6656,37 +5158,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#doesNotRequireSelectionCriterionType"
     },
     {
-      "name": "embodies",
-      "description": {
-        "_": "Relates a manifestation to the expression that it embodies. Inverse of \"is_embodied_by\".",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Manifestation",
-      "target": "Expression",
-      "documentation": "http://data.europa.eu/eli/ontology#embodies"
-    },
-    {
-      "name": "ensures_implementation_of",
-      "description": {
-        "_": "Indicates that this LegalResource ensures the implementation of another LegalResource. This implies a legal meaning (contrary to eli:applies).\n\nThis can cover links from national legislation to EU legislation, or links from regional to national legislation. It can also cover links from EU implementing acts to EU legislative acts. In the case of implementation of EU legislation at national level, this covers links to EU regulations, decisions, etc. However the transpositions of EU Directives must be captured with eli:transposes.\n\nLinks between national primary and secondary legislation must be captured by eli:based_on / eli:basis_for.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "LegalResource",
-      "documentation": "http://data.europa.eu/eli/ontology#ensures_implementation_of"
-    },
-    {
-      "name": "establishedUnder",
-      "description": "established under",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/establishedUnder"
-    },
-    {
       "name": "evaluatesProcurementCriterion",
       "description": {
         "_": "evaluates Procurement Criterion",
@@ -6697,32 +5168,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#evaluatesProcurementCriterion"
-    },
-    {
-      "name": "eventStatus",
-      "description": "event status",
-      "source": "PublicEvent",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/m8g/eventStatus"
-    },
-    {
-      "name": "evidenceTypeClassification",
-      "description": "evidence type classification",
-      "source": "EvidenceType",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/m8g/evidenceTypeClassification"
-    },
-    {
-      "name": "exactMatch",
-      "description": {
-        "_": "skos:exactMatch is used to link two concepts, indicating a high degree of confidence that the concepts can be used interchangeably across a wide range of information retrieval applications. skos:exactMatch is a transitive property, and is a sub-property of skos:closeMatch.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#exactMatch"
     },
     {
       "name": "exposesChannel",
@@ -6821,20 +5266,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#foreseesTerm"
     },
     {
-      "name": "format",
-      "description": "format",
-      "source": "PublicEvent",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/m8g/format"
-    },
-    {
-      "name": "frequency",
-      "description": "frequency",
-      "source": "TemporalEntity",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/m8g/frequency"
-    },
-    {
       "name": "fulfillsRequirement",
       "description": {
         "_": "The requirement to which the concept meets.",
@@ -6857,99 +5288,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#fulfillsStrategicProcurement"
-    },
-    {
-      "name": "fulfils",
-      "description": "fulfils",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/fulfils"
-    },
-    {
-      "name": "gender",
-      "description": "gender",
-      "source": "Person",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/m8g/gender"
-    },
-    {
-      "name": "geometryType",
-      "description": "geometry type",
-      "source": "Geometry",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/m8g/geometryType"
-    },
-    {
-      "name": "has_annex",
-      "description": {
-        "_": "Indicates an annex to this this work or expression .",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#has_annex"
-    },
-    {
-      "name": "has_another_publication",
-      "description": {
-        "_": "Inverse of \"is_another_publication_of\".",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "LegalResource",
-      "target": "LegalResource",
-      "documentation": "http://data.europa.eu/eli/ontology#has_another_publication"
-    },
-    {
-      "name": "has_derivative",
-      "description": {
-        "_": "Inverse of is_derivative_of",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#has_derivative"
-    },
-    {
-      "name": "has_member",
-      "description": {
-        "_": "Indicates that this work conceptually includes another one. For the notion of physical inclusion, use eli:has_part.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Work",
-      "target": "Work",
-      "documentation": "http://data.europa.eu/eli/ontology#has_member"
-    },
-    {
-      "name": "has_part",
-      "description": {
-        "_": "inverse of \"is_part_of\"",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Work",
-      "target": "Work",
-      "documentation": "http://data.europa.eu/eli/ontology#has_part"
-    },
-    {
-      "name": "has_translation",
-      "description": {
-        "_": "Inverse of \"is_translation_of\". Indicates that this expression has been translated into another derived expression. See the definition of \"is_translation_of\".",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "LegalExpression",
-      "target": "LegalExpression",
-      "documentation": "http://data.europa.eu/eli/ontology#has_translation"
     },
     {
       "name": "hasAdditionalClassification",
@@ -7156,13 +5494,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#hasBatchID"
     },
     {
-      "name": "hasBeginning",
-      "description": "has beginning",
-      "source": "TemporalEntity",
-      "target": "Instant",
-      "documentation": "http://www.w3.org/2006/time#hasBeginning"
-    },
-    {
       "name": "hasBeneficialOwner",
       "description": {
         "_": "A role of any natural person(s) who ultimately owns or controls the organisation or on whose behalf a transaction or activity is being conducted. Additional Information: This role is defined in the directive EU 2015/849 and it's beyond the scope for public eProcurement domain.",
@@ -7271,27 +5602,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#hasChangeJustification"
     },
     {
-      "name": "hasChannel",
-      "description": "has channel",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/hasChannel"
-    },
-    {
-      "name": "hasCompetentAuthority",
-      "description": "has competent authority",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/hasCompetentAuthority"
-    },
-    {
-      "name": "hasConcept",
-      "description": "has concept",
-      "source": "Requirement",
-      "target": "InformationConcept",
-      "documentation": "http://data.europa.eu/m8g/hasConcept"
-    },
-    {
       "name": "hasConcessionEstimatedValue",
       "description": {
         "_": "has Concession Estimated Value",
@@ -7352,13 +5662,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#hasContactPointInRole"
     },
     {
-      "name": "hasContractingAuthority",
-      "description": "has contracting authority",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/hasContractingAuthority"
-    },
-    {
       "name": "hasContractNatureType",
       "description": {
         "_": "Subject of the acquisition.",
@@ -7381,13 +5684,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasContractValue"
-    },
-    {
-      "name": "hasCost",
-      "description": "has cost",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/hasCost"
     },
     {
       "name": "hasCountryCode",
@@ -7460,13 +5756,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasCustomerReference"
-    },
-    {
-      "name": "hasDateTimeDescription",
-      "description": "has Date-Time description",
-      "source": "DateTimeInterval",
-      "target": "GeneralDateTimeDescription",
-      "documentation": "http://www.w3.org/2006/time#hasDateTimeDescription"
     },
     {
       "name": "hasDebitAmount",
@@ -7625,20 +5914,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#hasDPSScope"
     },
     {
-      "name": "hasDuration",
-      "description": "has duration",
-      "source": "Entity",
-      "target": "Duration",
-      "documentation": "http://www.w3.org/2006/time#hasDuration"
-    },
-    {
-      "name": "hasDurationDescription",
-      "description": "has duration description",
-      "source": "Entity",
-      "target": "GeneralDurationDescription",
-      "documentation": "http://www.w3.org/2006/time#hasDurationDescription"
-    },
-    {
       "name": "hasECataloguePermission",
       "description": {
         "_": "The extent to which electronic catalogues may be used in tenders.",
@@ -7649,13 +5924,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasECataloguePermission"
-    },
-    {
-      "name": "hasEconomicOperator",
-      "description": "has economic operator",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/hasEconomicOperator"
     },
     {
       "name": "hasEInvoicingPermission",
@@ -7692,13 +5960,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasElectronicSignature"
-    },
-    {
-      "name": "hasEnd",
-      "description": "has end",
-      "source": "TemporalEntity",
-      "target": "Instant",
-      "documentation": "http://www.w3.org/2006/time#hasEnd"
     },
     {
       "name": "hasEndpointIdentifier",
@@ -7807,13 +6068,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasESubmissionPermission"
-    },
-    {
-      "name": "hasEvidenceTypeList",
-      "description": "has evidence type list",
-      "source": "Requirement",
-      "target": "EvidenceTypeList",
-      "documentation": "http://data.europa.eu/m8g/hasEvidenceTypeList"
     },
     {
       "name": "hasExclusionGroundType",
@@ -7994,13 +6248,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasHighestReceivedTenderValue"
-    },
-    {
-      "name": "hasInputType",
-      "description": "has input type",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/hasInputType"
     },
     {
       "name": "hasInternalIdentifier",
@@ -8229,13 +6476,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasLegalIdentifier"
-    },
-    {
-      "name": "hasLegalResource",
-      "description": "has legal resource",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/hasLegalResource"
     },
     {
       "name": "hasLength",
@@ -8670,20 +6910,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#hasOversupplyQuantity"
     },
     {
-      "name": "hasParticipant",
-      "description": "has participant",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/hasParticipant"
-    },
-    {
-      "name": "hasParticipation",
-      "description": "has participation",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/hasParticipation"
-    },
-    {
       "name": "hasPaymentAccountIdentifier",
       "description": {
         "_": "A unique identifier of the financial payment account, at a payment service provider, to which payment should be made.",
@@ -8888,13 +7114,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#hasQualificationSystemDuration"
     },
     {
-      "name": "hasQualifiedRelation",
-      "description": "has qualified relation",
-      "source": "Requirement",
-      "target": "Requirement",
-      "documentation": "http://data.europa.eu/m8g/hasQualifiedRelation"
-    },
-    {
       "name": "hasQualifiedValue",
       "description": {
         "_": "Qualified value of the property, which is defined in a classification scheme. Additional Information: For example, the (0173-1#02-AAA026#007) drilling diameter of an item has value of 12 inches.",
@@ -8967,13 +7186,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#hasRejectedQuantity"
     },
     {
-      "name": "hasRelatedService",
-      "description": "has related service",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/hasRelatedService"
-    },
-    {
       "name": "hasRemedyValue",
       "description": {
         "_": "has Remedy Value",
@@ -8996,13 +7208,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasRequestedDeliveryPeriod"
-    },
-    {
-      "name": "hasRequirement",
-      "description": "has requirement",
-      "source": "Requirement",
-      "target": "Requirement",
-      "documentation": "http://data.europa.eu/m8g/hasRequirement"
     },
     {
       "name": "hasReservedExecution",
@@ -9245,13 +7450,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#hasSubcontractor"
     },
     {
-      "name": "hasSupportingEvidence",
-      "description": "has supporting evidence",
-      "source": "Requirement",
-      "target": "Evidence",
-      "documentation": "http://data.europa.eu/m8g/hasSupportingEvidence"
-    },
-    {
       "name": "hasTaxIdentifier",
       "description": {
         "_": "has Tax Identifier",
@@ -9274,13 +7472,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasTaxInformation"
-    },
-    {
-      "name": "hasTemporalDuration",
-      "description": "has temporal duration",
-      "source": "TemporalEntity",
-      "target": "TemporalDuration",
-      "documentation": "http://www.w3.org/2006/time#hasTemporalDuration"
     },
     {
       "name": "hasTenderSubcontractingInformation",
@@ -9329,25 +7520,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#hasThresholdType"
-    },
-    {
-      "name": "hasTime",
-      "description": "has time",
-      "source": "Entity",
-      "target": "TemporalEntity",
-      "documentation": "http://www.w3.org/2006/time#hasTime"
-    },
-    {
-      "name": "hasTopConcept",
-      "description": {
-        "_": "Relates, by convention, a concept scheme to a concept which is topmost in the broader/narrower concept hierarchies for that scheme, providing an entry point to these hierarchies.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "ConceptScheme",
-      "target": "Concept",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#hasTopConcept"
     },
     {
       "name": "hasTotalAccountingCurrencyTaxAmount",
@@ -9554,13 +7726,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#hasTransportHandlingUnitQuantity"
     },
     {
-      "name": "hasTRS",
-      "description": "Temporal reference system used",
-      "source": "_g_L780C2175",
-      "target": "TRS",
-      "documentation": "http://www.w3.org/2006/time#hasTRS"
-    },
-    {
       "name": "hasUnitCode",
       "description": {
         "_": "has Unit Code",
@@ -9681,82 +7846,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#hasWidth"
     },
     {
-      "name": "holdsRequirement",
-      "description": "holds requirement",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/holdsRequirement"
-    },
-    {
-      "name": "identifier",
-      "description": "identifier",
-      "source": "Entity",
-      "target": "Identifier",
-      "documentation": "http://www.w3.org/ns/adms#identifier"
-    },
-    {
-      "name": "ifAccessedThrough",
-      "description": "if accessed through",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/ifAccessedThrough"
-    },
-    {
-      "name": "implementation_ensured_by",
-      "description": {
-        "_": "Indicates that the implementation of this LegalResource is ensured by another LegalResource. This implies a legal meaning (contrary to eli:applies). See the definition of eli:ensures_implementation_of.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "LegalResource",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#implementation_ensured_by"
-    },
-    {
-      "name": "implemented_by",
-      "description": {
-        "_": "This property is deprecated. Use \"applied_by\" instead.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#implemented_by"
-    },
-    {
-      "name": "implements",
-      "description": {
-        "_": "This property is deprecated. Use \"applies\" instead.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#implements"
-    },
-    {
-      "name": "in_force",
-      "description": {
-        "_": "A value indicating the legal force of a legal resource or a legal expression. A set of values is defined by ELI in the corresponding concept scheme. These values are :\n  - in force\n  - partially in force\n  - not in force",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "InForce",
-      "documentation": "http://data.europa.eu/eli/ontology#in_force"
-    },
-    {
-      "name": "includedAsset",
-      "description": "included asset",
-      "source": "Asset",
-      "target": "Asset",
-      "documentation": "http://www.w3.org/ns/adms#includedAsset"
-    },
-    {
       "name": "includesAccessibilityCriterion",
       "description": {
         "_": "Explanation as to whether accessibility Criterion are used or not.",
@@ -9793,13 +7882,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#includesTender"
     },
     {
-      "name": "inDateTime",
-      "description": "in date-time description",
-      "source": "Instant",
-      "target": "GeneralDateTimeDescription",
-      "documentation": "http://www.w3.org/2006/time#inDateTime"
-    },
-    {
       "name": "indicatesAwardToWinner",
       "description": {
         "_": "Reveals the winner to whom the tender award outcome is attributed.",
@@ -9810,151 +7892,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#indicatesAwardToWinner"
-    },
-    {
-      "name": "inScheme",
-      "description": {
-        "_": "Relates a resource (for example a concept) to a concept scheme in which it is included.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "ConceptScheme",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#inScheme"
-    },
-    {
-      "name": "inside",
-      "description": "has time instant inside",
-      "source": "Interval",
-      "target": "Instant",
-      "documentation": "http://www.w3.org/2006/time#inside"
-    },
-    {
-      "name": "inTemporalPosition",
-      "description": "Temporal position",
-      "source": "Instant",
-      "target": "TemporalPosition",
-      "documentation": "http://www.w3.org/2006/time#inTemporalPosition"
-    },
-    {
-      "name": "interoperabilityLevel",
-      "description": "interoperability level",
-      "source": "Asset",
-      "target": "Concept",
-      "documentation": "http://www.w3.org/ns/adms#interoperabilityLevel"
-    },
-    {
-      "name": "intervalAfter",
-      "description": "interval after",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalAfter"
-    },
-    {
-      "name": "intervalBefore",
-      "description": "interval before",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalBefore"
-    },
-    {
-      "name": "intervalContains",
-      "description": "interval contains",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalContains"
-    },
-    {
-      "name": "intervalDisjoint",
-      "description": "interval disjoint",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalDisjoint"
-    },
-    {
-      "name": "intervalDuring",
-      "description": "interval during",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalDuring"
-    },
-    {
-      "name": "intervalEquals",
-      "description": "interval equals",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalEquals"
-    },
-    {
-      "name": "intervalFinishedBy",
-      "description": "interval finished by",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalFinishedBy"
-    },
-    {
-      "name": "intervalFinishes",
-      "description": "interval finishes",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalFinishes"
-    },
-    {
-      "name": "intervalIn",
-      "description": "interval in",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalIn"
-    },
-    {
-      "name": "intervalMeets",
-      "description": "interval meets",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalMeets"
-    },
-    {
-      "name": "intervalMetBy",
-      "description": "interval met by",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalMetBy"
-    },
-    {
-      "name": "intervalOverlappedBy",
-      "description": "interval overlapped by",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalOverlappedBy"
-    },
-    {
-      "name": "intervalOverlaps",
-      "description": "interval overlaps",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalOverlaps"
-    },
-    {
-      "name": "intervalStartedBy",
-      "description": "interval started by",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalStartedBy"
-    },
-    {
-      "name": "intervalStarts",
-      "description": "interval starts",
-      "source": "ProperInterval",
-      "target": "ProperInterval",
-      "documentation": "http://www.w3.org/2006/time#intervalStarts"
-    },
-    {
-      "name": "inTimePosition",
-      "description": "Time position",
-      "source": "Instant",
-      "target": "TimePosition",
-      "documentation": "http://www.w3.org/2006/time#inTimePosition"
     },
     {
       "name": "involvesBuyer",
@@ -9979,138 +7916,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#involvesProcurementDocument"
-    },
-    {
-      "name": "is_about",
-      "description": {
-        "_": "A subject for this work. The use of Eurovoc (http://eurovoc.europa.eu) is encouraged to select values for this property. Member states are encouraged to align local values to Eurovoc.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Work",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/eli/ontology#is_about"
-    },
-    {
-      "name": "is_annex_of",
-      "description": {
-        "_": "Indicates this work or expression is an annex of another one.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#is_annex_of"
-    },
-    {
-      "name": "is_another_publication_of",
-      "description": {
-        "_": "Indicates that this resource is a new publication, in a different official journal, of another resource already published elsewhere, and cannot be considered to be the same resource (owl:sameAs cannot be used to avoid potential duplication of certain metadata, like the date of publication, or the publisher).\n\nNote that this is different from the exceptionnal cases of \"republication\", where the same resource is actually republished in the same official journal a few days after its initial publication, in case of errors.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "LegalResource",
-      "target": "LegalResource",
-      "documentation": "http://data.europa.eu/eli/ontology#is_another_publication_of"
-    },
-    {
-      "name": "is_derivative_of",
-      "description": {
-        "_": "A Work or Expression from which this one derives",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#is_derivative_of"
-    },
-    {
-      "name": "is_embodied_by",
-      "description": {
-        "_": "Relates an expression to a manifestation of that expression. Inverse of \"embodies\".",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Expression",
-      "target": "Manifestation",
-      "documentation": "http://data.europa.eu/eli/ontology#is_embodied_by"
-    },
-    {
-      "name": "is_exemplified_by",
-      "description": {
-        "_": "Link to a concrete file URL.\nRelates a manifestation to a single exemplar or instance of that manifestation.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Manifestation",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#is_exemplified_by"
-    },
-    {
-      "name": "is_member_of",
-      "description": {
-        "_": "Indicates that this work is conceptually included in another one. In the case of a legislation, its successive temporal versions are conceptually members of a single « abstract » resource. For the notion of physical inclusion, use eli:is_part_of.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Work",
-      "target": "Work",
-      "documentation": "http://data.europa.eu/eli/ontology#is_member_of"
-    },
-    {
-      "name": "is_part_of",
-      "description": {
-        "_": "Indicates a work in which this one is physically included. Covers the case of text included in an Official Journal, or an article included in a text. For the notion of conceptual/temporal inclusion, use eli:is_member_of.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Work",
-      "target": "Work",
-      "documentation": "http://data.europa.eu/eli/ontology#is_part_of"
-    },
-    {
-      "name": "is_realized_by",
-      "description": {
-        "_": "Relates a work to an expression of this work in the form of a \"sequence of signs\" (typically alpha-numeric characters in a legal context). Inverse of \"realizes\".",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Work",
-      "target": "Expression",
-      "documentation": "http://data.europa.eu/eli/ontology#is_realized_by"
-    },
-    {
-      "name": "is_referred_to_by",
-      "description": {
-        "_": "Indicates a work or expression that refers to this entity.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Thing",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#is_referred_to_by"
-    },
-    {
-      "name": "is_translation_of",
-      "description": {
-        "_": "Indicates that this expression has been translated from another original expression; this can be used to distinguish original from derived expressions.\n\nNote that asserting this link does not have any implication on the legal value of the original and translated expressions : depending on the context, a translation can be as legally binding as the original version, or can be published for informative purposes only (e.g. a country translating some legal acts in English).\n\nThe expressions linked with this property can be realisations of the same LegalResource, or different LegalResources. Multilingual legislations that do not need to distinguish between original and derived expressions of the same LegalResource (e.g. european legislation) will not use this property.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "LegalExpression",
-      "target": "LegalExpression",
-      "documentation": "http://data.europa.eu/eli/ontology#is_translation_of"
     },
     {
       "name": "isAppointedBy",
@@ -10173,13 +7978,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#isCalculatedOn"
     },
     {
-      "name": "isClassifiedBy",
-      "description": "is classified by",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/isClassifiedBy"
-    },
-    {
       "name": "isContainedInTender",
       "description": {
         "_": "is Contained In Tender",
@@ -10190,20 +7988,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isContainedInTender"
-    },
-    {
-      "name": "isDefinedBy",
-      "description": "is defined by",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/isDefinedBy"
-    },
-    {
-      "name": "isDerivedFrom",
-      "description": "is derived from",
-      "source": "Requirement",
-      "target": "ReferenceFramework",
-      "documentation": "http://data.europa.eu/m8g/isDerivedFrom"
     },
     {
       "name": "isExecutedByProcurementServiceProvider",
@@ -10230,13 +8014,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#isFundedBy"
     },
     {
-      "name": "isGroupedBy",
-      "description": "is grouped by",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/isGroupedBy"
-    },
-    {
       "name": "isOwnedByAgent",
       "description": {
         "_": "is Owned By Agent",
@@ -10261,13 +8038,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#isReinforcedBy"
     },
     {
-      "name": "isRequirementOf",
-      "description": "is requirement of",
-      "source": "Requirement",
-      "target": "Requirement",
-      "documentation": "http://data.europa.eu/m8g/isRequirementOf"
-    },
-    {
       "name": "isResponsibilityOfBuyer",
       "description": {
         "_": "The buyer in charge of the procedure.",
@@ -10278,13 +8048,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#isResponsibilityOfBuyer"
-    },
-    {
-      "name": "isSpecifiedIn",
-      "description": "is specified in",
-      "source": "EvidenceType",
-      "target": "EvidenceTypeList",
-      "documentation": "http://data.europa.eu/m8g/isSpecifiedIn"
     },
     {
       "name": "isSubjectToGrouping",
@@ -10395,37 +8158,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#isUsedInProfile"
     },
     {
-      "name": "jurisdiction",
-      "description": {
-        "_": "The jurisdiction from which the legal resource originates. \n\nThe place identifier can be taken from the Administrative Territorial Unit table published of the EU Publications Office at https://op.europa.eu/en/web/eu-vocabularies/at-dataset/-/resource/dataset/atu. Member States don't have to recreate their own list of values.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "AdministrativeArea",
-      "documentation": "http://data.europa.eu/eli/ontology#jurisdiction"
-    },
-    {
-      "name": "language",
-      "description": {
-        "_": "The language of an expression.\n\nEU Publications Office provides a list of languages at https://op.europa.eu/en/web/eu-vocabularies/at-dataset/-/resource/dataset/language. This list is large enough so that member states should not have to declare local values.\n\nNote that, if needed, a language can also be stated on a legal resource using the DublinCore \"language\" property.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Expression",
-      "target": "Language",
-      "documentation": "http://data.europa.eu/eli/ontology#language"
-    },
-    {
-      "name": "last",
-      "description": "last",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/ns/adms#last"
-    },
-    {
       "name": "leadBy",
       "description": {
         "_": "The epo:OrganisationGroup epo:leadBy org:Organization was implemented to be used in case of an Economic Operator Group.",
@@ -10436,123 +8168,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#leadBy"
-    },
-    {
-      "name": "legal_value",
-      "description": {
-        "_": "The legal value associated with a specific format of a resource. A set of values is defined by ELI in the corresponding concept scheme. These values are :\n  - unofficial : no particular or special standing;\n  - official : published by an organisation with the public task of making the information available (e.g. a consolidated version of a EU directive) ;\n  - authoritative : the publisher gives some special status to the publication (e.g. \"the Queens Printer\" version of an Act of Parliament, or the OJ version of a EU Directive);\n  - definitive : the text is conclusively what the law says, (e.g. the digitally signed version of an OJ).",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Format",
-      "target": "LegalValue",
-      "documentation": "http://data.europa.eu/eli/ontology#legal_value"
-    },
-    {
-      "name": "level",
-      "description": "level",
-      "source": "AdminUnit",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/m8g/level"
-    },
-    {
-      "name": "licence",
-      "description": {
-        "_": "A legal document giving official permission to do something with the resource (Definition from Dublin Core)",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Format",
-      "target": "Thing",
-      "documentation": "http://data.europa.eu/eli/ontology#licence"
-    },
-    {
-      "name": "mappingRelation",
-      "description": {
-        "_": "Relates two concepts coming, by convention, from different schemes, and that have comparable meanings",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#mappingRelation"
-    },
-    {
-      "name": "media_type",
-      "description": {
-        "_": "The file format of the manifestation.\nThis field is intended to capture the technical file format and will serve as a basis for content negotiation for the server to return the appropriate file based on the client preference.\nAlthough not mandatory, this property is highly encouraged.\nPossible URIs values MUST be taken from http://www.iana.org/assignments/media-types (e.g. http://www.iana.org/assignments/media-types/application/xml).\nSee also the \"format\" property.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Manifestation",
-      "target": "Thing",
-      "documentation": "http://data.europa.eu/eli/ontology#media_type"
-    },
-    {
-      "name": "member",
-      "description": {
-        "_": "Relates a collection to one of its members.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Collection",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#member"
-    },
-    {
-      "name": "memberList",
-      "description": {
-        "_": "Relates an ordered collection to the RDF list containing its members.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "OrderedCollection",
-      "target": "List",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#memberList"
-    },
-    {
-      "name": "monthOfYear",
-      "description": "month of year",
-      "source": "GeneralDateTimeDescription",
-      "target": "MonthOfYear",
-      "documentation": "http://www.w3.org/2006/time#monthOfYear"
-    },
-    {
-      "name": "narrower",
-      "description": {
-        "_": "Relates a concept to a concept that is more specific in meaning.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#narrower"
-    },
-    {
-      "name": "narrowerTransitive",
-      "description": "skos:narrowerTransitive is a transitive superproperty of skos:narrower.",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#narrowerTransitive"
-    },
-    {
-      "name": "narrowMatch",
-      "description": {
-        "_": "skos:narrowMatch is used to state a hierarchical mapping link between two conceptual resources in different concept schemes.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#narrowMatch"
     },
     {
       "name": "needsToBeATenderer",
@@ -10579,27 +8194,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#needsToBeAWinner"
     },
     {
-      "name": "next",
-      "description": "next",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/ns/adms#next"
-    },
-    {
-      "name": "openingHours",
-      "description": "opening hours",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/openingHours"
-    },
-    {
-      "name": "ownedBy",
-      "description": "owned by",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/ownedBy"
-    },
-    {
       "name": "ownsSystem",
       "description": {
         "_": "owns System",
@@ -10610,39 +8204,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#ownsSystem"
-    },
-    {
-      "name": "participates",
-      "description": "participates",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/participates"
-    },
-    {
-      "name": "passed_by",
-      "description": {
-        "_": "The person or organization that originally passed or made the law : typically parliament (for primary legislation) or government (for secondary legislation). This indicates the \"legal author\" of the law, as opposed to its physical author. \n\nThis property can be used multiple times to indicate both the agent that authored the text, and/or the agent that signed the text, thus turning it into an actual legislation.\n\nThe relationship between current and any former law making body should be represented in the description of the agent itself.\n\nMember states are encouraged to make their own list of Agents. EU Publications Office provides a list of corporate bodies at https://op.europa.eu/en/web/eu-vocabularies/at-dataset/-/resource/dataset/corporate-body.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "LegalResource",
-      "target": "Agent",
-      "documentation": "http://data.europa.eu/eli/ontology#passed_by"
-    },
-    {
-      "name": "placeOfBirth",
-      "description": "place of birth",
-      "source": "Person",
-      "target": "Location",
-      "documentation": "http://www.w3.org/ns/person#placeOfBirth"
-    },
-    {
-      "name": "placeOfDeath",
-      "description": "place of death",
-      "source": "Person",
-      "target": "Location",
-      "documentation": "http://www.w3.org/ns/person#placeOfDeath"
     },
     {
       "name": "playedBy",
@@ -10667,13 +8228,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#preparesForPotentialProcurementObject"
-    },
-    {
-      "name": "prev",
-      "description": "prev",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/ns/adms#prev"
     },
     {
       "name": "providesContractTotalPaymentValue",
@@ -10818,122 +8372,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#providesRulingOnRemedy"
-    },
-    {
-      "name": "providesValueFor",
-      "description": "provides value for",
-      "source": "SupportedValue",
-      "target": "InformationConcept",
-      "documentation": "http://data.europa.eu/m8g/providesValueFor"
-    },
-    {
-      "name": "published_in_format",
-      "description": {
-        "_": "Reference to the Official Journal or other publication manifestation in which this format is published.\nThis property should be used when the value can be identified by a suitable URI; in the absence of such a URI, the property \"published_in\" should be used with a string value.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Format",
-      "target": "Format",
-      "documentation": "http://data.europa.eu/eli/ontology#published_in_format"
-    },
-    {
-      "name": "publisher_agent",
-      "description": {
-        "_": "An entity responsible for making the resource available (definition from Dublin Core).\nThis property should be used when the value can be identified by a suitable URI; in the absence of such a URI, the property \"publisher\" should be used with a string value.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Agent",
-      "documentation": "http://data.europa.eu/eli/ontology#publisher_agent"
-    },
-    {
-      "name": "publishes",
-      "description": {
-        "_": "Inverse of \"published_in_format\". Note this property does not link a publisher with a resource, but rather a specific Format of a resource with a specific Format of another resource, indicating that the subject Format publishes the object Format.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Format",
-      "target": "Format",
-      "documentation": "http://data.europa.eu/eli/ontology#publishes"
-    },
-    {
-      "name": "R10_has_member",
-      "description": "R10_has_member relationship",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://iflastandards.info/ns/fr/frbr/frbroo/R10_has_member"
-    },
-    {
-      "name": "R10i_is_member_of",
-      "description": "R10i_is_member_of relationship",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://iflastandards.info/ns/fr/frbr/frbroo/R10i_is_member_of"
-    },
-    {
-      "name": "R3_is_realised_in",
-      "description": "R3_is_realised_in relationship",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://iflastandards.info/ns/fr/frbr/frbroo/R3_is_realised_in"
-    },
-    {
-      "name": "R3i_realises",
-      "description": "R3i_realises relationship",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://iflastandards.info/ns/fr/frbr/frbroo/R3i_realises"
-    },
-    {
-      "name": "R4_carriers_provided_by",
-      "description": "R4_carriers_provided_by relationship",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://iflastandards.info/ns/fr/frbr/frbroo/R4_carriers_provided_by"
-    },
-    {
-      "name": "R4i_comprises_carriers_of",
-      "description": "R4i_comprises_carriers_of relationship",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://iflastandards.info/ns/fr/frbr/frbroo/R4i_comprises_carriers_of"
-    },
-    {
-      "name": "R7i_has_example",
-      "description": "R7i_has_example relationship",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://iflastandards.info/ns/fr/frbr/frbroo/R7i_has_example"
-    },
-    {
-      "name": "realizes",
-      "description": {
-        "_": "Relates an expression to a work realised through that expression. Inverse of \"is_realized_by\".",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Expression",
-      "target": "Work",
-      "documentation": "http://data.europa.eu/eli/ontology#realizes"
-    },
-    {
-      "name": "refers_to",
-      "description": {
-        "_": "Any entity that this work or expression refers to ; typically references are made to other Works, but it can be also to legislative processes, persons, etc.\n\nNote that specific subproperties exist in ELI-DL to describe future legal impacts (\\\"foresees_xxxx\\\" links) and links between amendments and draft legislation.\n\nExample : an opinion refers to the specific version of the draft legislation on which it is based.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Thing",
-      "documentation": "http://data.europa.eu/eli/ontology#refers_to"
     },
     {
       "name": "refersToApplicablePeriod",
@@ -11140,56 +8578,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#refersToRole"
     },
     {
-      "name": "registrationPage",
-      "description": "registration page",
-      "source": "PublicEvent",
-      "target": "Document",
-      "documentation": "http://data.europa.eu/m8g/registrationPage"
-    },
-    {
-      "name": "related",
-      "description": {
-        "_": "Relates a concept to a concept with which there is an associative semantic relationship.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#related"
-    },
-    {
-      "name": "related_to",
-      "description": {
-        "_": "Indicates a somehow related other document, not necessarily a legal resource. Note that citation links should use the cites property.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Thing",
-      "documentation": "http://data.europa.eu/eli/ontology#related_to"
-    },
-    {
-      "name": "relatedMatch",
-      "description": {
-        "_": "skos:relatedMatch is used to state an associative mapping link between two conceptual resources in different concept schemes.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#relatedMatch"
-    },
-    {
-      "name": "relatedService",
-      "description": "related service",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/relatedService"
-    },
-    {
       "name": "relatesToEFormSectionIdentifier",
       "description": {
         "_": "relates To E Form Section Identifier",
@@ -11202,49 +8590,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#relatesToEFormSectionIdentifier"
     },
     {
-      "name": "relevant_for",
-      "description": {
-        "_": "Refers to a place or an area associated with the resource. This covers the notions of jurisdiction, sovereignty, applicability or administrative area. The place identifier can be taken from the Administrative Territorial Unit table published of the EU Publications Office at https://op.europa.eu/en/web/eu-vocabularies/at-dataset/-/resource/dataset/atu. Member States don't have to recreate their own list of values.\n\nThe group notes the limitations of what can be said with a single property; member states can refine this notion by declaring specific sub properties.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "AdministrativeArea",
-      "documentation": "http://data.europa.eu/eli/ontology#relevant_for"
-    },
-    {
-      "name": "repealed_by",
-      "description": {
-        "_": "Inverse of \"repeals\". Indicates that this legal resource or legal expression is being completely canceled, abrogated or replaced by another legal resource. If a resource is partially repealed by another, this link can be used at the corresponding subdivision level being completely repealed.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#repealed_by"
-    },
-    {
-      "name": "repeals",
-      "description": {
-        "_": "Indicates that this legal resource or legal expression completely cancels, abrogates or replaces another. If a resource partially repeals another, this link can be used at the corresponding subdivision level being completely repealed.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#repeals"
-    },
-    {
-      "name": "representationTechnique",
-      "description": "representation technique",
-      "source": "Entity",
-      "target": "Concept",
-      "documentation": "http://www.w3.org/ns/adms#representationTechnique"
-    },
-    {
       "name": "requestsRemedyType",
       "description": {
         "_": "requests Remedy Type",
@@ -11255,25 +8600,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#requestsRemedyType"
-    },
-    {
-      "name": "residency",
-      "description": "residency",
-      "source": "Person",
-      "target": "Jurisdiction",
-      "documentation": "http://www.w3.org/ns/person#residency"
-    },
-    {
-      "name": "responsibility_of_agent",
-      "description": {
-        "_": "An individual, organisation or organisational unit that has some kind of responsibility for the legislation. Typically the ministry who is/was in charge of elaborating the legislation, or the adressee for potential questions about the legislation once it is published.\nThis property should be used when the value can be identified by a suitable URI; in the absence of such a URI, the property \"responsibility_of\" should be used with a string value.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "LegalResource",
-      "target": "Agent",
-      "documentation": "http://data.europa.eu/eli/ontology#responsibility_of_agent"
     },
     {
       "name": "resultsFromLotAwardOutcome",
@@ -11312,51 +8638,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#resultsFromUsingCandidateList"
     },
     {
-      "name": "rightsholder_agent",
-      "description": {
-        "_": "A person or organisation owning or managing rights over the resource (definition from Dublin Core).\nThis property should be used when the value can be identified by a suitable URI; in the absence of such a URI, the property \"rightsholder\" should be used with a string value.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Format",
-      "target": "Agent",
-      "documentation": "http://data.europa.eu/eli/ontology#rightsholder_agent"
-    },
-    {
-      "name": "role",
-      "description": "role",
-      "source": "Participation",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/m8g/role"
-    },
-    {
-      "name": "sample",
-      "description": "sample",
-      "source": "Asset",
-      "target": "Asset",
-      "documentation": "http://www.w3.org/ns/adms#sample"
-    },
-    {
-      "name": "sector",
-      "description": "sector",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/sector"
-    },
-    {
-      "name": "semanticRelation",
-      "description": {
-        "_": "Links a concept to a concept related by meaning.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Concept",
-      "target": "Concept",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#semanticRelation"
-    },
-    {
       "name": "setsGroupingContextForLot",
       "description": {
         "_": "sets Grouping Context For Lot",
@@ -11367,13 +8648,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#setsGroupingContextForLot"
-    },
-    {
-      "name": "sex",
-      "description": "sex",
-      "source": "Person",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/m8g/sex"
     },
     {
       "name": "signedByBuyer",
@@ -11410,13 +8684,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#signsAwardDecision"
-    },
-    {
-      "name": "specialOpeningHoursSpecification",
-      "description": "availability restriction",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/specialOpeningHoursSpecification"
     },
     {
       "name": "specifiesBuyer",
@@ -11539,13 +8806,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesEvidence"
     },
     {
-      "name": "specifiesEvidenceType",
-      "description": "specifies evidence type",
-      "source": "EvidenceTypeList",
-      "target": "EvidenceType",
-      "documentation": "http://data.europa.eu/m8g/specifiesEvidenceType"
-    },
-    {
       "name": "specifiesForeignSubsidiesMeasureConclusion",
       "description": {
         "_": "specifies Foreign Subsidies Measure Conclusion",
@@ -11666,13 +8926,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#specifiesTenderer"
     },
     {
-      "name": "status",
-      "description": "status",
-      "source": "Entity",
-      "target": "Concept",
-      "documentation": "http://www.w3.org/ns/adms#status"
-    },
-    {
       "name": "substantiatesExclusionGround",
       "description": {
         "_": "substantiates Exclusion Ground",
@@ -11709,122 +8962,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#summarisesInformationForAwardOutcome"
     },
     {
-      "name": "supportedSchema",
-      "description": "supported schema",
-      "source": "Entity",
-      "target": "Asset",
-      "documentation": "http://www.w3.org/ns/adms#supportedSchema"
-    },
-    {
-      "name": "supportsConcept",
-      "description": "supports concept",
-      "source": "Evidence",
-      "target": "InformationConcept",
-      "documentation": "http://data.europa.eu/m8g/supportsConcept"
-    },
-    {
-      "name": "supportsRequirement",
-      "description": "supports requirement",
-      "source": "Evidence",
-      "target": "Requirement",
-      "documentation": "http://data.europa.eu/m8g/supportsRequirement"
-    },
-    {
-      "name": "supportsValue",
-      "description": "supports value",
-      "source": "Evidence",
-      "target": "SupportedValue",
-      "documentation": "http://data.europa.eu/m8g/supportsValue"
-    },
-    {
-      "name": "thematicArea",
-      "description": "thematic area",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/m8g/thematicArea"
-    },
-    {
-      "name": "timeZone",
-      "description": "in time zone",
-      "source": "GeneralDateTimeDescription",
-      "target": "TimeZone",
-      "documentation": "http://www.w3.org/2006/time#timeZone"
-    },
-    {
-      "name": "topConceptOf",
-      "description": {
-        "_": "Relates a concept to the concept scheme that it is a top level concept of.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Concept",
-      "target": "ConceptScheme",
-      "documentation": "http://www.w3.org/2004/02/skos/core/#topConceptOf"
-    },
-    {
-      "name": "translation",
-      "description": "translation",
-      "source": "Entity",
-      "target": "Entity",
-      "documentation": "http://www.w3.org/ns/adms#translation"
-    },
-    {
-      "name": "transposed_by",
-      "description": {
-        "_": "Inverse of \"transposes\".\n\nNote that this property is expressed on a legal resource, not on one of its language-specific legal expression.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "LegalResource",
-      "target": "Entity",
-      "documentation": "http://data.europa.eu/eli/ontology#transposed_by"
-    },
-    {
-      "name": "transposes",
-      "description": {
-        "_": "Indicates that this legislation (or part of legislation) fulfills the objectives set by another legislation, by passing appropriate implementation measures. Typically, some legislations of European Union's member states or regions transpose European Directives. This indicates a legally binding link between the 2 legislations, at act or article level, from the original version of a national implementing measure to the legal resource Directive as published in the EU Official Journal. Can be used for transposition tables, once EU Publication Office has introduced ELI support down to the article level.\n\nThe implementation of EU legislation at national level, involving links to EU regulations, decisions, etc. must be captured with eli:ensures_implementation_of.\n\nNote that this should point to the legal resource of the Directive itself, not to one of its language-specific legal expression.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "LegalResource",
-      "documentation": "http://data.europa.eu/eli/ontology#transposes"
-    },
-    {
-      "name": "type_document",
-      "description": {
-        "_": "The type of a legal resource (e.g. \"Directive\", \"Règlement grand ducal\", \"law\", \"règlement ministériel\", \"draft proposition\", \"Parliamentary act\", etc.). \n\nMember states are encouraged to make their own list of values in the corresponding concept scheme. EU Publications Office provides a list of values for EU resource types at https://op.europa.eu/en/web/eu-vocabularies/at-dataset/-/resource/dataset/resource-type",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "LegalResource",
-      "target": "ResourceType",
-      "documentation": "http://data.europa.eu/eli/ontology#type_document"
-    },
-    {
-      "name": "type_subdivision",
-      "description": {
-        "_": "The type of a document subdivision (e.g. \"Article\", \"Paragraph\", \"Section\", etc.).\nA subdivision can have only one type.\n\nELI does not specify a list of possible values. Member states are encouraged to make their own list of values in the corresponding concept scheme. EU Publication Office provies a list of values for EU resource types at https://op.europa.eu/en/web/eu-vocabularies/at-dataset/-/resource/dataset/subdivision",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "WorkSubdivision",
-      "target": "SubdivisionType",
-      "documentation": "http://data.europa.eu/eli/ontology#type_subdivision"
-    },
-    {
-      "name": "unitType",
-      "description": "temporal unit type",
-      "source": "_g_L1269C3965",
-      "target": "TemporalUnit",
-      "documentation": "http://www.w3.org/2006/time#unitType"
-    },
-    {
       "name": "updatesContractValue",
       "description": {
         "_": "updates Contract Value",
@@ -11835,18 +8972,6 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#updatesContractValue"
-    },
-    {
-      "name": "uri_schema",
-      "description": {
-        "_": "Schema describing the URI of an ELI instance. ELI uses URI template specifications (IETF RFC 6570). Schemes should be associated with member states and will be published in a registry.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Thing",
-      "documentation": "http://data.europa.eu/eli/ontology#uri_schema"
     },
     {
       "name": "usesChannel",
@@ -11883,59 +9008,14 @@
       "source": "Entity",
       "target": "Entity",
       "documentation": "http://data.europa.eu/a4g/ontology#usesTechnique"
-    },
-    {
-      "name": "validityPeriod",
-      "description": "validity period",
-      "source": "Evidence",
-      "target": "ProperInterval",
-      "documentation": "http://data.europa.eu/m8g/validityPeriod"
-    },
-    {
-      "name": "validityPeriodConstraint",
-      "description": "validity period constraint",
-      "source": "EvidenceType",
-      "target": "ProperInterval",
-      "documentation": "http://data.europa.eu/m8g/validityPeriodConstraint"
-    },
-    {
-      "name": "version",
-      "description": {
-        "_": "A skos concept scheme, could be locally defined? Group proposal is to start with an initial ELI scheme, that might include concepts of \"Official Journal\" \"made\" \"consolidated\" \"proposed\" \"prospective\"",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Entity",
-      "target": "Version",
-      "documentation": "http://data.europa.eu/eli/ontology#version"
-    },
-    {
-      "name": "weightingType",
-      "description": "weighting type",
-      "source": "Criterion",
-      "target": "Concept",
-      "documentation": "http://data.europa.eu/m8g/weightingType"
-    },
-    {
-      "name": "work_type",
-      "description": {
-        "_": "The type of a work, taken from a controlled vocabulary.\n\nMember States need to define their own work type values.",
-        "$": {
-          "xml:lang": "en"
-        }
-      },
-      "source": "Work",
-      "target": "WorkType",
-      "documentation": "http://data.europa.eu/eli/ontology#work_type"
     }
   ],
   "metadata": {
     "sourceUrl": "https://raw.githubusercontent.com/OP-TED/ePO/master/implementation/ePO_core/owl_ontology/ePO_core.rdf",
-    "extractionDate": "2025-07-05T20:24:51.742Z",
+    "extractionDate": "2025-07-05T21:05:28.914Z",
     "sourceVersion": "2024.06",
-    "entityCount": 227,
-    "relationshipCount": 591
+    "entityCount": 148,
+    "relationshipCount": 395
   },
   "ignoredEntities": [],
   "ignoredRelationships": []

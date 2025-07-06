@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Entity-transposes->LegalResource
-- LegalResource-type_document->ResourceType

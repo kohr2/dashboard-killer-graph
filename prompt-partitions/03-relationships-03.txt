@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Work-based_on->Entity
-- Entity-basis_for->Work

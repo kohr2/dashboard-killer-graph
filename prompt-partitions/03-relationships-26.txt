@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Asset-interoperabilityLevel->Concept
-- ProperInterval-intervalAfter->ProperInterval

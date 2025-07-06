@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- ProperInterval-intervalOverlappedBy->ProperInterval
-- ProperInterval-intervalOverlaps->ProperInterval

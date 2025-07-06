@@ -7,8 +7,6 @@ import { OntologyService } from '@platform/ontology/ontology.service';
 import { logger } from '@common/utils/logger';
 import { flattenEnrichmentData } from './utils/enrichment.utils';
 import { ContentProcessingService } from './content-processing.service';
-import * as fs from 'fs';
-import * as path from 'path';
 
 export interface IngestionEntity {
   id: string;
@@ -49,63 +47,24 @@ export class Neo4jIngestionService {
 
   async initialize(): Promise<void> {
     await this.neo4jConnection.connect();
+    // Build dynamic schema & vector indexes based on whatever ontologies are currently loaded.
+    // This keeps the service ontology-agnostic and removes any path assumptions.
+    await this.neo4jConnection.initializeSchema();
+
     this.session = this.neo4jConnection.getSession();
-    
     if (!this.session) {
       throw new Error('Failed to create Neo4j session.');
-    }
-
-    // Get the ontology path and create vector indexes only for entities with vectorIndex: true
-    // For now, use a hardcoded path to the procurement ontology
-    const ontologyPath = path.join(process.cwd(), 'ontologies', 'procurement', 'ontology.json');
-    await this.createVectorIndexesFromOntology(ontologyPath);
-  }
-
-  /**
-   * Create vector indexes only for labels with vectorIndex: true in the ontology
-   */
-  private async createVectorIndexesFromOntology(ontologyPath: string): Promise<void> {
-    if (!this.session) {
-      throw new Error('Neo4j session not initialized');
-    }
-    
-    // Load the ontology JSON
-    const ontology = JSON.parse(fs.readFileSync(ontologyPath, 'utf-8'));
-    let entityMap: Record<string, any> = {};
-    if (Array.isArray(ontology.entities)) {
-      // Convert array of entities [{ name: ..., ... }, ...] to record keyed by name
-      entityMap = Object.fromEntries(
-        ontology.entities.map((e: any) => [e.name ?? e.label ?? e.id ?? 'Unknown', e])
-      );
-    } else if (ontology.entities && typeof ontology.entities === 'object') {
-      entityMap = ontology.entities as Record<string, any>;
-    }
-
-    // Find all entity names with vectorIndex: true
-    const indexableLabels = Object.entries(entityMap)
-      .filter(([_, entity]: [string, any]) => entity.vectorIndex)
-      .map(([name]) => name);
-    if (indexableLabels.length === 0) {
-      logger.info('No vector indexes to create (no entities with vectorIndex: true)');
-      return;
-    }
-    for (const label of indexableLabels) {
-      const indexName = `${label.toLowerCase()}_embeddings`;
-      await this.session.run(`DROP INDEX \`${indexName}\` IF EXISTS`);
-      const query = `CREATE VECTOR INDEX \`${indexName}\` IF NOT EXISTS FOR (n:\`${label}\`) ON (n.embedding) OPTIONS {indexConfig: {\`vector.dimensions\`: 384, \`vector.similarity_function\`: 'cosine'}}`;
-      await this.session.run(query);
-      logger.info(`Vector index '${indexName}' is ready for label '${label}'.`);
     }
   }
 
   private getLabelInfo(entity: IngestionEntity, validOntologyTypes: string[]): { primary: string; candidates: string[] } {
     // Delegate normalisation logic to ContentProcessingService so we keep it in one place.
-    const primaryLabel: string = ContentProcessingService.normaliseEntityType(
+    const primaryLabel = ContentProcessingService.normaliseEntityType(
       entity.getOntologicalType ? entity.getOntologicalType() : entity.type,
     );
 
-    if (primaryLabel === 'Thing' && !validOntologyTypes.includes('Thing')) {
-      logger.warn(`[Label Validation] Received unknown type; defaulting to Thing.`);
+    if (!primaryLabel) {
+      return { primary: 'UnrecognizedEntity', candidates: [] };
     }
     
     // Get indexable labels from ontology service instead of this.indexableLabels
@@ -186,6 +145,12 @@ export class Neo4jIngestionService {
         logger.info(`Skipping unrecognized entity '${entity.name}'.`);
         continue;
       }
+      // Skip generic catch-all types
+      if (primaryLabel === 'Thing') {
+        logger.info(`Skipping generic 'Thing' entity '${entity.name}'.`);
+        continue;
+      }
+
       if (!entity.embedding && !this.ontologyService.getIndexableEntityTypes().includes(primaryLabel)) {
         logger.info(`Skipping entity '${entity.name}' (type: ${primaryLabel}) because it has no embedding and is not an indexed type.`);
         continue;

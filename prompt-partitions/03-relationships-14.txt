@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Work-has_part->Work
-- LegalExpression-has_translation->LegalExpression

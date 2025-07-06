@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Manifestation-is_exemplified_by->Entity
-- Work-is_member_of->Work

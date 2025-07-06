@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Instant-inTimePosition->TimePosition
-- Work-is_about->Concept

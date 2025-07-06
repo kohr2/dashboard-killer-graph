@@ -1,10 +1,10 @@
 {
   "name": "fibo",
   "source": {
-    "url": "https://raw.githubusercontent.com/edmcouncil/fibo/master/AboutFIBOProd.rdf",
+    "url": "https://spec.edmcouncil.org/fibo/ontology/master/latest/AboutFIBOProd-TBoxOnly.rdf",
     "type": "rdf",
     "version": "2025-07",
-    "description": "Financial Industry Business Ontology (FIBO) - Full production RDF from EDM Council GitHub repository"
+    "description": "Financial Industry Business Ontology (FIBO) - Production T-Box only (schema) from EDM Council"
   },
   "extraction": {
     "entities": {

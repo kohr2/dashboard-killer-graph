@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Person-gender->Concept
-- Geometry-geometryType->Concept

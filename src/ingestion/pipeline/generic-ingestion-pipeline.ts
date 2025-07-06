@@ -27,6 +27,9 @@ export class GenericIngestionPipeline {
   private readonly neo4jService: {
     ingestEntitiesAndRelationships: (result: IngestionResult) => Promise<any>;
   };
+  private readonly reasoningOrchestrator?: {
+    executeAllReasoning: () => Promise<{ success: boolean; message: string }>;
+  };
   private readonly extractor: (input: IngestionInput) => string;
 
   constructor(
@@ -36,10 +39,14 @@ export class GenericIngestionPipeline {
     neo4jService: {
       ingestEntitiesAndRelationships: (result: IngestionResult) => Promise<any>;
     },
+    reasoningOrchestrator?: {
+      executeAllReasoning: () => Promise<{ success: boolean; message: string }>;
+    },
     extractor: (input: IngestionInput) => string = (input) => input.content,
   ) {
     this.processingService = processingService;
     this.neo4jService = neo4jService;
+    this.reasoningOrchestrator = reasoningOrchestrator;
     this.extractor = extractor;
   }
 
@@ -51,6 +58,10 @@ export class GenericIngestionPipeline {
     const results = await this.processingService.processContentBatch(contents);
     for (const result of results) {
       await this.neo4jService.ingestEntitiesAndRelationships(result);
+    }
+
+    if (this.reasoningOrchestrator) {
+      await this.reasoningOrchestrator.executeAllReasoning();
     }
   }
 } 

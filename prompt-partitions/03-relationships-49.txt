@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Person-residency->Jurisdiction
-- LegalResource-responsibility_of_agent->Agent

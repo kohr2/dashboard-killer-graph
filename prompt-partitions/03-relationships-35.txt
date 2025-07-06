@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- LegalResource-is_another_publication_of->LegalResource
-- Expression-is_embodied_by->Manifestation

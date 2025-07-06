@@ -171,4 +171,32 @@ export class Neo4jConnection {
       await session.close();
     }
   }
+
+  /**
+   * Perform a cosine-similarity vector search in the Organization index.
+   * Returns the top-scoring node if the score exceeds the threshold; otherwise undefined.
+   */
+  async findSimilarOrganizationEmbedding(embedding: number[], threshold = 0.9) {
+    const session = this.getSession();
+    const indexName = 'organization_embeddings';
+    try {
+      const result = await session.run(
+        `CALL db.index.vector.queryNodes($indexName, 1, $embedding) YIELD node, score RETURN node, score`,
+        { indexName, embedding }
+      );
+      if (result.records.length === 0) return undefined;
+      const score = result.records[0].get('score');
+      if (score < threshold) return undefined;
+      return result.records[0].get('node');
+    } catch (err: any) {
+      if (err.code === 'Neo.ClientError.Procedure.ProcedureCallFailed') {
+        logger.warn(`Vector search skipped – index '${indexName}' not found.`);
+        return undefined;
+      }
+      logger.error('❌ Vector similarity search failed:', err);
+      return undefined;
+    } finally {
+      await session.close();
+    }
+  }
 } 

@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- PublicEvent-eventStatus->Concept
-- EvidenceType-evidenceTypeClassification->Concept

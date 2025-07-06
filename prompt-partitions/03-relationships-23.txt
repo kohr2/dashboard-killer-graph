@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Entity-in_force->InForce
-- Asset-includedAsset->Asset

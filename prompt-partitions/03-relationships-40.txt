@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Entity-jurisdiction->AdministrativeArea
-- Expression-language->Language

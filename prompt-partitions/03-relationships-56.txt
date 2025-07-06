@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Concept-topConceptOf->ConceptScheme
-- LegalResource-transposed_by->Entity

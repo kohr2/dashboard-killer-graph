@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- LegalResource-countersigned_by->Agent
-- Person-countryOfBirth->Location

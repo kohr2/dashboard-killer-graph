@@ -76,6 +76,18 @@ export class EntityImportanceAnalyzer {
 
       const analysis = response.data.analysis as EntityImportanceAnalysis[];
       
+      // Post-process: apply single-word bonus / composed-name penalty to align with heuristics
+      analysis.forEach(item => {
+        const spacedName = item.entityName.replace(/([a-z])([A-Z])/g, '$1 $2');
+        const wordCount = spacedName.split(/[^A-Za-z0-9]+/).filter(Boolean).length;
+        if (wordCount > 1) {
+          const penalty = Math.min((wordCount - 1) * 0.07, 0.3);
+          item.importanceScore = Math.max(0, item.importanceScore - penalty);
+        } else {
+          item.importanceScore = Math.min(1, item.importanceScore + 0.05);
+        }
+      });
+      
       // Sort by importance score (descending)
       analysis.sort((a, b) => b.importanceScore - a.importanceScore);
 
@@ -125,6 +137,18 @@ export class EntityImportanceAnalyzer {
       );
 
       const analysis = response.data.analysis as RelationshipImportanceAnalysis[];
+      
+      // Post-process: apply single-word bonus / composed-name penalty to align with heuristics
+      analysis.forEach(item => {
+        const spacedName = item.relationshipName.replace(/([a-z])([A-Z])/g, '$1 $2');
+        const wordCount = spacedName.split(/[^A-Za-z0-9]+/).filter(Boolean).length;
+        if (wordCount > 1) {
+          const penalty = Math.min((wordCount - 1) * 0.07, 0.3);
+          item.importanceScore = Math.max(0, item.importanceScore - penalty);
+        } else {
+          item.importanceScore = Math.min(1, item.importanceScore + 0.05);
+        }
+      });
       
       // Sort by importance score (descending)
       analysis.sort((a, b) => b.importanceScore - a.importanceScore);
@@ -416,6 +440,11 @@ Return a JSON array of objects with the following structure:
       // Boost score for entities with longer descriptions (indicates detailed documentation)
       const descriptionLength = entity.description?.length || 0;
       score += Math.min(descriptionLength / 2000, 0.1);
+      
+      // Additional boost for key domain pillars if not already sufficiently boosted
+      if (/(^|[^a-z])(person|project|organization)([^a-z]|$)/.test(fullText)) {
+        score += 0.1;
+      }
       
       // Cap / floor score to keep within [0.1, 1.0]
       score = Math.min(Math.max(score, 0.1), 1.0);

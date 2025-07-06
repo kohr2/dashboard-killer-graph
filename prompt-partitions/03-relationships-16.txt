@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- DateTimeInterval-hasDateTimeDescription->GeneralDateTimeDescription
-- Entity-hasDuration->Duration

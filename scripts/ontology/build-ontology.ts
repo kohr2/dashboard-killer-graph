@@ -8,6 +8,7 @@ import * as path from 'path';
 import { EntityImportanceAnalyzer } from './entity-importance-analyzer';
 import { EntityImportanceAnalysis } from './entity-importance-analyzer';
 import { sortNamedArray, sortRecord, sortEntityProperties } from './sort-utils';
+import { pruneRelationshipsByEntities } from './relationship-utils';
 
 interface BuildOptions {
   configPath?: string;
@@ -82,6 +83,13 @@ async function buildOntology(options: BuildOptions = {}) {
         entityAnalysis = await analyzer.analyzeEntityImportance(entityInputs, contextDescription, options.topEntities);
         // Keep only the top entities by importance
         const topEntityNames = new Set(entityAnalysis.slice(0, options.topEntities).map(e => e.entityName));
+        // Always retain core entities even if not in the topN slice
+        const CORE_ENTITY_WHITELIST = new Set([
+          'Buyer',
+          'Organization'
+        ]);
+        CORE_ENTITY_WHITELIST.forEach(coreName => topEntityNames.add(coreName));
+
         const allEntityNames = new Set(result.sourceOntology.entities.map(e => e.name));
         const ignoredEntities = Array.from(allEntityNames).filter(name => !topEntityNames.has(name));
         result.sourceOntology.ignoredEntities = ignoredEntities;
@@ -142,6 +150,20 @@ async function buildOntology(options: BuildOptions = {}) {
       }
     }
 
+    // After topRelationships filtering add relationship pruning
+    if (result.sourceOntology) {
+      // Prune any relationships that reference entities that are no longer present
+      const allowedEntityNames = new Set(result.sourceOntology.entities.map(e => e.name));
+      const { kept: keptRels, prunedNames } = pruneRelationshipsByEntities(result.sourceOntology.relationships, allowedEntityNames);
+      if (prunedNames.length > 0) {
+        result.sourceOntology.relationships = keptRels;
+        result.sourceOntology.ignoredRelationships = [
+          ...(result.sourceOntology.ignoredRelationships || []),
+          ...prunedNames
+        ];
+      }
+    }
+
     console.log(`📊 Entities kept: ${result.sourceOntology?.entities.length || 0}`);
     console.log(`🔗 Relationships kept: ${result.sourceOntology?.relationships.length || 0}`);
     
@@ -163,14 +185,18 @@ async function buildOntology(options: BuildOptions = {}) {
       return true;
     };
     const filteredEntities = result.sourceOntology?.entities ? result.sourceOntology.entities.filter(e => isValidEntityName(e.name)) : [];
+
+    // Alphabetically sort ignored lists (deduplicated)
+    const alpha = (arr: string[] = []) => [...new Set(arr)].sort((a, b) => a.localeCompare(b));
+
     const sourceOntology = {
       name: config.name,
       source: config.source,
       entities: sortNamedArray(filteredEntities),
       relationships: result.sourceOntology?.relationships ? sortNamedArray(result.sourceOntology.relationships) : [],
       metadata: result.metadata,
-      ignoredEntities: result.sourceOntology?.ignoredEntities || [],
-      ignoredRelationships: result.sourceOntology?.ignoredRelationships || []
+      ignoredEntities: alpha(result.sourceOntology?.ignoredEntities),
+      ignoredRelationships: alpha(result.sourceOntology?.ignoredRelationships)
     };
     
     fs.writeFileSync(sourceOntologyPath, JSON.stringify(sourceOntology, null, 2));

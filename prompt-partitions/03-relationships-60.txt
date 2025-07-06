@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Entity-version->Version
-- Criterion-weightingType->Concept

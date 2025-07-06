@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Constraint-constrains->InformationConcept
-- ContactPoint-contactPage->Document

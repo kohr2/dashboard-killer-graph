@@ -13,6 +13,7 @@ import { registerAllOntologies } from '@src/register-ontologies';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { resetDatabase } from '../database/reset-neo4j';
 import { logger } from '@common/utils/logger';
+import { ReasoningOrchestratorService } from '@platform/reasoning/reasoning-orchestrator.service';
 
 interface ParsedEmailWithSource extends ParsedMail { sourceFile: string; }
 
@@ -60,7 +61,8 @@ interface ParsedEmailWithSource extends ParsedMail { sourceFile: string; }
   const neo4jService = container.resolve(Neo4jIngestionService);
   await neo4jService.initialize();
 
-  const pipeline = new GenericIngestionPipeline(contentProcessing, neo4jService);
+  const reasoningOrchestrator = container.resolve(ReasoningOrchestratorService);
+  const pipeline = new GenericIngestionPipeline(contentProcessing, neo4jService, reasoningOrchestrator);
 
   // -------------- Read emails --------------
   const dir = join(process.cwd(), 'test', 'fixtures', EMAIL_FOLDER);

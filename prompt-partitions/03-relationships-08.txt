@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Person-countryOfDeath->Location
-- GeneralDateTimeDescription-dayOfWeek->DayOfWeek

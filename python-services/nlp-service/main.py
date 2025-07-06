@@ -196,17 +196,18 @@ async def extract_graph_with_llm_async(text: str) -> Dict[str, Any]:
     """
     
     # --- DEBUG: Persist prompt to disk (optional) ---
-    try:
-        debug_dir = Path(os.getenv("PROMPT_DEBUG_DIR", "/tmp/llm-prompts"))
-        debug_dir.mkdir(parents=True, exist_ok=True)
-        ts = int(time.time() * 1000)
-        debug_file = debug_dir / f"prompt-{ts}.txt"
-        debug_file.write_text(prompt)
-        # Log success for easier troubleshooting
-        print(f"📝 Prompt persisted to {debug_file}")
-    except Exception as e:
-        # Non-fatal: if we cannot write the prompt we just continue
-        print(f"⚠️  Failed to write LLM prompt for debugging: {e}")
+    if os.getenv("ENABLE_PROMPT_DEBUG", "0") == "1":
+        try:
+            debug_dir = Path(os.getenv("PROMPT_DEBUG_DIR", "/tmp/llm-prompts"))
+            debug_dir.mkdir(parents=True, exist_ok=True)
+            ts = int(time.time() * 1000)
+            debug_file = debug_dir / f"prompt-{ts}.txt"
+            debug_file.write_text(prompt)
+            # Log success for easier troubleshooting
+            print(f"📝 Prompt persisted to {debug_file}")
+        except Exception as e:
+            # Non-fatal: if we cannot write the prompt we just continue
+            print(f"⚠️  Failed to write LLM prompt for debugging: {e}")
 
     try:
         llm_start_time = time.time()
@@ -521,16 +522,17 @@ async def update_ontologies(request: OntologyUpdateRequest):
             f"{len(VALID_RELATIONSHIP_TYPES)} relationships"
         )
 
-        # --- DEBUG: Persist compact ontology to disk ---
-        try:
-            debug_dir = Path(os.getenv("PROMPT_DEBUG_DIR", "/tmp/llm-prompts"))
-            debug_dir.mkdir(parents=True, exist_ok=True)
-            ts = int(time.time() * 1000)
-            ont_file = debug_dir / f"compact-ontology-{ts}.json"
-            ont_file.write_text(json.dumps(compact, indent=2))
-            print(f"📝 Compact ontology persisted to {ont_file}")
-        except Exception as e:
-            print(f"⚠️  Failed to write compact ontology for debugging: {e}")
+        # --- DEBUG: Persist compact ontology to disk (optional) ---
+        if os.getenv("ENABLE_PROMPT_DEBUG", "0") == "1":
+            try:
+                debug_dir = Path(os.getenv("PROMPT_DEBUG_DIR", "/tmp/llm-prompts"))
+                debug_dir.mkdir(parents=True, exist_ok=True)
+                ts = int(time.time() * 1000)
+                ont_file = debug_dir / f"compact-ontology-{ts}.json"
+                ont_file.write_text(json.dumps(compact, indent=2))
+                print(f"📝 Compact ontology persisted to {ont_file}")
+            except Exception as e:
+                print(f"⚠️  Failed to write compact ontology for debugging: {e}")
     else:
         # Handle legacy full ontology format
         VALID_ONTOLOGY_TYPES = request.entity_types

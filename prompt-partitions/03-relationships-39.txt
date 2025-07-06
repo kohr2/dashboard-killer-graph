@@ -1,3 +1,0 @@
-**Ontology Relationships:**
-- Requirement-isRequirementOf->Requirement
-- EvidenceType-isSpecifiedIn->EvidenceTypeList
