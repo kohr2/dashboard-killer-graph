@@ -1,9 +1,9 @@
 {
   "name": "cidoc-crm",
   "source": {
-    "url": "https://raw.githubusercontent.com/archesproject/cidoc-crm-ontology/master/cidoc_crm_v6.2.xml",
+    "url": "https://cidoc-crm.org/sites/default/files/cidoc_crm_v7.1.1_20200424.owl",
     "type": "owl",
-    "version": "6.2",
+    "version": "7.1.1",
     "description": "CIDOC Conceptual Reference Model – cultural heritage information standard"
   },
   "extraction": {
@@ -24,7 +24,7 @@
   },
   "metadata": {
     "lastExtraction": null,
-    "sourceVersion": "6.2",
+    "sourceVersion": "7.1.1",
     "localVersion": "0.0.0"
   }
 } 
