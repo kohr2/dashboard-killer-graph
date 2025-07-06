@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { OntologyDrivenReasoningService } from '../ontology-driven-reasoning.service';
-import { ReasoningController } from '../reasoning.controller';
+import { ReasoningOrchestratorService } from '../reasoning-orchestrator.service';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 
@@ -50,7 +50,7 @@ const mockProcurementOntology = {
 
 describe('Reasoning Integration', () => {
   let reasoningService: OntologyDrivenReasoningService;
-  let reasoningController: ReasoningController;
+  let reasoningOrchestrator: ReasoningOrchestratorService;
   let ontologyService: OntologyService;
   let connection: Neo4jConnection;
   let sessionRun: jest.Mock;
@@ -63,7 +63,7 @@ describe('Reasoning Integration', () => {
     (connection.getDriver as jest.Mock).mockReturnValue({ session: () => ({ run: sessionRun, close: jest.fn() }) });
     
     reasoningService = new OntologyDrivenReasoningService(ontologyService, connection);
-    reasoningController = new ReasoningController(reasoningService, ontologyService);
+    reasoningOrchestrator = new ReasoningOrchestratorService(reasoningService, ontologyService);
   });
 
   it('should execute reasoning for all ontologies', async () => {
@@ -77,7 +77,7 @@ describe('Reasoning Integration', () => {
   });
 
   it('should return all reasoning algorithms via controller', async () => {
-    const result = await reasoningController.getReasoningAlgorithms();
+    const result = await reasoningOrchestrator.getReasoningAlgorithms();
     
     expect(result.algorithms).toHaveLength(2);
     expect(result.algorithms[0].name).toBe('similarity_scoring');
@@ -87,7 +87,7 @@ describe('Reasoning Integration', () => {
   });
 
   it('should execute reasoning for specific ontology', async () => {
-    const result = await reasoningController.executeOntologyReasoning('financial');
+    const result = await reasoningOrchestrator.executeOntologyReasoning('financial');
     
     expect(result.success).toBe(true);
     expect(sessionRun).toHaveBeenCalledTimes(1);

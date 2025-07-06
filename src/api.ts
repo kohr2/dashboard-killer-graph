@@ -16,7 +16,7 @@ import { ChatService } from '@platform/chat/application/services/chat.service';
 import { QueryTranslator } from '@platform/chat/application/services/query-translator.service';
 import { createChatRouter } from '@platform/chat/chat.router';
 
-import { ReasoningController } from '@platform/reasoning/reasoning.controller';
+import { ReasoningOrchestratorService } from '@platform/reasoning/reasoning-orchestrator.service';
 import { User } from '@platform/security/domain/user';
 import { Role } from '@platform/security/domain/role';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
@@ -49,8 +49,8 @@ export function createApp(): express.Express {
     queryTranslator,
   );
 
-  // ReasoningController still resolved through the container until refactored
-  const reasoningController = container.resolve(ReasoningController);
+  // ReasoningOrchestratorService still resolved through the container until refactored
+  const reasoningOrchestrator = container.resolve(ReasoningOrchestratorService);
   const apiRouter = express.Router();
 
   // Mount the chat router
@@ -59,7 +59,7 @@ export function createApp(): express.Express {
   // Reasoning endpoints
   apiRouter.post('/reasoning/execute-all', async (req, res) => {
     try {
-      const result = await reasoningController.executeAllReasoning();
+      const result = await reasoningOrchestrator.executeAllReasoning();
       res.json(result);
     } catch (error) {
       res.status(500).json({ 
@@ -71,7 +71,7 @@ export function createApp(): express.Express {
 
   apiRouter.get('/reasoning/algorithms', async (req, res) => {
     try {
-      const result = await reasoningController.getReasoningAlgorithms();
+      const result = await reasoningOrchestrator.getReasoningAlgorithms();
       res.json(result);
     } catch (error) {
       res.status(500).json({ 
@@ -83,7 +83,7 @@ export function createApp(): express.Express {
 
   apiRouter.post('/reasoning/execute/:ontology', async (req, res) => {
     try {
-      const result = await reasoningController.executeOntologyReasoning(req.params.ontology);
+      const result = await reasoningOrchestrator.executeOntologyReasoning(req.params.ontology);
       res.json(result);
     } catch (error) {
       res.status(500).json({ 
