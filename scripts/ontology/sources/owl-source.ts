@@ -113,10 +113,9 @@ export class OwlSource implements OntologySource {
     const firstLines = trimmed.split('\n').slice(0, 3).join('\n');
     console.log(`[DEBUG] Processing content (first 3 lines):\n${firstLines}\n---`);
     
-    // Skip HTML files (error pages, redirects, etc.)
-    if (trimmed.toLowerCase().includes('<!doctype html>') || 
-        trimmed.toLowerCase().includes('<html') ||
-        trimmed.toLowerCase().includes('<!doctype')) {
+    const loweredStart = trimmed.slice(0, 1000).toLowerCase();
+    const isLikelyHtml = /<!doctype\s+html/i.test(loweredStart) || loweredStart.includes('<html');
+    if (isLikelyHtml) {
       console.warn('⚠️  Skipping HTML content (likely error page)');
       return { entities: [], relationships: [] };
     }
@@ -161,7 +160,8 @@ export class OwlSource implements OntologySource {
         const classSubjects = store.each(null, RDF_TYPE, OWL_CLASS);
         classSubjects.forEach((subject: any) => {
           if (!subject.value) return;
-          const entityName = this.extractNameFromUri(subject.value);
+          let entityName = this.extractNameFromUri(subject.value);
+          entityName = this.normalizeEntityName(entityName);
           if (!entityName || this.isSystemClass(entityName) || !this.isValidEntityName(entityName)) return;
           const labelLit = store.any(subject, RDFS_LABEL, null) as any;
           const description = labelLit ? (labelLit.value as string) : '';
@@ -187,14 +187,16 @@ export class OwlSource implements OntologySource {
 
           const domainNode = store.any(subject, RDFS_DOMAIN, null) as any;
           const rangeNode = store.any(subject, RDFS_RANGE, null) as any;
-          const domainName = domainNode ? this.extractNameFromUri(domainNode.value) : 'Entity';
-          const rangeName = rangeNode ? this.extractNameFromUri(rangeNode.value) : 'Entity';
+          let domainName = domainNode ? this.extractNameFromUri(domainNode.value) : 'Entity';
+          let rangeName = rangeNode ? this.extractNameFromUri(rangeNode.value) : 'Entity';
+          domainName = this.normalizeEntityName(domainName) || 'Entity';
+          rangeName = this.normalizeEntityName(rangeName) || 'Entity';
 
           relationships.push({
             name: propName,
             description,
-            source: domainName || 'Entity',
-            target: rangeName || 'Entity',
+            source: domainName,
+            target: rangeName,
             documentation: subject.value
           });
         });
@@ -282,7 +284,8 @@ export class OwlSource implements OntologySource {
       for (const cls of classes) {
         console.log(`[OWLSource] Class element structure:`, JSON.stringify(cls, null, 2).substring(0, 500));
         if (cls.$ && cls.$['rdf:about']) {
-          const className = this.extractNameFromUri(cls.$['rdf:about']);
+          let className = this.extractNameFromUri(cls.$['rdf:about']);
+          className = this.normalizeEntityName(className);
           console.log(`[OWLSource] Processing class: ${cls.$['rdf:about']} -> ${className}`);
           if (className && !this.isSystemClass(className) && this.isValidEntityName(className)) {
             const entity = this.buildEntity(cls, className, cls.$['rdf:about'], datatypeProperties);
@@ -323,7 +326,8 @@ export class OwlSource implements OntologySource {
           const uri = desc.$['rdf:about'];
           // Check if it's a class
           if (desc['rdf:type'] && this.isClassType(desc['rdf:type'])) {
-            const className = this.extractNameFromUri(uri);
+            let className = this.extractNameFromUri(uri);
+            className = this.normalizeEntityName(className);
             console.log(`[OWLSource] Processing description class: ${uri} -> ${className}`);
             if (className && !this.isSystemClass(className) && this.isValidEntityName(className)) {
               const entity = this.buildEntity(desc, className, uri, datatypeProperties);
@@ -418,7 +422,8 @@ export class OwlSource implements OntologySource {
         const classSubjects = store.each(null, RDF_TYPE, OWL_CLASS);
         classSubjects.forEach((subject: any) => {
           if (!subject.value) return;
-          const entityName = this.extractNameFromUri(subject.value);
+          let entityName = this.extractNameFromUri(subject.value);
+          entityName = this.normalizeEntityName(entityName);
           if (!entityName || this.isSystemClass(entityName) || !this.isValidEntityName(entityName)) return;
           const labelLit = store.any(subject, RDFS_LABEL, null) as any;
           const description = labelLit ? (labelLit.value as string) : '';
@@ -440,13 +445,15 @@ export class OwlSource implements OntologySource {
           const description = labelLit ? (labelLit.value as string) : '';
           const domainNode = store.any(subject, RDFS_DOMAIN, null) as any;
           const rangeNode = store.any(subject, RDFS_RANGE, null) as any;
-          const domainName = domainNode ? this.extractNameFromUri(domainNode.value) : 'Entity';
-          const rangeName = rangeNode ? this.extractNameFromUri(rangeNode.value) : 'Entity';
+          let domainName = domainNode ? this.extractNameFromUri(domainNode.value) : 'Entity';
+          let rangeName = rangeNode ? this.extractNameFromUri(rangeNode.value) : 'Entity';
+          domainName = this.normalizeEntityName(domainName) || 'Entity';
+          rangeName = this.normalizeEntityName(rangeName) || 'Entity';
           relationships.push({
             name: propName,
             description,
-            source: domainName || 'Entity',
-            target: rangeName || 'Entity',
+            source: domainName,
+            target: rangeName,
             documentation: subject.value
           });
         });
@@ -645,7 +652,8 @@ export class OwlSource implements OntologySource {
   }
 
   private buildEntity(element: any, name: string, uri: string, datatypeProperties: Map<string, any>): Entity {
-    const description = this.extractDefinition(element) || this.extractLabel(element) || `${name} as defined in OWL ontology`;
+    const cleanName = this.normalizeEntityName(name) || name;
+    const description = this.extractDefinition(element) || this.extractLabel(element) || `${cleanName} as defined in OWL ontology`;
     const properties = this.extractEntityProperties(element, datatypeProperties);
     // Compose full URI for documentation if needed
     let documentation = uri;
@@ -658,7 +666,7 @@ export class OwlSource implements OntologySource {
       }
     }
     return {
-      name,
+      name: cleanName,
       description,
       properties,
       keyProperties: ['name'],
@@ -668,9 +676,10 @@ export class OwlSource implements OntologySource {
   }
 
   private buildRelationship(element: any, name: string, uri: string): Relationship {
+    // Source and target may refer to class names; normalise them as well
     const description = this.extractDefinition(element) || this.extractLabel(element) || `${name} relationship`;
-    const domain = this.extractDomain(element);
-    const range = this.extractRange(element);
+    const domain = this.normalizeEntityName(this.extractDomain(element));
+    const range = this.normalizeEntityName(this.extractRange(element));
     // Compose full URI for documentation if needed
     let documentation = uri;
     if (documentation && !documentation.includes('://')) {
@@ -844,5 +853,15 @@ export class OwlSource implements OntologySource {
     };
     scan(rdfRoot);
     return importUrls;
+  }
+
+  /**
+   * Normalize entity class names by removing leading numeric prefixes like
+   * "E55_" found in CIDOC CRM. Example: "E55_Type" -> "Type".
+   * If the pattern is not present the name is returned unchanged.
+   */
+  private normalizeEntityName(name: string | null | undefined): string | null {
+    if (!name) return null;
+    return name.replace(/^E\d+_/, '');
   }
 } 
