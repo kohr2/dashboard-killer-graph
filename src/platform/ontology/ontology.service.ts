@@ -278,7 +278,7 @@ export class OntologyService {
    * @returns Array of key property names, or empty array if not found
    */
   public getKeyProperties(entityType: string): string[] {
-    const entityDefinition = this.schema.entities[entityType];
+    const entityDefinition: any = this.schema.entities[entityType];
     if (!entityDefinition) {
       logger.warn(`[OntologyService] Entity type not found: ${entityType}`);
       return [];
@@ -350,8 +350,22 @@ export class OntologyService {
     const entityType = 'label' in entity ? entity.label : undefined;
     if (!entityType) return undefined;
 
-    const entityDefinition = this.schema.entities[entityType];
-    return entityDefinition?.enrichment?.service;
+    // First, check direct definition
+    const directDef: any = this.schema.entities[entityType];
+    if (directDef?.enrichment?.service) {
+      return directDef.enrichment.service;
+    }
+
+    // Otherwise, walk up the hierarchy using getSuperClasses
+    const superClasses = this.getSuperClasses(entityType);
+    for (const parentType of superClasses) {
+      const parentDef: any = this.schema.entities[parentType];
+      if (parentDef?.enrichment?.service) {
+        return parentDef.enrichment.service;
+      }
+    }
+
+    return undefined;
   }
 
   // NOTE: These methods are not fully implemented and are placeholders
@@ -384,6 +398,29 @@ export class OntologyService {
    */
   public getAllOntologies(): Ontology[] {
     return this.ontologies;
+  }
+
+  public getSuperClasses(entityType: string): string[] {
+    const superClasses: string[] = [];
+    const visited = new Set<string>();
+
+    let current: string | undefined = entityType;
+    while (current) {
+      const def: any = this.schema.entities[current];
+      if (!def) break;
+
+      // Support both `parent` and legacy `parentClass` keys
+      const parent: string | undefined = (def as any).parent || (def as any).parentClass;
+      if (!parent || visited.has(parent)) {
+        break;
+      }
+
+      superClasses.push(parent);
+      visited.add(parent);
+      current = parent;
+    }
+
+    return superClasses;
   }
 
   // ------------------------------------------------------------------

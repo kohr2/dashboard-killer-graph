@@ -665,13 +665,17 @@ export class OwlSource implements OntologySource {
         documentation = base.endsWith('/') ? base + uri : base + '/' + uri;
       }
     }
+    const parentClassRaw = this.extractParentClass(element);
+    const parent = parentClassRaw ? (this.normalizeEntityName(parentClassRaw) || parentClassRaw) : undefined;
+
     return {
       name: cleanName,
       description,
       properties,
       keyProperties: ['name'],
       vectorIndex: true,
-      documentation
+      documentation,
+      ...(parent ? { parent } : {}),
     };
   }
 

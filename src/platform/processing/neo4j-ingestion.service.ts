@@ -5,7 +5,7 @@ import { singleton } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { logger } from '@common/utils/logger';
-import { flattenEnrichmentData } from './utils/enrichment.utils';
+import { flattenEnrichmentData, flattenEntityProperties } from './utils/enrichment.utils';
 import { ContentProcessingService } from './content-processing.service';
 
 export interface IngestionEntity {
@@ -67,10 +67,15 @@ export class Neo4jIngestionService {
       return { primary: 'UnrecognizedEntity', candidates: [] };
     }
     
+    // Get super classes from ontology to add additional labels
+    const superClasses = this.ontologyService.getSuperClasses(primaryLabel);
+    
+    // Combine primary + super classes (excluding duplicates)
+    const allPotentialLabels = [primaryLabel, ...superClasses];
+    
     // Get indexable labels from ontology service instead of this.indexableLabels
     const indexableLabels = this.ontologyService.getIndexableEntityTypes();
-    const candidateLabels = [primaryLabel]
-      .filter(l => indexableLabels.includes(l));
+    const candidateLabels = allPotentialLabels.filter(l => indexableLabels.includes(l));
 
     return { primary: primaryLabel, candidates: [...new Set(candidateLabels)] };
   }
@@ -190,7 +195,10 @@ export class Neo4jIngestionService {
 
       if (!foundExistingNode) {
         // Create new entity
-        const allLabels = [primaryLabel];
+        const allLabels = [
+          primaryLabel,
+          ...this.ontologyService.getSuperClasses(primaryLabel),
+        ].filter((l, idx, arr) => arr.indexOf(l) === idx);
         const labelsCypher = allLabels.map(l => '\`' + l + '\`').join(':');
 
         // Prepare properties
@@ -290,7 +298,7 @@ export class Neo4jIngestionService {
                 return new Date().toISOString();
               })(),
               embedding: entity.embedding,
-              ...(entity.properties || {}),
+              ...(entity.properties ? flattenEntityProperties(entity.properties) : {}),
               ...additionalProperties,
             }
           }
@@ -361,7 +369,7 @@ export class Neo4jIngestionService {
             {
               id: nodeId,
               props: {
-                ...(entity.properties || {}),
+                ...(entity.properties ? flattenEntityProperties(entity.properties) : {}),
                 ...additionalProps,
               },
             },

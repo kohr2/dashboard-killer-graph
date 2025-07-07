@@ -102,6 +102,15 @@ export function flattenEnrichmentData(enrichedData: any): Record<string, any> {
 }
 
 /**
+ * Flatten arbitrary entity `properties` so they are safe for Neo4j – we simply
+ * delegate to `flattenEnrichmentData`, which already knows how to stringify
+ * contact/location/address/date-like objects while preserving primitives.
+ */
+export function flattenEntityProperties(props: Record<string, any>): Record<string, any> {
+  return flattenEnrichmentData(props);
+}
+
+/**
  * Check if an object looks like an address
  */
 function isAddressLikeObject(key: string, value: any): boolean {

@@ -309,38 +309,40 @@ export class ContentProcessingService {
       
       // --- Automatic Enrichment Step ---
       const enrichedEntities: IngestionEntity[] = [];
-      for(const entity of allEntities) {
-        if (entity.type === 'Organization') {
-          logger.info(`      -> Auto-enriching Organization: ${entity.name}`);
+      const ontologyService = container.resolve(OntologyService);
+
+      for (const entity of allEntities) {
+        const dto = {
+          ...entity,
+          label: entity.type,
+        } as any;
+
+        const serviceName = ontologyService.getEnrichmentServiceName(dto);
+        if (serviceName) {
+          logger.info(`      -> Auto-enriching ${entity.type} '${entity.name}' via ${serviceName}`);
           try {
-            const orgDTO = {
-              type: 'Organization',
-              name: entity.name,
-              id: entity.id,
-              label: entity.type,
-              properties: entity.properties || {}
-            };
-            const enrichedOrg = await this.enrichmentOrchestrator.enrich(orgDTO);
-            if (enrichedOrg) {
-              const finalEntity = { 
-                ...entity, 
-                ...enrichedOrg, 
-                properties: { 
-                  ...entity.properties, 
-                  ...enrichedOrg 
-                } 
-              };
-              enrichedEntities.push(finalEntity);
-            } else {
-              enrichedEntities.push(entity);
+            const service = this.enrichmentOrchestrator.getService(serviceName);
+            if (service) {
+              const result = await service.enrich(dto);
+              if (result?.success) {
+                const finalEntity = {
+                  ...entity,
+                  enrichedData: result.data,
+                  properties: {
+                    ...entity.properties,
+                    ...(result.data || {}),
+                  },
+                } as any;
+                enrichedEntities.push(finalEntity);
+                continue;
+              }
             }
-          } catch (enrichError: any) {
-            logger.error(`      ❌ Error enriching ${entity.name}:`, enrichError.message);
-            enrichedEntities.push(entity); // Keep original entity if enrichment fails
+          } catch (err: any) {
+            logger.error(`      ❌ Error enriching ${entity.name} with ${serviceName}:`, err.message);
           }
-        } else {
-          enrichedEntities.push(entity);
         }
+        // Fallback: push original entity unchanged
+        enrichedEntities.push(entity);
       }
       
       if (enrichedEntities.length > 0) {
