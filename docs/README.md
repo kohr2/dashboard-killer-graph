@@ -1,21 +1,20 @@
-# Knowledge Graph Dashboard
+# Knowledge Graph Platform Documentation
 
-A comprehensive knowledge graph platform for processing and analyzing business communications, documents, and data with ontology-driven intelligence.
+A comprehensive knowledge graph platform for processing and analyzing business data with ontology-driven intelligence.
 
 ## Quick Overview
 
-The Knowledge Graph Dashboard ingests, processes, and analyzes data from various sources to build a rich knowledge graph. Supports email processing, document analysis, entity extraction, and ontology-driven reasoning with a focus on financial, CRM, and procurement domains.
+The Knowledge Graph Platform ingests, processes, and analyzes data from various sources to build a rich knowledge graph. It supports email processing, entity extraction, and ontology-driven reasoning for business intelligence.
 
 ## Key Features
 
-- **Email Processing**: Parse .eml files with attachment support and entity extraction
-- **AI-Powered Entity Recognition**: Advanced NLP-based entity extraction with ontology mapping
-- **Ontology-Driven Reasoning**: Multi-domain reasoning algorithms for business intelligence
-- **Knowledge Graph**: Neo4j-based graph database with vector search capabilities
-- **Chat Interface**: Natural language querying with context awareness
-- **Vector Search**: Similarity-based entity matching and semantic search
-- **MCP Server**: Claude Desktop integration for AI-powered queries
-- **Test-Driven Development**: Comprehensive test suite with 235+ passing tests
+- **Email Processing**: Parse .eml files with entity extraction
+- **AI-Powered Entity Recognition**: NLP-based entity extraction with ontology mapping
+- **Ontology-Driven System**: Multi-domain ontologies (CRM, Financial, Procurement, FIBO)
+- **Knowledge Graph**: Neo4j-based graph database with vector search
+- **Chat Interface**: Natural language querying
+- **MCP Server**: Claude Desktop integration
+- **Test Coverage**: 70+ test files with Jest framework
 
 ## Quick Start
 
@@ -23,28 +22,22 @@ The Knowledge Graph Dashboard ingests, processes, and analyzes data from various
 - Node.js 18+
 - Docker & Docker Compose
 - Python 3.8+ (for NLP services)
-- Claude Desktop (for MCP integration)
 
 ### Installation
 
 ```bash
 # Install and setup
 git clone <repository-url>
-cd dashboard-killer-graph-new
+cd dashboard-killer-graph
 npm install
-cp config/environment.example.js config/environment.js
 
 # Start services
 docker-compose -f docker-compose.neo4j.yml up -d
 
-# Start Python NLP services (optional - system works without them)
+# Start Python NLP service (optional)
 cd python-services/nlp-service
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-python main.py &
-
-cd ../analysis-service
+source venv/bin/activate
 pip install -r requirements.txt
 python main.py &
 
@@ -52,547 +45,188 @@ python main.py &
 npm run dev
 ```
 
-### Ontology Management
+## Ontology Management
 
-The system includes an ontology-agnostic builder for managing domain ontologies with advanced filtering and importance-based selection.
+The system includes comprehensive ontology management with intelligent filtering based on business relevance.
 
-#### Basic Ontology Building
+### Basic Ontology Operations
 
 ```bash
-# Build procurement ontology from ePO source
+# Build procurement ontology
 npx ts-node scripts/ontology/build-ontology.ts --ontology-name procurement
 
-# Build any ontology by name
-npx ts-node scripts/ontology/build-ontology.ts --ontology-name <ontology-name>
-
-# Build from specific config file
-npx ts-node scripts/ontology/build-ontology.ts --config-path path/to/config.json
+# Build with importance filtering
+npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo --top-entities 50 --top-relationships 50
 
 # Generate code from ontologies
 npx ts-node scripts/codegen/generate-ontologies.ts procurement
-npx ts-node scripts/codegen/generate-ontologies.ts  # Generate all ontologies
 ```
 
-#### Advanced Ontology Processing with Importance-Based Filtering
+### Supported Ontologies
 
-The ontology builder now supports intelligent filtering based on business relevance and semantic significance:
+- **FIBO (Financial)**: Legal entities, financial instruments, bonds, shares
+- **Procurement (ePO)**: Contracts, tenders, suppliers, awards
+- **CRM**: Leads, opportunities, accounts, contacts
+- **Financial**: Deals, investments, portfolios, transactions
+
+### Features
+
+- **LLM-Powered Analysis**: AI-driven importance ranking
+- **Transparency**: Full visibility into filtered entities
+- **Flexible Configuration**: Customizable filtering and output options
+
+## MCP Server (Claude Desktop Integration)
+
+Enable Claude Desktop to query your knowledge graph directly.
+
+### Setup
 
 ```bash
-# Build FIBO ontology with 50 most important entities and relationships
-npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo --top-entities 50 --top-relationships 50
-
-# Build with 100 limits for more comprehensive coverage
-npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo --top-entities 100 --top-relationships 100
-
-# Include external imports (not recommended for production)
-npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo --top-entities 50 --include-external
-
-# Custom output directory
-npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo --top-entities 50 --output-dir ./custom-output
-```
-
-#### Importance-Based Filtering Features
-
-**LLM-Powered Analysis:**
-- Uses AI to analyze entity and relationship importance
-- Considers business relevance, semantic significance, and operational impact
-- Falls back to heuristic analysis when LLM endpoints unavailable
-
-**Transparency and Tracking:**
-- `ignoredEntities`: Array of filtered-out entity names
-- `ignoredRelationships`: Array of filtered-out relationship names
-- Full visibility into what was excluded during processing
-
-**Output Files:**
-- `source.ontology.json`: Raw extraction with ignored items lists
-- `ontology.json`: Final processed ontology with overrides applied
-
-#### Supported Ontologies
-
-**FIBO (Financial Industry Business Ontology):**
-```bash
-# Process full FIBO ontology with intelligent filtering
-npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo --top-entities 100 --top-relationships 100
-```
-- **Source**: EDM Council GitHub repository
-- **Coverage**: Legal entities, corporations, financial instruments, bonds, shares
-- **Features**: Recursive import processing, namespace-agnostic parsing
-- **Output**: 100 most important entities and relationships from 612 total
-
-**Procurement (ePO):**
-```bash
-# Process procurement ontology
-npx ts-node scripts/ontology/build-ontology.ts --ontology-name procurement
-```
-- **Source**: European Procurement Ontology
-- **Coverage**: Contracts, tenders, suppliers, awards
-- **Features**: Multi-language support, regulatory compliance
-
-**Financial:**
-```bash
-# Process financial ontology
-npx ts-node scripts/ontology/build-ontology.ts --ontology-name financial
-```
-- **Source**: Custom financial domain ontology
-- **Coverage**: Deals, investments, portfolios, transactions
-
-**CRM:**
-```bash
-# Process CRM ontology
-npx ts-node scripts/ontology/build-ontology.ts --ontology-name crm
-```
-- **Source**: Customer relationship management ontology
-- **Coverage**: Leads, opportunities, accounts, contacts
-
-#### Ontology Processing Pipeline
-
-1. **Source Fetching**: Downloads ontology files from configured sources
-2. **Import Resolution**: Recursively processes owl:imports for comprehensive coverage
-3. **Entity Extraction**: Parses OWL classes and RDF descriptions
-4. **Relationship Extraction**: Processes OWL object properties
-5. **Importance Analysis**: Uses LLM or heuristics to rank by business relevance
-6. **Filtering**: Keeps top N entities and relationships based on importance
-7. **Deduplication**: Removes duplicate entities and relationships by name
-8. **Output Generation**: Creates source and final ontology files
-
-#### Configuration Options
-
-**Command Line Arguments:**
-- `--ontology-name`: Name of ontology to process
-- `--config-path`: Path to custom configuration file
-- `--top-entities`: Number of most important entities to keep
-- `--top-relationships`: Number of most important relationships to keep
-- `--include-external`: Include external imports (default: false)
-- `--output-dir`: Custom output directory
-
-**Configuration File Structure:**
-```json
-{
-  "name": "ontology-name",
-  "source": {
-    "url": "https://example.com/ontology.rdf",
-    "type": "owl",
-    "version": "1.0.0",
-    "description": "Ontology description"
-  },
-  "extraction": {
-    "entities": {
-      "path": "//owl:Class",
-      "name": "@rdf:about",
-      "description": "//rdfs:comment/text()"
-    },
-    "relationships": {
-      "path": "//owl:ObjectProperty",
-      "name": "@rdf:about",
-      "description": "//rdfs:comment/text()"
-    }
-  },
-  "overrides": {
-    "entities": {},
-    "relationships": {}
-  },
-  "metadata": {
-    "lastExtraction": "2024-01-01T00:00:00.000Z",
-    "sourceVersion": "1.0.0",
-    "localVersion": "1.0.0"
-  }
-}
-```
-
-#### Example: Processing FIBO with 100 Limits
-
-```bash
-# Process FIBO ontology with comprehensive coverage
-npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo --top-entities 100 --top-relationships 100
-```
-
-**Output:**
-- **Entities kept**: 100 (from 612 total)
-- **Relationships kept**: 100 (from 612 total)
-- **Entities ignored**: 512 (listed in source.ontology.json)
-- **Relationships ignored**: 512 (listed in source.ontology.json)
-
-**Sample Extracted Content:**
-- **Entities**: JointStockCompany, PrivatelyHeldCompany, BenefitCorporation, Bond, Share, etc.
-- **Relationships**: hasDateOfRegistration, hasRegisteredAddress, hasBaseCurrency, etc.
-
-#### Troubleshooting Ontology Processing
-
-**Common Issues:**
-```bash
-# Check if ontology config exists
-ls ontologies/<ontology-name>/config.json
-
-# Verify source URL accessibility
-curl -I <ontology-source-url>
-
-# Check TypeScript compilation
-npx tsc --noEmit scripts/ontology/build-ontology.ts
-
-# Run with debug logging
-DEBUG=* npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo
-```
-
-**LLM Service Issues:**
-- System gracefully falls back to heuristic analysis
-- No LLM service required for basic functionality
-- Check logs for fallback warnings
-
-**Import Processing:**
-- Large ontologies may take time to process
-- Monitor memory usage for very large imports
-- Use `--include-external` sparingly to avoid processing irrelevant imports
-
-### MCP Server Setup (Claude Desktop Integration)
-
-The MCP server enables Claude Desktop to query your knowledge graph directly.
-
-#### 1. Start the MCP Server
-```bash
-# In a separate terminal
+# Start MCP server
 npm run dev:mcp
+
+# Configure Claude Desktop
+# Add server: llm-orchestrator
+# Command: node /path/to/project/src/mcp/servers/mcp-server-simple.js
 ```
 
-#### 2. Configure Claude Desktop
-1. Open Claude Desktop
-2. Go to Settings → MCP Servers
-3. Add a new server with these settings:
-   - **Name**: `llm-orchestrator`
-   - **Command**: `node`
-   - **Arguments**: `["/path/to/your/project/src/mcp/servers/mcp-server-simple.js"]`
-   - **Working Directory**: `/path/to/your/project`
+### Usage
 
-#### 3. Test the Integration
-In Claude Desktop, you can now ask questions like:
+Ask Claude questions like:
 - "Show me all deals for the company 'BlueWave'"
 - "Find contacts related to the deal 'Project Alpha'"
 - "List companies in the technology sector"
 
-#### Troubleshooting MCP
-- **Server not found**: Ensure the MCP server is running (`npm run dev:mcp`)
-- **Connection errors**: Check the file paths in Claude Desktop configuration
-- **No response**: Verify Neo4j is running and accessible
+## Email Processing
 
-### Quick Demo
+Comprehensive email fixture generation and processing system.
 
-```bash
-# Initialize database schema
-npm run db:init
-
-# Process test emails (100+ test emails available)
-npm run pipeline:email
-
-# Process specific email folders
-npm run pipeline:email -- --folder=procurement/emails
-npm run pipeline:email -- --folder=financial/emails
-
-# Generate new email fixtures
-npx ts-node -P config/tsconfig.base.json scripts/fixtures/generate-email-fixtures.ts --ontology=procurement --count=50
-
-# Test reasoning algorithms
-npm run demo:reasoning
-
-# Start chat interface
-npm run chat:dev
-
-# Run full test suite
-npm test
-```
-
-## Email Fixtures
-
-The system includes a comprehensive email fixture generation system that creates realistic test emails for different ontologies.
-
-### Features
-- **LLM-Powered Generation**: Uses OpenAI GPT-3.5 to generate realistic email content
-- **Fake People Names**: Includes realistic sender and recipient names with professional titles
-- **Multi-Ontology Support**: Supports procurement, financial, CRM, legal, healthcare, and FIBO ontologies
-- **Dynamic Ontology Loading**: Loads entity information from `source.ontology.json` files
-- **Realistic Email Addresses**: Generates vendor-specific email domains
-- **Professional Signatures**: Includes proper business signatures with titles
-
-### Generating Email Fixtures
+### Generate Test Emails
 
 ```bash
-# Generate procurement emails (requires OPENAI_API_KEY)
-npx ts-node -P config/tsconfig.base.json scripts/fixtures/generate-email-fixtures.ts --ontology=procurement --count=100
+# Generate procurement emails
+npx ts-node scripts/fixtures/generate-email-fixtures.ts --ontology=procurement --count=100
 
 # Generate financial emails
-npx ts-node -P config/tsconfig.base.json scripts/fixtures/generate-email-fixtures.ts --ontology=financial --count=50
-
-# Generate CRM emails
-npx ts-node -P config/tsconfig.base.json scripts/fixtures/generate-email-fixtures.ts --ontology=crm --count=25
-
-# Generate FIBO emails
-npx ts-node -P config/tsconfig.base.json scripts/fixtures/generate-email-fixtures.ts --ontology=fibo --count=30
+npx ts-node scripts/fixtures/generate-email-fixtures.ts --ontology=financial --count=50
 ```
 
-### Available Ontologies
-- **procurement**: Contract awards, RFQs, purchase orders, supplier evaluations, tender notifications
-- **financial**: Deal announcements, investment updates, fund raising, merger notifications, IPO announcements
-- **crm**: Lead qualification, opportunity updates, customer onboarding, account reviews, sales pitches
-- **legal**: Contract reviews, legal consultations, compliance alerts, litigation updates, regulatory notices
-- **healthcare**: Patient referrals, medical supply orders, clinical trial updates, regulatory approvals, insurance claims
-- **fibo**: Financial instrument trades, risk assessments, compliance reports, market data updates, regulatory filings
-
-### Example Generated Email
-
-```
-From: "Lisa Anderson" <lisa.anderson@company.com>
-To: "David Brown" <david.brown@vertexconstruction.com>
-Subject: RFQ Request for Transport Services from Vertex Construction - Ref: PROCUREMENT-205911
-
-Dear David Brown,
-
-I hope this message finds you well. We are currently in need of transport services and would like to request a quotation from Vertex Construction. The estimated amount for this service is 40263.45 EUR. Please provide a Professional Suitability Summary along with the Concession Estimate for this Concession Contract. Your prompt response is highly appreciated.
-
-Thank you for your attention to this request.
-
-Best regards,
-Lisa Anderson
-Contract Manager
-```
-
-### Processing Email Fixtures
+### Process Emails
 
 ```bash
 # Process all email fixtures
 npm run pipeline:email
 
-# Process specific email folders
+# Process specific folders
 npm run pipeline:email -- --folder=procurement/emails
-npm run pipeline:email -- --folder=financial/emails
-npm run pipeline:email -- --folder=crm/emails
-
-# Process with database reset
-npm run pipeline:email -- --folder=procurement/emails --reset-db
 ```
-
-### Fake People Data
-
-The system includes comprehensive fake people data for each ontology:
-
-**Procurement Professionals:**
-- Sarah Mitchell (Procurement Manager)
-- Michael Chen (Senior Buyer)
-- Jennifer Rodriguez (Procurement Specialist)
-- David Thompson (Strategic Sourcing Manager)
-- Lisa Anderson (Contract Manager)
-- Robert Williams (Procurement Director)
-- Amanda Garcia (Supplier Relations Manager)
-- James Johnson (Category Manager)
-
-**Financial Professionals:**
-- Alexandra Smith (Investment Manager)
-- Christopher Brown (Portfolio Manager)
-- Victoria Davis (Financial Analyst)
-- Daniel Wilson (Deal Manager)
-- Rachel Taylor (Investment Director)
-- Kevin Martinez (Fund Manager)
-- Nicole Garcia (Financial Controller)
-- Thomas Lee (Investment Analyst)
-
-Plus similar professional data for CRM, Legal, Healthcare, and FIBO domains.
 
 ## Testing
 
-### Test Coverage
-- **235/236 tests passing** (99.6% success rate)
-- **37 test suites** covering all major components
-- **Comprehensive mock objects** for external dependencies
-- **Integration tests** for email processing pipeline
-- **Unit tests** for all services and utilities
+### Current Status
+- **70+ test files** with Jest framework
+- **Test dependencies**: Need `ts-jest` installation for proper execution
+- **Coverage**: Comprehensive unit and integration tests
 
-### Running Tests
+### Run Tests
+
 ```bash
-# Run all tests
+# Fix dependencies first
+npm install ts-jest @types/jest
+
+# Run tests
 npm test
 
-# Run specific test suites
-npm test -- --testPathPattern=email
-npm test -- --testPathPattern=ontology
-npm test -- --testPathPattern=pipeline
-
-# Run with coverage
-npm run test:coverage
+# Run specific test types
+npm run test:unit
+npm run test:integration
 ```
+
+## Common Commands
+
+### Development
+```bash
+npm run dev              # Start development server
+npm run dev:all          # Start with NLP services
+cd chat-ui && npm run dev # Start chat interface
+```
+
+### Database
+```bash
+npm run graph:start      # Start Neo4j
+npm run graph:stop       # Stop Neo4j
+npm run graph:logs       # View logs
+```
+
+### Code Generation
+```bash
+npm run ontologies:generate  # Generate ontology code
+npm run type-check          # Type checking
+```
+
+## Architecture
+
+### Core Components
+- **Platform Core**: Framework for ontology loading and orchestration
+- **Ontology System**: Dynamic plugin discovery and registration
+- **Chat Interface**: React-based conversational UI with NLP
+- **Knowledge Graph**: Neo4j database with vector search
+- **MCP Server**: Claude Desktop integration
+- **NLP Processing**: Python FastAPI services with OpenAI
+
+### Tech Stack
+- **Backend**: Node.js, TypeScript, Express
+- **Frontend**: React, TypeScript, Vite
+- **Database**: Neo4j Graph Database
+- **AI/NLP**: OpenAI GPT-4, Python FastAPI, spaCy
+- **Testing**: Jest, Supertest
+- **DevOps**: Docker, GitHub Actions
+
+## Current Issues
+
+1. **Test Dependencies**: Jest configuration needs `ts-jest`
+2. **Environment Setup**: Missing `.env.example` file
+3. **Documentation**: Some outdated information in detailed docs
+
+## Development Guidelines
+
+1. Follow [Test-Driven Development](./development/tdd-approach.md)
+2. Use [Conventional Commits](https://www.conventionalcommits.org/)
+3. See [Contributing Guide](../CONTRIBUTING.md) for details
+
+## Documentation Structure
+
+### Architecture
+- **[Ontology Plugin Architecture](./architecture/ontology-plugin-architecture.md)** - Plugin system
+- **[Entity Extraction Guide](./architecture/entity-extraction-guide.md)** - NLP pipeline
+- **[MCP Server Architecture](./architecture/mcp-server-architecture.md)** - Claude integration
+
+### Development
+- **[TDD Approach](./development/tdd-approach.md)** - Testing methodology
+- **[System Status](./development/system-status.md)** - Current system health
+- **[Ontology Scripts](./development/ontology-scripts.md)** - Ontology management
+
+### Features
+- **[Enhanced Entity Extraction](./features/enhanced-entity-extraction.md)** - Advanced NLP capabilities
 
 ## Troubleshooting
 
 ### Common Issues
+- **Neo4j Connection**: Check Docker containers with `docker ps`
+- **Python Services**: Services are optional; system works without them
+- **MCP Server**: Ensure correct paths in Claude Desktop configuration
+- **Tests**: Install `ts-jest` for proper test execution
 
-#### Neo4j Connection
+### Debug Commands
 ```bash
-# Check if Neo4j is running
-docker ps | grep neo4j
-
-# Restart Neo4j
-docker-compose -f docker-compose.neo4j.yml restart
-
-# Check Neo4j logs
-docker-compose -f docker-compose.neo4j.yml logs neo4j
-```
-
-#### Python NLP Service
-```bash
-# Check if Python services are running
-ps aux | grep python
-
-# Restart NLP service
-cd python-services/nlp-service
-python main.py &
-
-# Note: System works without NLP services (optional)
-```
-
-#### MCP Server Issues
-```bash
-# Check if MCP server is running
-ps aux | grep mcp-server
-
-# Restart MCP server
-npm run dev:mcp
-
-# Check Claude Desktop configuration
-# Ensure paths are correct and absolute
-```
-
-#### Email Processing
-```bash
-# Test with included test emails
-npm run pipeline:email
-
-# Check email file format
-file test/fixtures/emails/your-email.eml
-
-# Run email ingestion tests
-npm test -- --testPathPattern=email-ingestion
-```
-
-#### Build Issues
-```bash
-# Clean and rebuild
-npm run clean
-npm install
-npm run build
-
-# Check TypeScript configuration
-npx tsc --noEmit
-```
-
-### Debug Mode
-```bash
-# Enable debug logging
-LOG_LEVEL=debug npm run dev
-
 # Check service health
 curl http://localhost:3001/api/health
 curl http://localhost:8000/health
+
+# Check Neo4j status
+docker-compose -f docker-compose.neo4j.yml logs neo4j
 ```
 
-## Development
+---
 
-### Code Standards
-- **TypeScript**: Strict type checking enabled
-- **ESLint**: Code quality and style enforcement
-- **Prettier**: Code formatting
-- **Conventional Commits**: Standardized commit messages
-- **TDD**: Test-driven development approach
-
-### Architecture Principles
-- **Modularity**: Domain-specific ontologies with clear boundaries
-- **Extensibility**: Plugin-based architecture for new ontologies
-- **Scalability**: Microservice approach for NLP and processing
-- **Testability**: Comprehensive test coverage with TDD
-- **Ontology Agnostic**: System handles multiple ontologies and data sources
-
-### Development Workflow
-```bash
-# 1. Write failing test (TDD)
-npm test -- --testPathPattern=your-feature
-
-# 2. Implement feature
-# 3. Make test pass
-npm test
-
-# 4. Refactor
-npm run lint
-npm run format
-
-# 5. Commit with conventional commit
-git commit -m "feat(domain): add new feature"
-```
-
-## Technology Stack
-
-- **Backend**: Node.js 18+, TypeScript
-- **Database**: Neo4j (graph database with vector search)
-- **NLP**: Python spaCy microservice (optional)
-- **Vector Search**: Neo4j vector indexes for similarity search
-- **MCP**: Model Context Protocol for Claude Desktop integration
-- **Architecture**: Domain-driven design with hexagonal architecture
-- **Testing**: Jest with comprehensive test coverage
-- **Code Quality**: ESLint, Prettier, TypeScript strict mode
-
-## Roadmap
-
-### Current Version (v1.0) ✅
-- ✅ Email processing with attachments and entity extraction
-- ✅ Ontology-driven entity mapping and validation
-- ✅ Knowledge graph with vector search capabilities
-- ✅ Multi-domain reasoning engine with algorithms
-- ✅ Chat interface for natural language queries
-- ✅ MCP server for Claude Desktop integration
-- ✅ Comprehensive test suite (235+ tests)
-- ✅ Financial, CRM, and procurement ontologies
-
-### Short Term (v1.1) 🔄
-- 🔄 Real-time processing and streaming
-- 🔄 Advanced NLP improvements and custom models
-- 📋 Document processing (PDF, Word, Excel)
-- 📋 API integrations for external data sources
-- 📋 Enhanced reasoning algorithms
-
-### Medium Term (v1.2) 🎯
-- 🎯 Interactive graph visualization dashboard
-- 🎯 Business intelligence and analytics dashboards
-- 🎯 Mobile support and responsive design
-- 🎯 Multi-tenant architecture and user management
-- 🎯 Advanced entity linking and disambiguation
-
-### Long Term (v2.0) 🚀
-- 🚀 Advanced AI assistant with learning capabilities
-- 🚀 Predictive analytics and forecasting
-- 🚀 Enterprise features and security enhancements
-- 🚀 Cloud deployment and scaling
-- 🚀 Advanced graph algorithms and machine learning
-
-## Support
-
-- **Documentation**: This README and `/docs` directory contain comprehensive information
-- **Issues**: Create GitHub issues for bugs and feature requests
-- **Development**: Follow TDD principles and established code standards
-- **Architecture**: Domain-driven design with hexagonal architecture
-- **Testing**: Maintain high test coverage and quality standards
-
-## 🔗 Related Documentation
-
-- **Documentation**: This README and `/docs` directory contain comprehensive information
-- **Issues**: Create GitHub issues for bugs and feature requests
-- **Development**: Follow TDD principles and established code standards
-- **Architecture**: Domain-driven design with hexagonal architecture
-- **Testing**: Maintain high test coverage and quality standards
-- **System Status**: [Current System Status](development/system-status.md)
-
-## Recent Changes
-
-### Latest Release (Current)
-- **Enhanced ontology generation** with importance-based filtering and LLM-powered analysis
-- **Added FIBO ontology support** with comprehensive processing from EDM Council repository
-- **Implemented ignored items tracking** for transparency in ontology filtering
-- **Extended ontology interfaces** to support ignored entities and relationships throughout pipeline
-- **Added fallback heuristics** when LLM endpoints unavailable for ontology analysis
-- **Processed FIBO with 100 entity/relationship limits** for comprehensive financial domain coverage
-- **Enhanced documentation** with detailed ontology processing guides and troubleshooting
-- **Improved test coverage** with comprehensive mock objects and TDD approach
-- **Updated build configuration** for better TypeScript support and error handling 
+**For comprehensive documentation, see individual files in the `docs/` directory.** 
