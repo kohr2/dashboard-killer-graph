@@ -12,9 +12,10 @@ The Knowledge Graph Dashboard ingests, processes, and analyzes data from various
 - **AI-Powered Entity Recognition**: Advanced NLP-based entity extraction with ontology mapping
 - **Ontology-Driven Reasoning**: Multi-domain reasoning algorithms for business intelligence
 - **Knowledge Graph**: Neo4j-based graph database with vector search capabilities
-- **Chat Interface**: Natural language querying with context awareness
+- **Chat Interface**: Natural language querying with context awareness and multi-database support
 - **Vector Search**: Similarity-based entity matching and semantic search
 - **MCP Server**: Claude Desktop integration for AI-powered queries
+- **Multi-Database Support**: Switch between different Neo4j databases for different use cases
 - **Test-Driven Development**: Comprehensive test suite with 235+ passing tests
 
 ## Quick Start
@@ -24,6 +25,7 @@ The Knowledge Graph Dashboard ingests, processes, and analyzes data from various
 - Docker & Docker Compose
 - Python 3.8+ (for NLP services)
 - Claude Desktop (for MCP integration)
+- OpenAI API Key (for chat functionality)
 
 ### Installation
 
@@ -33,6 +35,10 @@ git clone <repository-url>
 cd dashboard-killer-graph-new
 npm install
 cp config/environment.example.js config/environment.js
+
+# Configure environment
+echo "OPENAI_API_KEY=your_key_here" >> .env
+echo "NEO4J_DATABASE=fibo" >> .env
 
 # Start services
 docker-compose -f docker-compose.neo4j.yml up -d
@@ -50,7 +56,36 @@ python main.py &
 
 # Start application
 npm run dev
+
+# Test chat interface
+curl -X POST http://localhost:3001/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"query": "show all organizations"}'
 ```
+
+### Database Configuration
+
+The system supports multiple Neo4j databases for different use cases:
+
+```bash
+# Switch to financial database (default)
+echo "NEO4J_DATABASE=fibo" >> .env
+
+# Switch to procurement database
+echo "NEO4J_DATABASE=procurement" >> .env
+
+# Switch to CRM database
+echo "NEO4J_DATABASE=crm" >> .env
+
+# Restart application after database change
+npm run dev
+```
+
+**Available Databases:**
+- `fibo` - Financial Industry Business Ontology (Organizations, Instruments, Legal Entities)
+- `procurement` - European Procurement Ontology (Contracts, Tenders, Suppliers)
+- `crm` - Customer Relationship Management (Leads, Opportunities, Accounts)
+- `dashboard-killer` - Default application database
 
 ### Ontology Management
 
@@ -421,6 +456,21 @@ npm run test:coverage
 
 ### Common Issues
 
+#### Chat System Returns "No Results"
+```bash
+# Check if correct database is configured
+grep NEO4J_DATABASE .env
+
+# Verify data exists in target database
+docker exec -it neo4j-container cypher-shell -u neo4j -p password -d fibo
+# Run: MATCH (n) RETURN count(n) as total
+
+# Test chat endpoint directly
+curl -X POST http://localhost:3001/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"query": "show all organizations"}'
+```
+
 #### Neo4j Connection
 ```bash
 # Check if Neo4j is running
@@ -587,6 +637,11 @@ git commit -m "feat(domain): add new feature"
 ## Recent Changes
 
 ### Latest Release (Current)
+- **Fixed chat system database selection** - ChatService now correctly uses configured database instead of default
+- **Resolved dependency injection issues** - Added proper @injectable decorators to ChatService and QueryTranslator
+- **Fixed QueryTranslator validation bug** - Corrected entity type validation logic that was causing false positives
+- **Enhanced multi-database support** - System now properly switches between Neo4j databases (fibo, procurement, crm)
+- **Improved chat troubleshooting** - Added comprehensive debugging tools and documentation
 - **Enhanced ontology generation** with importance-based filtering and LLM-powered analysis
 - **Added FIBO ontology support** with comprehensive processing from EDM Council repository
 - **Implemented ignored items tracking** for transparency in ontology filtering
