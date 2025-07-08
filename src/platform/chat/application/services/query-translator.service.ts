@@ -28,7 +28,8 @@ export class QueryTranslator {
     rawQuery: string,
     history: ConversationTurn[] = []
   ): Promise<StructuredQuery> {
-    const validEntityTypes = this.ontologyService.getAllEntityTypes().join(', ');
+    const validEntityTypesArray = this.ontologyService.getAllEntityTypes();
+    const validEntityTypes = validEntityTypesArray.join(', ');
     const lastTurn = history.length > 0 ? history[history.length - 1] : null;
 
     let previousContext = 'No previous context.';
@@ -147,7 +148,7 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
       logger.info('Parsed result:', JSON.stringify(parsedResult, null, 2));
 
       // Basic validation
-      if (parsedResult.command === 'show' && (!parsedResult.resourceTypes || parsedResult.resourceTypes.some(rt => !validEntityTypes.includes(rt)))) {
+      if (parsedResult.command === 'show' && (!parsedResult.resourceTypes || parsedResult.resourceTypes.some(rt => !validEntityTypesArray.includes(rt)))) {
         logger.warn('Invalid resource types in result, returning unknown');
         return { command: 'unknown', resourceTypes: [] };
       }

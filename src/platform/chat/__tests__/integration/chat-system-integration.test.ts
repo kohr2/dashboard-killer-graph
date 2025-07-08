@@ -25,7 +25,7 @@ describe('Chat System Integration Test', () => {
     // Instantiate dependencies directly
     const ontologyService = OntologyService.getInstance();
     const accessControlService = new AccessControlService();
-    const queryTranslator = new QueryTranslator(ontologyService);
+    const queryTranslator = new QueryTranslator(ontologyService, undefined);
 
     chatService = new ChatService(
       connection,

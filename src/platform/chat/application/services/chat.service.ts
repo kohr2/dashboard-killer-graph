@@ -282,7 +282,7 @@ Summarize the results if they are numerous, but list key details. Format your an
             continue;
         }
 
-        const session = this.neo4j.getDriver().session();
+        const session = this.neo4j.getSession();
         try {
             let whereClauses = '';
             const params: { [key: string]: any } = {};
@@ -362,7 +362,7 @@ Summarize the results if they are numerous, but list key details. Format your an
         return null;
     }
 
-    const session = this.neo4j.getDriver().session();
+    const session = this.neo4j.getSession();
     try {
         const relationshipCypher = relationshipType ? `[:\`${relationshipType}\`]` : `[*1..2]`;
         
@@ -643,7 +643,7 @@ Summarize the results if they are numerous, but list key details. Format your an
         continue;
       }
 
-      const session = this.neo4j.getDriver().session();
+      const session = this.neo4j.getSession();
       try {
         // Build optimized query with proper indexing
         const { whereClause, params } = this.buildWhereClause(filters);

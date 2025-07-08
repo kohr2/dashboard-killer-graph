@@ -41,7 +41,7 @@ export function createApp(): express.Express {
   const ontologyService = OntologyService.getInstance();
   const neo4jConnection = new Neo4jConnection();
   const accessControlService = new AccessControlService();
-  const queryTranslator = new QueryTranslator(ontologyService);
+  const queryTranslator = new QueryTranslator(ontologyService, undefined);
   const chatService = new ChatService(
     neo4jConnection,
     ontologyService,
