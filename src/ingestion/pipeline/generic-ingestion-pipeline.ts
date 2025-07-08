@@ -22,7 +22,7 @@ export interface IngestionResult {
  */
 export class GenericIngestionPipeline {
   private readonly processingService: {
-    processContentBatch: (contents: string[]) => Promise<IngestionResult[]>;
+    processContentBatch: (contents: string[], ontologyName?: string) => Promise<IngestionResult[]>;
   };
   private readonly neo4jService: {
     ingestEntitiesAndRelationships: (result: IngestionResult) => Promise<any>;
@@ -31,10 +31,11 @@ export class GenericIngestionPipeline {
     executeAllReasoning: () => Promise<{ success: boolean; message: string }>;
   };
   private readonly extractor: (input: IngestionInput) => string;
+  private readonly ontologyName?: string;
 
   constructor(
     processingService: {
-      processContentBatch: (contents: string[]) => Promise<IngestionResult[]>;
+      processContentBatch: (contents: string[], ontologyName?: string) => Promise<IngestionResult[]>;
     },
     neo4jService: {
       ingestEntitiesAndRelationships: (result: IngestionResult) => Promise<any>;
@@ -43,11 +44,13 @@ export class GenericIngestionPipeline {
       executeAllReasoning: () => Promise<{ success: boolean; message: string }>;
     },
     extractor: (input: IngestionInput) => string = (input) => input.content,
+    ontologyName?: string,
   ) {
     this.processingService = processingService;
     this.neo4jService = neo4jService;
     this.reasoningOrchestrator = reasoningOrchestrator;
     this.extractor = extractor;
+    this.ontologyName = ontologyName;
   }
 
   /**
@@ -55,7 +58,7 @@ export class GenericIngestionPipeline {
    */
   public async run(inputs: IngestionInput[]): Promise<void> {
     const contents = inputs.map(this.extractor);
-    const results = await this.processingService.processContentBatch(contents);
+    const results = await this.processingService.processContentBatch(contents, this.ontologyName);
     for (const result of results) {
       await this.neo4jService.ingestEntitiesAndRelationships(result);
     }

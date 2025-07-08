@@ -18,7 +18,9 @@ npm install
 
 # 2. Set up environment variables
 cp .env.example .env
-# Edit .env and add your OPENAI_API_KEY
+# Edit .env and configure:
+# - OPENAI_API_KEY (required for chat functionality)
+# - NEO4J_DATABASE (set to your target database, e.g., 'fibo')
 
 # 3. Start Neo4j Database
 docker-compose -f docker-compose.neo4j.yml up -d
@@ -39,6 +41,41 @@ npm run dev:mcp
 - **API Server**: http://localhost:3001
 - **Neo4j Browser**: http://localhost:7474 (username: neo4j, password: password)
 - **MCP Server**: Connects to Claude Desktop for AI-powered queries
+
+## 🗄️ Database Configuration
+
+The system supports multiple Neo4j databases for different use cases:
+
+### Environment Variables
+```bash
+# Database configuration
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=password
+NEO4J_DATABASE=fibo  # Target database name
+```
+
+### Available Databases
+- **`fibo`**: Financial Industry Business Ontology data
+- **`dashboard-killer`**: Default application database
+- **`neo4j`**: System default database
+
+### Switching Databases
+To change the target database for chat queries:
+
+1. **Via Environment File** (recommended):
+   ```bash
+   # Edit .env file
+   NEO4J_DATABASE=fibo
+   ```
+
+2. **Via Environment Variable**:
+   ```bash
+   export NEO4J_DATABASE=fibo
+   npm run dev
+   ```
+
+3. **Runtime Configuration**: The system automatically connects to the configured database and creates it if it doesn't exist.
 
 ## 🏛️ Architecture: Platform + Extensions
 
@@ -73,6 +110,8 @@ The system includes a fully functional conversational interface that:
 - ✅ **Relationship Queries**: Can find related entities ("show organizations related to Rick")
 - ✅ **Rich Responses**: Uses OpenAI to format results in natural language
 - ✅ **Real-time Data**: Queries live data from Neo4j knowledge graph
+- ✅ **Database-aware**: Automatically queries the configured database
+- ✅ **Dependency Injection**: Proper service initialization and dependency management
 
 ### Example Queries
 ```
@@ -81,6 +120,21 @@ The system includes a fully functional conversational interface that:
 "show me organizations"
 "find contacts related to Thoma Bravo"
 "show me all persons"
+"trouve moi les entreprises" (French)
+"show all Organization" (explicit entity type)
+```
+
+### Chat API Endpoints
+```bash
+# Send a chat query
+curl -X POST http://localhost:3001/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"query": "show all organizations"}'
+
+# Response format
+{
+  "response": "Here are the organizations found:\n\n1. **Vista Equity Partners**\n   - ID: vista_equity_partners\n\n2. **Morgan Stanley**\n   - ID: morgan_stanley\n..."
+}
 ```
 
 ## 📚 Documentation
@@ -105,12 +159,20 @@ The system includes a fully functional conversational interface that:
 -   [x] **Query Translation**: OpenAI-powered translation from natural language to structured queries.
 -   [x] **Knowledge Graph Integration**: Real-time queries to Neo4j database.
 -   [x] **Multi-language Support**: Works in English, French, and other languages.
+-   [x] **Database Configuration**: Support for multiple Neo4j databases with proper session management.
+-   [x] **Dependency Injection**: Proper service initialization with tsyringe container.
 -   [x] **MCP Server**: Integration with Claude Desktop for AI-powered assistance.
 -   [x] **CRM & Financial Extensions**: Foundational extensions for CRM and Finance domains.
 -   [x] **Procurement Extension**: Public procurement ontology with 227 entities and 595 relationships.
 -   [x] **Compact Ontology & Prompt Partitioning**: New compact ontology format (≈ 98 % size reduction) and partitioned prompt generation for efficient LLM interaction. Entity (`e`) and relationship (`r`) lists are now alphabetically sorted for deterministic diffing.
 -   [x] **Automated Code Generation**: Ontology-to-code generation with plugin templates.
 -   [x] **TDD Foundation**: Comprehensive test structure with Jest.
+
+### 🔧 Recent Fixes
+-   [x] **Chat Service Database Selection**: Fixed ChatService to use configured database instead of default
+-   [x] **Query Translator Validation**: Fixed entity type validation bug in QueryTranslator
+-   [x] **Service Initialization**: Proper dependency injection setup for chat services
+-   [x] **Session Management**: Correct Neo4j session handling with database specification
 
 ### 📋 Next Steps
 -   **Advanced Query Types**: Support for complex aggregations and analytics.
@@ -132,7 +194,29 @@ npm run lint:ontology:financial
 
 # Test chat functionality
 npm run chat:test
+
+# Test query translator
+npx ts-node -r tsconfig-paths/register test-query-translator.ts
 ```
+
+## 🐞 Troubleshooting
+
+### Common Issues
+
+**Chat returns "I couldn't find any information"**
+- Check that `NEO4J_DATABASE` is set to the correct database containing your data
+- Verify the database exists and contains the expected entities
+- Ensure the API server is using the correct database configuration
+
+**Database connection issues**
+- Verify Neo4j is running: `docker-compose -f docker-compose.neo4j.yml ps`
+- Check connection settings in `.env` file
+- Ensure database exists or will be created automatically
+
+**OpenAI API errors**
+- Verify `OPENAI_API_KEY` is set in `.env`
+- Check API key validity and rate limits
+- Review query translator logs for detailed error messages
 
 ## 🐞 Prompt & Ontology Debugging
 

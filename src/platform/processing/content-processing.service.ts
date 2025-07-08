@@ -251,6 +251,7 @@ export class ContentProcessingService {
 
   public async processContentBatch(
     contents: string[],
+    ontologyName?: string,
   ): Promise<Array<{
     entities: IngestionEntity[];
     relationships: unknown[];
@@ -258,9 +259,9 @@ export class ContentProcessingService {
     // --- One-time ontology synchronisation with NLP service ---
     if (!this.ontologySynced) {
       const ontologyService = container.resolve(OntologyService);
-      const payload = buildCompactOntologySyncPayload(ontologyService);
+      const payload = buildCompactOntologySyncPayload(ontologyService, ontologyName);
       try {
-        logger.info('   🔄 Syncing compact ontology schema with NLP service...');
+        logger.info(`   🔄 Syncing compact ontology schema with NLP service${ontologyName ? ` for ${ontologyName}` : ''}...`);
         await axios.post(`${this.nlpServiceUrl}/ontologies`, payload, { timeout: 30000 });
         this.ontologySynced = true;
         logger.info('      -> Compact ontology schema synced');

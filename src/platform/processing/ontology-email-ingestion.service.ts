@@ -126,7 +126,8 @@ export class OntologyEmailIngestionService {
         this.contentProcessingService,
         this.neo4jIngestionService,
         undefined,
-        (input: IngestionInput) => input.content
+        (input: IngestionInput) => input.content,
+        ontologyName
       );
 
       // Create email input
