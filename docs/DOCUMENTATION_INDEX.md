@@ -83,7 +83,11 @@ This index provides navigation to all documentation files in the Knowledge Graph
 - **[Main README Troubleshooting](../README.md#troubleshooting)** - General troubleshooting
 
 ### Test Issues
+- **[Test Documentation Summary](development/test-documentation-summary.md)** - Overview and navigation guide for all test documentation
 - **[TDD Approach](development/tdd-approach.md)** - Testing methodology and debugging
+- **[Test Strategy](development/test-strategy.md)** - Comprehensive testing strategy and standards
+- **[Test Suite Documentation](development/test-suite-documentation.md)** - Comprehensive test documentation
+- **[Test Troubleshooting Guide](development/test-troubleshooting-guide.md)** - Common test issues and solutions
 - **[System Status](development/system-status.md)** - Current test results and known issues
 
 ## 📈 Performance and Monitoring
