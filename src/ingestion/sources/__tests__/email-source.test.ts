@@ -15,7 +15,7 @@ describe('EmailSource', () => {
       name: 'test-email-source',
       enabled: true,
       provider: 'eml',
-      directory: path.join(process.cwd(), 'test', 'fixtures', 'emails')
+      directory: path.join(process.cwd(), 'test', 'fixtures', 'financial', 'emails')
     };
   });
 

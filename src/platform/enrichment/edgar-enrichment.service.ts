@@ -1,14 +1,32 @@
 import type { AxiosInstance } from 'axios';
+import axios from 'axios';
 import { IEnrichmentService } from './i-enrichment-service.interface';
-import { GenericEntity, EnrichmentResult } from './dto-aliases';
+import { GenericEntity } from './dto-aliases';
 import { logger } from '@common/utils/logger';
-import { container } from 'tsyringe';
-import { VectorSearchService } from '@platform/database/vector-search.service';
+import { promises as fs } from 'fs';
+import { join } from 'path';
 
-interface EdgarCompanyHit {
-  cik_str: string;
-  entityType?: string;
-  name?: string;
+interface CikData {
+  [key: string]: {
+    cik_str: number;
+    ticker: string;
+    title: string;
+  };
+}
+
+interface CompanyData {
+  name: string;
+  cik: string;
+  sic: string;
+  sicDescription: string;
+  addresses: {
+    business: {
+      street1: string;
+      city: string;
+      stateOrCountry: string;
+      zipCode: string;
+    };
+  };
 }
 
 /**
@@ -17,88 +35,97 @@ interface EdgarCompanyHit {
  */
 export class EdgarEnrichmentService implements IEnrichmentService {
   public readonly name = 'EDGAR';
-  private readonly axiosInstance: AxiosInstance;
+  private readonly userAgent: string;
+  private cikData: CikData | null = null;
+  private initialized = false;
 
-  // Simple in-memory cache by normalised company name → enriched payload
-  private readonly cache = new Map<string, any>();
-
-  private readonly vectorSearch: VectorSearchService;
-
-  constructor(axiosInstance: AxiosInstance) {
-    this.axiosInstance = axiosInstance;
-    this.vectorSearch = container.resolve(VectorSearchService);
+  constructor(userAgent: string) {
+    this.userAgent = userAgent;
   }
 
   /**
    * Enrich any entity with EDGAR data
    */
-  public async enrich(entity: GenericEntity): Promise<EnrichmentResult> {
+  public async enrich(entity: GenericEntity): Promise<GenericEntity | {}> {
     try {
-      // 0. Vector search reuse (if embedding present)
-      if (Array.isArray((entity as any).embedding)) {
-        const similar = await this.vectorSearch.findSimilarOrganization((entity as any).embedding as number[], 0.92);
-        if (similar && (similar.node as any)?.properties?.cik) {
-          return {
-            success: true,
-            data: {
-              cik: (similar.node as any).properties.cik,
-              source: 'edgar',
-            },
-            metadata: {
-              service: this.name,
-              reused: true,
-            }
-          } as EnrichmentResult;
-        }
+      // Only enrich Organization entities
+      if (entity.type !== 'Organization') {
+        return {};
       }
 
-      // 1. Normalise name and check cache
-      const normName = this.normaliseName(entity.name || '')
-      if (!normName) {
-        return { success: false, error: 'empty-name' } as EnrichmentResult;
-      }
-      if (this.cache.has(normName)) {
-        return { success: true, data: this.cache.get(normName) } as EnrichmentResult;
+      // Initialize if needed
+      if (!this.initialized) {
+        await this.initialize();
       }
 
-      // 2. Call SEC search API
-      const url = `https://data.sec.gov/submissions/search-api?keys=${encodeURIComponent(normName)}&category=companies`;
-      const resp = await this.axiosInstance.get<EdgarCompanyHit[]>(url, { timeout: 5000 });
-      if (!resp.data || (Array.isArray(resp.data) && resp.data.length === 0)) {
-        return { success: false, error: 'no-match' } as EnrichmentResult;
+      if (!this.cikData) {
+        return {};
       }
 
-      const hit: EdgarCompanyHit = Array.isArray(resp.data) ? resp.data[0] : (resp.data as any);
-      if (!hit.cik_str) {
-        return { success: false, error: 'no-cik' } as EnrichmentResult;
+      // Find matching company by name
+      const normalizedName = this.normalizeName(entity.name || '');
+      const matchingEntry = Object.values(this.cikData).find(
+        company => this.normalizeName(company.title) === normalizedName
+      );
+
+      if (!matchingEntry) {
+        return {};
       }
 
-      const enrichedData = {
-        cik: hit.cik_str.padStart(10, '0'),
-        entityType: hit.entityType,
-        source: 'edgar'
+      // Fetch detailed company data
+      const companyUrl = `https://data.sec.gov/submissions/CIK${matchingEntry.cik_str.toString().padStart(10, '0')}.json`;
+      const companyResponse = await axios.get<CompanyData>(companyUrl, {
+        headers: { 'User-Agent': this.userAgent },
+        timeout: 5000
+      });
+
+      // Return enriched entity
+      return {
+        ...entity,
+        cik: matchingEntry.cik_str.toString(),
+        legalName: companyResponse.data.name,
+        sic: companyResponse.data.sic,
+        sicDescription: companyResponse.data.sicDescription,
+        address: companyResponse.data.addresses?.business
       };
 
-      // Cache for future
-      this.cache.set(normName, enrichedData);
-
-      return {
-        success: true,
-        data: enrichedData,
-        metadata: { service: this.name }
-      } as EnrichmentResult;
-
     } catch (error) {
-      logger.error(`EDGAR enrichment failed for entity ${entity.id}:`, error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        metadata: { service: this.name }
-      } as EnrichmentResult;
+      // eslint-disable-next-line no-console
+      console.error(`Failed to initialize EDGAR service: ${error}`);
+      return {};
     }
   }
 
-  private normaliseName(name: string): string {
+  private async initialize(): Promise<void> {
+    try {
+      const cacheDir = join(process.cwd(), 'cache');
+      const cacheFile = join(cacheDir, 'edgar-cik-lookup.json');
+
+      try {
+        // Try to read from cache first
+        const cachedData = await fs.readFile(cacheFile, 'utf-8');
+        this.cikData = JSON.parse(cachedData);
+      } catch {
+        // Cache miss, fetch from SEC
+        const response = await axios.get<CikData>('https://www.sec.gov/files/company_tickers.json', {
+          headers: { 'User-Agent': this.userAgent },
+          timeout: 10000
+        });
+
+        this.cikData = response.data;
+
+        // Cache the data
+        await fs.mkdir(cacheDir, { recursive: true });
+        await fs.writeFile(cacheFile, JSON.stringify(this.cikData, null, 2));
+      }
+
+      this.initialized = true;
+    } catch (error) {
+      throw new Error(`Failed to initialize EDGAR service: ${error}`);
+    }
+  }
+
+  private normalizeName(name: string): string {
     return name
       .toLowerCase()
       .replace(/\b(incorporated|inc\.?|corp\.?|corporation|ltd\.?|limited|llc|gmbh|sas|sa|plc|co\.?|spa)\b/g, '')

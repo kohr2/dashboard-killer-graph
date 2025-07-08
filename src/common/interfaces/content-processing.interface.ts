@@ -1,7 +1,7 @@
 export interface IContentProcessingService {
   /**
-   * Process an array of plain-text contents (e.g. email bodies) and push the
-   * results downstream (DB, message bus, etc.).
+   * Process an array of plain-text contents (e.g. email bodies).
+   * Implementations may either push results downstream (void) or return them for further processing.
    */
-  processContentBatch(contents: string[]): Promise<void>;
+  processContentBatch(contents: string[]): Promise<void | Array<{ entities: unknown[]; relationships: unknown[] }>>;
 } 

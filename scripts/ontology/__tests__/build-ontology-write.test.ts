@@ -13,7 +13,7 @@ describe('buildOntology file outputs', () => {
 
   it('writes only source.ontology.json', async () => {
     // Spy on fs.writeFileSync
-    const spy = jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {} as any);
+    const spy = jest.spyOn(fs, 'writeFileSync').mockImplementation(() => undefined);
 
     // Dynamically import the builder (commonjs require to avoid ts-node ts-path complications)
     // eslint-disable-next-line @typescript-eslint/no-var-requires

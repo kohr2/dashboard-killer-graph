@@ -17,10 +17,11 @@ export interface GenericEntity {
 
 // Generic enrichment result
 export interface EnrichmentResult {
-  success: boolean;
+  success?: boolean;
   data?: Record<string, any>;
   error?: string;
   metadata?: Record<string, any>;
+  [key: string]: any; // allow arbitrary extra fields like cik, legalName, etc.
 }
 
 // Generic type guard for any entity

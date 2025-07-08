@@ -25,9 +25,10 @@ describe('FIBO Plugin Discovery', () => {
     const enabledPlugins = getEnabledPlugins();
     const fiboPlugin = enabledPlugins.find(p => p.name === 'fibo');
     
-    // FIBO plugin should load without serviceProviders since register.ts doesn't exist
+    // FIBO plugin should now load with serviceProviders since register.ts exists
     expect(fiboPlugin).toBeDefined();
-    expect(fiboPlugin?.serviceProviders).toBeUndefined();
+    expect(fiboPlugin?.serviceProviders).toBeDefined();
+    expect(fiboPlugin?.serviceProviders?.register).toBeDefined();
   });
 
   it('should load ontology data from JSON file', () => {

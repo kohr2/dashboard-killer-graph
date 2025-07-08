@@ -25,13 +25,15 @@ describe('ContentProcessingService', () => {
   describe('when NLP service fails', () => {
     it('should handle the error gracefully and return an empty array', async () => {
       // Mock axios pour qu'il lance une erreur
-      mockedAxios.post.mockRejectedValue(new Error('Network error'));
+      mockedAxios.post
+        .mockResolvedValueOnce({ data: 'OK' }) // Ontology sync succeeds
+        .mockRejectedValueOnce(new Error('Network error')); // NLP service fails
 
       const contents = ['Sample text for processing'];
       const result = await service.processContentBatch(contents);
 
       expect(result).toEqual([]); // Doit retourner un tableau vide en cas d'échec
-      expect(mockedAxios.post).toHaveBeenCalledTimes(1); // S'assure que l'appel a été tenté
+      expect(mockedAxios.post).toHaveBeenCalledTimes(2); // Ontology sync + NLP call
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining('An unexpected error occurred during batch NLP processing:')
       );
@@ -56,8 +58,9 @@ describe('ContentProcessingService', () => {
 
       // Mock du service d'embedding qui échoue
       mockedAxios.post
-        .mockResolvedValueOnce(nlpResponse) // Premier appel (NLP) réussit
-        .mockRejectedValueOnce(new Error('Embedding service down')); // Deuxième appel (embedding) échoue
+        .mockResolvedValueOnce({ data: 'OK' }) // Ontology sync succeeds
+        .mockResolvedValueOnce(nlpResponse) // NLP service succeeds
+        .mockRejectedValueOnce(new Error('Embedding service down')); // Embedding service fails
 
       const contents = ['John Doe works for Acme Corp'];
       const result = await service.processContentBatch(contents);
@@ -72,7 +75,7 @@ describe('ContentProcessingService', () => {
       });
       expect(result[0].relationships).toHaveLength(0); // Pas de relation car target n'existe pas
       
-      expect(mockedAxios.post).toHaveBeenCalledTimes(2); // Un appel à NLP, un à l'embedding
+      expect(mockedAxios.post).toHaveBeenCalledTimes(3); // Ontology sync + NLP + embedding
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Error generating batch entity embeddings:')
       );
@@ -106,8 +109,9 @@ describe('ContentProcessingService', () => {
       };
 
       mockedAxios.post
-        .mockResolvedValueOnce(nlpResponse)
-        .mockResolvedValueOnce(embeddingResponse);
+        .mockResolvedValueOnce({ data: 'OK' }) // Ontology sync succeeds
+        .mockResolvedValueOnce(nlpResponse) // NLP service succeeds
+        .mockResolvedValueOnce(embeddingResponse); // Embedding service succeeds
 
       const contents = ['Jane Smith manages Tech Corp'];
       const result = await service.processContentBatch(contents);
@@ -134,7 +138,7 @@ describe('ContentProcessingService', () => {
         type: 'MANAGES'
       });
 
-      expect(mockedAxios.post).toHaveBeenCalledTimes(2);
+      expect(mockedAxios.post).toHaveBeenCalledTimes(3); // Ontology sync + NLP + embedding
       
       // Verify that no actual ERRORS were logged
       const errorCalls = consoleErrorSpy.mock.calls.filter(call =>

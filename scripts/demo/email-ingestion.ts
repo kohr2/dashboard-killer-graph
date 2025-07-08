@@ -17,7 +17,7 @@ import { ReasoningOrchestratorService } from '@platform/reasoning/reasoning-orch
 
 interface ParsedEmailWithSource extends ParsedMail { sourceFile: string; }
 
-(async () => {
+export async function demonstrateSpacyEmailIngestionPipeline(): Promise<void> {
   // ------------------ CLI FLAGS ------------------
   const argvFlags = process.argv.slice(2);
   function flag(name: string, def?: string): string | undefined {
@@ -85,4 +85,14 @@ interface ParsedEmailWithSource extends ParsedMail { sourceFile: string; }
   logger.info('✅ All emails ingested.');
 
   await neo4jService.close();
-})(); 
+
+}
+
+// Execute if run directly via CLI
+if (require.main === module) {
+  demonstrateSpacyEmailIngestionPipeline().catch(err => {
+    // eslint-disable-next-line no-console
+    console.error(err);
+    process.exit(1);
+  });
+} 

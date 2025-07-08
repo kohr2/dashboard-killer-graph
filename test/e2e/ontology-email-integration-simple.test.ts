@@ -10,12 +10,12 @@ import { ContentProcessingService } from '@platform/processing/content-processin
 import { Neo4jIngestionService } from '@platform/processing/neo4j-ingestion.service';
 import { GenericIngestionPipeline } from '@ingestion/pipeline/generic-ingestion-pipeline';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
+import { registerSelectedOntologies } from '@src/register-ontologies';
 
-// Simple ontology registration without problematic imports
+// Simple ontology registration using the proper plugin system
 function registerSimpleOntologies() {
-  // Only register FIBO and procurement ontologies
-  require('../../ontologies/procurement/register').register();
-  require('../../ontologies/fibo/register').register();
+  // Use the proper plugin-based registration system
+  registerSelectedOntologies(['procurement', 'fibo']);
 }
 
 const testDatabaseName = 'test-ontology-integration-simple';
@@ -49,8 +49,10 @@ async function processEmailAndIngest(ontologyName: string, emailPath: string): P
     // Set test database environment variable
     process.env.NEO4J_DATABASE = testDatabaseName;
     
-    // Initialize services
+    // IMPORTANT: Register ontologies FIRST before resolving services
     registerSimpleOntologies();
+    
+    // Initialize services AFTER ontology registration
     const contentProcessingService = container.resolve(ContentProcessingService);
     const neo4jIngestionService = container.resolve(Neo4jIngestionService);
     

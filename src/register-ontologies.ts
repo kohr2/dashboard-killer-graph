@@ -46,7 +46,7 @@ export function registerAllOntologies() {
     }
   });
   
-  const edgarService = new EdgarEnrichmentService(axiosInstance);
+  const edgarService = new EdgarEnrichmentService('Dashboard Killer Graph Bot 1.0 (contact@example.com)');
 
   // Add Edgar service to the orchestrator
   enrichmentOrchestrator.addService(edgarService);

@@ -32,6 +32,7 @@ const OntologyEntitySchema = z.object({
   ]).optional(),
   values: z.array(z.string()).optional(),
   parent: z.string().optional(),
+  parentClass: z.string().optional(),
   isProperty: z.boolean().optional(),
   vectorIndex: z.boolean().optional(),
   properties: z.record(z.union([z.string(), OntologyPropertySchema])).optional(),
@@ -401,26 +402,25 @@ export class OntologyService {
   }
 
   public getSuperClasses(entityType: string): string[] {
-    const superClasses: string[] = [];
-    const visited = new Set<string>();
+    const chain: string[] = [];
+    const visited = new Set<string>([entityType]); // seed with starting node to stop immediate cycles
 
     let current: string | undefined = entityType;
     while (current) {
       const def: any = this.schema.entities[current];
       if (!def) break;
 
-      // Support both `parent` and legacy `parentClass` keys
-      const parent: string | undefined = (def as any).parent || (def as any).parentClass;
+      const parent: string | undefined = def.parent ?? def.parentClass;
       if (!parent || visited.has(parent)) {
         break;
       }
 
-      superClasses.push(parent);
+      chain.push(parent);
       visited.add(parent);
       current = parent;
     }
 
-    return superClasses;
+    return chain;
   }
 
   // ------------------------------------------------------------------

@@ -18,6 +18,7 @@ module.exports = {
     '^@common/(.*)$': '<rootDir>/src/common/$1',
     '^@procurement/(.*)$': '<rootDir>/ontologies/procurement/$1',
     '^@generated/(.*)$': '<rootDir>/codegen/generated/$1',
+    '^@ingestion/(.*)$': '<rootDir>/src/ingestion/$1',
     '^@codegen/generated/(.*)$': '<rootDir>/codegen/generated/$1',
     '^ontologies/(.*)$': '<rootDir>/ontologies/$1',
   },

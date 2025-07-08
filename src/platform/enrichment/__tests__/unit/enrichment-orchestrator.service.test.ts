@@ -11,7 +11,9 @@ class MockEdgarService implements IEnrichmentService {
   async enrich(entity: OrganizationDTO): Promise<Record<string, any>> {
     if (entity.name === 'TestCorp') {
       return {
+        ...entity,
         enrichedData: {
+          ...(entity.enrichedData || {}),
           EDGAR: {
             metadata: {
               cik: '12345',
@@ -29,7 +31,9 @@ class MockSalesforceService implements IEnrichmentService {
   public readonly name = 'Salesforce';
   async enrich(entity: OrganizationDTO): Promise<Record<string, any>> {
     return {
+      ...entity,
       enrichedData: {
+        ...(entity.enrichedData || {}),
         Salesforce: {
           metadata: {
             salesforceId: 'SFDC-98765',
@@ -75,8 +79,14 @@ describe('EnrichmentOrchestratorService', () => {
       type: 'Organization',
       label: 'TestCorp'
     });
+    
+    // First enrichment with EDGAR service
     mockOntologyService.getEnrichmentServiceName.mockReturnValue('EDGAR');
     const edgarEnrichedEntity = await orchestrator.enrich(initialEntity);
+    expect(edgarEnrichedEntity).not.toBeNull();
+    expect((edgarEnrichedEntity as any).enrichedData?.EDGAR?.metadata?.cik).toBe('12345');
+    
+    // Second enrichment with Salesforce service on the already enriched entity
     mockOntologyService.getEnrichmentServiceName.mockReturnValue('Salesforce');
     const finalEntity = await orchestrator.enrich(edgarEnrichedEntity) as OrganizationDTO;
     expect(finalEntity).not.toBeNull();
@@ -115,8 +125,8 @@ describe('EnrichmentOrchestratorService', () => {
 
     const enrichedEntity = await orchestrator.enrich(initialEntity) as OrganizationDTO;
 
-    expect(enrichedEntity?.enrichedData?.source).toBe('initial-source');
-    expect(enrichedEntity?.enrichedData?.EDGAR?.metadata?.cik).toBe('12345');
+    expect((enrichedEntity as any).enrichedData?.source).toBe('initial-source');
+    expect((enrichedEntity as any).enrichedData?.EDGAR?.metadata?.cik).toBe('12345');
   });
 
   it('should continue enrichment even if one service fails', async () => {
@@ -153,7 +163,7 @@ describe('EnrichmentOrchestratorService', () => {
     const successfulEnrichmentEntity = await orchestrator.enrich(failedEnrichmentEntity) as OrganizationDTO;
 
     // The second service should have enriched the entity
-    expect(successfulEnrichmentEntity.enrichedData?.EDGAR?.metadata?.cik).toBe('12345');
+    expect((successfulEnrichmentEntity as any).enrichedData?.EDGAR?.metadata?.cik).toBe('12345');
 
     // Clean up the spy
     consoleErrorSpy.mockRestore();

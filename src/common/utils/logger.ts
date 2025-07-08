@@ -64,7 +64,15 @@ class Logger {
     if (process.env.NODE_ENV === 'production') {
       return JSON.stringify(entry);
     } else {
-      return `[${entry.timestamp}] ${level}: ${message}${data ? ` | ${JSON.stringify(data)}` : ''}`;
+      let extra = '';
+      if (data !== undefined) {
+        try {
+          extra = ` | ${JSON.stringify(data)}`;
+        } catch {
+          extra = ' | [Unserializable]';
+        }
+      }
+      return `[${entry.timestamp}] ${level}: ${message}${extra}`;
     }
   }
 

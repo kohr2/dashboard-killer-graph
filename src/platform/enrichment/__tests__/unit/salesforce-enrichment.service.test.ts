@@ -43,10 +43,10 @@ describe('SalesforceEnrichmentService', () => {
     const result = await service.enrich(entity);
 
     expect(result).not.toBeNull();
-    expect(result?.metadata?.salesforceId).toBe('SFDC-MOCK-12345');
-    expect(result?.metadata?.accountStatus).toBe('Active');
+    expect((result as any)?.metadata?.salesforceId).toBe('SFDC-MOCK-12345');
+    expect((result as any)?.metadata?.accountStatus).toBe('Active');
     // Ensure existing metadata is preserved
-    expect(result?.metadata?.cik).toBe('12345');
+    expect((result as any)?.metadata?.cik).toBe('12345');
   });
 
   it('should return null if the API call (simulated) fails', async () => {

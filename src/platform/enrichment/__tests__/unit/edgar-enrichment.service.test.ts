@@ -57,8 +57,8 @@ describe('EdgarEnrichmentService', () => {
       const result = await service.enrich(baseEntity);
 
       expect(result).not.toBeNull();
-      expect(result?.cik).toBe('12345');
-      expect(result?.legalName).toBe('Enrichment Corp');
+      expect((result as any).cik).toBe('12345');
+      expect((result as any).legalName).toBe('Enrichment Corp');
     });
 
     it('should return an empty object for an unknown organization', async () => {

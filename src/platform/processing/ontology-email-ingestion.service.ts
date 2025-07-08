@@ -115,6 +115,7 @@ export class OntologyEmailIngestionService {
       const pipeline = new GenericIngestionPipeline(
         this.contentProcessingService,
         this.neo4jIngestionService,
+        undefined,
         (input: IngestionInput) => input.content
       );
 

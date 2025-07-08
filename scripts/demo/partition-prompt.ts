@@ -15,7 +15,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join, isAbsolute, dirname } from 'path';
 import { registerSelectedOntologies } from '@src/register-ontologies';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { buildOntologySyncPayload } from '@platform/processing/content-processing.service';
+import { buildOntologySyncPayload, OntologySyncPayload } from '@platform/processing/content-processing.service';
 
 interface PromptPartition {
   name: string;
@@ -58,7 +58,7 @@ export function partitionPrompt(ontologyName: string, emailFile: string, maxPart
 
   // Filter out generic relationships (Entity->Entity patterns)
   const filteredRelationships = (payload.relationship_patterns || [])
-    .filter(pattern => {
+    .filter((pattern: string) => {
       // Robustly extract source, relationship, target
       const dashIdx = pattern.indexOf('-');
       const arrowIdx = pattern.lastIndexOf('->');
@@ -85,13 +85,13 @@ export function partitionPrompt(ontologyName: string, emailFile: string, maxPart
     });
 
   const entityLines = payload.entity_types
-    .filter((e) => !payload.property_types.includes(e))
-    .filter((e) => !['Thing', 'UnrecognizedEntity'].includes(e))
-    .map((e) => `- ${e}`)
+    .filter((e: string) => !payload.property_types.includes(e))
+    .filter((e: string) => !['Thing', 'UnrecognizedEntity'].includes(e))
+    .map((e: string) => `- ${e}`)
     .join('\n');
 
   const relationshipLines = filteredRelationships
-    .map((r) => `- ${r}`)
+    .map((r: string) => `- ${r}`)
     .join('\n');
 
   // Create partitions
@@ -294,7 +294,7 @@ function loadCompactOntology(compactOntologyPath: string) {
 }
 
 export function generateSinglePrompt(ontologyName: string, emailFile: string, compactOntologyPath?: string): string {
-  let payload: { entity_types: string[]; relationship_patterns: string[] };
+  let payload: any;
   let usingCompact = false;
   if (compactOntologyPath) {
     payload = loadCompactOntology(compactOntologyPath);
@@ -314,7 +314,7 @@ export function generateSinglePrompt(ontologyName: string, emailFile: string, co
 
   // Filter out generic relationships (Entity->Entity patterns)
   const filteredRelationships = (payload.relationship_patterns || [])
-    .filter(pattern => {
+    .filter((pattern: string) => {
       // Robustly extract source, relationship, target
       const dashIdx = pattern.indexOf('-');
       const arrowIdx = pattern.lastIndexOf('->');
@@ -344,12 +344,12 @@ export function generateSinglePrompt(ontologyName: string, emailFile: string, co
     });
 
   const entityLines = (payload.entity_types || [])
-    .filter((e) => !['Thing', 'UnrecognizedEntity'].includes(e))
-    .map((e) => `- ${e}`)
+    .filter((e: string) => !['Thing', 'UnrecognizedEntity'].includes(e))
+    .map((e: string) => `- ${e}`)
     .join('\n');
 
   const relationshipLines = filteredRelationships
-    .map((r) => `- ${r}`)
+    .map((r: string) => `- ${r}`)
     .join('\n');
 
   const ontologyExplanation = usingCompact

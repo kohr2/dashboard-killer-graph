@@ -864,7 +864,7 @@ export class OwlSource implements OntologySource {
    * "E55_" found in CIDOC CRM. Example: "E55_Type" -> "Type".
    * If the pattern is not present the name is returned unchanged.
    */
-  private normalizeEntityName(name: string | null | undefined): string | null {
+  public normalizeEntityName(name: string | null | undefined): string | null {
     if (!name) return null;
     // Remove E###_ prefix first
     let cleaned = name.replace(/^E\d+_/, '');

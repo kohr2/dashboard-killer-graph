@@ -324,17 +324,33 @@ export class ContentProcessingService {
             const service = this.enrichmentOrchestrator.getService(serviceName);
             if (service) {
               const result = await service.enrich(dto);
-              if (result?.success) {
-                const finalEntity = {
-                  ...entity,
-                  enrichedData: result.data,
-                  properties: {
-                    ...entity.properties,
-                    ...(result.data || {}),
-                  },
-                } as any;
-                enrichedEntities.push(finalEntity);
-                continue;
+              
+              // Handle mixed return types from enrichment services
+              if (result && typeof result === 'object') {
+                // Check if it's an EnrichmentResult format
+                if ('success' in result && result.success && 'data' in result) {
+                  const finalEntity = {
+                    ...entity,
+                    properties: {
+                      ...entity.properties,
+                      ...(result.data || {}),
+                    },
+                  } as any;
+                  enrichedEntities.push(finalEntity);
+                  continue;
+                } else if ('id' in result || 'name' in result || 'type' in result) {
+                  // It's an enriched entity (legacy format)
+                  const finalEntity = {
+                    ...entity,
+                    properties: {
+                      ...entity.properties,
+                      ...result,
+                    },
+                  } as any;
+                  enrichedEntities.push(finalEntity);
+                  continue;
+                }
+                // For empty objects {}, we don't add enrichment data
               }
             }
           } catch (err: any) {
