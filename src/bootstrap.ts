@@ -5,6 +5,8 @@ import OpenAI from 'openai';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
+import { ChatService } from '@platform/chat/application/services/chat.service';
+import { QueryTranslator } from '@platform/chat/application/services/query-translator.service';
 import { logger } from '@common/utils/logger';
 
 /**
@@ -30,6 +32,8 @@ export function bootstrap(): void {
   // Register other singletons
   container.registerSingleton(Neo4jConnection);
   container.registerSingleton(AccessControlService);
+  container.registerSingleton(QueryTranslator);
+  container.registerSingleton(ChatService);
 
   // Immediately load ontology data into the singleton
   logger.info('Loading ontology data into singleton...');
