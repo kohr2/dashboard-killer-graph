@@ -48,6 +48,9 @@ export function createApp(): express.Express {
     accessControlService,
     queryTranslator,
   );
+  
+  // Initialize Neo4j connection
+  neo4jConnection.connect();
 
   // ReasoningOrchestratorService still resolved through the container until refactored
   const reasoningOrchestrator = container.resolve(ReasoningOrchestratorService);

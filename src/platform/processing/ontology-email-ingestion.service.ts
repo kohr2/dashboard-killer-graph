@@ -3,11 +3,11 @@ import { OntologyService } from '@platform/ontology/ontology.service';
 import { ContentProcessingService } from './content-processing.service';
 import { Neo4jIngestionService } from './neo4j-ingestion.service';
 import { EmailFixtureGenerationService } from '../fixtures/email-fixture-generation.service';
+import { OntologyBuildService, BuildOptions } from '@platform/ontology/ontology-build.service';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { simpleParser } from 'mailparser';
 import { logger } from '@common/utils/logger';
-import { registerAllOntologies } from '../../register-ontologies';
 import { GenericIngestionPipeline, IngestionInput } from '@ingestion/pipeline/generic-ingestion-pipeline';
 
 /**
@@ -20,24 +20,27 @@ export class OntologyEmailIngestionService {
   private contentProcessingService: ContentProcessingService;
   private neo4jIngestionService: Neo4jIngestionService;
   private emailFixtureGenerationService: EmailFixtureGenerationService;
+  private ontologyBuildService: OntologyBuildService;
 
   constructor() {
     this.ontologyService = container.resolve(OntologyService);
     this.contentProcessingService = container.resolve(ContentProcessingService);
     this.neo4jIngestionService = container.resolve(Neo4jIngestionService);
     this.emailFixtureGenerationService = container.resolve(EmailFixtureGenerationService);
+    this.ontologyBuildService = container.resolve(OntologyBuildService);
   }
 
   /**
    * Ingest a fixture email for the specified ontology
    * @param ontologyName - The name of the ontology (e.g., 'fibo', 'procurement')
+   * @param buildOptions - Optional build options to limit entities/relationships
    */
-  async ingestOntologyEmail(ontologyName: string): Promise<void> {
+  async ingestOntologyEmail(ontologyName: string, buildOptions?: Partial<BuildOptions>): Promise<void> {
     logger.info(`🚀 Starting ontology email ingestion for: ${ontologyName}`);
 
     try {
       // Step 1: Build ontology service
-      await this.buildOntologyService(ontologyName);
+      await this.buildOntologyService(ontologyName, buildOptions);
 
       // Step 2: Generate fixture email
       const emailContent = await this.generateFixtureEmail(ontologyName);
@@ -58,22 +61,29 @@ export class OntologyEmailIngestionService {
   /**
    * Step 1: Build ontology service
    */
-  private async buildOntologyService(ontologyName: string): Promise<void> {
+  private async buildOntologyService(ontologyName: string, buildOptions?: Partial<BuildOptions>): Promise<void> {
     logger.info(`🔧 Step 1: Building ontology service for ${ontologyName}`);
     
     try {
-      // Register ontologies and build service
-      registerAllOntologies();
-      
-      // Verify the ontology exists
-      const ontologies = this.ontologyService.getAllOntologies();
-      const ontology = ontologies.find((o: any) => o.name.toLowerCase() === ontologyName.toLowerCase());
-      
-      if (!ontology) {
-        throw new Error(`Ontology '${ontologyName}' not found. Available ontologies: ${ontologies.map((o: any) => o.name).join(', ')}`);
+      // If build options are provided, use the ontology build service
+      if (buildOptions) {
+        await this.ontologyBuildService.buildOntologyByName(ontologyName, buildOptions);
+        logger.info(`✅ Built ontology ${ontologyName} with options:`, buildOptions);
+      } else {
+        // Register ontologies and build service
+        const { registerAllOntologies } = require('../../register-ontologies');
+        registerAllOntologies();
+        
+        // Verify the ontology exists
+        const ontologies = this.ontologyService.getAllOntologies();
+        const ontology = ontologies.find((o: any) => o.name.toLowerCase() === ontologyName.toLowerCase());
+        
+        if (!ontology) {
+          throw new Error(`Ontology '${ontologyName}' not found. Available ontologies: ${ontologies.map((o: any) => o.name).join(', ')}`);
+        }
+        
+        logger.info(`✅ Ontology service built successfully for ${ontologyName}`);
       }
-      
-      logger.info(`✅ Ontology service built successfully for ${ontologyName}`);
     } catch (error) {
       logger.error(`❌ Failed to build ontology service for ${ontologyName}:`, error);
       throw error;

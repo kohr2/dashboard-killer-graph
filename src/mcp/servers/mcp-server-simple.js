@@ -52,8 +52,11 @@ const {
   ListToolsRequestSchema,
 } = require('@modelcontextprotocol/sdk/types.js');
 
-// Import the bootstrap function to initialize all services properly
+// Import the bootstrap function and services BEFORE calling bootstrap
 const { bootstrap } = require('../../bootstrap');
+const { OntologyService } = require('@platform/ontology/ontology.service');
+const { ChatService } = require('@platform/chat/application/services/chat.service');
+const { Neo4jConnection } = require('@platform/database/neo4j-connection');
 
 // A mock user for the MCP server context, conforming to the User and Role interfaces.
 const mcpUser = {
@@ -74,9 +77,6 @@ async function main() {
     bootstrap();
     
     // Get the services we need from the container
-    const { OntologyService } = require('@platform/ontology/ontology.service');
-    const { ChatService } = require('@platform/chat/application/services/chat.service');
-    const { Neo4jConnection } = require('@platform/database/neo4j-connection');
     
     const ontologyService = container.resolve(OntologyService);
     const chatService = container.resolve(ChatService);

@@ -1,14 +1,15 @@
+import { injectable, inject } from 'tsyringe';
 import OpenAI from 'openai';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { logger } from '@common/utils/logger';
 import type { StructuredQuery, ConversationTurn } from './query-translator.types';
 
-// Removed tsyringe dependency
+@injectable()
 export class QueryTranslator {
   private openai: OpenAI;
 
   constructor(
-    private readonly ontologyService: OntologyService = OntologyService.getInstance(),
+    private readonly ontologyService: OntologyService,
     openai?: OpenAI,
   ) {
     if (openai) {

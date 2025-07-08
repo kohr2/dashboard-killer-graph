@@ -1,4 +1,4 @@
-// Removed tsyringe dependency
+import { injectable, inject } from 'tsyringe';
 import { v4 as uuidv4 } from 'uuid';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
 import { User } from '@platform/security/domain/user';
@@ -33,6 +33,7 @@ export interface ChatResponse {
   };
 }
 
+@injectable()
 export class ChatService {
   // In-memory store for conversations, for now. Replace with a real repository.
   private conversations: Map<string, Conversation> = new Map();
@@ -42,23 +43,30 @@ export class ChatService {
   private neo4j: Neo4jConnection;
   private ontologyService: OntologyService;
   private accessControlService: AccessControlService;
+  private queryTranslator: QueryTranslator;
 
   constructor(
     neo4j: Neo4jConnection,
     ontologyService: OntologyService,
     accessControlService: AccessControlService,
-    private readonly queryTranslator: QueryTranslator,
+    queryTranslator: QueryTranslator,
+    openai?: OpenAI,
   ) {
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY environment variable is not set.');
+    if (openai) {
+      this.openai = openai;
+    } else {
+      if (!process.env.OPENAI_API_KEY) {
+        throw new Error('OPENAI_API_KEY environment variable is not set.');
+      }
+      this.openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
     }
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
 
     this.neo4j = neo4j;
     this.ontologyService = ontologyService;
     this.accessControlService = accessControlService;
+    this.queryTranslator = queryTranslator;
 
     // Seed with a sample conversation for testing
     const sampleConversation: Conversation = {

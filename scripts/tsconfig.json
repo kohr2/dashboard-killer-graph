@@ -12,9 +12,7 @@
       "@common/*": ["src/common/*"],
       "@shared/*": ["src/shared/*"],
       "@ingestion/*": ["src/ingestion/*"],
-      "@generated/*": ["codegen/generated/*"],
-      "@generated/*/*DTO": ["codegen/generated/*/*.dto.ts"],
-      "@generated/*/*Dto": ["codegen/generated/*/*.dto.ts"]
+      "@generated/*": ["codegen/generated/*"]
     },
     "noEmit": true,
     "skipLibCheck": true,
