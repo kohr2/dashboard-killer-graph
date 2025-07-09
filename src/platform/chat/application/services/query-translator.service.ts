@@ -28,6 +28,14 @@ export class QueryTranslator {
     rawQuery: string,
     history: ConversationTurn[] = []
   ): Promise<StructuredQuery> {
+    // First try simple pattern matching for basic queries
+    const simpleResult = this.trySimplePatternMatching(rawQuery);
+    if (simpleResult) {
+      logger.info('Using simple pattern matching for query:', rawQuery);
+      return simpleResult;
+    }
+
+    // Fallback to OpenAI for complex queries
     const validEntityTypesArray = this.ontologyService.getAllEntityTypes();
     const validEntityTypes = validEntityTypesArray.join(', ');
     const lastTurn = history.length > 0 ? history[history.length - 1] : null;
@@ -50,7 +58,7 @@ You have three commands:
 2. 'show_related': For listing resources related to the entities from the previous turn in the conversation, or for complex self-contained relational queries.
 3. 'unknown': For anything else (greetings, general questions, etc.).
 
-The supported resource types are: ${validEntityTypes}.
+The supported resource types are: ${validEntityTypes}
 The user can write in any language.
 
 # Rules:
@@ -163,8 +171,77 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
 
     } catch (error) {
       logger.error('Error translating query with OpenAI:', error);
-      // Fallback to a safe default in case of any API or parsing error
+      logger.info('Falling back to simple pattern matching...');
+      
+      // Enhanced fallback: try simple pattern matching again
+      const fallbackResult = this.trySimplePatternMatching(rawQuery);
+      if (fallbackResult) {
+        logger.info('Using fallback pattern matching for query:', rawQuery);
+        return fallbackResult;
+      }
+      
+      // Final fallback to a safe default
       return { command: 'unknown', resourceTypes: [] };
     }
+  }
+
+  /**
+   * Simple pattern matching for basic queries when OpenAI is not available
+   */
+  private trySimplePatternMatching(query: string): StructuredQuery | null {
+    const normalizedQuery = query.toLowerCase().trim();
+    const validEntityTypes = this.ontologyService.getAllEntityTypes();
+    
+    // Pattern 1: "show all [entity]" or "list all [entity]"
+    const showAllPattern = /^(show|list|get|find)\s+(all\s+)?(.*?)s?$/i;
+    const showMatch = normalizedQuery.match(showAllPattern);
+    
+    if (showMatch) {
+      const entityPart = showMatch[3];
+      
+      // Try to match common entity types
+      const entityMappings: { [key: string]: string[] } = {
+        'person': ['Person'],
+        'people': ['Person'],
+        'persons': ['Person'],
+        'organization': ['Organization'],
+        'organizations': ['Organization'],
+        'org': ['Organization'],
+        'orgs': ['Organization'],
+        'company': ['Organization'],
+        'companies': ['Organization'],
+        'deal': ['Deal'],
+        'deals': ['Deal'],
+        'contract': ['Contract'],
+        'contracts': ['Contract'],
+        'communication': ['Communication'],
+        'communications': ['Communication'],
+        'email': ['Email'],
+        'emails': ['Email'],
+        'ratingagency': ['RatingAgency'],
+        'rating agency': ['RatingAgency'],
+        'rating agencies': ['RatingAgency'],
+        'amountofmoney': ['AmountOfMoney'],
+        'amount of money': ['AmountOfMoney'],
+        'amounts of money': ['AmountOfMoney'],
+        'money': ['AmountOfMoney'],
+        'amount': ['AmountOfMoney'],
+        'amounts': ['AmountOfMoney']
+      };
+      
+      const matchedTypes = entityMappings[entityPart];
+      if (matchedTypes) {
+        // Verify the types exist in the ontology
+        const validTypes = matchedTypes.filter(type => validEntityTypes.includes(type));
+        if (validTypes.length > 0) {
+          return {
+            command: 'show',
+            resourceTypes: validTypes
+          };
+        }
+      }
+    }
+    
+    return null;
   }
 } 

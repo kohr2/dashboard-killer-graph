@@ -205,9 +205,14 @@ export class ChatService {
     }
 
     // NEW: Generate a natural language response
-    const finalResponse = await this.generateNaturalResponse(query, response, sourceEntityForResponse);
-
-    return finalResponse;
+    try {
+      const finalResponse = await this.generateNaturalResponse(query, response, sourceEntityForResponse);
+      return finalResponse;
+    } catch (error) {
+      logger.error('Error generating natural response, falling back to simple format:', error);
+      // Fallback to simple response formatting
+      return responseText;
+    }
   }
 
   private cleanRecord(record: any): any {

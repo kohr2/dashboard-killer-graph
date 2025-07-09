@@ -101,6 +101,40 @@ export function createApp(): express.Express {
     res.status(200).send('OK');
   });
 
+  // Test endpoint for direct database access
+  apiRouter.get('/test-db', async (req, res) => {
+    try {
+      const session = neo4jConnection.getSession();
+      
+      try {
+        // Test query
+        const result = await session.run('MATCH (n:Person) RETURN n LIMIT 5');
+        const people = result.records.map(record => {
+          const person = record.get('n').properties;
+          return {
+            id: person.id,
+            name: person.name || 'Unnamed',
+            type: 'Person'
+          };
+        });
+        
+        res.json({
+          success: true,
+          database: process.env.NEO4J_DATABASE,
+          totalPeople: people.length,
+          people: people
+        });
+      } finally {
+        await session.close();
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
   app.use('/api', apiRouter);
   return app;
 }

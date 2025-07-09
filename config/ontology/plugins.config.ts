@@ -66,7 +66,7 @@ class PluginRegistry {
     const pluginPath = path.join(this.ontologiesDir, ontologyName, `${ontologyName}.plugin.ts`);
     
     if (!fs.existsSync(pluginPath)) {
-      console.warn(`Plugin file not found: ${pluginPath}`);
+      // Silently skip missing plugin files - this is normal for plugins not yet implemented
       return;
     }
 

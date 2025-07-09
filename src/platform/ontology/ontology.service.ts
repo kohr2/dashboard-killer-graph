@@ -293,6 +293,7 @@ export class OntologyService {
    * Generates a human-readable representation of the current graph schema.
    * The format is a simple Markdown-style list so that LLM prompts can embed
    * it directly (see QueryTranslator & MCP server).
+   * Limited to 250 entities and 250 relationships to avoid overwhelming responses.
    *
    * Example output:
    *
@@ -306,14 +307,20 @@ export class OntologyService {
    * ```
    */
   public getSchemaRepresentation(): string {
-    // Build entity lines
-    const entityLines = Object.entries(this.schema.entities).map(([name, def]) => {
+    const MAX_ITEMS = 250;
+    
+    // Build entity lines (limited to 250)
+    const allEntityEntries = Object.entries(this.schema.entities);
+    const entityEntries = allEntityEntries.slice(0, MAX_ITEMS);
+    const entityLines = entityEntries.map(([name, def]) => {
       const desc = def.description ? `: ${def.description}` : '';
       return `- ${name}${desc}`;
     });
 
-    // Build relationship lines
-    const relationshipLines = Object.entries(this.schema.relationships).map(([name, def]) => {
+    // Build relationship lines (limited to 250)
+    const allRelationshipEntries = Object.entries(this.schema.relationships);
+    const relationshipEntries = allRelationshipEntries.slice(0, MAX_ITEMS);
+    const relationshipLines = relationshipEntries.map(([name, def]) => {
       const domain = Array.isArray(def.domain) ? def.domain.join(' | ') : def.domain;
       const range = Array.isArray(def.range) ? def.range.join(' | ') : def.range;
       const arrow = ' → ';
@@ -322,16 +329,34 @@ export class OntologyService {
     });
 
     const parts: string[] = [];
-    parts.push(`## Entities (${entityLines.length})`);
+    const totalEntities = allEntityEntries.length;
+    const showingEntities = entityEntries.length;
+    const entityTitle = totalEntities > MAX_ITEMS 
+      ? `## Entities (showing ${showingEntities} of ${totalEntities})`
+      : `## Entities (${totalEntities})`;
+    
+    parts.push(entityTitle);
     if (entityLines.length) {
       parts.push(...entityLines);
+      if (totalEntities > MAX_ITEMS) {
+        parts.push(`- ... and ${totalEntities - MAX_ITEMS} more entities`);
+      }
     } else {
       parts.push('- _None loaded_');
     }
 
-    parts.push('\n## Relationships (' + relationshipLines.length + ')');
+    const totalRelationships = allRelationshipEntries.length;
+    const showingRelationships = relationshipEntries.length;
+    const relationshipTitle = totalRelationships > MAX_ITEMS
+      ? `\n## Relationships (showing ${showingRelationships} of ${totalRelationships})`
+      : `\n## Relationships (${totalRelationships})`;
+    
+    parts.push(relationshipTitle);
     if (relationshipLines.length) {
       parts.push(...relationshipLines);
+      if (totalRelationships > MAX_ITEMS) {
+        parts.push(`- ... and ${totalRelationships - MAX_ITEMS} more relationships`);
+      }
     } else {
       parts.push('- _None loaded_');
     }

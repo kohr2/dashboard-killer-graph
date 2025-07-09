@@ -280,33 +280,41 @@ DEBUG=* npx ts-node scripts/ontology/build-ontology.ts --ontology-name fibo
 
 ### MCP Server Setup (Claude Desktop Integration)
 
-The MCP server enables Claude Desktop to query your knowledge graph directly.
+The MCP server provides ontology-agnostic Claude Desktop integration.
 
 #### 1. Start the MCP Server
+
 ```bash
-# In a separate terminal
+# Default (all enabled ontologies)
 npm run dev:mcp
+
+# Specific ontologies
+MCP_ACTIVE_ONTOLOGIES=financial,crm npm run dev:mcp
+
+# Configure database + ontologies
+NEO4J_DATABASE=fibo MCP_ACTIVE_ONTOLOGIES=fibo npm run dev:mcp
 ```
 
 #### 2. Configure Claude Desktop
-1. Open Claude Desktop
-2. Go to Settings → MCP Servers
-3. Add a new server with these settings:
+1. Open Claude Desktop → Settings → MCP Servers
+2. Add server:
    - **Name**: `llm-orchestrator`
    - **Command**: `node`
    - **Arguments**: `["/path/to/your/project/src/mcp/servers/mcp-server-simple.js"]`
    - **Working Directory**: `/path/to/your/project`
 
-#### 3. Test the Integration
-In Claude Desktop, you can now ask questions like:
-- "Show me all deals for the company 'BlueWave'"
-- "Find contacts related to the deal 'Project Alpha'"
-- "List companies in the technology sector"
+#### 3. Example Queries
 
-#### Troubleshooting MCP
-- **Server not found**: Ensure the MCP server is running (`npm run dev:mcp`)
-- **Connection errors**: Check the file paths in Claude Desktop configuration
-- **No response**: Verify Neo4j is running and accessible
+The server adapts to your ontology configuration:
+
+- **Financial**: `"show all LegalEntity"`, `"find organizations"`
+- **CRM**: `"show all Person"`, `"list contacts"`
+- **FIBO**: `"show all FinancialInstrument"`
+- **Multi-domain**: `"find deals for Morgan Stanley"`
+
+#### Troubleshooting
+- **No response**: Check Neo4j is running and MCP server is started
+- **Wrong entities**: Verify `MCP_ACTIVE_ONTOLOGIES` and `ontology.json` files
 
 ### Quick Demo
 

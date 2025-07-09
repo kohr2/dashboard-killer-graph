@@ -30,7 +30,7 @@ testing-conventions:
 # Code Style and Quality
 # Ensure that the generated code is consistent with the rest of the project.
 code-style:
-  - rule: "do not user emoji in code or logs"
+  - rule: "do not user emoji in code or logs or documentations or comments or anything else"
 
 code-style-typescript:
   - rule: "Format all generated TypeScript code using the project's Prettier configuration."
