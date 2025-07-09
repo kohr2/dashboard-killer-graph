@@ -1,20 +1,21 @@
 import 'reflect-metadata';
+
+// Test configuration
+const testDatabaseName = 'test-ontology-integration';
+
+// Set test database environment variable BEFORE importing any services
+process.env.NEO4J_DATABASE = testDatabaseName;
+
 import { container } from 'tsyringe';
 import { OntologyEmailIngestionService } from '@platform/processing/ontology-email-ingestion.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { logger } from '@common/utils/logger';
-
-// Test configuration
-const testDatabaseName = 'test-ontology-integration';
 
 describe('Ontology Email Integration E2E', () => {
   let ontologyEmailIngestionService: OntologyEmailIngestionService;
   let neo4jConnection: Neo4jConnection;
 
   beforeAll(async () => {
-    // Set test database environment variable
-    process.env.NEO4J_DATABASE = testDatabaseName;
-    
     // Drop and recreate the test database to ensure completely clean state
     neo4jConnection = container.resolve(Neo4jConnection);
     await neo4jConnection.connect();

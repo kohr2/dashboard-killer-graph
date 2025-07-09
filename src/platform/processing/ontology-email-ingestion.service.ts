@@ -65,25 +65,25 @@ export class OntologyEmailIngestionService {
     logger.info(`🔧 Step 1: Building ontology service for ${ontologyName}`);
     
     try {
+      // Always register all ontologies first to ensure they're loaded into the service
+      const { registerAllOntologies } = require('../../register-ontologies');
+      registerAllOntologies();
+      
       // If build options are provided, use the ontology build service
       if (buildOptions) {
         await this.ontologyBuildService.buildOntologyByName(ontologyName, buildOptions);
         logger.info(`✅ Built ontology ${ontologyName} with options:`, buildOptions);
-      } else {
-        // Register ontologies and build service
-        const { registerAllOntologies } = require('../../register-ontologies');
-        registerAllOntologies();
-        
-        // Verify the ontology exists
-        const ontologies = this.ontologyService.getAllOntologies();
-        const ontology = ontologies.find((o: any) => o.name.toLowerCase() === ontologyName.toLowerCase());
-        
-        if (!ontology) {
-          throw new Error(`Ontology '${ontologyName}' not found. Available ontologies: ${ontologies.map((o: any) => o.name).join(', ')}`);
-        }
-        
-        logger.info(`✅ Ontology service built successfully for ${ontologyName}`);
       }
+      
+      // Verify the ontology exists
+      const ontologies = this.ontologyService.getAllOntologies();
+      const ontology = ontologies.find((o: any) => o.name.toLowerCase() === ontologyName.toLowerCase());
+      
+      if (!ontology) {
+        throw new Error(`Ontology '${ontologyName}' not found. Available ontologies: ${ontologies.map((o: any) => o.name).join(', ')}`);
+      }
+      
+      logger.info(`✅ Ontology service built successfully for ${ontologyName}`);
     } catch (error) {
       logger.error(`❌ Failed to build ontology service for ${ontologyName}:`, error);
       throw error;

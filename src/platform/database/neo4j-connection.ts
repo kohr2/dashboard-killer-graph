@@ -65,6 +65,11 @@ export class Neo4jConnection {
         logger.info(`🗄️ Creating database: ${this.database}`);
         await session.run(`CREATE DATABASE \`${this.database}\``);
         logger.info(`✅ Database ${this.database} created successfully`);
+        
+        // Wait for database to be fully initialized
+        logger.info(`⏱️ Waiting for database ${this.database} to be ready...`);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        logger.info(`✅ Database ${this.database} is ready`);
       } else {
         logger.info(`✅ Database ${this.database} already exists`);
       }
