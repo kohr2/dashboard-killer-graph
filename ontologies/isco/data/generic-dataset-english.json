@@ -1,0 +1,351 @@
+{
+  "metadata": {
+    "source": "ISCO Classification System (English)",
+    "ontology": "isco",
+    "version": "1.0.0",
+    "createdAt": "2025-07-10T17:53:49.264Z",
+    "recordCount": 20
+  },
+  "records": [
+    {
+      "id": "ISCOMajorGroup_1",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Managers",
+      "properties": {
+        "code": "1",
+        "name": "Managers",
+        "description": "Managers plan, direct, coordinate and evaluate the overall activities of enterprises, governments and other organizations, or of organizational units within them, and formulate and review their policies, laws, rules and regulations.",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_1"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_2",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Professionals",
+      "properties": {
+        "code": "2",
+        "name": "Professionals",
+        "description": "Professionals increase the existing stock of knowledge, apply scientific or artistic concepts and theories, teach about the foregoing in a systematic manner, or engage in any combination of these activities.",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_2"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_3",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Technicians and associate professionals",
+      "properties": {
+        "code": "3",
+        "name": "Technicians and associate professionals",
+        "description": "Technicians and associate professionals perform technical and related tasks connected with research and the application of scientific or artistic concepts and operational methods, and government and business regulations.",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_3"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_4",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Clerical support workers",
+      "properties": {
+        "code": "4",
+        "name": "Clerical support workers",
+        "description": "Clerical support workers record, organize, store, compute and retrieve information related to transactions, and provide information to members of the public, clients and customers.",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_4"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_5",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Service and sales workers",
+      "properties": {
+        "code": "5",
+        "name": "Service and sales workers",
+        "description": "Service and sales workers provide personal and protective services related to travel, housekeeping, catering, waiting, personal care, or selling, demonstrate and promoting sales of goods in wholesale or retail shops and similar establishments, or market stalls and door-to-door.",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_5"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_6",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Skilled agricultural, forestry and fishery workers",
+      "properties": {
+        "code": "6",
+        "name": "Skilled agricultural, forestry and fishery workers",
+        "description": "Skilled agricultural, forestry and fishery workers grow and harvest field or tree and shrub crops, vegetables, fruits, nuts, fungi, honey and other bee products; breed, tend, feed or hunt animals; produce a variety of animal husbandry products; cultivate, conserve and exploit forests; breed or catch fish; and cultivate or gather other forms of aquatic life in order to provide food, shelter, income, and employment for themselves and their households.",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_6"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_7",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Craft and related trades workers",
+      "properties": {
+        "code": "7",
+        "name": "Craft and related trades workers",
+        "description": "Craft and related trades workers apply specific knowledge and skills to construct and maintain buildings; form metal; erect metal structures; set up and operate machine tools; make, fit, maintain and repair machinery, equipment or tools; carry out printing work; and produce or process foodstuffs, textiles, wooden, metal and other articles including handicrafts.",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_7"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_8",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Plant and machine operators, and assemblers",
+      "properties": {
+        "code": "8",
+        "name": "Plant and machine operators, and assemblers",
+        "description": "Plant and machine operators and assemblers monitor and operate industrial and agricultural machinery and equipment on the spot or by remote control; drive and operate trains, motor vehicles and mobile machinery and equipment; or assemble products from component parts according to strict specifications and procedures.",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_8"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_9",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Elementary occupations",
+      "properties": {
+        "code": "9",
+        "name": "Elementary occupations",
+        "description": "Elementary occupations involve the performance of simple and routine tasks which may require the use of hand-held tools and in some cases considerable physical effort.",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_9"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_0",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Armed forces occupations",
+      "properties": {
+        "code": "0",
+        "name": "Armed forces occupations",
+        "description": "Armed forces occupations involve the application of military tactics, strategy and logistics, and the operation of weapons, equipment and machinery in air, sea and land operations and for the defence and security of the state.",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_0"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_1",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Managers",
+      "properties": {
+        "code": "1",
+        "name": "Managers",
+        "level": "major",
+        "description": "Managers plan, direct, coordinate and evaluate the overall activities of enterprises, governments and other organizations, or of organizational units within them, and formulate and review their policies, laws, rules and regulations."
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_1"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_2",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Professionals",
+      "properties": {
+        "code": "2",
+        "name": "Professionals",
+        "level": "major",
+        "description": "Professionals increase the existing stock of knowledge, apply scientific or artistic concepts and theories, teach about the foregoing in a systematic manner, or engage in any combination of these activities."
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_2"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_3",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Technicians and associate professionals",
+      "properties": {
+        "code": "3",
+        "name": "Technicians and associate professionals",
+        "level": "major",
+        "description": "Technicians and associate professionals perform technical and related tasks connected with research and the application of scientific or artistic concepts and operational methods, and government and business regulations."
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_3"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_4",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Clerical support workers",
+      "properties": {
+        "code": "4",
+        "name": "Clerical support workers",
+        "level": "major",
+        "description": "Clerical support workers record, organize, store, compute and retrieve information related to transactions, and provide information to members of the public, clients and customers."
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_4"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_5",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Service and sales workers",
+      "properties": {
+        "code": "5",
+        "name": "Service and sales workers",
+        "level": "major",
+        "description": "Service and sales workers provide personal and protective services related to travel, housekeeping, catering, waiting, personal care, or selling, demonstrate and promoting sales of goods in wholesale or retail shops and similar establishments, or market stalls and door-to-door."
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_5"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_6",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Skilled agricultural, forestry and fishery workers",
+      "properties": {
+        "code": "6",
+        "name": "Skilled agricultural, forestry and fishery workers",
+        "level": "major",
+        "description": "Skilled agricultural, forestry and fishery workers grow and harvest field or tree and shrub crops, vegetables, fruits, nuts, fungi, honey and other bee products; breed, tend, feed or hunt animals; produce a variety of animal husbandry products; cultivate, conserve and exploit forests; breed or catch fish; and cultivate or gather other forms of aquatic life in order to provide food, shelter, income, and employment for themselves and their households."
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_6"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_7",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Craft and related trades workers",
+      "properties": {
+        "code": "7",
+        "name": "Craft and related trades workers",
+        "level": "major",
+        "description": "Craft and related trades workers apply specific knowledge and skills to construct and maintain buildings; form metal; erect metal structures; set up and operate machine tools; make, fit, maintain and repair machinery, equipment or tools; carry out printing work; and produce or process foodstuffs, textiles, wooden, metal and other articles including handicrafts."
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_7"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_8",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Plant and machine operators, and assemblers",
+      "properties": {
+        "code": "8",
+        "name": "Plant and machine operators, and assemblers",
+        "level": "major",
+        "description": "Plant and machine operators and assemblers monitor and operate industrial and agricultural machinery and equipment on the spot or by remote control; drive and operate trains, motor vehicles and mobile machinery and equipment; or assemble products from component parts according to strict specifications and procedures."
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_8"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_9",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Elementary occupations",
+      "properties": {
+        "code": "9",
+        "name": "Elementary occupations",
+        "level": "major",
+        "description": "Elementary occupations involve the performance of simple and routine tasks which may require the use of hand-held tools and in some cases considerable physical effort."
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_9"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_0",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Armed forces occupations",
+      "properties": {
+        "code": "0",
+        "name": "Armed forces occupations",
+        "level": "major",
+        "description": "Armed forces occupations involve the application of military tactics, strategy and logistics, and the operation of weapons, equipment and machinery in air, sea and land operations and for the defence and security of the state."
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_0"
+        }
+      ]
+    }
+  ]
+}

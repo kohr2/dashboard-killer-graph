@@ -1,0 +1,55 @@
+{
+  "ISCO_GROUP_PARENT": [],
+  "ISCO_GROUP_TYPE": [
+    {
+      "source": "ISCOMajorGroup_1",
+      "target": "ISCOMajorGroup_1",
+      "type": "ISCOMajorGroup"
+    },
+    {
+      "source": "ISCOMajorGroup_2",
+      "target": "ISCOMajorGroup_2",
+      "type": "ISCOMajorGroup"
+    },
+    {
+      "source": "ISCOMajorGroup_3",
+      "target": "ISCOMajorGroup_3",
+      "type": "ISCOMajorGroup"
+    },
+    {
+      "source": "ISCOMajorGroup_4",
+      "target": "ISCOMajorGroup_4",
+      "type": "ISCOMajorGroup"
+    },
+    {
+      "source": "ISCOMajorGroup_5",
+      "target": "ISCOMajorGroup_5",
+      "type": "ISCOMajorGroup"
+    },
+    {
+      "source": "ISCOMajorGroup_6",
+      "target": "ISCOMajorGroup_6",
+      "type": "ISCOMajorGroup"
+    },
+    {
+      "source": "ISCOMajorGroup_7",
+      "target": "ISCOMajorGroup_7",
+      "type": "ISCOMajorGroup"
+    },
+    {
+      "source": "ISCOMajorGroup_8",
+      "target": "ISCOMajorGroup_8",
+      "type": "ISCOMajorGroup"
+    },
+    {
+      "source": "ISCOMajorGroup_9",
+      "target": "ISCOMajorGroup_9",
+      "type": "ISCOMajorGroup"
+    },
+    {
+      "source": "ISCOMajorGroup_0",
+      "target": "ISCOMajorGroup_0",
+      "type": "ISCOMajorGroup"
+    }
+  ]
+}

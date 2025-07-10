@@ -146,8 +146,8 @@ class ISCOOnlyIngestionService {
       // Load ontology schema
       this.loadOntologySchema();
 
-      // Load dataset
-      const datasetPath = path.join(this.ontologyDir, 'data', 'generic-dataset.json');
+      // Load dataset (use English version)
+      const datasetPath = path.join(this.ontologyDir, 'data', 'generic-dataset-english.json');
       if (!fs.existsSync(datasetPath)) {
         throw new Error(`Dataset file not found: ${datasetPath}`);
       }
