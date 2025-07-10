@@ -29,6 +29,7 @@ This index provides navigation to all documentation files in the Knowledge Graph
 
 ### Domain-Specific
 - **[Procurement Ontology](architecture/ontologies/procurement.md)** - Procurement domain documentation
+- **[GeoNames Ontology](architecture/ontologies/geonames.md)** - Geographic places, cities, and countries
 
 ## 🛠️ Development Documentation
 
@@ -53,6 +54,7 @@ This index provides navigation to all documentation files in the Knowledge Graph
 
 ### Enhanced Features
 - **[Enhanced Entity Extraction](features/enhanced-entity-extraction.md)** - Advanced entity extraction capabilities
+- **[NLP Service Ontology Scoping](features/nlp-service-ontology-scoping.md)** - Multi-ontology support for improved extraction accuracy
 
 ## 📋 Documentation by Category
 
@@ -163,3 +165,25 @@ This index provides navigation to all documentation files in the Knowledge Graph
 **Last Updated**: July 3, 2025  
 **Documentation Version**: v1.0.0  
 **Maintained By**: Development Team
+
+## Recent Changes
+
+### Latest Release (Current)
+- **Added NLP Service Ontology Scoping** - Support for multiple ontologies (financial, procurement, CRM) to improve extraction accuracy
+- **Enhanced NLP Service Deployment** - Production-ready Docker containers with Nginx reverse proxy and SSL support
+- **Python Client SDK** - Easy integration for external applications with ontology scoping support
+- **Improved Entity Extraction** - Domain-specific extraction with reduced noise and better performance
+- **Fixed chat system database selection** - ChatService now correctly uses configured database instead of default
+- **Resolved dependency injection issues** - Added proper @injectable decorators to ChatService and QueryTranslator
+- **Fixed QueryTranslator validation bug** - Corrected entity type validation logic that was causing false positives
+- **Enhanced multi-database support** - System now properly switches between Neo4j databases (fibo, procurement, crm)
+- **Improved chat troubleshooting** - Added comprehensive debugging tools and documentation
+- **Enhanced ontology generation** with importance-based filtering and LLM-powered analysis
+- **Added FIBO ontology support** with comprehensive processing from EDM Council repository
+- **Implemented ignored items tracking** for transparency in ontology filtering
+- **Extended ontology interfaces** to support ignored entities and relationships throughout pipeline
+- **Added fallback heuristics** when LLM endpoints unavailable for ontology analysis
+- **Processed FIBO with 100 entity/relationship limits** for comprehensive financial domain coverage
+- **Enhanced documentation** with detailed ontology processing guides and troubleshooting
+- **Improved test coverage** with comprehensive mock objects and TDD approach
+- **Updated build configuration** for better TypeScript support and error handling

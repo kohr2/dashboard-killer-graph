@@ -90,13 +90,13 @@ The system is composed of a central **Platform** and multiple **Extensions**.
 +-----------------+-----------------+-----------------+
 |                 |                 |                 |
 +-----------------+-------+ +-------+-------+ +-------+-----------------+
-|   CRM Ontology Extension  | | Financial Ontology Ext. | | Procurement Ontology Ext. |
-| (Contacts, Orgs)        | | (Deals, Investments)    | | (Contracts, Tenders)      |
+|   CRM Ontology Extension  | | Financial Ontology Ext. | | Procurement Ontology Ext. | | GeoNames Ontology Ext. |
+| (Contacts, Orgs)        | | (Deals, Investments)    | | (Contracts, Tenders)      | | (Cities, Countries)     |
 +-------------------------+ +-------------------------+ +-------------------------+
 ```
 
 -   **Platform Core**: Provides the essential services: extension loading, knowledge graph connection (Neo4j), conversational interface, and shared tools. It is domain-agnostic.
--   **Ontology Extensions**: Self-contained modules that define a specific business domain (e.g., CRM, Finance, Procurement). Each extension contributes its own data model (`ontology.json`), business logic, and services to the platform. Extensions are automatically discovered and loaded by the plugin registry.
+-   **Ontology Extensions**: Self-contained modules that define a specific business domain (e.g., CRM, Finance, Procurement, Geography). Each extension contributes its own data model (`ontology.json`), business logic, and services to the platform. Extensions are automatically discovered and loaded by the plugin registry.
 
 This modular design allows new capabilities to be added without modifying the core platform.
 
@@ -164,6 +164,7 @@ curl -X POST http://localhost:3001/api/chat \
 -   [x] **MCP Server**: Integration with Claude Desktop for AI-powered assistance.
 -   [x] **CRM & Financial Extensions**: Foundational extensions for CRM and Finance domains.
 -   [x] **Procurement Extension**: Public procurement ontology with 227 entities and 595 relationships.
+-   [x] **GeoNames Extension**: Geographic ontology with 159,045 cities from 195+ countries.
 -   [x] **Compact Ontology & Prompt Partitioning**: New compact ontology format (≈ 98 % size reduction) and partitioned prompt generation for efficient LLM interaction. Entity (`e`) and relationship (`r`) lists are now alphabetically sorted for deterministic diffing.
 -   [x] **Automated Code Generation**: Ontology-to-code generation with plugin templates.
 -   [x] **TDD Foundation**: Comprehensive test structure with Jest.

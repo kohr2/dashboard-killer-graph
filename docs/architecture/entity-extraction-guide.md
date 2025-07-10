@@ -10,20 +10,93 @@ Our system has evolved from a regex-based approach to a more sophisticated solut
 
 The core of our entity extraction is a Python-based microservice using the `spaCy` library, a leading tool for Natural Language Processing. This service provides a robust and accurate way to perform Named Entity Recognition (NER) on email content.
 
-### 1. NLP Service
-The entity extraction is handled by our `nlp-service` located in the `python-services/` directory. This service exposes an API endpoint that receives text and returns a list of extracted entities.
+### 1. NLP Service with Ontology Scoping
+The entity extraction is handled by our `nlp-service` located in the `python-services/` directory. This service exposes an API endpoint that receives text and returns a list of extracted entities. **New Feature**: The service now supports ontology scoping to improve accuracy and reduce noise.
 
 The service is built with:
 - **FastAPI**: For creating a high-performance API.
 - **spaCy**: For state-of-the-art NLP, including entity recognition. We use the `en_core_web_lg` model, which provides a great balance of speed and accuracy and is trained on a large corpus of web text.
+- **Ontology Scoping**: Support for multiple ontologies (financial, procurement, CRM) to improve domain-specific extraction accuracy.
 
-### 2. Extraction Workflow
+### 2. Extraction Workflow with Ontology Scoping
 1.  **Email Ingestion**: The email ingestion service receives an email.
 2.  **Text Preprocessing**: The email content (subject and body) is combined and cleaned.
-3.  **API Call to NLP Service**: The cleaned text is sent to the `nlp-service`.
-4.  **Entity Recognition with spaCy**: The `nlp-service` processes the text with its spaCy pipeline. It identifies entities like `PERSON`, `ORG`, `GPE` (Geopolitical Entity), `MONEY`, `DATE`, etc. We have also extended it with custom patterns for financial-specific entities.
-5.  **Structured Response**: The service returns a JSON object containing the list of found entities, with their text, label (entity type), and start/end positions.
-6.  **Integration into CRM**: The `EmailIngestionService` in the core application receives the entities and prepares them for integration into the knowledge graph.
+3.  **Ontology Selection**: The system determines which ontology to use based on the email content or explicit configuration.
+4.  **API Call to NLP Service**: The cleaned text and selected ontology are sent to the `nlp-service`.
+5.  **Entity Recognition with spaCy**: The `nlp-service` processes the text with its spaCy pipeline, constrained by the specified ontology. It identifies entities like `PERSON`, `ORG`, `GPE` (Geopolitical Entity), `MONEY`, `DATE`, etc., but only those relevant to the selected ontology.
+6.  **Structured Response**: The service returns a JSON object containing the list of found entities, with their text, label (entity type), confidence scores, and the ontology used.
+7.  **Integration into CRM**: The `EmailIngestionService` in the core application receives the entities and prepares them for integration into the knowledge graph.
+
+### 3. Ontology Scoping Benefits
+
+The new ontology scoping feature provides several key advantages:
+
+**Improved Accuracy**: By limiting extraction to specific entity and relationship types, the LLM can focus on relevant patterns for the domain.
+
+**Reduced Noise**: Fewer irrelevant entities and relationships are extracted, leading to cleaner knowledge graphs.
+
+**Domain-Specific Results**: Results are tailored to the specific domain (financial, procurement, CRM, etc.).
+
+**Better Performance**: Smaller ontology scope can lead to faster processing times.
+
+**Available Ontologies**:
+- `financial` - Financial instruments, companies, investments, monetary amounts
+- `procurement` - Contracts, tenders, suppliers, award amounts
+- `crm` - Customers, leads, opportunities, contact information
+- `default` - General purpose extraction (fallback)
+
+### 4. API Usage Examples
+
+**Extract with Financial Ontology:**
+```bash
+curl -X POST http://localhost:8000/extract-graph \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Apple Inc. CEO Tim Cook announced a $2 billion investment in renewable energy.",
+    "ontology_name": "financial"
+  }'
+```
+
+**Extract with Procurement Ontology:**
+```bash
+curl -X POST http://localhost:8000/extract-graph \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Contract awarded to Microsoft Corp. for $50 million software development.",
+    "ontology_name": "procurement"
+  }'
+```
+
+**Get Available Ontologies:**
+```bash
+curl -X GET http://localhost:8000/ontologies
+```
+
+### 5. Python Client SDK Integration
+
+The service includes a Python client SDK for easy integration:
+
+```python
+from client import NLPServiceClient
+
+client = NLPServiceClient("http://localhost:8000")
+
+# Extract with financial ontology
+financial_graph = client.extract_graph(
+    "Apple Inc. CEO Tim Cook announced a $2 billion investment.",
+    ontology_name="financial"
+)
+
+# Extract with procurement ontology
+procurement_graph = client.extract_graph(
+    "Contract awarded to Microsoft Corp. for $50 million.",
+    ontology_name="procurement"
+)
+
+# Get available ontologies
+ontologies = client.get_available_ontologies()
+print(f"Available: {ontologies['available_ontologies']}")
+```
 
 ### 3. Entity Linking and Deduplication with Vector Search
 

@@ -492,16 +492,101 @@ docker-compose -f docker-compose.neo4j.yml logs neo4j
 ```
 
 #### Python NLP Service
-```bash
-# Check if Python services are running
-ps aux | grep python
 
-# Restart NLP service
+The system includes a powerful NLP microservice for advanced entity extraction and knowledge graph generation. The service now supports **ontology scoping** to improve accuracy and reduce noise.
+
+**New Features:**
+- **Ontology Scoping**: Specify which ontology to use for extraction (financial, procurement, CRM, etc.)
+- **Multiple Ontology Support**: Handle different domains with specialized extraction
+- **Production-Ready Deployment**: Docker containers with Nginx reverse proxy
+- **Python Client SDK**: Easy integration for external applications
+
+**Quick Start:**
+```bash
+# Deploy with deployment script (recommended)
+chmod +x scripts/deploy-nlp-service.sh
+./scripts/deploy-nlp-service.sh
+
+# Deploy with specific ontology support
+OPENAI_API_KEY=your_key ./scripts/deploy-nlp-service.sh
+
+# Deploy production version with SSL
+./scripts/deploy-nlp-service.sh production
+
+# Manual deployment
+cd python-services/nlp-service
+docker build -t nlp-service .
+docker run -d -p 8000:8000 -e OPENAI_API_KEY=your_key nlp-service
+```
+
+**API Usage with Ontology Scoping:**
+```bash
+# Extract with financial ontology
+curl -X POST http://localhost:8000/extract-graph \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Apple Inc. CEO Tim Cook announced a $2 billion investment.",
+    "ontology_name": "financial"
+  }'
+
+# Extract with procurement ontology
+curl -X POST http://localhost:8000/extract-graph \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Contract awarded to Microsoft Corp. for $50 million.",
+    "ontology_name": "procurement"
+  }'
+
+# Get available ontologies
+curl -X GET http://localhost:8000/ontologies
+```
+
+**Python Client SDK:**
+```python
+from client import NLPServiceClient
+
+client = NLPServiceClient("http://localhost:8000")
+
+# Extract with specific ontology
+financial_graph = client.extract_graph(
+    "Apple Inc. CEO Tim Cook announced a $2 billion investment.",
+    ontology_name="financial"
+)
+
+procurement_graph = client.extract_graph(
+    "Contract awarded to Microsoft Corp. for $50 million.",
+    ontology_name="procurement"
+)
+
+# Get available ontologies
+ontologies = client.get_available_ontologies()
+print(f"Available: {ontologies['available_ontologies']}")
+```
+
+**Available Ontologies:**
+- `financial` - Financial instruments, companies, investments
+- `procurement` - Contracts, tenders, suppliers  
+- `crm` - Customers, leads, opportunities
+- `default` - General purpose (fallback)
+
+**Benefits of Ontology Scoping:**
+- **Improved Accuracy**: Focus on domain-specific patterns
+- **Reduced Noise**: Fewer irrelevant entities extracted
+- **Better Performance**: Smaller scope for faster processing
+- **Domain-Specific Results**: Tailored to specific business domains
+
+**Restart NLP service:**
+```bash
 cd python-services/nlp-service
 python main.py &
-
-# Note: System works without NLP services (optional)
 ```
+
+**Note: System works without NLP services (optional)**
+
+**For detailed NLP service documentation, see:**
+- **[NLP Service Ontology Scoping](features/nlp-service-ontology-scoping.md)** - Complete guide to ontology scoping features
+- **[API Documentation](../python-services/nlp-service/API_DOCUMENTATION.md)** - Full API reference
+- **[Quick Start Guide](../python-services/nlp-service/QUICK_START.md)** - Deployment and usage guide
 
 #### MCP Server Issues
 ```bash
@@ -645,6 +730,11 @@ git commit -m "feat(domain): add new feature"
 ## Recent Changes
 
 ### Latest Release (Current)
+- **Added NLP Service Ontology Scoping** - Support for multiple ontologies (financial, procurement, CRM) to improve extraction accuracy
+- **Enhanced NLP Service Deployment** - Production-ready Docker containers with Nginx reverse proxy and SSL support
+- **Python Client SDK** - Easy integration for external applications with ontology scoping support
+- **Improved Entity Extraction** - Domain-specific extraction with reduced noise and better performance
+- **Comprehensive Documentation** - Updated guides and API documentation for NLP service features
 - **Fixed chat system database selection** - ChatService now correctly uses configured database instead of default
 - **Resolved dependency injection issues** - Added proper @injectable decorators to ChatService and QueryTranslator
 - **Fixed QueryTranslator validation bug** - Corrected entity type validation logic that was causing false positives
