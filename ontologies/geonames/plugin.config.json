@@ -1,0 +1,5 @@
+{
+  "name": "geonames",
+  "enabled": true,
+  "description": "Ontology for GeoNames locations, cities, countries, and features."
+} 

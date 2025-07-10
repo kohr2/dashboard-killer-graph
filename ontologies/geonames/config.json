@@ -1,0 +1,71 @@
+{
+  "name": "geonames",
+  "version": "1.0.0",
+  "description": "Ontology for GeoNames locations, cities, countries, and features.",
+  "enabled": true,
+  "datasets": [
+    {
+      "name": "geonames_cities1000",
+      "description": "GeoNames cities with population > 1000",
+      "url": "https://download.geonames.org/export/dump/cities1000.zip",
+      "format": "txt",
+      "license": "CC-BY",
+      "source": "GeoNames.org",
+      "fields": [
+        { "name": "geonameid", "type": "string", "description": "GeoNames unique identifier" },
+        { "name": "name", "type": "string", "description": "Name of the place" },
+        { "name": "asciiname", "type": "string", "description": "ASCII name" },
+        { "name": "alternatenames", "type": "string", "description": "Comma-separated alternate names" },
+        { "name": "latitude", "type": "number", "description": "Latitude" },
+        { "name": "longitude", "type": "number", "description": "Longitude" },
+        { "name": "featureClass", "type": "string", "description": "Feature class (A, P, S, etc.)" },
+        { "name": "featureCode", "type": "string", "description": "Feature code (PPL, ADM1, etc.)" },
+        { "name": "countryCode", "type": "string", "description": "Country code (ISO)" },
+        { "name": "admin1Code", "type": "string", "description": "Admin region code (state/province)" },
+        { "name": "population", "type": "number", "description": "Population" }
+      ],
+      "transformation": {
+        "script": "scripts/ontology/transform-geonames-data.ts",
+        "output": "ontologies/geonames/data/geonames_cities.json"
+      }
+    }
+  ],
+  "enrichment": {
+    "services": [
+      {
+        "name": "city_country_resolution",
+        "description": "Disambiguates cities by country and region using codes and names.",
+        "type": "reasoning",
+        "config": {
+          "algorithm": "city_country_resolution"
+        }
+      },
+      {
+        "name": "nearby_places",
+        "description": "Finds places within a certain distance of each other.",
+        "type": "reasoning",
+        "config": {
+          "algorithm": "nearby_places"
+        }
+      }
+    ]
+  },
+  "extraction": {
+    "patterns": {
+      "city": [
+        {
+          "name": "city_name",
+          "pattern": "\\b([A-Z][a-zA-Z\\s\\-']{2,})\\b",
+          "description": "Capitalized city names"
+        }
+      ],
+      "country": [
+        {
+          "name": "country_name",
+          "pattern": "\\b([A-Z][a-zA-Z\\s\\-']{2,})\\b",
+          "description": "Capitalized country names"
+        }
+      ]
+    }
+  }
+} 

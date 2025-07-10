@@ -1,0 +1,131 @@
+{
+  "entities": {
+    "Place": {
+      "id": "Place",
+      "name": "Place",
+      "description": "A generic geographic place (city, country, region, feature)",
+      "properties": [
+        { "name": "geonameid", "type": "string", "description": "GeoNames unique identifier" },
+        { "name": "name", "type": "string", "description": "Place name" },
+        { "name": "latitude", "type": "number", "description": "Latitude" },
+        { "name": "longitude", "type": "number", "description": "Longitude" },
+        { "name": "featureClass", "type": "string", "description": "Feature class (A, P, S, etc.)" },
+        { "name": "featureCode", "type": "string", "description": "Feature code (PPL, ADM1, etc.)" },
+        { "name": "countryCode", "type": "string", "description": "Country code (ISO)" }
+      ]
+    },
+    "City": {
+      "id": "City",
+      "name": "City",
+      "description": "A populated place (city, town, village)",
+      "properties": [
+        { "name": "geonameid", "type": "string", "description": "GeoNames unique identifier" },
+        { "name": "name", "type": "string", "description": "City name" },
+        { "name": "asciiname", "type": "string", "description": "ASCII name" },
+        { "name": "alternatenames", "type": "string", "description": "Alternate names (comma-separated)" },
+        { "name": "latitude", "type": "number", "description": "Latitude" },
+        { "name": "longitude", "type": "number", "description": "Longitude" },
+        { "name": "population", "type": "number", "description": "Population" },
+        { "name": "countryCode", "type": "string", "description": "Country code (ISO)" },
+        { "name": "admin1Code", "type": "string", "description": "Admin region code (state/province)" }
+      ]
+    },
+    "Country": {
+      "id": "Country",
+      "name": "Country",
+      "description": "A country",
+      "properties": [
+        { "name": "geonameid", "type": "string", "description": "GeoNames unique identifier" },
+        { "name": "name", "type": "string", "description": "Country name" },
+        { "name": "countryCode", "type": "string", "description": "Country code (ISO)" },
+        { "name": "population", "type": "number", "description": "Population" },
+        { "name": "area", "type": "number", "description": "Area in sq km" },
+        { "name": "capital", "type": "string", "description": "Capital city name" }
+      ]
+    },
+    "AdminRegion": {
+      "id": "AdminRegion",
+      "name": "AdminRegion",
+      "description": "An administrative region (state, province, etc.)",
+      "properties": [
+        { "name": "geonameid", "type": "string", "description": "GeoNames unique identifier" },
+        { "name": "name", "type": "string", "description": "Region name" },
+        { "name": "admin1Code", "type": "string", "description": "Admin region code" },
+        { "name": "countryCode", "type": "string", "description": "Country code (ISO)" }
+      ]
+    },
+    "Feature": {
+      "id": "Feature",
+      "name": "Feature",
+      "description": "A geographic feature (mountain, river, etc.)",
+      "properties": [
+        { "name": "geonameid", "type": "string", "description": "GeoNames unique identifier" },
+        { "name": "name", "type": "string", "description": "Feature name" },
+        { "name": "featureClass", "type": "string", "description": "Feature class" },
+        { "name": "featureCode", "type": "string", "description": "Feature code" },
+        { "name": "countryCode", "type": "string", "description": "Country code (ISO)" }
+      ]
+    }
+  },
+  "relationships": {
+    "LOCATED_IN": {
+      "id": "LOCATED_IN",
+      "name": "LOCATED_IN",
+      "description": "Place is located in a country or region",
+      "sourceEntity": "Place",
+      "targetEntity": "AdminRegion",
+      "properties": []
+    },
+    "NEAR": {
+      "id": "NEAR",
+      "name": "NEAR",
+      "description": "Place is geographically near another place",
+      "sourceEntity": "Place",
+      "targetEntity": "Place",
+      "properties": [
+        { "name": "distanceKm", "type": "number", "description": "Distance in kilometers" }
+      ]
+    },
+    "HAS_FEATURE": {
+      "id": "HAS_FEATURE",
+      "name": "HAS_FEATURE",
+      "description": "Country or region has a geographic feature",
+      "sourceEntity": "Country",
+      "targetEntity": "Feature",
+      "properties": []
+    }
+  },
+  "entityExtractionPatterns": {
+    "City": [
+      { "name": "city_name", "pattern": "\\b([A-Z][a-zA-Z\\s\\-']{2,})\\b", "description": "Capitalized city names" }
+    ],
+    "Country": [
+      { "name": "country_name", "pattern": "\\b([A-Z][a-zA-Z\\s\\-']{2,})\\b", "description": "Capitalized country names" }
+    ],
+    "Feature": [
+      { "name": "feature_name", "pattern": "\\b([A-Z][a-zA-Z\\s\\-']{2,})\\b", "description": "Capitalized feature names" }
+    ]
+  },
+  "reasoning": {
+    "algorithms": {
+      "city_country_resolution": {
+        "name": "City-Country Resolution",
+        "description": "Disambiguates cities by country and region using codes and names.",
+        "entityType": "City",
+        "factors": ["name", "countryCode", "admin1Code"],
+        "weights": [0.5, 0.3, 0.2],
+        "threshold": 0.7,
+        "relationshipType": "LOCATED_IN"
+      },
+      "nearby_places": {
+        "name": "Nearby Places",
+        "description": "Finds places within a certain distance of each other.",
+        "entityType": "Place",
+        "factors": ["latitude", "longitude"],
+        "weights": [0.5, 0.5],
+        "threshold": 0.8,
+        "relationshipType": "NEAR"
+      }
+    }
+  }
+} 
