@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as https from 'https';
-import * as zlib from 'zlib';
-import { pipeline } from 'stream/promises';
+import { IncomingMessage } from 'http';
+import AdmZip from 'adm-zip';
 
 interface GeoNamesRecord {
   geonameid: string;
@@ -57,7 +57,7 @@ async function downloadGeonamesData(): Promise<string> {
   console.log('📥 Downloading GeoNames cities data...');
   
   // Download the zip file
-  const response = await new Promise<https.IncomingMessage>((resolve, reject) => {
+  const response = await new Promise<IncomingMessage>((resolve, reject) => {
     https.get(GEONAMES_URL, resolve).on('error', reject);
   });
 
@@ -75,10 +75,19 @@ async function downloadGeonamesData(): Promise<string> {
 
   console.log('📦 Extracting zip file...');
   
-  // Extract the zip file
-  const zipBuffer = fs.readFileSync(zipPath);
-  const extracted = zlib.unzipSync(zipBuffer);
-  fs.writeFileSync(txtPath, extracted);
+  // Extract the zip file using adm-zip
+  const zip = new AdmZip(zipPath);
+  const zipEntries = zip.getEntries();
+  
+  // Find the cities1000.txt file
+  const citiesEntry = zipEntries.find(entry => entry.entryName === 'cities1000.txt');
+  if (!citiesEntry) {
+    throw new Error('cities1000.txt not found in the ZIP file');
+  }
+  
+  // Extract the file
+  const fileContent = citiesEntry.getData().toString('utf8');
+  fs.writeFileSync(txtPath, fileContent);
 
   console.log('✅ GeoNames data downloaded and extracted');
   return txtPath;
