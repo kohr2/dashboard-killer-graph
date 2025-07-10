@@ -9,6 +9,8 @@ export interface ExtractionRule {
   path: string;
   name: string;
   description: string;
+  source?: string; // For relationships
+  target?: string; // For relationships
   properties?: {
     path: string;
     name: string;

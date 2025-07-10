@@ -22,6 +22,7 @@ export interface ParsedOntology {
   relationships: Relationship[];
   ignoredEntities?: string[];
   ignoredRelationships?: string[];
+  rawData?: any; // Raw parsed data for source-specific processing
 }
 
 export interface OntologySource {

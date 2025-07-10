@@ -6,16 +6,24 @@
     "version": "2025-07",
     "description": "Financial Industry Business Ontology (FIBO) - Production T-Box only (schema) from EDM Council"
   },
+  "dataset": {
+    "downloadUrl": "https://spec.edmcouncil.org/fibo/ontology/master/latest/AboutFIBOProd-TBoxOnly.rdf",
+    "format": "rdf",
+    "license": "CC-BY-4.0",
+    "description": "Financial Industry Business Ontology (FIBO) dataset for financial domain entities and relationships"
+  },
   "extraction": {
     "entities": {
-      "path": "fibo",
-      "name": "FIBO Entities",
-      "description": "Extract FIBO entities with rich properties"
+      "path": "//owl:Class[contains(@rdf:about, 'fibo')]",
+      "name": "substring-after(@rdf:about, '#')",
+      "description": "//rdfs:comment/text()"
     },
     "relationships": {
-      "path": "fibo",
-      "name": "FIBO Relationships",
-      "description": "Extract FIBO relationships"
+      "path": "//owl:ObjectProperty[contains(@rdf:about, 'fibo')]",
+      "name": "substring-after(@rdf:about, '#')",
+      "description": "//rdfs:comment/text()",
+      "source": "//rdfs:domain/@rdf:resource",
+      "target": "//rdfs:range/@rdf:resource"
     }
   },
   "overrides": {

@@ -27,7 +27,7 @@ module.exports = {
 
   globalSetup: '<rootDir>/test/global-setup.ts',
   setupFilesAfterEnv: ['jest-extended/all', './test/setup.ts'],
-  testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/scripts/**/*.test.ts', '<rootDir>/test/**/*.test.ts'],
+  testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/scripts/**/*.test.ts', '<rootDir>/test/**/*.test.ts', '<rootDir>/ontologies/**/*.test.ts'],
   globals: {
     'ts-jest': {
       tsconfig: 'test/tsconfig.json'
