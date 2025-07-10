@@ -1,17 +1,13 @@
-import { registerCrm } from '../ontologies/crm';
-import { registerFinancial } from '../ontologies/financial';
 import { logger } from '@common/utils/logger';
-import { EdgarEnrichmentService } from './platform/enrichment/edgar-enrichment.service';
-import { EnrichmentOrchestratorService } from './platform/enrichment/enrichment-orchestrator.service';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { pluginRegistry } from '../config/ontology/plugins.config';
-import axios from 'axios';
 
 /**
- * Registers all platform services, including ontologies and enrichment pipelines.
+ * Registers all platform services, including ontologies.
  * This function should be called at the application's entry point.
  * 
  * Plugins are configured in src/config/ontology-plugins.config.ts
+ * Enrichment services are configured separately in register-enrichments.ts
  */
 export function registerAllOntologies() {
   logger.debug('Registering all ontologies...');
@@ -33,24 +29,6 @@ export function registerAllOntologies() {
   const ontologyService = OntologyService.getInstance();
   // enabledPlugins already contains OntologyPlugin objects, no need to extract
   ontologyService.loadFromPlugins(enabledPlugins);
-
-  const secApiUserAgent = process.env.SEC_API_USER_AGENT || 'My Company My Product me@mycompany.com';
-
-  // Create enrichment orchestrator with empty services array
-  const enrichmentOrchestrator = new EnrichmentOrchestratorService();
-  
-  // Create axios instance for EDGAR service
-  const axiosInstance = axios.create({
-    headers: {
-      'User-Agent': secApiUserAgent
-    }
-  });
-  
-  const edgarService = new EdgarEnrichmentService('Dashboard Killer Graph Bot 1.0 (contact@example.com)');
-
-  // Add Edgar service to the orchestrator
-  enrichmentOrchestrator.addService(edgarService);
-  logger.info('Enrichment services registered.');
 
   logger.info('All ontologies registered.');
 }

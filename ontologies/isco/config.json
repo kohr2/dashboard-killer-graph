@@ -1,0 +1,84 @@
+{
+  "name": "isco",
+  "version": "1.0.0",
+  "description": "International Standard Classification of Occupations (ISCO) plugin for standardized occupational classification",
+  "enabled": true,
+  "priority": 1,
+  "source": {
+    "url": "https://www.ilo.org/public/english/bureau/stat/isco/isco08/",
+    "type": "official",
+    "version": "1.0.0",
+    "description": "Official ISCO-08 classification data from ILO in English"
+  },
+  "dataset": {
+    "downloadUrl": "https://www.ilo.org/public/english/bureau/stat/isco/isco08/",
+    "format": "official",
+    "license": "ILO",
+    "description": "Official International Standard Classification of Occupations data in English"
+  },
+  "extraction": {
+    "entities": {
+      "path": "$.entities.ISCOGroup[*]",
+      "name": "$.name",
+      "description": "$.description"
+    },
+    "relationships": {
+      "path": "$.relationships.ISCO_GROUP_PARENT[*]",
+      "name": "ISCO_GROUP_PARENT",
+      "description": "Parent-child relationship in ISCO hierarchy",
+      "source": "$.source",
+      "target": "$.target"
+    }
+  },
+  "datasets": {
+    "isco-classification": {
+      "name": "ISCO Classification Data",
+      "description": "International Standard Classification of Occupations data from ILO",
+      "source": "patriciomacadden/isco",
+      "url": "https://raw.githubusercontent.com/patriciomacadden/isco/master/db/seeds.rb",
+      "format": "ruby-seeds",
+      "license": "MIT",
+      "updateFrequency": "monthly",
+      "lastUpdated": "2024-01-01",
+      "size": "~2MB",
+      "records": "~4000",
+      "documentation": "https://github.com/patriciomacadden/isco"
+    },
+    "job-titles": {
+      "name": "Job Titles Dataset",
+      "description": "Comprehensive collection of job titles for mapping to ISCO codes",
+      "source": "jneidel/job-titles",
+      "url": "https://raw.githubusercontent.com/jneidel/job-titles/master/job-titles.json",
+      "format": "json",
+      "license": "MIT",
+      "updateFrequency": "quarterly",
+      "lastUpdated": "2024-01-01",
+      "size": "~500KB",
+      "records": "~50000",
+      "documentation": "https://github.com/jneidel/job-titles"
+    }
+  },
+  "settings": {
+    "enableAutoMapping": true,
+    "confidenceThreshold": 0.7,
+    "maxMappingSuggestions": 5,
+    "enableHierarchyValidation": true,
+    "enableCrossLanguageSupport": false
+  },
+  "features": {
+    "entityExtraction": true,
+    "enrichment": true,
+    "classification": true,
+    "hierarchyMapping": true,
+    "jobTitleMapping": true
+  },
+  "overrides": {
+    "entities": {},
+    "relationships": {}
+  },
+  "metadata": {
+    "lastExtraction": "2024-01-15T10:30:00Z",
+    "sourceVersion": "1.0.0",
+    "localVersion": "1.0.0"
+  }
+} 

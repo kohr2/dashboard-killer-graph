@@ -1,0 +1,118 @@
+{
+  "services": [
+    {
+      "name": "edgar",
+      "type": "api",
+      "enabled": true,
+      "config": {
+        "userAgent": "Dashboard Killer Graph Bot 1.0 (contact@example.com)",
+        "baseUrl": "https://api.sec.gov",
+        "apiKey": "",
+        "enrichmentLogic": {
+          "type": "api_call",
+          "endpoint": "/companies/{entityName}",
+          "method": "GET",
+          "headers": {
+            "User-Agent": "{userAgent}",
+            "Accept": "application/json"
+          },
+          "responseMapping": {
+            "companyName": "name",
+            "ticker": "ticker",
+            "industry": "industry",
+            "founded": "founded_date"
+          }
+        }
+      },
+      "timeout": 10000,
+      "retries": 3
+    },
+    {
+      "name": "openCorporates",
+      "type": "api",
+      "enabled": false,
+      "config": {
+        "apiKey": "",
+        "baseUrl": "https://api.opencorporates.com",
+        "enrichmentLogic": {
+          "type": "api_call",
+          "endpoint": "/companies/search",
+          "method": "GET",
+          "queryParams": {
+            "q": "{entityName}",
+            "api_token": "{apiKey}"
+          },
+          "responseMapping": {
+            "companyName": "company.name",
+            "jurisdiction": "company.jurisdiction_code",
+            "incorporationDate": "company.incorporation_date",
+            "status": "company.company_type"
+          }
+        }
+      },
+      "timeout": 5000,
+      "retries": 2
+    },
+    {
+      "name": "linkedin",
+      "type": "api",
+      "enabled": false,
+      "config": {
+        "apiKey": "",
+        "baseUrl": "https://api.linkedin.com"
+      },
+      "timeout": 8000,
+      "retries": 2
+    }
+  ],
+  "rules": [
+    {
+      "entityType": "Organization",
+      "enrichmentService": "edgar",
+      "priority": 1,
+      "enabled": true,
+      "conditions": {
+        "hasName": true,
+        "minNameLength": 2
+      }
+    },
+    {
+      "entityType": "Company",
+      "enrichmentService": "edgar",
+      "priority": 1,
+      "enabled": true,
+      "conditions": {
+        "hasName": true,
+        "minNameLength": 2
+      }
+    },
+    {
+      "entityType": "Person",
+      "enrichmentService": "linkedin",
+      "priority": 2,
+      "enabled": false,
+      "conditions": {
+        "hasName": true,
+        "minNameLength": 2
+      }
+    },
+    {
+      "entityType": "Deal",
+      "enrichmentService": "openCorporates",
+      "priority": 3,
+      "enabled": false,
+      "conditions": {
+        "hasName": true
+      }
+    }
+  ],
+  "global": {
+    "defaultTimeout": 10000,
+    "defaultRetries": 3,
+    "enableLogging": true,
+    "defaults": {
+      "enabled": false,
+      "priority": 10
+    }
+  }
+} 

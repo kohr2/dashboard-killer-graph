@@ -1,0 +1,351 @@
+{
+  "metadata": {
+    "source": "ISCO Classification System",
+    "ontology": "isco",
+    "version": "1.0.0",
+    "createdAt": "2025-07-10T17:23:21.710Z",
+    "recordCount": 20
+  },
+  "records": [
+    {
+      "id": "ISCOMajorGroup_1",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Directores y gerentes",
+      "properties": {
+        "code": "1",
+        "name": "Directores y gerentes",
+        "description": "ISCO Major Group 1: Directores y gerentes",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_1"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_2",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Profesionales científicos e intelectuales",
+      "properties": {
+        "code": "2",
+        "name": "Profesionales científicos e intelectuales",
+        "description": "ISCO Major Group 2: Profesionales científicos e intelectuales",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_2"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_3",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Técnicos y profesionales de nivel medio",
+      "properties": {
+        "code": "3",
+        "name": "Técnicos y profesionales de nivel medio",
+        "description": "ISCO Major Group 3: Técnicos y profesionales de nivel medio",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_3"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_4",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Personal de apoyo administrativo",
+      "properties": {
+        "code": "4",
+        "name": "Personal de apoyo administrativo",
+        "description": "ISCO Major Group 4: Personal de apoyo administrativo",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_4"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_5",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Trabajadores de los servicios y vendedores de comercios y mercados",
+      "properties": {
+        "code": "5",
+        "name": "Trabajadores de los servicios y vendedores de comercios y mercados",
+        "description": "ISCO Major Group 5: Trabajadores de los servicios y vendedores de comercios y mercados",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_5"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_6",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros",
+      "properties": {
+        "code": "6",
+        "name": "Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros",
+        "description": "ISCO Major Group 6: Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_6"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_7",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Oficiales, operarios y artesanos de artes mecánicas y de otros oficios",
+      "properties": {
+        "code": "7",
+        "name": "Oficiales, operarios y artesanos de artes mecánicas y de otros oficios",
+        "description": "ISCO Major Group 7: Oficiales, operarios y artesanos de artes mecánicas y de otros oficios",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_7"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_8",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Operadores de instalaciones y máquinas y ensambladores",
+      "properties": {
+        "code": "8",
+        "name": "Operadores de instalaciones y máquinas y ensambladores",
+        "description": "ISCO Major Group 8: Operadores de instalaciones y máquinas y ensambladores",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_8"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_9",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Ocupaciones elementales",
+      "properties": {
+        "code": "9",
+        "name": "Ocupaciones elementales",
+        "description": "ISCO Major Group 9: Ocupaciones elementales",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_9"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_0",
+      "type": "ISCOMajorGroup",
+      "content": "ISCOMajorGroup: Ocupaciones militares",
+      "properties": {
+        "code": "0",
+        "name": "Ocupaciones militares",
+        "description": "ISCO Major Group 0: Ocupaciones militares",
+        "level": "major"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_0"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_1",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Directores y gerentes",
+      "properties": {
+        "code": "1",
+        "name": "Directores y gerentes",
+        "level": "major",
+        "description": "ISCO Major Group 1: Directores y gerentes"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_1"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_2",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Profesionales científicos e intelectuales",
+      "properties": {
+        "code": "2",
+        "name": "Profesionales científicos e intelectuales",
+        "level": "major",
+        "description": "ISCO Major Group 2: Profesionales científicos e intelectuales"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_2"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_3",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Técnicos y profesionales de nivel medio",
+      "properties": {
+        "code": "3",
+        "name": "Técnicos y profesionales de nivel medio",
+        "level": "major",
+        "description": "ISCO Major Group 3: Técnicos y profesionales de nivel medio"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_3"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_4",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Personal de apoyo administrativo",
+      "properties": {
+        "code": "4",
+        "name": "Personal de apoyo administrativo",
+        "level": "major",
+        "description": "ISCO Major Group 4: Personal de apoyo administrativo"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_4"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_5",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Trabajadores de los servicios y vendedores de comercios y mercados",
+      "properties": {
+        "code": "5",
+        "name": "Trabajadores de los servicios y vendedores de comercios y mercados",
+        "level": "major",
+        "description": "ISCO Major Group 5: Trabajadores de los servicios y vendedores de comercios y mercados"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_5"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_6",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros",
+      "properties": {
+        "code": "6",
+        "name": "Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros",
+        "level": "major",
+        "description": "ISCO Major Group 6: Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_6"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_7",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Oficiales, operarios y artesanos de artes mecánicas y de otros oficios",
+      "properties": {
+        "code": "7",
+        "name": "Oficiales, operarios y artesanos de artes mecánicas y de otros oficios",
+        "level": "major",
+        "description": "ISCO Major Group 7: Oficiales, operarios y artesanos de artes mecánicas y de otros oficios"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_7"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_8",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Operadores de instalaciones y máquinas y ensambladores",
+      "properties": {
+        "code": "8",
+        "name": "Operadores de instalaciones y máquinas y ensambladores",
+        "level": "major",
+        "description": "ISCO Major Group 8: Operadores de instalaciones y máquinas y ensambladores"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_8"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_9",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Ocupaciones elementales",
+      "properties": {
+        "code": "9",
+        "name": "Ocupaciones elementales",
+        "level": "major",
+        "description": "ISCO Major Group 9: Ocupaciones elementales"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_9"
+        }
+      ]
+    },
+    {
+      "id": "ISCOMajorGroup_0",
+      "type": "ISCOGroup",
+      "content": "ISCOGroup: Ocupaciones militares",
+      "properties": {
+        "code": "0",
+        "name": "Ocupaciones militares",
+        "level": "major",
+        "description": "ISCO Major Group 0: Ocupaciones militares"
+      },
+      "relationships": [
+        {
+          "type": "ISCO_GROUP_TYPE",
+          "target": "ISCOMajorGroup_0"
+        }
+      ]
+    }
+  ]
+}

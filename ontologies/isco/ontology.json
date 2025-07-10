@@ -1,0 +1,190 @@
+{
+  "name": "isco",
+  "version": "1.0.0",
+  "description": "International Standard Classification of Occupations (ISCO) ontology for standardized occupational classification",
+  "entities": {
+    "ISCOMajorGroup": {
+      "properties": {
+        "code": { "type": "string", "required": true, "description": "ISCO major group code (1-digit)" },
+        "name": { "type": "string", "required": true, "description": "ISCO major group name" },
+        "description": { "type": "string", "description": "Detailed description of the major group" },
+        "level": { "type": "string", "required": true, "description": "Hierarchy level (major)" }
+    },
+      "relationships": {
+        "HAS_SUB_MAJOR_GROUP": { "target": "ISCOSubMajorGroup", "type": "one-to-many" },
+        "ISCO_GROUP_TYPE": { "target": "ISCOMajorGroup", "type": "self-reference" }
+      }
+    },
+    "ISCOSubMajorGroup": {
+      "properties": {
+        "code": { "type": "string", "required": true, "description": "ISCO sub-major group code (2-digit)" },
+        "name": { "type": "string", "required": true, "description": "ISCO sub-major group name" },
+        "description": { "type": "string", "description": "Detailed description of the sub-major group" },
+        "parentCode": { "type": "string", "description": "Parent major group code" },
+        "level": { "type": "string", "required": true, "description": "Hierarchy level (sub-major)" }
+      },
+      "relationships": {
+        "BELONGS_TO_MAJOR_GROUP": { "target": "ISCOMajorGroup", "type": "many-to-one" },
+        "HAS_MINOR_GROUP": { "target": "ISCOMinorGroup", "type": "one-to-many" },
+        "ISCO_GROUP_PARENT": { "target": "ISCOMajorGroup", "type": "many-to-one" },
+        "ISCO_GROUP_TYPE": { "target": "ISCOSubMajorGroup", "type": "self-reference" }
+      }
+    },
+    "ISCOMinorGroup": {
+      "properties": {
+        "code": { "type": "string", "required": true, "description": "ISCO minor group code (3-digit)" },
+        "name": { "type": "string", "required": true, "description": "ISCO minor group name" },
+        "description": { "type": "string", "description": "Detailed description of the minor group" },
+        "parentCode": { "type": "string", "description": "Parent sub-major group code" },
+        "level": { "type": "string", "required": true, "description": "Hierarchy level (minor)" }
+      },
+      "relationships": {
+        "BELONGS_TO_SUB_MAJOR_GROUP": { "target": "ISCOSubMajorGroup", "type": "many-to-one" },
+        "HAS_UNIT_GROUP": { "target": "ISCOUnitGroup", "type": "one-to-many" },
+        "ISCO_GROUP_PARENT": { "target": "ISCOSubMajorGroup", "type": "many-to-one" },
+        "ISCO_GROUP_TYPE": { "target": "ISCOMinorGroup", "type": "self-reference" }
+      }
+      },
+    "ISCOUnitGroup": {
+      "properties": {
+        "code": { "type": "string", "required": true, "description": "ISCO unit group code (4-digit)" },
+        "name": { "type": "string", "required": true, "description": "ISCO unit group name" },
+        "description": { "type": "string", "description": "Detailed description of the unit group" },
+        "parentCode": { "type": "string", "description": "Parent minor group code" },
+        "level": { "type": "string", "required": true, "description": "Hierarchy level (unit)" }
+    },
+      "relationships": {
+        "BELONGS_TO_MINOR_GROUP": { "target": "ISCOMinorGroup", "type": "many-to-one" },
+        "ISCO_GROUP_PARENT": { "target": "ISCOMinorGroup", "type": "many-to-one" },
+        "ISCO_GROUP_TYPE": { "target": "ISCOUnitGroup", "type": "self-reference" }
+      }
+      },
+    "ISCOGroup": {
+      "properties": {
+        "code": { "type": "string", "required": true, "description": "ISCO group code" },
+        "name": { "type": "string", "required": true, "description": "ISCO group name" },
+        "description": { "type": "string", "description": "Detailed description of the group" },
+        "parentCode": { "type": "string", "description": "Parent group code" },
+        "level": { "type": "string", "required": true, "description": "Hierarchy level" }
+      },
+      "relationships": {
+        "ISCO_GROUP_PARENT": { "target": "ISCOGroup", "type": "many-to-one" },
+        "ISCO_GROUP_TYPE": { "target": "ISCOGroup", "type": "self-reference" }
+    }
+  },
+    "JobTitle": {
+      "properties": {
+        "title": { "type": "string", "required": true, "description": "Job title name" },
+        "normalizedTitle": { "type": "string", "description": "Normalized job title for matching" },
+        "description": { "type": "string", "description": "Job title description" },
+        "level": { "type": "string", "description": "Job level (entry, mid, senior, executive)" },
+        "function": { "type": "string", "description": "Job function category" },
+        "department": { "type": "string", "description": "Department or area" },
+        "iscoCodes": { "type": "array", "description": "Associated ISCO codes" }
+        },
+      "relationships": {
+        "MAPPED_TO_ISCO": { "target": "ISCOUnitGroup", "type": "many-to-many" },
+        "BELONGS_TO_LEVEL": { "target": "JobLevel", "type": "many-to-one" },
+        "BELONGS_TO_FUNCTION": { "target": "JobFunction", "type": "many-to-one" },
+        "BELONGS_TO_DEPARTMENT": { "target": "JobDepartment", "type": "many-to-one" }
+      }
+    },
+    "JobLevel": {
+      "properties": {
+        "name": { "type": "string", "required": true, "description": "Job level name" },
+        "description": { "type": "string", "description": "Job level description" },
+        "hierarchy": { "type": "number", "description": "Hierarchical position" }
+        },
+      "relationships": {
+        "CONTAINS_JOB_TITLES": { "target": "JobTitle", "type": "one-to-many" }
+      }
+    },
+    "JobFunction": {
+      "properties": {
+        "name": { "type": "string", "required": true, "description": "Job function name" },
+        "description": { "type": "string", "description": "Job function description" },
+        "category": { "type": "string", "description": "Function category" }
+        },
+      "relationships": {
+        "CONTAINS_JOB_TITLES": { "target": "JobTitle", "type": "one-to-many" }
+      }
+    },
+    "JobDepartment": {
+      "properties": {
+        "name": { "type": "string", "required": true, "description": "Department name" },
+        "description": { "type": "string", "description": "Department description" },
+        "organization": { "type": "string", "description": "Parent organization" }
+      },
+      "relationships": {
+        "CONTAINS_JOB_TITLES": { "target": "JobTitle", "type": "one-to-many" }
+      }
+    }
+        },
+  "relationships": {
+    "ISCO_GROUP_PARENT": {
+      "source": "ISCOGroup",
+      "target": "ISCOGroup",
+      "properties": {
+        "relationshipType": { "type": "string", "description": "Type of parent relationship" }
+      }
+        },
+    "ISCO_GROUP_TYPE": {
+      "source": "ISCOGroup",
+      "target": "ISCOGroup",
+      "properties": {
+        "groupType": { "type": "string", "description": "Type of ISCO group" }
+      }
+    },
+    "MAPPED_TO_ISCO": {
+      "source": "JobTitle",
+      "target": "ISCOUnitGroup",
+      "properties": {
+        "confidence": { "type": "number", "description": "Mapping confidence score" },
+        "mappingMethod": { "type": "string", "description": "Method used for mapping" }
+      }
+    },
+    "BELONGS_TO_LEVEL": {
+      "source": "JobTitle",
+      "target": "JobLevel",
+      "properties": {
+        "level": { "type": "string", "description": "Specific level within the hierarchy" }
+      }
+    },
+    "BELONGS_TO_FUNCTION": {
+      "source": "JobTitle",
+      "target": "JobFunction",
+      "properties": {
+        "function": { "type": "string", "description": "Specific function category" }
+      }
+    },
+    "BELONGS_TO_DEPARTMENT": {
+      "source": "JobTitle",
+      "target": "JobDepartment",
+      "properties": {
+        "department": { "type": "string", "description": "Specific department" }
+      }
+    }
+  },
+  "entityExtractionPatterns": {
+    "JobTitle": [
+      { "pattern": "\\b(?:Senior|Junior|Lead|Principal|Staff|Associate)\\s+(?:Software\\s+)?(?:Engineer|Developer|Programmer)\\b", "confidence": 0.9 },
+      { "pattern": "\\b(?:Data\\s+)?(?:Scientist|Analyst|Engineer)\\b", "confidence": 0.8 },
+      { "pattern": "\\b(?:Marketing|Sales|Product|Project|Program|Engineering|Operations)\\s+(?:Manager|Director|Lead|Coordinator)\\b", "confidence": 0.85 },
+      { "pattern": "\\b(?:Chief|Senior|Executive|Vice)\\s+(?:Executive|Officer|President|Director)\\b", "confidence": 0.9 },
+      { "pattern": "\\b(?:Human\\s+Resources|HR|Finance|Legal|IT|Technology)\\s+(?:Manager|Director|Specialist|Coordinator)\\b", "confidence": 0.8 },
+      { "pattern": "\\b(?:Software|Web|Mobile|Frontend|Backend|Full\\s+Stack|DevOps)\\s+(?:Engineer|Developer|Architect)\\b", "confidence": 0.85 },
+      { "pattern": "\\b(?:Business|Systems|Requirements|Process|Data)\\s+(?:Analyst|Consultant|Specialist)\\b", "confidence": 0.8 },
+      { "pattern": "\\b(?:Design|UX|UI|Product|Graphic|Visual)\\s+(?:Designer|Manager|Lead|Specialist)\\b", "confidence": 0.8 },
+      { "pattern": "\\b(?:Quality\\s+Assurance|QA|Test|Testing)\\s+(?:Engineer|Manager|Lead|Specialist)\\b", "confidence": 0.8 },
+      { "pattern": "\\b(?:Customer|Client|Account|Sales)\\s+(?:Service|Support|Representative|Manager|Executive)\\b", "confidence": 0.8 },
+      { "pattern": "\\b(?:Research|Development|R&D)\\s+(?:Scientist|Engineer|Manager|Director)\\b", "confidence": 0.8 },
+      { "pattern": "\\b(?:Administrative|Admin|Office|Executive)\\s+(?:Assistant|Coordinator|Manager|Specialist)\\b", "confidence": 0.8 },
+      { "pattern": "\\b(?:Intern|Trainee|Apprentice|Junior|Entry\\s+Level)\\b", "confidence": 0.7 },
+      { "pattern": "\\b(?:Expert|Guru|Ninja|Rockstar|Senior|Lead|Principal)\\b", "confidence": 0.6 }
+        ],
+    "ISCOGroup": [
+      { "pattern": "\\b(\\d{1,4})\\s*(?:ISCO\\s+)?(?:Group|Code|Classification)\\b", "confidence": 0.9 },
+      { "pattern": "\\bISCO\\s+(?:Major|Sub-Major|Minor|Unit)\\s+Group\\s+(\\d{1,4})\\b", "confidence": 0.9 }
+    ]
+  }
+} 

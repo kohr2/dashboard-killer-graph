@@ -1,0 +1,186 @@
+{
+  "entities": {
+    "ISCOMajorGroup": {
+      "ISCOMajorGroup_1": {
+        "code": "1",
+        "name": "Directores y gerentes",
+        "description": "ISCO Major Group 1: Directores y gerentes",
+        "level": "major"
+      },
+      "ISCOMajorGroup_2": {
+        "code": "2",
+        "name": "Profesionales científicos e intelectuales",
+        "description": "ISCO Major Group 2: Profesionales científicos e intelectuales",
+        "level": "major"
+      },
+      "ISCOMajorGroup_3": {
+        "code": "3",
+        "name": "Técnicos y profesionales de nivel medio",
+        "description": "ISCO Major Group 3: Técnicos y profesionales de nivel medio",
+        "level": "major"
+      },
+      "ISCOMajorGroup_4": {
+        "code": "4",
+        "name": "Personal de apoyo administrativo",
+        "description": "ISCO Major Group 4: Personal de apoyo administrativo",
+        "level": "major"
+      },
+      "ISCOMajorGroup_5": {
+        "code": "5",
+        "name": "Trabajadores de los servicios y vendedores de comercios y mercados",
+        "description": "ISCO Major Group 5: Trabajadores de los servicios y vendedores de comercios y mercados",
+        "level": "major"
+      },
+      "ISCOMajorGroup_6": {
+        "code": "6",
+        "name": "Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros",
+        "description": "ISCO Major Group 6: Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros",
+        "level": "major"
+      },
+      "ISCOMajorGroup_7": {
+        "code": "7",
+        "name": "Oficiales, operarios y artesanos de artes mecánicas y de otros oficios",
+        "description": "ISCO Major Group 7: Oficiales, operarios y artesanos de artes mecánicas y de otros oficios",
+        "level": "major"
+      },
+      "ISCOMajorGroup_8": {
+        "code": "8",
+        "name": "Operadores de instalaciones y máquinas y ensambladores",
+        "description": "ISCO Major Group 8: Operadores de instalaciones y máquinas y ensambladores",
+        "level": "major"
+      },
+      "ISCOMajorGroup_9": {
+        "code": "9",
+        "name": "Ocupaciones elementales",
+        "description": "ISCO Major Group 9: Ocupaciones elementales",
+        "level": "major"
+      },
+      "ISCOMajorGroup_0": {
+        "code": "0",
+        "name": "Ocupaciones militares",
+        "description": "ISCO Major Group 0: Ocupaciones militares",
+        "level": "major"
+      }
+    },
+    "ISCOSubMajorGroup": {},
+    "ISCOMinorGroup": {},
+    "ISCOUnitGroup": {},
+    "ISCOGroup": {
+      "ISCOMajorGroup_1": {
+        "code": "1",
+        "name": "Directores y gerentes",
+        "level": "major",
+        "description": "ISCO Major Group 1: Directores y gerentes"
+      },
+      "ISCOMajorGroup_2": {
+        "code": "2",
+        "name": "Profesionales científicos e intelectuales",
+        "level": "major",
+        "description": "ISCO Major Group 2: Profesionales científicos e intelectuales"
+      },
+      "ISCOMajorGroup_3": {
+        "code": "3",
+        "name": "Técnicos y profesionales de nivel medio",
+        "level": "major",
+        "description": "ISCO Major Group 3: Técnicos y profesionales de nivel medio"
+      },
+      "ISCOMajorGroup_4": {
+        "code": "4",
+        "name": "Personal de apoyo administrativo",
+        "level": "major",
+        "description": "ISCO Major Group 4: Personal de apoyo administrativo"
+      },
+      "ISCOMajorGroup_5": {
+        "code": "5",
+        "name": "Trabajadores de los servicios y vendedores de comercios y mercados",
+        "level": "major",
+        "description": "ISCO Major Group 5: Trabajadores de los servicios y vendedores de comercios y mercados"
+      },
+      "ISCOMajorGroup_6": {
+        "code": "6",
+        "name": "Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros",
+        "level": "major",
+        "description": "ISCO Major Group 6: Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros"
+      },
+      "ISCOMajorGroup_7": {
+        "code": "7",
+        "name": "Oficiales, operarios y artesanos de artes mecánicas y de otros oficios",
+        "level": "major",
+        "description": "ISCO Major Group 7: Oficiales, operarios y artesanos de artes mecánicas y de otros oficios"
+      },
+      "ISCOMajorGroup_8": {
+        "code": "8",
+        "name": "Operadores de instalaciones y máquinas y ensambladores",
+        "level": "major",
+        "description": "ISCO Major Group 8: Operadores de instalaciones y máquinas y ensambladores"
+      },
+      "ISCOMajorGroup_9": {
+        "code": "9",
+        "name": "Ocupaciones elementales",
+        "level": "major",
+        "description": "ISCO Major Group 9: Ocupaciones elementales"
+      },
+      "ISCOMajorGroup_0": {
+        "code": "0",
+        "name": "Ocupaciones militares",
+        "level": "major",
+        "description": "ISCO Major Group 0: Ocupaciones militares"
+      }
+    }
+  },
+  "relationships": {
+    "ISCO_GROUP_PARENT": [],
+    "ISCO_GROUP_TYPE": [
+      {
+        "source": "ISCOMajorGroup_1",
+        "target": "ISCOMajorGroup_1",
+        "type": "ISCOMajorGroup"
+      },
+      {
+        "source": "ISCOMajorGroup_2",
+        "target": "ISCOMajorGroup_2",
+        "type": "ISCOMajorGroup"
+      },
+      {
+        "source": "ISCOMajorGroup_3",
+        "target": "ISCOMajorGroup_3",
+        "type": "ISCOMajorGroup"
+      },
+      {
+        "source": "ISCOMajorGroup_4",
+        "target": "ISCOMajorGroup_4",
+        "type": "ISCOMajorGroup"
+      },
+      {
+        "source": "ISCOMajorGroup_5",
+        "target": "ISCOMajorGroup_5",
+        "type": "ISCOMajorGroup"
+      },
+      {
+        "source": "ISCOMajorGroup_6",
+        "target": "ISCOMajorGroup_6",
+        "type": "ISCOMajorGroup"
+      },
+      {
+        "source": "ISCOMajorGroup_7",
+        "target": "ISCOMajorGroup_7",
+        "type": "ISCOMajorGroup"
+      },
+      {
+        "source": "ISCOMajorGroup_8",
+        "target": "ISCOMajorGroup_8",
+        "type": "ISCOMajorGroup"
+      },
+      {
+        "source": "ISCOMajorGroup_9",
+        "target": "ISCOMajorGroup_9",
+        "type": "ISCOMajorGroup"
+      },
+      {
+        "source": "ISCOMajorGroup_0",
+        "target": "ISCOMajorGroup_0",
+        "type": "ISCOMajorGroup"
+      }
+    ]
+  }
+}

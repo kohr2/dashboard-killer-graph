@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { registerAllOntologies } from './register-ontologies';
+import { registerAvailableEnrichmentServices } from './register-enrichment-services';
 import { container } from 'tsyringe';
 import OpenAI from 'openai';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
@@ -35,6 +36,10 @@ export function bootstrap(): void {
   container.registerSingleton(QueryTranslator);
   container.registerSingleton(ChatService);
 
+  // Register available enrichment services from config
+  logger.info('Registering enrichment services from config...');
+  registerAvailableEnrichmentServices();
+  
   // Immediately load ontology data into the singleton
   logger.info('Loading ontology data into singleton...');
   registerAllOntologies();
