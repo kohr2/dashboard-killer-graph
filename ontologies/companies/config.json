@@ -1,0 +1,179 @@
+{
+  "name": "companies",
+  "version": "1.0.0",
+  "description": "Company and business organization ontology for identifying and classifying companies, industries, and business entities",
+  "enabled": true,
+  "datasets": [
+    {
+      "name": "sp500_companies",
+      "description": "S&P 500 companies dataset with ticker symbols, names, and CIK identifiers",
+      "url": "https://raw.githubusercontent.com/nqabell89/SP500-Wikipedia-Company-Info-Extractor/master/sp500_constituents.csv",
+      "format": "csv",
+      "license": "MIT",
+      "source": "GitHub - SP500-Wikipedia-Company-Info-Extractor",
+      "fields": [
+        {
+          "name": "ticker",
+          "type": "string",
+          "description": "Stock ticker symbol"
+        },
+        {
+          "name": "name",
+          "type": "string", 
+          "description": "Company name"
+        },
+        {
+          "name": "cik",
+          "type": "string",
+          "description": "Central Index Key (SEC identifier)"
+        }
+      ],
+      "transformation": {
+        "script": "scripts/ontology/transform-sp500-data.ts",
+        "output": "ontologies/companies/data/sp500_companies.json"
+      }
+    },
+    {
+      "name": "fortune500_companies",
+      "description": "Fortune 500 companies dataset",
+      "url": "https://raw.githubusercontent.com/knutsynstad/fortune500-distance-matrix/master/data.json",
+      "format": "json",
+      "license": "MIT",
+      "source": "GitHub - fortune500-distance-matrix",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string",
+          "description": "Company name"
+        },
+        {
+          "name": "rank",
+          "type": "number",
+          "description": "Fortune 500 rank"
+        },
+        {
+          "name": "revenue",
+          "type": "number",
+          "description": "Annual revenue"
+        },
+        {
+          "name": "employees",
+          "type": "number",
+          "description": "Number of employees"
+        }
+      ],
+      "transformation": {
+        "script": "scripts/ontology/transform-fortune500-data.ts",
+        "output": "ontologies/companies/data/fortune500_companies.json"
+      }
+    },
+    {
+      "name": "industry_classifications",
+      "description": "Standard industry classification codes and definitions",
+      "url": "https://www.naics.com/wp-content/uploads/2017/06/NAICS-2017-Codes-Descriptions.xlsx",
+      "format": "xlsx",
+      "license": "Public Domain",
+      "source": "NAICS Association",
+      "fields": [
+        {
+          "name": "code",
+          "type": "string",
+          "description": "NAICS industry code"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "Industry name"
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "description": "Industry description"
+        },
+        {
+          "name": "level",
+          "type": "number",
+          "description": "Classification level (2-6 digits)"
+        }
+      ],
+      "transformation": {
+        "script": "scripts/ontology/transform-naics-data.ts",
+        "output": "ontologies/companies/data/industry_classifications.json"
+      }
+    }
+  ],
+  "enrichment": {
+    "services": [
+      {
+        "name": "company_info_enrichment",
+        "description": "Enriches company entities with additional information from S&P 500 dataset",
+        "type": "dataset_lookup",
+        "config": {
+          "dataset": "sp500_companies",
+          "matchFields": ["ticker", "name"],
+          "outputFields": ["ticker", "cik", "name"]
+        }
+      },
+      {
+        "name": "financial_data_enrichment",
+        "description": "Enriches companies with financial data from Fortune 500 dataset",
+        "type": "dataset_lookup",
+        "config": {
+          "dataset": "fortune500_companies",
+          "matchFields": ["name"],
+          "outputFields": ["revenue", "employees", "rank"]
+        }
+      },
+      {
+        "name": "industry_classification",
+        "description": "Classifies companies into industries based on NAICS codes",
+        "type": "classification",
+        "config": {
+          "dataset": "industry_classifications",
+          "algorithm": "keyword_matching",
+          "outputFields": ["industry_code", "industry_name", "sector"]
+        }
+      }
+    ]
+  },
+  "extraction": {
+    "patterns": {
+      "company": [
+        {
+          "name": "company_name_with_ticker",
+          "pattern": "\\b([A-Z][a-zA-Z\\s&.,]+)\\s*\\(([A-Z]{1,5})\\)",
+          "description": "Company name followed by ticker symbol in parentheses"
+        },
+        {
+          "name": "ticker_symbol",
+          "pattern": "\\b[A-Z]{1,5}\\b",
+          "description": "Standalone ticker symbol (3-5 capital letters)"
+        },
+        {
+          "name": "company_name_capitalized",
+          "pattern": "\\b[A-Z][a-zA-Z\\s&.,]{2,50}\\b",
+          "description": "Capitalized company names"
+        },
+        {
+          "name": "inc_corp_llc",
+          "pattern": "\\b[A-Z][a-zA-Z\\s&.,]+\\s+(Inc|Corp|LLC|Ltd|Company|Co)\\b",
+          "description": "Company names ending with business suffixes"
+        }
+      ],
+      "industry": [
+        {
+          "name": "industry_terms",
+          "pattern": "\\b(Technology|Healthcare|Finance|Manufacturing|Retail|Energy|Transportation|Telecommunications|Media|Real Estate|Agriculture|Mining|Construction|Education|Entertainment|Food|Automotive|Aerospace|Pharmaceuticals|Biotechnology)\\b",
+          "description": "Common industry terms"
+        }
+      ],
+      "sector": [
+        {
+          "name": "sector_terms",
+          "pattern": "\\b(Technology|Healthcare|Financial|Consumer|Industrial|Energy|Materials|Utilities|Communication Services|Real Estate)\\b",
+          "description": "Common sector terms"
+        }
+      ]
+    }
+  }
+} 

@@ -14,6 +14,8 @@ This index provides navigation to all documentation files in the Knowledge Graph
 - **[Ontology Plugin Architecture](architecture/ontology-plugin-architecture.md)** - Plugin-based ontology system
 - **[MCP Server Architecture](architecture/mcp-server-architecture.md)** - Claude Desktop integration
 - **[Unified Data Ingestion Architecture](architecture/unified-data-ingestion-architecture.md)** - Data ingestion pipeline design
+- **[Enrichment Config-Driven Architecture](development/enrichment-agnostic-architecture.md)** - Config-driven enrichment system
+- **[Enrichment Quick Reference](development/enrichment-quick-reference.md)** - Quick start guide for enrichment system
 
 ### Entity Processing
 - **[Entity Extraction Guide](architecture/entity-extraction-guide.md)** - AI-powered entity recognition
@@ -36,6 +38,7 @@ This index provides navigation to all documentation files in the Knowledge Graph
 - **[Processing Migration Summary](development/processing-migration-summary.md)** - Pipeline refactoring details
 - **[Ontology Generation Strategy](development/ontology-generation-strategy.md)** - Code generation approach
 - **[Ontology Scripts](development/ontology-scripts.md)** - Ontology-agnostic builder and CLI system
+- **[Enrichment Config-Driven Architecture](development/enrichment-agnostic-architecture.md)** - Config-driven enrichment system
 
 ### System Status
 - **[System Status Report](development/system-status.md)** - Current system health and metrics
@@ -63,6 +66,7 @@ This index provides navigation to all documentation files in the Knowledge Graph
 2. **[Architecture Overview](architecture/ontology-plugin-architecture.md)** - System architecture
 3. **[Entity Extraction Guide](architecture/entity-extraction-guide.md)** - Entity processing
 4. **[Processing Migration Summary](development/processing-migration-summary.md)** - Recent changes
+5. **[Enrichment Config-Driven Architecture](development/enrichment-agnostic-architecture.md)** - Enrichment system
 
 ### For System Administrators
 1. **[System Status Report](development/system-status.md)** - System health monitoring
