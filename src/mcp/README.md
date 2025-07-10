@@ -33,7 +33,7 @@ The MCP server exposes the knowledge graph as a tool that agents can use to:
        "knowledge-graph": {
          "command": "node",
          "args": [
-           "/path/to/your/project/src/mcp/servers/mcp-server-simple.js"
+           "/path/to/your/project/src/mcp/servers/mcp-server-stdio.js"
          ],
          "cwd": "/path/to/your/project",
          "env": {
@@ -54,7 +54,7 @@ Use the generic configuration format:
   "mcpServers": {
     "knowledge-graph": {
       "command": "node",
-      "args": ["./src/mcp/servers/mcp-server-simple.js"],
+      "args": ["./src/mcp/servers/mcp-server-stdio.js"],
       "cwd": ".",
       "env": {
         "NEO4J_DATABASE": "dashboard-killer",
@@ -191,7 +191,7 @@ NEO4J_DATABASE=dashboard-killer
    npm install
    
    # Test server directly
-   node src/mcp/servers/mcp-server-simple.js
+   node src/mcp/servers/mcp-server-stdio.js
    ```
 
 2. **Database connection failed**:
@@ -215,7 +215,7 @@ NEO4J_DATABASE=dashboard-killer
 ### Debug Mode
 ```bash
 # Enable debug logging
-DEBUG=* node src/mcp/servers/mcp-server-simple.js
+DEBUG=* node src/mcp/servers/mcp-server-stdio.js
 
 # Check MCP server logs
 tail -f logs/mcp-server.log
@@ -243,7 +243,7 @@ tail -f logs/mcp-server.log
   "mcpServers": {
     "knowledge-graph": {
       "command": "node",
-      "args": ["./src/mcp/servers/mcp-server-simple.js"],
+      "args": ["./src/mcp/servers/mcp-server-stdio.js"],
       "cwd": "/path/to/project",
       "env": {
         "NEO4J_DATABASE": "fibo",
@@ -261,7 +261,7 @@ const mcpClient = new MCPClient({
   servers: {
     "knowledge-graph": {
       command: "node",
-      args: ["./src/mcp/servers/mcp-server-simple.js"],
+      args: ["./src/mcp/servers/mcp-server-stdio.js"],
       cwd: process.cwd(),
       env: {
         NEO4J_DATABASE: "dashboard-killer",

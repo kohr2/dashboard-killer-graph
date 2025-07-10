@@ -17,7 +17,7 @@
   "mcpServers": {
     "knowledge-graph": {
       "command": "node",
-      "args": ["./src/mcp/servers/mcp-server-simple.js"],
+      "args": ["./src/mcp/servers/mcp-server-stdio.js"],
       "cwd": ".",
       "env": {
         "NEO4J_DATABASE": "dashboard-killer",
@@ -78,7 +78,7 @@ Tool: `query_knowledge_graph`
 docker-compose -f docker-compose.neo4j.yml up -d
 
 # Test stdio server
-node src/mcp/servers/mcp-server-simple.js --test
+node src/mcp/servers/mcp-server-stdio.js --test
 
 # Test HTTP server
 node src/mcp/servers/mcp-server-http.js

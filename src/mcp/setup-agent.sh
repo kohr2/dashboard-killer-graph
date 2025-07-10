@@ -65,7 +65,7 @@ cat > "$AGENT_CONFIG" << EOF
     "knowledge-graph": {
       "command": "node",
       "args": [
-        "$PROJECT_ROOT/src/mcp/servers/mcp-server-simple.js"
+        "$PROJECT_ROOT/src/mcp/servers/mcp-server-stdio.js"
       ],
       "cwd": "$PROJECT_ROOT",
       "env": {
@@ -81,7 +81,7 @@ echo "✅ Configuration created at: $AGENT_CONFIG"
 
 # Test MCP server
 echo "🧪 Testing MCP server..."
-if node "$PROJECT_ROOT/src/mcp/servers/mcp-server-simple.js" --test; then
+if node "$PROJECT_ROOT/src/mcp/servers/mcp-server-stdio.js" --test; then
     echo "✅ MCP server test passed"
 else
     echo "⚠️  MCP server test failed - check logs above"

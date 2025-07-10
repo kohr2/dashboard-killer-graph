@@ -3,7 +3,7 @@
     "knowledge-graph": {
       "command": "node",
       "args": [
-        "./src/mcp/servers/mcp-server-simple.js"
+        "./src/mcp/servers/mcp-server-stdio.js"
       ],
       "cwd": ".",
       "env": {
