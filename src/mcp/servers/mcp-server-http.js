@@ -39,6 +39,7 @@ const { OntologyService } = require('@platform/ontology/ontology.service');
 const { ChatService } = require('@platform/chat/application/services/chat.service');
 const { Neo4jConnection } = require('@platform/database/neo4j-connection');
 const { pluginRegistry } = require('../../../config/ontology/plugins.config');
+const { NLPServiceClient } = require('@platform/processing/nlp-service.client');
 
 const mcpUser = {
   id: 'mcp-server-user',
@@ -99,6 +100,26 @@ function generateToolDescription(ontologyService, neo4jConnection) {
   return description;
 }
 
+function generateNLPToolDescription() {
+  return `Process text using Natural Language Processing (NLP) services.\n\n` +
+         `**Available Operations**:\n` +
+         `- Entity extraction (raw spaCy)\n` +
+         `- Entity refinement (spaCy + LLM)\n` +
+         `- Knowledge graph extraction\n` +
+         `- Batch processing\n` +
+         `- Embedding generation\n\n` +
+         `**Available Ontologies**:\n` +
+         `- financial: Companies, people, monetary amounts\n` +
+         `- procurement: Contracts, suppliers, amounts\n` +
+         `- crm: People, companies, opportunities\n` +
+         `- default: General purpose extraction\n\n` +
+         `**Example Operations**:\n` +
+         `- "extract entities from [text]" - Extract named entities\n` +
+         `- "extract graph from [text] using [ontology]" - Generate knowledge graph\n` +
+         `- "generate embeddings for [texts]" - Create vector embeddings\n` +
+         `- "batch process [texts] with [ontology]" - Process multiple texts`;
+}
+
 async function main() {
   try {
     configureActiveOntologies();
@@ -108,6 +129,18 @@ async function main() {
     const chatService = container.resolve(ChatService);
     const neo4jConnection = container.resolve(Neo4jConnection);
     await neo4jConnection.connect();
+    
+    // Initialize NLP service client
+    const nlpServiceUrl = process.env.NLP_SERVICE_URL || 'http://localhost:8000';
+    const nlpClient = new NLPServiceClient(nlpServiceUrl);
+    
+    // Test NLP service connection
+    try {
+      const health = await nlpClient.healthCheck();
+      console.log(`✅ NLP Service connected: ${health.status}`);
+    } catch (error) {
+      console.warn(`⚠️ NLP Service not available: ${error.message}`);
+    }
     
     const app = express();
     const PORT = process.env.MCP_HTTP_PORT || 3002;
@@ -129,22 +162,54 @@ async function main() {
     // Tools endpoint (MCP ListTools equivalent)
     app.get('/tools', (req, res) => {
       const toolDescription = generateToolDescription(ontologyService, neo4jConnection);
+      const nlpToolDescription = generateNLPToolDescription();
       
       res.json({
-        tools: [{
-          name: 'query_knowledge_graph',
-          description: toolDescription,
-          inputSchema: {
-            type: 'object',
-            properties: {
-              query: {
-                type: 'string',
-                description: 'The natural language query to execute against the knowledge graph.',
+        tools: [
+          {
+            name: 'query_knowledge_graph',
+            description: toolDescription,
+            inputSchema: {
+              type: 'object',
+              properties: {
+                query: {
+                  type: 'string',
+                  description: 'The natural language query to execute against the knowledge graph.',
+                },
               },
+              required: ['query'],
             },
-            required: ['query'],
           },
-        }]
+          {
+            name: 'nlp_processing',
+            description: nlpToolDescription,
+            inputSchema: {
+              type: 'object',
+              properties: {
+                operation: {
+                  type: 'string',
+                  description: 'The NLP operation to perform: extract_entities, refine_entities, extract_graph, batch_extract_graph, generate_embeddings',
+                  enum: ['extract_entities', 'refine_entities', 'extract_graph', 'batch_extract_graph', 'generate_embeddings']
+                },
+                text: {
+                  type: 'string',
+                  description: 'The text to process (for single text operations)',
+                },
+                texts: {
+                  type: 'array',
+                  items: { type: 'string' },
+                  description: 'Array of texts to process (for batch operations)',
+                },
+                ontology_name: {
+                  type: 'string',
+                  description: 'Optional ontology name to scope the extraction (financial, procurement, crm, default)',
+                  enum: ['financial', 'procurement', 'crm', 'default']
+                },
+              },
+              required: ['operation'],
+            },
+          }
+        ]
       });
     });
     
@@ -214,11 +279,94 @@ async function main() {
       }
     });
     
+    // NLP processing endpoint
+    app.post('/nlp', async (req, res) => {
+      try {
+        const { operation, text, texts, ontology_name } = req.body;
+        
+        if (!operation) {
+          return res.status(400).json({
+            error: 'Operation parameter is required'
+          });
+        }
+        
+        let result;
+        
+        switch (operation) {
+          case 'extract_entities':
+            if (!text) {
+              return res.status(400).json({
+                error: 'Text parameter is required for extract_entities operation'
+              });
+            }
+            result = await nlpClient.extractEntities(text, ontology_name);
+            break;
+            
+          case 'refine_entities':
+            if (!text) {
+              return res.status(400).json({
+                error: 'Text parameter is required for refine_entities operation'
+              });
+            }
+            result = await nlpClient.refineEntities(text, ontology_name);
+            break;
+            
+          case 'extract_graph':
+            if (!text) {
+              return res.status(400).json({
+                error: 'Text parameter is required for extract_graph operation'
+              });
+            }
+            result = await nlpClient.extractGraph(text, ontology_name);
+            break;
+            
+          case 'batch_extract_graph':
+            if (!texts || !Array.isArray(texts)) {
+              return res.status(400).json({
+                error: 'Texts parameter (array) is required for batch_extract_graph operation'
+              });
+            }
+            result = await nlpClient.batchExtractGraph(texts, ontology_name);
+            break;
+            
+          case 'generate_embeddings':
+            if (!texts || !Array.isArray(texts)) {
+              return res.status(400).json({
+                error: 'Texts parameter (array) is required for generate_embeddings operation'
+              });
+            }
+            result = await nlpClient.generateEmbeddings(texts);
+            break;
+            
+          default:
+            return res.status(400).json({
+              error: `Unknown operation: ${operation}. Supported operations: extract_entities, refine_entities, extract_graph, batch_extract_graph, generate_embeddings`
+            });
+        }
+        
+        res.json({
+          operation,
+          result,
+          ontology_used: ontology_name || 'default',
+          timestamp: new Date().toISOString()
+        });
+        
+      } catch (error) {
+        console.error('Error handling NLP operation:', error);
+        res.status(500).json({
+          error: error.message,
+          operation: req.body.operation,
+          stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
+      }
+    });
+    
     app.listen(PORT, () => {
       console.log(`🚀 MCP HTTP Server running on http://localhost:${PORT}`);
       console.log(`📊 Health check: http://localhost:${PORT}/health`);
       console.log(`🔧 Tools info: http://localhost:${PORT}/tools`);
       console.log(`❓ Query endpoint: http://localhost:${PORT}/query`);
+      console.log(`🧠 NLP endpoint: http://localhost:${PORT}/nlp`);
       console.log(`✅ Database: ${process.env.NEO4J_DATABASE || 'neo4j'}`);
       console.log(`🎯 Active ontologies: ${pluginRegistry.getPluginSummary().enabled.join(', ')}`);
     });
