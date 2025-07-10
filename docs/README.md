@@ -85,6 +85,7 @@ npm run dev
 - `fibo` - Financial Industry Business Ontology (Organizations, Instruments, Legal Entities)
 - `procurement` - European Procurement Ontology (Contracts, Tenders, Suppliers)
 - `crm` - Customer Relationship Management (Leads, Opportunities, Accounts)
+- `geonames` - Geographic Ontology (Cities, Countries, Administrative Regions)
 - `dashboard-killer` - Default application database
 
 ### Ontology Management
@@ -178,6 +179,18 @@ npx ts-node scripts/ontology/build-ontology.ts --ontology-name crm
 ```
 - **Source**: Customer relationship management ontology
 - **Coverage**: Leads, opportunities, accounts, contacts
+
+**GeoNames:**
+```bash
+# Transform GeoNames data (cities with population > 1000)
+npx ts-node scripts/ontology/transform-geonames-data.ts
+
+# Ingest GeoNames data
+npx ts-node scripts/ontology/geonames-only-ingestion.ts
+```
+- **Source**: GeoNames cities1000.txt dataset
+- **Coverage**: 159,045 cities from 195+ countries
+- **Features**: Geographic coordinates, population data, administrative regions
 
 #### Ontology Processing Pipeline
 
