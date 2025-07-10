@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "knowledge-graph": {
+      "command": "node",
+      "args": [
+        "./src/mcp/servers/mcp-server-simple.js"
+      ],
+      "cwd": ".",
+      "env": {
+        "NEO4J_DATABASE": "dashboard-killer",
+        "MCP_ACTIVE_ONTOLOGIES": "core,fibo,procurement,geonames"
+      }
+    }
+  }
+} 
