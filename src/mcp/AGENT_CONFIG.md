@@ -3,10 +3,8 @@
 ## Quick Setup
 
 ```bash
-# 1. Run setup script
 ./src/mcp/setup-agent.sh
-
-# 2. Restart your agent
+# Restart your agent
 ```
 
 ## Configuration
@@ -77,9 +75,7 @@ Tool: `query_knowledge_graph`
 # Start Neo4j
 docker-compose -f docker-compose.neo4j.yml up -d
 
-# Test stdio server
+# Test servers
 node src/mcp/servers/mcp-server-stdio.js --test
-
-# Test HTTP server
 node src/mcp/servers/mcp-server-http.js
 ``` 

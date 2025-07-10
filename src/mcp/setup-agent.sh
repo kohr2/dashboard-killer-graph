@@ -1,64 +1,45 @@
 #!/bin/bash
 
 # MCP Server Setup Script for Agents
-# This script helps agents quickly configure the MCP server
 
 set -e
 
-echo "🔧 MCP Server Setup for Knowledge Graph Platform"
-echo "================================================"
+echo "🔧 MCP Server Setup"
+echo "=================="
 
-# Get project root
 PROJECT_ROOT=$(pwd)
-echo "📁 Project root: $PROJECT_ROOT"
+echo "📁 Project: $PROJECT_ROOT"
 
 # Check prerequisites
 echo "🔍 Checking prerequisites..."
 
 if ! command -v node &> /dev/null; then
-    echo "❌ Node.js not found. Please install Node.js 18 or higher."
+    echo "❌ Node.js not found. Install Node.js 18+"
     exit 1
 fi
 
-NODE_VERSION=$(node --version)
-echo "✅ Node.js version: $NODE_VERSION"
+echo "✅ Node.js: $(node --version)"
 
-if ! command -v npm &> /dev/null; then
-    echo "❌ npm not found. Please install npm."
-    exit 1
-fi
-
-echo "✅ npm found"
-
-# Check if Neo4j is running
-echo "🔍 Checking Neo4j connection..."
 if ! curl -s http://localhost:7474 > /dev/null; then
-    echo "⚠️  Neo4j not accessible at localhost:7474"
-    echo "   Please start Neo4j with: docker-compose -f docker-compose.neo4j.yml up -d"
+    echo "⚠️  Neo4j not accessible. Start with: docker-compose -f docker-compose.neo4j.yml up -d"
 else
-    echo "✅ Neo4j is running"
+    echo "✅ Neo4j running"
 fi
 
-# Create agent-specific config
+# Create agent config
 echo "📝 Creating agent configuration..."
 
-# Detect agent type
 AGENT_CONFIG=""
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS
     AGENT_CONFIG="$HOME/Library/Application Support/Claude/claude_desktop_config.json"
-    mkdir -p "$(dirname "$AGENT_CONFIG")"
 elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
-    # Windows
     AGENT_CONFIG="$APPDATA/Claude/claude_desktop_config.json"
-    mkdir -p "$(dirname "$AGENT_CONFIG")"
 else
-    # Linux
     AGENT_CONFIG="$HOME/.config/Claude/claude_desktop_config.json"
-    mkdir -p "$(dirname "$AGENT_CONFIG")"
 fi
 
-# Create configuration
+mkdir -p "$(dirname "$AGENT_CONFIG")"
+
 cat > "$AGENT_CONFIG" << EOF
 {
   "mcpServers": {
@@ -77,30 +58,17 @@ cat > "$AGENT_CONFIG" << EOF
 }
 EOF
 
-echo "✅ Configuration created at: $AGENT_CONFIG"
+echo "✅ Config: $AGENT_CONFIG"
 
-# Test MCP server
+# Test server
 echo "🧪 Testing MCP server..."
 if node "$PROJECT_ROOT/src/mcp/servers/mcp-server-stdio.js" --test; then
-    echo "✅ MCP server test passed"
+    echo "✅ Server test passed"
 else
-    echo "⚠️  MCP server test failed - check logs above"
+    echo "⚠️  Server test failed"
 fi
 
 echo ""
 echo "🎉 Setup complete!"
-echo ""
-echo "📋 Next steps:"
-echo "1. Restart your agent (Claude Desktop, etc.)"
-echo "2. The knowledge graph tool should now be available"
-echo "3. Try queries like:"
-echo "   - 'show all companies'"
-echo "   - 'find cities in United States'"
-echo "   - 'count contracts'"
-echo ""
-echo "🔧 Configuration options:"
-echo "- Change database: Set NEO4J_DATABASE in the config"
-echo "- Enable ontologies: Modify MCP_ACTIVE_ONTOLOGIES"
-echo "- Available databases: dashboard-killer, fibo, procurement, geonames"
-echo ""
-echo "📚 For more information, see: src/mcp/README.md" 
+echo "📋 Next: Restart your agent"
+echo "🔧 Try: 'show all companies', 'find cities in United States'" 
