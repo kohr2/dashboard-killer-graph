@@ -35,10 +35,30 @@ services:
     volumes:
       - redis_data:/data
 
+  nlp-service:
+    build:
+      context: ./python-services/nlp-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"  # NLP Service API
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ENABLE_PROMPT_DEBUG=${ENABLE_PROMPT_DEBUG:-0}
+    volumes:
+      - nlp_cache:/app/cache
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
 volumes:
   neo4j_data:
   neo4j_logs:
   neo4j_import:
   neo4j_plugins:
   neo4j_test_data:
-  redis_data: 
+  redis_data:
+  nlp_cache: 
