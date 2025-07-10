@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "knowledge-graph-http": {
+      "command": "node",
+      "args": [
+        "./src/mcp/servers/mcp-server-http.js"
+      ],
+      "cwd": ".",
+      "env": {
+        "NEO4J_DATABASE": "dashboard-killer",
+        "MCP_ACTIVE_ONTOLOGIES": "core,fibo,procurement,geonames",
+        "MCP_HTTP_PORT": "3002"
+      }
+    }
+  }
+} 
