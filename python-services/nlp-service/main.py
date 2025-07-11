@@ -71,10 +71,10 @@ class OntologyUpdateRequest(BaseModel):
     entity_types: List[str] = []
     relationship_types: List[str] = []
     property_types: List[str] = []
-    entity_descriptions: Dict[str, str] | None = None
-    relationship_descriptions: Dict[str, str] | None = None
+    entity_descriptions: Optional[Dict[str, str]] = None
+    relationship_descriptions: Optional[Dict[str, str]] = None
     # New compact ontology format
-    compact_ontology: Dict[str, Any] | None = None
+    compact_ontology: Optional[Dict[str, Any]] = None
     ontology_name: Optional[str] = None  # New field to name the ontology
 
 # --- Global State ---
