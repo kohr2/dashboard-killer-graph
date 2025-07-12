@@ -38,7 +38,7 @@ The following documentation files were updated to reference the new generic scri
 
 All legacy script functionality has been replaced by the new ontology-agnostic architecture:
 
-- **Ingestion**: Use `scripts/ontology/ingest-ontology-dataset.ts --ontology-name <name>`
+- **Ingestion**: Use `scripts/ontology/ingest-ontology-dataset.ts --ontology <name> --database <db-name>`
 - **Verification**: Use `scripts/ontology/verify-ontology-data.ts --ontology-name <name>`
 - **Data Clearing**: Use verification script with `--clear-data` flag
 

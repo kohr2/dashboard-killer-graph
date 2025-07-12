@@ -44,7 +44,7 @@ For pre-structured datasets with defined entities and relationships:
 
 ```bash
 # Fast, no LLM processing
-npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name isco
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology isco --database jobboardkiller
 ```
 
 **Benefits:**
@@ -58,7 +58,7 @@ For unstructured text that needs entity extraction:
 
 ```bash
 # LLM processing for text extraction
-npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name isco --use-llm
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology isco --database jobboardkiller --use-llm
 ```
 
 **Use when:**
@@ -144,13 +144,13 @@ npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name isco --u
 ### Ingestion
 ```bash
 # Basic ingestion (direct mode)
-npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name <name>
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology <name> --database <db-name>
 
 # With LLM processing
-npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name <name> --use-llm
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology <name> --database <db-name> --use-llm
 
 # With options
-npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name <name> --limit 100
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology <name> --database <db-name> --limit 100
 ```
 
 ### Verification
@@ -235,7 +235,7 @@ npx ts-node scripts/ontology/transform-new-ontology-data.ts
 
 ### 4. Ingest Data
 ```bash
-npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name new-ontology
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology new-ontology --database jobboardkiller
 ```
 
 ### 5. Verify Ingestion

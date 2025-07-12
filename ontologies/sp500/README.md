@@ -148,10 +148,10 @@ Ingest the transformed data into the knowledge graph:
 
 ```bash
 # Companies-only ingestion (recommended for performance)
-npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name companies
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology companies --database jobboardkiller
 
 # Generic dataset ingestion
-npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name companies
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology companies --database jobboardkiller
 ```
 
 ### 4. Use in Applications
@@ -291,7 +291,7 @@ The plugin supports enrichment from external APIs:
 Enable debug logging to troubleshoot issues:
 
 ```bash
-DEBUG=* npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name companies
+DEBUG=* npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology companies --database jobboardkiller
 ```
 
 ## Contributing

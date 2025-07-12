@@ -73,7 +73,7 @@ Dataset Records → Direct Conversion → Neo4j
 
 ```bash
 # Default behavior - no LLM processing
-npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name isco
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology isco --database jobboardkiller
 ```
 
 ### LLM Processing Mode
@@ -85,7 +85,7 @@ npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name isco
 
 ```bash
 # Explicit LLM processing
-npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name isco --use-llm
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology isco --database jobboardkiller --use-llm
 ```
 
 ## Implementation Details
@@ -142,11 +142,11 @@ npx ts-node ontologies/isco/scripts/ingest-comprehensive-isco.ts
 ### After (Direct by Default)
 ```bash
 # Default: Direct ingestion (no LLM)
-npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name isco
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology isco --database jobboardkiller
 # Result: Fast, free, accurate
 
 # Optional: LLM processing when needed
-npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name isco --use-llm
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology isco --database jobboardkiller --use-llm
 # Result: LLM processing for unstructured data
 ```
 

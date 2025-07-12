@@ -8,59 +8,80 @@ import { OntologyDatasetIngestionService } from '../../src/platform/processing/o
 /**
  * Generic Ontology Dataset Ingestion CLI
  * 
- * Usage:
+ * Simplified usage with automatic path construction:
  * npx ts-node -r tsconfig-paths/register scripts/ontology/ingest-ontology-dataset.ts \
- *   --ontology-name isco \
- *   --dataset-path ontologies/isco/data/comprehensive-isco-dataset-english.json \
- *   --plugin-path ontologies/isco/isco.plugin.ts \
+ *   --ontology isco \
+ *   --database jobboardkiller \
  *   --limit 100
+ * 
+ * The script automatically constructs paths:
+ * - Dataset: ontologies/{ontology}/data/comprehensive-{ontology}-dataset-english.json
+ * - Plugin: ontologies/{ontology}/{ontology}.plugin.ts
+ * - Config: ontologies/{ontology}/config.json
  */
 async function main() {
   // Parse command line arguments
   const args = process.argv.slice(2);
-  const ontologyName = getArgValue(args, '--ontology-name');
-  const datasetPath = getArgValue(args, '--dataset-path');
-  const pluginPath = getArgValue(args, '--plugin-path');
+  const ontologyName = getArgValue(args, '--ontology');
+  const databaseName = getArgValue(args, '--database');
   const limitStr = getArgValue(args, '--limit');
   const limit = limitStr ? parseInt(limitStr, 10) : undefined;
   const useLLM = args.includes('--use-llm');
 
   // Validate required arguments
   if (!ontologyName) {
-    console.error('❌ --ontology-name is required');
+    console.error('❌ --ontology is required');
+    console.error('Usage: --ontology <name> --database <name> [--limit <number>] [--use-llm]');
     process.exit(1);
   }
 
-  if (!datasetPath) {
-    console.error('❌ --dataset-path is required');
+  if (!databaseName) {
+    console.error('❌ --database is required');
+    console.error('Usage: --ontology <name> --database <name> [--limit <number>] [--use-llm]');
     process.exit(1);
   }
 
-  if (!pluginPath) {
-    console.error('❌ --plugin-path is required');
-    process.exit(1);
-  }
+  // Construct paths using standard naming conventions
+  const datasetPath = `ontologies/${ontologyName}/data/comprehensive-${ontologyName}-dataset-english.json`;
+  const pluginPath = `ontologies/${ontologyName}/${ontologyName}.plugin.ts`;
+  const configPath = `ontologies/${ontologyName}/config.json`;
+
+  console.log(`🔍 Looking for files:`);
+  console.log(`   Dataset: ${datasetPath}`);
+  console.log(`   Plugin: ${pluginPath}`);
+  console.log(`   Config: ${configPath}`);
 
   // Validate file paths
-  if (!fs.existsSync(datasetPath!)) {
+  if (!fs.existsSync(datasetPath)) {
     console.error(`❌ Dataset file not found: ${datasetPath}`);
+    console.error(`   Expected: ontologies/${ontologyName}/data/comprehensive-${ontologyName}-dataset-english.json`);
     process.exit(1);
   }
 
-  if (!fs.existsSync(pluginPath!)) {
+  if (!fs.existsSync(pluginPath)) {
     console.error(`❌ Plugin file not found: ${pluginPath}`);
+    console.error(`   Expected: ontologies/${ontologyName}/${ontologyName}.plugin.ts`);
     process.exit(1);
+  }
+
+  if (!fs.existsSync(configPath)) {
+    console.warn(`⚠️ Config file not found: ${configPath}`);
+    console.warn(`   Expected: ontologies/${ontologyName}/config.json`);
+    console.warn(`   Continuing without config...`);
   }
 
   try {
     // Load the ontology plugin
-    const pluginModule = require(path.resolve(pluginPath!));
+    const pluginModule = require(path.resolve(pluginPath));
     const ontologyPlugin = pluginModule.default || pluginModule[`${ontologyName}Plugin`] || pluginModule;
 
     if (!ontologyPlugin) {
       console.error(`❌ Could not find ontology plugin in: ${pluginPath}`);
       process.exit(1);
     }
+
+    // Set database name in environment for Neo4j connection
+    process.env.NEO4J_DATABASE = databaseName;
 
     // Create ingestion service
     const ingestionService = new OntologyDatasetIngestionService();

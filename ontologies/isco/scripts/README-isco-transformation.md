@@ -66,10 +66,10 @@ Ingests the comprehensive dataset into the Neo4j database using the generic onto
 
 ```bash
 # Ingest first 100 records
-npx ts-node -r tsconfig-paths/register scripts/ontology/ingest-ontology-dataset.ts --ontology-name isco --limit 100
+npx ts-node -r tsconfig-paths/register scripts/ontology/ingest-ontology-dataset.ts --ontology isco --database jobboardkiller --limit 100
 
 # Ingest all records
-npx ts-node -r tsconfig-paths/register scripts/ontology/ingest-ontology-dataset.ts --ontology-name isco
+npx ts-node -r tsconfig-paths/register scripts/ontology/ingest-ontology-dataset.ts --ontology isco --database jobboardkiller
 ```
 
 ### 4. Data Verification (Generic Script)
@@ -96,7 +96,7 @@ npx ts-node -r tsconfig-paths/register scripts/ontology/verify-ontology-data.ts 
 
 3. **Ingest into Database**:
    ```bash
-   npx ts-node -r tsconfig-paths/register scripts/ontology/ingest-ontology-dataset.ts --ontology-name isco --limit 100
+   npx ts-node -r tsconfig-paths/register scripts/ontology/ingest-ontology-dataset.ts --ontology isco --database jobboardkiller --limit 100
    ```
 
 4. **Verify Ingestion**:
