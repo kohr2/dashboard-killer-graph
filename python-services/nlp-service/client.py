@@ -43,6 +43,7 @@ class GraphResponse:
     refinement_info: str
     embedding: Optional[List[float]] = None
     ontology_used: Optional[str] = None
+    database_used: Optional[str] = None
 
 
 @dataclass
@@ -52,6 +53,7 @@ class RefinedExtractionResponse:
     refined_entities: List[Entity]
     refinement_info: str
     ontology_used: Optional[str] = None
+    database_used: Optional[str] = None
 
 
 class NLPServiceError(Exception):
@@ -170,13 +172,14 @@ class NLPServiceClient:
         """
         return self._make_request('GET', '/health')
     
-    def extract_entities(self, text: str, ontology_name: Optional[str] = None) -> List[Entity]:
+    def extract_entities(self, text: str, ontology_name: Optional[str] = None, database: Optional[str] = None) -> List[Entity]:
         """
         Extract entities from text using spaCy (raw extraction).
         
         Args:
             text: Input text to process
             ontology_name: Optional ontology name to scope the extraction
+            database: Optional database name to use for the extraction
             
         Returns:
             List of extracted entities
@@ -184,6 +187,8 @@ class NLPServiceClient:
         payload = {'text': text}
         if ontology_name:
             payload['ontology_name'] = ontology_name
+        if database:
+            payload['database'] = database
             
         response = self._make_request('POST', '/extract-entities', payload)
         
@@ -194,13 +199,14 @@ class NLPServiceClient:
         
         return entities
     
-    def refine_entities(self, text: str, ontology_name: Optional[str] = None) -> RefinedExtractionResponse:
+    def refine_entities(self, text: str, ontology_name: Optional[str] = None, database: Optional[str] = None) -> RefinedExtractionResponse:
         """
         Extract entities with spaCy and refine them using LLM.
         
         Args:
             text: Input text to process
             ontology_name: Optional ontology name to scope the extraction
+            database: Optional database name to use for the extraction
             
         Returns:
             Refined extraction response with raw and refined entities
@@ -208,6 +214,8 @@ class NLPServiceClient:
         payload = {'text': text}
         if ontology_name:
             payload['ontology_name'] = ontology_name
+        if database:
+            payload['database'] = database
             
         response = self._make_request('POST', '/refine-entities', payload)
         
@@ -218,16 +226,18 @@ class NLPServiceClient:
             raw_entities=raw_entities,
             refined_entities=refined_entities,
             refinement_info=response.get('refinement_info', ''),
-            ontology_used=response.get('ontology_used')
+            ontology_used=response.get('ontology_used'),
+            database_used=response.get('database_used')
         )
     
-    def extract_graph(self, text: str, ontology_name: Optional[str] = None) -> GraphResponse:
+    def extract_graph(self, text: str, ontology_name: Optional[str] = None, database: Optional[str] = None) -> GraphResponse:
         """
         Extract a knowledge graph from text using LLM.
         
         Args:
             text: Input text to process
             ontology_name: Optional ontology name to scope the extraction
+            database: Optional database name to use for the extraction
             
         Returns:
             Complete graph extraction result
@@ -235,6 +245,8 @@ class NLPServiceClient:
         payload = {'text': text}
         if ontology_name:
             payload['ontology_name'] = ontology_name
+        if database:
+            payload['database'] = database
             
         response = self._make_request('POST', '/extract-graph', payload)
         
@@ -246,16 +258,18 @@ class NLPServiceClient:
             relationships=relationships,
             refinement_info=response.get('refinement_info', ''),
             embedding=response.get('embedding'),
-            ontology_used=response.get('ontology_used')
+            ontology_used=response.get('ontology_used'),
+            database_used=response.get('database_used')
         )
     
-    def batch_extract_graph(self, texts: List[str], ontology_name: Optional[str] = None) -> List[GraphResponse]:
+    def batch_extract_graph(self, texts: List[str], ontology_name: Optional[str] = None, database: Optional[str] = None) -> List[GraphResponse]:
         """
         Extract knowledge graphs from multiple texts in batch.
         
         Args:
             texts: List of input texts to process
             ontology_name: Optional ontology name to scope the extraction
+            database: Optional database name to use for the extraction
             
         Returns:
             List of graph extraction results
@@ -263,6 +277,8 @@ class NLPServiceClient:
         payload = {'texts': texts}
         if ontology_name:
             payload['ontology_name'] = ontology_name
+        if database:
+            payload['database'] = database
             
         response = self._make_request('POST', '/batch-extract-graph', payload)
         
@@ -276,7 +292,8 @@ class NLPServiceClient:
                 relationships=relationships,
                 refinement_info=graph_data.get('refinement_info', ''),
                 embedding=graph_data.get('embedding'),
-                ontology_used=graph_data.get('ontology_used')
+                ontology_used=graph_data.get('ontology_used'),
+                database_used=graph_data.get('database_used')
             )
             graphs.append(graph)
         

@@ -29,10 +29,12 @@ else:
 class ExtractionRequest(BaseModel):
     text: str
     ontology_name: Optional[str] = None  # New field for ontology scoping
+    database: Optional[str] = None  # New field for database specification
     
 class BatchExtractionRequest(BaseModel):
     texts: List[str]
     ontology_name: Optional[str] = None  # New field for ontology scoping
+    database: Optional[str] = None  # New field for database specification
     
 class Entity(BaseModel):
     id: str  # Unique identifier for the entity
@@ -65,6 +67,7 @@ class GraphResponse(BaseModel):
     refinement_info: str
     embedding: Optional[List[float]] = None
     ontology_used: Optional[str] = None  # New field to indicate which ontology was used
+    database_used: Optional[str] = None  # New field to indicate which database was used
     # Graph metadata
     graph_metadata: Optional[Dict[str, Any]] = None
 
@@ -74,6 +77,7 @@ class RefinedExtractionResponse(BaseModel):
     refined_entities: List[Entity]
     refinement_info: str
     ontology_used: Optional[str] = None  # New field to indicate which ontology was used
+    database_used: Optional[str] = None  # New field to indicate which database was used
     # Graph metadata
     graph_metadata: Optional[Dict[str, Any]] = None
 
@@ -103,6 +107,23 @@ RELATIONSHIP_DESCRIPTIONS: Dict[str, str] = {}
 # New: Multiple ontology support
 ONTOLOGIES: Dict[str, Dict[str, Any]] = {}  # Store multiple ontologies by name
 DEFAULT_ONTOLOGY_NAME = "default"  # Default ontology name
+
+def get_database_name(database_param: Optional[str] = None) -> Optional[str]:
+    """
+    Get the database name from parameter or environment variable.
+    
+    Args:
+        database_param: Database name from request parameter
+        
+    Returns:
+        Database name string or None if not set
+    """
+    if database_param:
+        return database_param
+    env_db = os.getenv("NEO4J_DATABASE")
+    if env_db:
+        return env_db
+    return None
 
 # Helper functions for generating unique identifiers and graph data
 def generate_entity_id(entity_type: str, value: str) -> str:
@@ -346,7 +367,7 @@ class SpacyEntityExtractor:
         return mapping.get(spacy_label, spacy_label)
 
 # --- ASYNC LLM Graph Extraction Logic ---
-async def extract_graph_with_llm_async(text: str, ontology_name: Optional[str] = None) -> Dict[str, Any]:
+async def extract_graph_with_llm_async(text: str, ontology_name: Optional[str] = None, database: Optional[str] = None) -> Dict[str, Any]:
     if not async_client:
         raise HTTPException(status_code=503, detail="OpenAI async client not configured.")
     
@@ -477,7 +498,7 @@ async def extract_graph_with_llm_async(text: str, ontology_name: Optional[str] =
         return {"entities": [], "relationships": [], "refinement_info": f"LLM graph extraction error: {str(e)}"}
 
 # --- LLM Graph Extraction Logic ---
-def extract_graph_with_llm(text: str, ontology_name: Optional[str] = None) -> Dict[str, Any]:
+def extract_graph_with_llm(text: str, ontology_name: Optional[str] = None, database: Optional[str] = None) -> Dict[str, Any]:
     if not client:
         raise HTTPException(status_code=503, detail="OpenAI client not configured.")
     
@@ -757,7 +778,10 @@ async def extract_graph_endpoint(request: ExtractionRequest):
     """
     request_id = generate_request_id()
     
-    graph_data = extract_graph_with_llm(request.text, request.ontology_name)
+    # Get database name from request or environment
+    database_name = get_database_name(request.database)
+    
+    graph_data = extract_graph_with_llm(request.text, request.ontology_name, database_name)
     
     # Get ontology configuration for graph data
     ontology_config = get_ontology_by_name(request.ontology_name)
@@ -792,6 +816,7 @@ async def extract_graph_endpoint(request: ExtractionRequest):
         "entity_count": len(entities),
         "relationship_count": len(relationships),
         "ontology_used": request.ontology_name or "default",
+        "database_used": database_name,
         "extraction_timestamp": time.time(),
         "has_embedding": embedding is not None
     }
@@ -803,6 +828,7 @@ async def extract_graph_endpoint(request: ExtractionRequest):
         refinement_info=graph_data.get("refinement_info", "Graph generated directly by LLM based on dynamic ontology."),
         embedding=embedding,
         ontology_used=request.ontology_name,
+        database_used=database_name,
         graph_metadata=graph_metadata
     )
 
@@ -923,7 +949,10 @@ async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
     - **texts**: List of texts to process.
     - **ontology_name**: Optional ontology name to scope the extraction.
     """
-    print(f"--- Received batch request for {len(request.texts)} documents using ontology: {request.ontology_name or 'default'} ---")
+    # Get database name from request or environment
+    database_name = get_database_name(request.database)
+    
+    print(f"--- Received batch request for {len(request.texts)} documents using ontology: {request.ontology_name or 'default'} and database: {database_name} ---")
     batch_start_time = time.time()
 
     # Process each text individually to add IDs and graph data
@@ -931,7 +960,7 @@ async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
     for i, text in enumerate(request.texts):
         try:
             # Extract graph data
-            graph_data = extract_graph_with_llm(text, request.ontology_name)
+            graph_data = extract_graph_with_llm(text, request.ontology_name, database_name)
             
             # Get ontology configuration for graph data
             ontology_config = get_ontology_by_name(request.ontology_name)
@@ -969,6 +998,7 @@ async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
                 "entity_count": len(entities),
                 "relationship_count": len(relationships),
                 "ontology_used": request.ontology_name or "default",
+                "database_used": database_name,
                 "extraction_timestamp": time.time(),
                 "has_embedding": embedding is not None,
                 "batch_index": i
@@ -982,6 +1012,7 @@ async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
                 refinement_info=graph_data.get("refinement_info", "Graph generated directly by LLM based on dynamic ontology."),
                 embedding=embedding,
                 ontology_used=request.ontology_name,
+                database_used=database_name,
                 graph_metadata=graph_metadata
             )
             
@@ -997,6 +1028,7 @@ async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
                 refinement_info=f"Error processing text: {str(e)}",
                 embedding=None,
                 ontology_used=request.ontology_name,
+                database_used=database_name,
                 graph_metadata={
                     "error": str(e),
                     "text_index": i,

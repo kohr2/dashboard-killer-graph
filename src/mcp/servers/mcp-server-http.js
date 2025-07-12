@@ -476,7 +476,7 @@ async function main() {
     
     app.post('/tools/nlp_processing', async (req, res) => {
       try {
-        const { operation, text, texts, ontology_name } = req.body;
+        const { operation, text, texts, ontology_name, database } = req.body;
         
         if (!operation) {
           return res.status(400).json({
@@ -493,7 +493,7 @@ async function main() {
                 error: 'Text parameter is required for extract_entities operation'
               });
             }
-            result = await nlpClient.extractEntities(text, ontology_name);
+            result = await nlpClient.extractEntities(text, ontology_name, database);
             break;
             
           case 'refine_entities':
@@ -502,7 +502,7 @@ async function main() {
                 error: 'Text parameter is required for refine_entities operation'
               });
             }
-            result = await nlpClient.refineEntities(text, ontology_name);
+            result = await nlpClient.refineEntities(text, ontology_name, database);
             break;
             
           case 'extract_graph':
@@ -511,7 +511,7 @@ async function main() {
                 error: 'Text parameter is required for extract_graph operation'
               });
             }
-            result = await nlpClient.extractGraph(text, ontology_name);
+            result = await nlpClient.extractGraph(text, ontology_name, database);
             break;
             
           case 'batch_extract_graph':
@@ -520,7 +520,7 @@ async function main() {
                 error: 'Texts parameter (array) is required for batch_extract_graph operation'
               });
             }
-            result = await nlpClient.batchExtractGraph(texts, ontology_name);
+            result = await nlpClient.batchExtractGraph(texts, ontology_name, database);
             break;
             
           case 'generate_embeddings':
@@ -542,6 +542,7 @@ async function main() {
           operation,
           result,
           ontology_used: ontology_name || 'default',
+          database_used: database || process.env.NEO4J_DATABASE || 'neo4j',
           timestamp: new Date().toISOString()
         });
         
@@ -590,7 +591,7 @@ async function main() {
     // NLP processing endpoint
     app.post('/nlp', async (req, res) => {
       try {
-        const { operation, text, texts, ontology_name } = req.body;
+        const { operation, text, texts, ontology_name, database } = req.body;
         
         if (!operation) {
           return res.status(400).json({
@@ -607,7 +608,7 @@ async function main() {
                 error: 'Text parameter is required for extract_entities operation'
               });
             }
-            result = await nlpClient.extractEntities(text, ontology_name);
+            result = await nlpClient.extractEntities(text, ontology_name, database);
             break;
             
           case 'refine_entities':
@@ -616,7 +617,7 @@ async function main() {
                 error: 'Text parameter is required for refine_entities operation'
               });
             }
-            result = await nlpClient.refineEntities(text, ontology_name);
+            result = await nlpClient.refineEntities(text, ontology_name, database);
             break;
             
           case 'extract_graph':
@@ -625,7 +626,7 @@ async function main() {
                 error: 'Text parameter is required for extract_graph operation'
               });
             }
-            result = await nlpClient.extractGraph(text, ontology_name);
+            result = await nlpClient.extractGraph(text, ontology_name, database);
             break;
             
           case 'batch_extract_graph':
@@ -634,7 +635,7 @@ async function main() {
                 error: 'Texts parameter (array) is required for batch_extract_graph operation'
               });
             }
-            result = await nlpClient.batchExtractGraph(texts, ontology_name);
+            result = await nlpClient.batchExtractGraph(texts, ontology_name, database);
             break;
             
           case 'generate_embeddings':
@@ -656,6 +657,7 @@ async function main() {
           operation,
           result,
           ontology_used: ontology_name || 'default',
+          database_used: database || process.env.NEO4J_DATABASE || 'neo4j',
           timestamp: new Date().toISOString()
         });
         
