@@ -72,6 +72,41 @@ describe('EdgarEnrichmentService', () => {
       const result = await service.enrich(unknownEntity);
       expect(result).toEqual({});
     });
+
+    it('should return an empty object for generic company names', async () => {
+      mockedFs.readFile.mockResolvedValue(JSON.stringify(mockCikData));
+      const genericEntities = [
+        createOrganizationDTO({
+          id: 'org-3',
+          name: 'Unknown Company',
+          type: 'Organization',
+          label: 'Organization',
+        }),
+        createOrganizationDTO({
+          id: 'org-4',
+          name: 'Company',
+          type: 'Organization',
+          label: 'Organization',
+        }),
+        createOrganizationDTO({
+          id: 'org-5',
+          name: 'Test Company',
+          type: 'Organization',
+          label: 'Organization',
+        }),
+        createOrganizationDTO({
+          id: 'org-6',
+          name: 'AB', // Too short
+          type: 'Organization',
+          label: 'Organization',
+        })
+      ];
+
+      for (const entity of genericEntities) {
+        const result = await service.enrich(entity);
+        expect(result).toEqual({});
+      }
+    });
     
     it('should return an empty object and log an error if initialization fails', async () => {
         mockedFs.readFile.mockRejectedValue(new Error('Failed to read cache'));
