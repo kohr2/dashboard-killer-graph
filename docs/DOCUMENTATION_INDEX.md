@@ -37,8 +37,7 @@ This index provides navigation to all documentation files in the Knowledge Graph
 - **[TDD Approach](development/tdd-approach.md)** - Test-driven development methodology
 - **[TDD MCP Implementation](development/tdd-mcp-implementation.md)** - MCP server development with TDD
 - **[Processing Migration Summary](development/processing-migration-summary.md)** - Pipeline refactoring details
-- **[Ontology Generation Strategy](development/ontology-generation-strategy.md)** - Code generation approach
-- **[Ontology Scripts](development/ontology-scripts.md)** - Ontology-agnostic builder and CLI system
+- **[Ontology System](development/ontology-system.md)** - Complete ontology management guide
 - **[Enrichment Config-Driven Architecture](development/enrichment-agnostic-architecture.md)** - Config-driven enrichment system
 
 ### System Status
@@ -76,10 +75,9 @@ This index provides navigation to all documentation files in the Knowledge Graph
 3. **[MCP Server Architecture](architecture/mcp-server-architecture.md)** - Claude Desktop integration
 
 ### For Ontology Developers
-1. **[Ontology Plugin Architecture](architecture/ontology-plugin-architecture.md)** - Plugin system
-2. **[Ontology Generation Strategy](development/ontology-generation-strategy.md)** - Code generation
-3. **[Ontology Scripts](development/ontology-scripts.md)** - Ontology-agnostic builder and CLI
-4. **[Ontology Advanced Relationships](architecture/ontology-advanced-relationships.md)** - Complex modeling
+1. **[Ontology System](development/ontology-system.md)** - Complete ontology management guide
+2. **[Ontology Plugin Architecture](architecture/ontology-plugin-architecture.md)** - Plugin system
+3. **[Ontology Advanced Relationships](architecture/ontology-advanced-relationships.md)** - Complex modeling
 
 ## 🔍 Troubleshooting
 

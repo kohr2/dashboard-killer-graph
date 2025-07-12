@@ -186,7 +186,7 @@ npx ts-node scripts/ontology/build-ontology.ts --ontology-name crm
 npx ts-node scripts/ontology/transform-geonames-data.ts
 
 # Ingest GeoNames data
-npx ts-node scripts/ontology/geonames-only-ingestion.ts
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name geonames
 ```
 - **Source**: GeoNames cities1000.txt dataset
 - **Coverage**: 159,045 cities from 195+ countries

@@ -170,7 +170,7 @@ This downloads the cities1000.zip file, extracts cities1000.txt, and creates `on
 Use the generic ingestion pipeline or the GeoNames-only ingestion script:
 
 ```bash
-npx ts-node scripts/ontology/geonames-only-ingestion.ts
+npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology-name geonames
 ```
 
 ### 3. Entity Extraction

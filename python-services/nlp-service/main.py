@@ -1,4 +1,5 @@
 import os
+import uuid
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import spacy
@@ -34,6 +35,7 @@ class BatchExtractionRequest(BaseModel):
     ontology_name: Optional[str] = None  # New field for ontology scoping
     
 class Entity(BaseModel):
+    id: str  # Unique identifier for the entity
     type: str
     value: str
     confidence: Optional[float] = None
@@ -43,26 +45,37 @@ class Entity(BaseModel):
     end: Optional[int] = None
     spacy_label: Optional[str] = None
     context: Optional[str] = None
+    # Graph data associated with this entity
+    graph_data: Optional[Dict[str, Any]] = None
 
 class Relationship(BaseModel):
+    id: str  # Unique identifier for the relationship
     source: str
     target: str
     type: str
     confidence: Optional[float] = None
     explanation: Optional[str] = None
+    # Graph data associated with this relationship
+    graph_data: Optional[Dict[str, Any]] = None
 
 class GraphResponse(BaseModel):
+    request_id: str  # Unique identifier for the entire request
     entities: List[Entity]
     relationships: List[Relationship]
     refinement_info: str
     embedding: Optional[List[float]] = None
     ontology_used: Optional[str] = None  # New field to indicate which ontology was used
+    # Graph metadata
+    graph_metadata: Optional[Dict[str, Any]] = None
 
 class RefinedExtractionResponse(BaseModel):
+    request_id: str  # Unique identifier for the entire request
     raw_entities: List[Entity]
     refined_entities: List[Entity]
     refinement_info: str
     ontology_used: Optional[str] = None  # New field to indicate which ontology was used
+    # Graph metadata
+    graph_metadata: Optional[Dict[str, Any]] = None
 
 class EmbeddingRequest(BaseModel):
     texts: List[str]
@@ -90,6 +103,144 @@ RELATIONSHIP_DESCRIPTIONS: Dict[str, str] = {}
 # New: Multiple ontology support
 ONTOLOGIES: Dict[str, Dict[str, Any]] = {}  # Store multiple ontologies by name
 DEFAULT_ONTOLOGY_NAME = "default"  # Default ontology name
+
+# Helper functions for generating unique identifiers and graph data
+def generate_entity_id(entity_type: str, value: str) -> str:
+    """
+    Generate a unique identifier for an entity based on its type and value.
+    
+    Args:
+        entity_type: Type of the entity
+        value: Value of the entity
+        
+    Returns:
+        Unique identifier string
+    """
+    # Create a deterministic ID based on type and value
+    base_id = f"{entity_type}_{value}".replace(" ", "_").replace("-", "_").lower()
+    # Add a UUID to ensure uniqueness
+    unique_suffix = str(uuid.uuid4())[:8]
+    return f"{base_id}_{unique_suffix}"
+
+def generate_relationship_id(source: str, target: str, rel_type: str) -> str:
+    """
+    Generate a unique identifier for a relationship.
+    
+    Args:
+        source: Source entity
+        target: Target entity
+        rel_type: Type of relationship
+        
+    Returns:
+        Unique identifier string
+    """
+    base_id = f"{source}_{rel_type}_{target}".replace(" ", "_").replace("-", "_").lower()
+    unique_suffix = str(uuid.uuid4())[:8]
+    return f"rel_{base_id}_{unique_suffix}"
+
+def generate_request_id() -> str:
+    """
+    Generate a unique identifier for a request.
+    
+    Returns:
+        Unique identifier string
+    """
+    return f"req_{str(uuid.uuid4())}"
+
+def create_entity_graph_data(entity: Dict[str, Any], ontology_config: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Create graph data for an entity based on ontology configuration.
+    
+    Args:
+        entity: Entity dictionary
+        ontology_config: Ontology configuration
+        
+    Returns:
+        Graph data dictionary
+    """
+    entity_type = entity.get("type", "")
+    entity_value = entity.get("value", "")
+    
+    # Get entity description from ontology
+    entity_descriptions = ontology_config.get("entity_descriptions", {})
+    description = entity_descriptions.get(entity_type, f"Entity of type {entity_type}")
+    
+    graph_data = {
+        "node_type": entity_type,
+        "node_value": entity_value,
+        "description": description,
+        "confidence": entity.get("confidence", 0.0),
+        "properties": entity.get("properties", {}),
+        "extraction_method": "nlp_service",
+        "timestamp": time.time(),
+        "ontology_source": ontology_config.get("ontology_name", "default")
+    }
+    
+    # Add additional properties if available
+    if entity.get("start") is not None:
+        graph_data["text_position"] = {
+            "start": entity["start"],
+            "end": entity["end"]
+        }
+    
+    if entity.get("context"):
+        graph_data["context"] = entity["context"]
+    
+    # Store the entity in global storage
+    entity_id = entity.get("id", "")
+    if entity_id:
+        EXTRACTED_OBJECTS[entity_id] = {
+            "type": "entity",
+            "entity_type": entity_type,
+            "value": entity_value,
+            "graph_data": graph_data,
+            "extraction_timestamp": time.time()
+        }
+    
+    return graph_data
+
+def create_relationship_graph_data(relationship: Dict[str, Any], ontology_config: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Create graph data for a relationship based on ontology configuration.
+    
+    Args:
+        relationship: Relationship dictionary
+        ontology_config: Ontology configuration
+        
+    Returns:
+        Graph data dictionary
+    """
+    rel_type = relationship.get("type", "")
+    
+    # Get relationship description from ontology
+    relationship_descriptions = ontology_config.get("relationship_descriptions", {})
+    description = relationship_descriptions.get(rel_type, f"Relationship of type {rel_type}")
+    
+    graph_data = {
+        "edge_type": rel_type,
+        "source": relationship.get("source", ""),
+        "target": relationship.get("target", ""),
+        "description": description,
+        "confidence": relationship.get("confidence", 0.0),
+        "explanation": relationship.get("explanation", ""),
+        "extraction_method": "nlp_service",
+        "timestamp": time.time(),
+        "ontology_source": ontology_config.get("ontology_name", "default")
+    }
+    
+    # Store the relationship in global storage
+    rel_id = relationship.get("id", "")
+    if rel_id:
+        EXTRACTED_OBJECTS[rel_id] = {
+            "type": "relationship",
+            "relationship_type": rel_type,
+            "source": relationship.get("source", ""),
+            "target": relationship.get("target", ""),
+            "graph_data": graph_data,
+            "extraction_timestamp": time.time()
+        }
+    
+    return graph_data
 
 # Helper functions for ontology management
 def get_ontology_by_name(ontology_name: Optional[str] = None) -> Dict[str, Any]:
@@ -168,17 +319,24 @@ class SpacyEntityExtractor:
     
     def extract_entities(self, text: str) -> List[Dict[str, Any]]:
         doc = self.nlp(text)
-        entities = [
-            {
-                "type": self._map_entity_label(ent.label_),
-                "value": ent.text.strip(),
+        entities = []
+        for ent in doc.ents:
+            entity_type = self._map_entity_label(ent.label_)
+            entity_value = ent.text.strip()
+            entity_id = generate_entity_id(entity_type, entity_value)
+            
+            entity = {
+                "id": entity_id,
+                "type": entity_type,
+                "value": entity_value,
                 "confidence": 0.85, # Simplified confidence for the service
                 "start": ent.start_char,
                 "end": ent.end_char,
                 "spacy_label": ent.label_,
                 "context": doc[max(0, ent.start - 5):min(len(doc), ent.end + 5)].text
-            } for ent in doc.ents
-        ]
+            }
+            entities.append(entity)
+        
         # For simplicity, regex and deduplication are omitted in this service version
         # but can be easily re-added here.
         return entities
@@ -532,6 +690,14 @@ async def extract_entities_endpoint(request: ExtractionRequest):
     - **ontology_name**: Optional ontology name to scope the extraction.
     """
     entities = extractor.extract_entities(request.text)
+    
+    # Get ontology configuration for graph data
+    ontology_config = get_ontology_by_name(request.ontology_name)
+    
+    # Add graph data to each entity
+    for entity in entities:
+        entity["graph_data"] = create_entity_graph_data(entity, ontology_config)
+    
     return entities
     
 @app.post("/refine-entities", response_model=RefinedExtractionResponse, summary="Extract and Refine with LLM")
@@ -541,17 +707,43 @@ async def refine_entities_endpoint(request: ExtractionRequest):
     - **text**: The input string to process.
     - **ontology_name**: Optional ontology name to scope the extraction.
     """
+    request_id = generate_request_id()
+    
     # Step 1: Raw extraction with spaCy
     raw_entities = extractor.extract_entities(request.text)
     
     # Step 2: Refine with LLM
     refined_entities = refine_entities_with_llm(request.text, raw_entities)
     
+    # Get ontology configuration for graph data
+    ontology_config = get_ontology_by_name(request.ontology_name)
+    
+    # Add graph data to entities
+    for entity in raw_entities:
+        entity["graph_data"] = create_entity_graph_data(entity, ontology_config)
+    
+    for entity in refined_entities:
+        if "id" not in entity:
+            entity["id"] = generate_entity_id(entity.get("type", ""), entity.get("value", ""))
+        entity["graph_data"] = create_entity_graph_data(entity, ontology_config)
+    
+    # Create graph metadata
+    graph_metadata = {
+        "request_id": request_id,
+        "text_length": len(request.text),
+        "raw_entity_count": len(raw_entities),
+        "refined_entity_count": len(refined_entities),
+        "ontology_used": request.ontology_name or "default",
+        "extraction_timestamp": time.time()
+    }
+    
     return RefinedExtractionResponse(
+        request_id=request_id,
         raw_entities=[Entity(**e) for e in raw_entities],
         refined_entities=[Entity(**e) for e in refined_entities],
         refinement_info="Entities refined by LLM.",
-        ontology_used=request.ontology_name
+        ontology_used=request.ontology_name,
+        graph_metadata=graph_metadata
     )
 
 @app.post("/extract-graph", response_model=GraphResponse, summary="Extract Entities and Relationships with LLM")
@@ -563,19 +755,55 @@ async def extract_graph_endpoint(request: ExtractionRequest):
     - **text**: The input string to process.
     - **ontology_name**: Optional ontology name to scope the extraction.
     """
+    request_id = generate_request_id()
+    
     graph_data = extract_graph_with_llm(request.text, request.ontology_name)
+    
+    # Get ontology configuration for graph data
+    ontology_config = get_ontology_by_name(request.ontology_name)
+    
+    # Process entities: add IDs and graph data
+    entities = graph_data.get("entities", [])
+    for entity in entities:
+        if "id" not in entity:
+            entity["id"] = generate_entity_id(entity.get("type", ""), entity.get("value", ""))
+        entity["graph_data"] = create_entity_graph_data(entity, ontology_config)
+    
+    # Process relationships: add IDs and graph data
+    relationships = graph_data.get("relationships", [])
+    for rel in relationships:
+        if "id" not in rel:
+            rel["id"] = generate_relationship_id(
+                rel.get("source", ""), 
+                rel.get("target", ""), 
+                rel.get("type", "")
+            )
+        rel["graph_data"] = create_relationship_graph_data(rel, ontology_config)
     
     # Generate a single embedding for the whole text
     embedding = None
     if embedding_model:
         embedding = embedding_model.encode(request.text).tolist()
+    
+    # Create graph metadata
+    graph_metadata = {
+        "request_id": request_id,
+        "text_length": len(request.text),
+        "entity_count": len(entities),
+        "relationship_count": len(relationships),
+        "ontology_used": request.ontology_name or "default",
+        "extraction_timestamp": time.time(),
+        "has_embedding": embedding is not None
+    }
 
     return GraphResponse(
-        entities=[Entity(**e) for e in graph_data.get("entities", [])],
-        relationships=[Relationship(**r) for r in graph_data.get("relationships", [])],
+        request_id=request_id,
+        entities=[Entity(**e) for e in entities],
+        relationships=[Relationship(**r) for r in relationships],
         refinement_info=graph_data.get("refinement_info", "Graph generated directly by LLM based on dynamic ontology."),
         embedding=embedding,
-        ontology_used=request.ontology_name
+        ontology_used=request.ontology_name,
+        graph_metadata=graph_metadata
     )
 
 @app.post("/embed", summary="Generate sentence embeddings for a list of texts")
@@ -698,8 +926,84 @@ async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
     print(f"--- Received batch request for {len(request.texts)} documents using ontology: {request.ontology_name or 'default'} ---")
     batch_start_time = time.time()
 
-    tasks = [extract_graph_with_llm_async(text, request.ontology_name) for text in request.texts]
-    results = await asyncio.gather(*tasks)
+    # Process each text individually to add IDs and graph data
+    results = []
+    for i, text in enumerate(request.texts):
+        try:
+            # Extract graph data
+            graph_data = extract_graph_with_llm(text, request.ontology_name)
+            
+            # Get ontology configuration for graph data
+            ontology_config = get_ontology_by_name(request.ontology_name)
+            
+            # Generate request ID
+            request_id = generate_request_id()
+            
+            # Process entities: add IDs and graph data
+            entities = graph_data.get("entities", [])
+            for entity in entities:
+                if "id" not in entity:
+                    entity["id"] = generate_entity_id(entity.get("type", ""), entity.get("value", ""))
+                entity["graph_data"] = create_entity_graph_data(entity, ontology_config)
+            
+            # Process relationships: add IDs and graph data
+            relationships = graph_data.get("relationships", [])
+            for rel in relationships:
+                if "id" not in rel:
+                    rel["id"] = generate_relationship_id(
+                        rel.get("source", ""), 
+                        rel.get("target", ""), 
+                        rel.get("type", "")
+                    )
+                rel["graph_data"] = create_relationship_graph_data(rel, ontology_config)
+            
+            # Generate embedding
+            embedding = None
+            if embedding_model:
+                embedding = embedding_model.encode(text).tolist()
+            
+            # Create graph metadata
+            graph_metadata = {
+                "request_id": request_id,
+                "text_length": len(text),
+                "entity_count": len(entities),
+                "relationship_count": len(relationships),
+                "ontology_used": request.ontology_name or "default",
+                "extraction_timestamp": time.time(),
+                "has_embedding": embedding is not None,
+                "batch_index": i
+            }
+            
+            # Create GraphResponse
+            result = GraphResponse(
+                request_id=request_id,
+                entities=[Entity(**e) for e in entities],
+                relationships=[Relationship(**r) for r in relationships],
+                refinement_info=graph_data.get("refinement_info", "Graph generated directly by LLM based on dynamic ontology."),
+                embedding=embedding,
+                ontology_used=request.ontology_name,
+                graph_metadata=graph_metadata
+            )
+            
+            results.append(result)
+            
+        except Exception as e:
+            print(f"Error processing text {i}: {e}")
+            # Create an error response
+            error_result = GraphResponse(
+                request_id=generate_request_id(),
+                entities=[],
+                relationships=[],
+                refinement_info=f"Error processing text: {str(e)}",
+                embedding=None,
+                ontology_used=request.ontology_name,
+                graph_metadata={
+                    "error": str(e),
+                    "text_index": i,
+                    "extraction_timestamp": time.time()
+                }
+            )
+            results.append(error_result)
     
     batch_end_time = time.time()
     print(f"--- Completed batch processing in {batch_end_time - batch_start_time:.2f} seconds ---")
@@ -733,6 +1037,89 @@ async def get_ontologies():
         "available_ontologies": available_ontologies,
         "default_ontology": DEFAULT_ONTOLOGY_NAME,
         "ontology_details": ontology_details
+    }
+
+# Global storage for tracking extracted objects (in production, this would be a database)
+EXTRACTED_OBJECTS = {}  # Store objects by their IDs
+
+@app.get("/object/{object_id}", summary="Get object data by ID")
+async def get_object_by_id(object_id: str):
+    """
+    Retrieve object data (entity or relationship) by its unique identifier.
+    - **object_id**: The unique identifier of the object to retrieve.
+    """
+    if object_id in EXTRACTED_OBJECTS:
+        return {
+            "object_id": object_id,
+            "object_data": EXTRACTED_OBJECTS[object_id],
+            "retrieved_at": time.time()
+        }
+    else:
+        raise HTTPException(status_code=404, detail=f"Object with ID '{object_id}' not found")
+
+@app.get("/objects", summary="List all extracted objects")
+async def list_all_objects():
+    """
+    List all extracted objects with their IDs and basic information.
+    """
+    objects_list = []
+    for obj_id, obj_data in EXTRACTED_OBJECTS.items():
+        obj_info = {
+            "id": obj_id,
+            "type": obj_data.get("type", "unknown"),
+            "value": obj_data.get("value", ""),
+            "extracted_at": obj_data.get("extraction_timestamp", 0)
+        }
+        objects_list.append(obj_info)
+    
+    return {
+        "total_objects": len(objects_list),
+        "objects": objects_list
+    }
+
+@app.get("/search-objects", summary="Search objects by type or value")
+async def search_objects(object_type: Optional[str] = None, value: Optional[str] = None, limit: int = 50):
+    """
+    Search for objects by type or value.
+    - **object_type**: Filter by object type (entity or relationship)
+    - **value**: Filter by value (partial match)
+    - **limit**: Maximum number of results to return
+    """
+    results = []
+    
+    for obj_id, obj_data in EXTRACTED_OBJECTS.items():
+        # Apply filters
+        if object_type and obj_data.get("type") != object_type:
+            continue
+            
+        if value:
+            obj_value = obj_data.get("value", "").lower()
+            search_value = value.lower()
+            if search_value not in obj_value:
+                continue
+        
+        obj_info = {
+            "id": obj_id,
+            "type": obj_data.get("type", "unknown"),
+            "value": obj_data.get("value", ""),
+            "entity_type": obj_data.get("entity_type", ""),
+            "relationship_type": obj_data.get("relationship_type", ""),
+            "extracted_at": obj_data.get("extraction_timestamp", 0),
+            "graph_data": obj_data.get("graph_data", {})
+        }
+        results.append(obj_info)
+        
+        if len(results) >= limit:
+            break
+    
+    return {
+        "total_found": len(results),
+        "limit": limit,
+        "filters": {
+            "object_type": object_type,
+            "value": value
+        },
+        "objects": results
     }
 
 if __name__ == "__main__":
