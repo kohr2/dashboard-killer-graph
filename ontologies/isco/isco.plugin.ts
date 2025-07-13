@@ -20,7 +20,7 @@ export const iscoPlugin: OntologyPlugin = {
   entitySchemas: ontologyData.entities,
   relationshipSchemas: ontologyData.relationships,
   reasoning: ontologyData.reasoning,
-  entityExtraction: ontologyData.entityExtractionPatterns,
+  entityExtraction: ontologyData.entityExtraction,
   ...(registerIsco && {
     serviceProviders: {
       register: registerIsco,

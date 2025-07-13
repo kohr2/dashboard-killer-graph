@@ -240,7 +240,7 @@ interface IngestionEntity {
 export class ContentProcessingService {
   private nlpServiceUrl: string;
   private enrichmentOrchestrator: EnrichmentOrchestratorService;
-  private ontologySynced = false;
+  private syncedOntologies = new Set<string>();
 
   constructor(
     enrichmentOrchestrator: EnrichmentOrchestratorService = new EnrichmentOrchestratorService(),
@@ -256,15 +256,16 @@ export class ContentProcessingService {
     entities: IngestionEntity[];
     relationships: unknown[];
   }>> {
-    // --- One-time ontology synchronisation with NLP service ---
-    if (!this.ontologySynced) {
+    // --- Ontology synchronisation with NLP service ---
+    const ontologyKey = ontologyName || 'default';
+    if (!this.syncedOntologies.has(ontologyKey)) {
       const ontologyService = container.resolve(OntologyService);
       const payload = buildCompactOntologySyncPayload(ontologyService, ontologyName);
       try {
         logger.info(`   🔄 Syncing compact ontology schema with NLP service${ontologyName ? ` for ${ontologyName}` : ''}...`);
         await axios.post(`${this.nlpServiceUrl}/ontologies`, payload, { timeout: 30000 });
-        this.ontologySynced = true;
-        logger.info('      -> Compact ontology schema synced');
+        this.syncedOntologies.add(ontologyKey);
+        logger.info(`      -> Compact ontology schema synced for ${ontologyKey}`);
       } catch (syncErr) {
         logger.warn('      ⚠️  Failed to sync compact ontology schema with NLP service:', (syncErr as any).message);
       }
@@ -274,7 +275,7 @@ export class ContentProcessingService {
       logger.info(`   🧠 Calling batch /extract-graph endpoint for ${contents.length} documents...`);
       const batchResponse = await axios.post<LlmGraphResponse[]>(
         `${this.nlpServiceUrl}/batch-extract-graph`,
-        { texts: contents },
+        { texts: contents, ontology_name: ontologyName },
         { timeout: 360000 } // 360-second timeout for the full batch
       );
 

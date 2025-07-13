@@ -162,6 +162,37 @@ async function buildOntology(options: BuildOptions = {}) {
           ...prunedNames
         ];
       }
+
+      // CRITICAL ALERT: Check if all relationships were pruned
+      const totalRelationships = result.sourceOntology.relationships.length + (result.sourceOntology.ignoredRelationships?.length || 0);
+      if (totalRelationships > 0 && result.sourceOntology.relationships.length === 0) {
+        console.error('🚨 CRITICAL ERROR: All relationships were pruned!');
+        console.error(`Total relationships processed: ${totalRelationships}`);
+        console.error(`Relationships kept: ${result.sourceOntology.relationships.length}`);
+        console.error(`Entities available: ${result.sourceOntology.entities.length}`);
+        console.error('This indicates a serious problem with entity extraction or relationship processing.');
+        console.error('Possible causes:');
+        console.error('  - External ontology imports not included (try --include-external)');
+        console.error('  - Entity names not matching relationship source/target');
+        console.error('  - OWL parsing issues');
+        
+        // Log some sample ignored relationships for debugging
+        const sampleIgnored = result.sourceOntology.ignoredRelationships?.slice(0, 10) || [];
+        console.error(`Sample ignored relationships: ${sampleIgnored.join(', ')}`);
+        
+        // Don't exit, but this should be investigated
+        console.error('⚠️  This build should be investigated immediately!');
+      }
+
+      // Warn if more than 50% of relationships are ignored
+      if (totalRelationships > 0) {
+        const ignorePercentage = ((result.sourceOntology.ignoredRelationships?.length || 0) / totalRelationships) * 100;
+        if (ignorePercentage > 50) {
+          console.warn(`⚠️  WARNING: ${ignorePercentage.toFixed(1)}% of relationships were ignored`);
+          console.warn(`  - Kept: ${result.sourceOntology.relationships.length}`);
+          console.warn(`  - Ignored: ${result.sourceOntology.ignoredRelationships?.length || 0}`);
+        }
+      }
     }
 
     console.log(`📊 Entities kept: ${result.sourceOntology?.entities.length || 0}`);

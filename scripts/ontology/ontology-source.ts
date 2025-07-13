@@ -7,6 +7,7 @@ export interface Entity {
   keyProperties: string[];
   vectorIndex: boolean;
   documentation?: string;
+  parent?: string;
 }
 
 export interface Relationship {

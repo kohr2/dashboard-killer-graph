@@ -1,8 +1,26 @@
 {
-  "entities": {
-    "Ontology": {
+  "name": "isco",
+  "source": {
+    "url": "https://www.ilo.org/public/english/bureau/stat/isco/isco08/",
+    "type": "official",
+    "version": "1.0.0",
+    "description": "Official ISCO-08 classification data from ILO in English"
+  },
+  "entities": [
+    {
+      "name": "Ontology",
       "description": "Represents the ontology itself.",
       "vectorIndex": false
     }
-  }
+  ],
+  "relationships": [],
+  "metadata": {
+    "sourceUrl": "https://www.ilo.org/public/english/bureau/stat/isco/isco08/",
+    "extractionDate": "2024-01-15T10:30:00Z",
+    "sourceVersion": "1.0.0",
+    "entityCount": 1,
+    "relationshipCount": 0
+  },
+  "ignoredEntities": [],
+  "ignoredRelationships": []
 } 

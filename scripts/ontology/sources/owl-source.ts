@@ -410,6 +410,9 @@ export class OwlSource implements OntologySource {
       }
       const uniqueRelationships = Array.from(uniqueRelationshipsMap.values());
 
+      // Aggregate parent labels as synonyms
+      this.aggregateParentLabels(uniqueEntities);
+
       return { entities: uniqueEntities, relationships: uniqueRelationships };
     } catch (error) {
       // If XML parsing fails, try Turtle as a fallback
@@ -626,6 +629,23 @@ export class OwlSource implements OntologySource {
     return null;
   }
 
+  private extractAlternativeLabels(element: any): string[] {
+    const labels: string[] = [];
+    
+    // Extract skos:altLabel
+    if (element['skos:altLabel']) {
+      const altLabels = Array.isArray(element['skos:altLabel']) ? element['skos:altLabel'] : [element['skos:altLabel']];
+      labels.push(...altLabels);
+    }
+    
+    // Extract rdfs:label if it's an array (multiple labels)
+    if (element['rdfs:label'] && Array.isArray(element['rdfs:label'])) {
+      labels.push(...element['rdfs:label'].slice(1)); // Skip the first one as it's the primary label
+    }
+    
+    return labels;
+  }
+
   private extractParentClass(element: any): string | null {
     if (element['rdfs:subClassOf'] && element['rdfs:subClassOf'].$ && element['rdfs:subClassOf'].$['rdf:resource']) {
       return this.extractNameFromUri(element['rdfs:subClassOf'].$['rdf:resource']);
@@ -655,6 +675,13 @@ export class OwlSource implements OntologySource {
     const cleanName = this.normalizeEntityName(name) || name;
     const description = this.extractDefinition(element) || this.extractLabel(element) || `${cleanName} as defined in OWL ontology`;
     const properties = this.extractEntityProperties(element, datatypeProperties);
+    
+    // Extract alternative labels and add them to properties
+    const alternativeLabels = this.extractAlternativeLabels(element);
+    if (alternativeLabels.length > 0) {
+      properties.alternativeLabels = alternativeLabels;
+    }
+    
     // Compose full URI for documentation if needed
     let documentation = uri;
     if (documentation && !documentation.includes('://')) {
@@ -717,15 +744,6 @@ export class OwlSource implements OntologySource {
       properties.definition = {
         type: 'string',
         description: 'Detailed definition of this entity'
-      };
-    }
-    
-    // Add inheritance information
-    const parentClass = this.extractParentClass(element);
-    if (parentClass) {
-      properties.parentClass = {
-        type: 'string',
-        description: 'Parent class in the inheritance hierarchy'
       };
     }
     
@@ -877,5 +895,50 @@ export class OwlSource implements OntologySource {
         .join('');
     }
     return cleaned;
+  }
+
+  /**
+   * Aggregate parent labels as synonyms for child entities
+   * This improves entity recognition by allowing parent class names to be used as alternative labels
+   */
+  private aggregateParentLabels(entities: Entity[]): void {
+    // Build a map of entity names to their labels
+    const entityLabels = new Map<string, string[]>();
+    
+    // First pass: collect all entity labels
+    for (const entity of entities) {
+      const labels: string[] = [];
+      
+      // Add the entity name itself
+      labels.push(entity.name);
+      
+      // Add alternative labels from properties if they exist
+      if (entity.properties.alternativeLabels) {
+        labels.push(...entity.properties.alternativeLabels);
+      }
+      
+      entityLabels.set(entity.name, labels);
+    }
+    
+    // Second pass: aggregate parent labels
+    for (const entity of entities) {
+      if (entity.parent) {
+        const parentLabels = entityLabels.get(entity.parent);
+        if (parentLabels) {
+          // Add parent labels as alternative labels
+          if (!entity.properties.alternativeLabels) {
+            entity.properties.alternativeLabels = [];
+          }
+          
+          // Add parent labels that aren't already included
+          for (const parentLabel of parentLabels) {
+            if (!entity.properties.alternativeLabels.includes(parentLabel) && 
+                parentLabel !== entity.name) {
+              entity.properties.alternativeLabels.push(parentLabel);
+            }
+          }
+        }
+      }
+    }
   }
 } 

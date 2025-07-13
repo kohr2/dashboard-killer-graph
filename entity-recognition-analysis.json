@@ -1,0 +1,989 @@
+[
+  {
+    "emailId": "001-contract-award-abc-corp.eml",
+    "emailSubject": "Contract Award Notification for Raw Materials - Reference PROCUREMENT-816467",
+    "extractedEntities": [
+      {
+        "value": "Award Decision",
+        "type": "AwardDecision"
+      },
+      {
+        "value": "raw materials procurement",
+        "type": "ProcurementObject"
+      },
+      {
+        "value": "Awarder",
+        "type": "Awarder"
+      },
+      {
+        "value": "ABC Corp",
+        "type": "Winner"
+      },
+      {
+        "value": "contract",
+        "type": "Contract"
+      }
+    ],
+    "potentialEntities": [
+      {
+        "value": "ABC Corp",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "17026.42 CAD",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "PROCUREMENT-816467",
+        "type": "Contract",
+        "reason": "Procurement reference number"
+      },
+      {
+        "value": "contract",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Maria Garcia",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "Awarder",
+        "type": "Buyer",
+        "reason": "Procurement role"
+      },
+      {
+        "value": "raw materials",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      },
+      {
+        "value": "Award Decision",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      }
+    ],
+    "missingEntities": [
+      {
+        "value": "ABC Corp",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "17026.42 CAD",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "PROCUREMENT-816467",
+        "type": "Contract",
+        "reason": "Procurement reference number"
+      },
+      {
+        "value": "contract",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Maria Garcia",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "Awarder",
+        "type": "Buyer",
+        "reason": "Procurement role"
+      },
+      {
+        "value": "raw materials",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      }
+    ]
+  },
+  {
+    "emailId": "001-purchase-order-abc-corp.eml",
+    "emailSubject": "Purchase Order for Raw Materials with Vendor ABC Corp - Reference: PROCUREMENT-976053",
+    "extractedEntities": [
+      {
+        "value": "ABC Corp",
+        "type": "Business"
+      },
+      {
+        "value": "Procurement Documents",
+        "type": "ProcurementDocument"
+      },
+      {
+        "value": "procurement procedure",
+        "type": "Procedure"
+      }
+    ],
+    "potentialEntities": [
+      {
+        "value": "ABC Corp",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "15786.70 USD",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "purchase order",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Contract",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Lisa Anderson",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "raw materials",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      }
+    ],
+    "missingEntities": [
+      {
+        "value": "15786.70 USD",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "purchase order",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Contract",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Lisa Anderson",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "raw materials",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      }
+    ]
+  },
+  {
+    "emailId": "001-purchase-order-blueocean-logistics.eml",
+    "emailSubject": "Purchase Order for Raw Materials with Vendor BlueOcean Logistics - Reference: PROCUREMENT-757267",
+    "extractedEntities": [
+      {
+        "value": "Lisa Williams",
+        "type": "AgentInRole"
+      },
+      {
+        "value": "BlueOcean Logistics",
+        "type": "Business"
+      },
+      {
+        "value": "Buyer",
+        "type": "Buyer"
+      },
+      {
+        "value": "AccessTerm",
+        "type": "AccessTerm"
+      },
+      {
+        "value": "Michael Chen",
+        "type": "AgentInRole"
+      }
+    ],
+    "potentialEntities": [
+      {
+        "value": "BlueOcean Logistics",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "15605.15 GBP",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "purchase order",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Lisa Williams",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "Michael Chen",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "Buyer",
+        "type": "Buyer",
+        "reason": "Procurement role"
+      },
+      {
+        "value": "raw materials",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      },
+      {
+        "value": "AccessTerm",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      }
+    ],
+    "missingEntities": [
+      {
+        "value": "15605.15 GBP",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "purchase order",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "raw materials",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      },
+      {
+        "value": "AccessTerm",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      }
+    ]
+  },
+  {
+    "emailId": "001-purchase-order-vertex-construction.eml",
+    "emailSubject": "Purchase Order for Transport Services with Vertex Construction - Reference: PROCUREMENT-564454",
+    "extractedEntities": [
+      {
+        "value": "Vertex Construction",
+        "type": "AcquiringParty"
+      },
+      {
+        "value": "Buyer",
+        "type": "Buyer"
+      },
+      {
+        "value": "Award Decision",
+        "type": "AwardDecision"
+      }
+    ],
+    "potentialEntities": [
+      {
+        "value": "Vertex Construction",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "20995.61 EUR",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "purchase order",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Lisa Williams",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "Buyer",
+        "type": "Buyer",
+        "reason": "Procurement role"
+      },
+      {
+        "value": "transport services",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      },
+      {
+        "value": "Award Decision",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      }
+    ],
+    "missingEntities": [
+      {
+        "value": "Vertex Construction",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "20995.61 EUR",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "purchase order",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Lisa Williams",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "transport services",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      }
+    ]
+  },
+  {
+    "emailId": "001-rfq-request-abc-corp.eml",
+    "emailSubject": "RFQ Request for Transport Services - Vendor ABC Corp - Ref: PROCUREMENT-914694",
+    "extractedEntities": [
+      {
+        "value": "John Smith",
+        "type": "Tenderer"
+      },
+      {
+        "value": "Procurement Department",
+        "type": "ProcurementServiceProvider"
+      },
+      {
+        "value": "Request for Quotation (RFQ)",
+        "type": "Notice"
+      },
+      {
+        "value": "transport services",
+        "type": "ProcurementObject"
+      },
+      {
+        "value": "ABC Corp",
+        "type": "OfferingParty"
+      },
+      {
+        "value": "20893.90 CAD",
+        "type": "MonetaryValue"
+      },
+      {
+        "value": "AccessTerm",
+        "type": "AccessTerm"
+      },
+      {
+        "value": "Robert Williams",
+        "type": "UniqueResponsibleOfTheProcurement"
+      }
+    ],
+    "potentialEntities": [
+      {
+        "value": "ABC Corp",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "20893.90 CAD",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "RFQ",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "John Smith",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "Robert Williams",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "transport services",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      },
+      {
+        "value": "AccessTerm",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "Procurement Department",
+        "type": "ProcurementServiceProvider",
+        "reason": "Procurement service provider"
+      },
+      {
+        "value": "Procurement Director",
+        "type": "ProcurementServiceProvider",
+        "reason": "Procurement service provider"
+      }
+    ],
+    "missingEntities": [
+      {
+        "value": "ABC Corp",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "RFQ",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "John Smith",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "Robert Williams",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "AccessTerm",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "Procurement Director",
+        "type": "ProcurementServiceProvider",
+        "reason": "Procurement service provider"
+      }
+    ]
+  },
+  {
+    "emailId": "001-rfq-request-global-supplies-ltd.eml",
+    "emailSubject": "RFQ Request for Raw Materials - PROCUREMENT-911731",
+    "extractedEntities": [
+      {
+        "value": "Procurement Documents",
+        "type": "ProcurementDocument"
+      },
+      {
+        "value": "AdHocChannel",
+        "type": "AdHocChannel"
+      }
+    ],
+    "potentialEntities": [
+      {
+        "value": "Global Supplies Ltd",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "1313.06 GBP",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "Maria Garcia",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "raw materials",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      }
+    ],
+    "missingEntities": [
+      {
+        "value": "Global Supplies Ltd",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "1313.06 GBP",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "Maria Garcia",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "raw materials",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      }
+    ]
+  },
+  {
+    "emailId": "001-supplier-evaluation-vertex-construction.eml",
+    "emailSubject": "Evaluation Request for Maintenance Services - Vertex Construction",
+    "extractedEntities": [
+      {
+        "value": "Vertex Construction",
+        "type": "Business"
+      },
+      {
+        "value": "PROCUREMENT-648765",
+        "type": "Contract"
+      },
+      {
+        "value": "44759.78 EUR",
+        "type": "MonetaryValue"
+      },
+      {
+        "value": "Award Criteria",
+        "type": "AwardCriteriaSummary"
+      },
+      {
+        "value": "Award Decision",
+        "type": "AwardDecision"
+      }
+    ],
+    "potentialEntities": [
+      {
+        "value": "Vertex Construction",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "44759.78 EUR",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "PROCUREMENT-648765",
+        "type": "Contract",
+        "reason": "Procurement reference number"
+      },
+      {
+        "value": "Contract",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Lisa Anderson",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "supplier",
+        "type": "Buyer",
+        "reason": "Procurement role"
+      },
+      {
+        "value": "maintenance services",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      },
+      {
+        "value": "Award Criteria",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "Award Decision",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "procurement department",
+        "type": "ProcurementServiceProvider",
+        "reason": "Procurement service provider"
+      }
+    ],
+    "missingEntities": [
+      {
+        "value": "Contract",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Lisa Anderson",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "supplier",
+        "type": "Buyer",
+        "reason": "Procurement role"
+      },
+      {
+        "value": "maintenance services",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      },
+      {
+        "value": "Award Criteria",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "procurement department",
+        "type": "ProcurementServiceProvider",
+        "reason": "Procurement service provider"
+      }
+    ]
+  },
+  {
+    "emailId": "001-tender-notification-helix-manufacturing.eml",
+    "emailSubject": "Tender Notification for Maintenance Services - Reference: PROCUREMENT-486392",
+    "extractedEntities": [
+      {
+        "value": "Helix Manufacturing",
+        "type": "Tenderer"
+      },
+      {
+        "value": "PROCUREMENT-486392",
+        "type": "Tender"
+      },
+      {
+        "value": "50195.35 GBP",
+        "type": "MonetaryValue"
+      },
+      {
+        "value": "AccessTerm",
+        "type": "AccessTerm"
+      },
+      {
+        "value": "Maria Garcia",
+        "type": "Awarder"
+      },
+      {
+        "value": "Award Decision",
+        "type": "AwardDecision"
+      },
+      {
+        "value": "Award Criteria",
+        "type": "AwardCriteriaSummary"
+      }
+    ],
+    "potentialEntities": [
+      {
+        "value": "Helix Manufacturing",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "50195.35 GBP",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "PROCUREMENT-486392",
+        "type": "Contract",
+        "reason": "Procurement reference number"
+      },
+      {
+        "value": "tender",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Maria Garcia",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "Awarder",
+        "type": "Buyer",
+        "reason": "Procurement role"
+      },
+      {
+        "value": "maintenance services",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      },
+      {
+        "value": "AccessTerm",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "Award Decision",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "Award Criteria",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      }
+    ],
+    "missingEntities": [
+      {
+        "value": "Helix Manufacturing",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "PROCUREMENT-486392",
+        "type": "Contract",
+        "reason": "Procurement reference number"
+      },
+      {
+        "value": "tender",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Maria Garcia",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "Awarder",
+        "type": "Buyer",
+        "reason": "Procurement role"
+      },
+      {
+        "value": "maintenance services",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      },
+      {
+        "value": "AccessTerm",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "Award Criteria",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      }
+    ]
+  },
+  {
+    "emailId": "001-tender-notification-vertex-construction.eml",
+    "emailSubject": "Tender Notification for Office Equipment - Reference Number PROCUREMENT-611946",
+    "extractedEntities": [
+      {
+        "value": "Vertex Construction",
+        "type": "Business"
+      },
+      {
+        "value": "PROCUREMENT-611946",
+        "type": "Tender"
+      },
+      {
+        "value": "47952.47 CAD",
+        "type": "MonetaryValue"
+      },
+      {
+        "value": "Award Decision",
+        "type": "AwardDecision"
+      },
+      {
+        "value": "Awarder",
+        "type": "Awarder"
+      },
+      {
+        "value": "Award Criteria Summary",
+        "type": "AwardCriteriaSummary"
+      },
+      {
+        "value": "Procurement Documents",
+        "type": "ProcurementDocument"
+      },
+      {
+        "value": "Conditions of access",
+        "type": "AccessTerm"
+      }
+    ],
+    "potentialEntities": [
+      {
+        "value": "Vertex Construction",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "47952.47 CAD",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "PROCUREMENT-611946",
+        "type": "Contract",
+        "reason": "Procurement reference number"
+      },
+      {
+        "value": "tender",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Awarder",
+        "type": "Buyer",
+        "reason": "Procurement role"
+      },
+      {
+        "value": "Award Decision",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "Award Criteria",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "Conditions of access",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      }
+    ],
+    "missingEntities": [
+      {
+        "value": "PROCUREMENT-611946",
+        "type": "Contract",
+        "reason": "Procurement reference number"
+      },
+      {
+        "value": "tender",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Awarder",
+        "type": "Buyer",
+        "reason": "Procurement role"
+      },
+      {
+        "value": "Award Criteria",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "Conditions of access",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      }
+    ]
+  },
+  {
+    "emailId": "002-tender-notification-abc-corp.eml",
+    "emailSubject": "Tender Notification for Raw Materials - Reference Number PROCUREMENT-828733",
+    "extractedEntities": [
+      {
+        "value": "ABC Corp",
+        "type": "AcquiringParty"
+      },
+      {
+        "value": "Procurement Documents",
+        "type": "ProcurementDocument"
+      },
+      {
+        "value": "AdHocChannel",
+        "type": "AdHocChannel"
+      },
+      {
+        "value": "Award Criteria",
+        "type": "AwardCriteriaSummary"
+      },
+      {
+        "value": "Award Decision",
+        "type": "AwardDecision"
+      },
+      {
+        "value": "Procurement Process",
+        "type": "ProcurementProcessInformation"
+      },
+      {
+        "value": "Tender",
+        "type": "Tender"
+      }
+    ],
+    "potentialEntities": [
+      {
+        "value": "ABC Corp",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "26318.66 USD",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "tender",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Robert Williams",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "raw materials",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      },
+      {
+        "value": "Award Criteria",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "Award Decision",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "Procurement Director",
+        "type": "ProcurementServiceProvider",
+        "reason": "Procurement service provider"
+      }
+    ],
+    "missingEntities": [
+      {
+        "value": "ABC Corp",
+        "type": "Business",
+        "reason": "Company name mentioned"
+      },
+      {
+        "value": "26318.66 USD",
+        "type": "MonetaryValue",
+        "reason": "Currency amount"
+      },
+      {
+        "value": "tender",
+        "type": "ProcurementDocument",
+        "reason": "Procurement document type"
+      },
+      {
+        "value": "Robert Williams",
+        "type": "AgentInRole",
+        "reason": "Person name mentioned"
+      },
+      {
+        "value": "raw materials",
+        "type": "ProcurementObject",
+        "reason": "Procurement object"
+      },
+      {
+        "value": "Award Criteria",
+        "type": "AwardDecision",
+        "reason": "Procurement term"
+      },
+      {
+        "value": "Procurement Director",
+        "type": "ProcurementServiceProvider",
+        "reason": "Procurement service provider"
+      }
+    ]
+  }
+]
