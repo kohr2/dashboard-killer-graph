@@ -1,0 +1,8 @@
+{
+  "entities": {
+    "Ontology": {
+      "description": "Represents the ontology itself.",
+      "vectorIndex": false
+    }
+  }
+} 

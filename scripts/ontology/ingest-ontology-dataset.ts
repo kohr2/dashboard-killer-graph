@@ -28,6 +28,16 @@ async function main() {
   const limit = limitStr ? parseInt(limitStr, 10) : undefined;
   const useLLM = args.includes('--use-llm');
 
+  // Debug log for argument parsing
+  console.log('--- Ontology Ingestion CLI Debug ---');
+  console.log('Command line:', process.argv.join(' '));
+  console.log('Parsed args:', args);
+  console.log('Ontology:', ontologyName);
+  console.log('Database:', databaseName);
+  console.log('Limit:', limit);
+  console.log('LLM mode:', useLLM ? 'ENABLED' : 'DISABLED (direct ingestion)');
+  console.log('------------------------------------');
+
   // Validate required arguments
   if (!ontologyName) {
     console.error('❌ --ontology is required');
@@ -89,6 +99,7 @@ async function main() {
     // Ingest the dataset
     if (useLLM) {
       console.log('🔄 Using LLM processing mode...');
+      console.log('🔍 [AUDIT] Calling ingestOntologyDatasetWithLLM');
       await ingestionService.ingestOntologyDatasetWithLLM(
         path.resolve(datasetPath),
         ontologyPlugin,
@@ -96,6 +107,7 @@ async function main() {
       );
     } else {
       console.log('🔄 Using direct ingestion mode (no LLM processing)...');
+      console.log('🔍 [AUDIT] Calling ingestOntologyDataset');
       await ingestionService.ingestOntologyDataset(
         path.resolve(datasetPath),
         ontologyPlugin,

@@ -20,12 +20,14 @@ export interface IngestionEntity {
   properties?: { [key: string]: any };
   getOntologicalType?: () => string;
   enrichedData?: any;
+  uuid?: string; // Add uuid for ontology datasets
 }
 
 export interface Relationship {
   source: string;
   target: string;
   type: string;
+  properties?: Record<string, any>;
 }
 
 export interface ProcessingResult {
@@ -156,13 +158,19 @@ export class Neo4jIngestionService {
         continue;
       }
 
-      if (!entity.embedding && !this.ontologyService.getIndexableEntityTypes().includes(primaryLabel)) {
-        logger.info(`Skipping entity '${entity.name}' (type: ${primaryLabel}) because it has no embedding and is not an indexed type.`);
-        continue;
+      // Always create Ontology node, even if not indexable or without embedding
+      if (primaryLabel === 'Ontology') {
+        logger.info(`[DEBUG] Processing Ontology entity: ${entity.name} (id: ${entity.id})`);
+      } else {
+        if (!entity.embedding && !this.ontologyService.getIndexableEntityTypes().includes(primaryLabel)) {
+          logger.info(`[DEBUG] Skipping entity '${entity.name}' (id: ${entity.id}, type: ${entity.type}, primaryLabel: ${primaryLabel}) because it has no embedding and is not an indexed type.`);
+          continue;
+        }
       }
 
-      // Vector search for existing entities
-      if (entity.embedding && candidateLabels.length > 0 && primaryLabel !== 'Thing') {
+      // Vector search for existing entities (skip for ontology datasets with exact IDs)
+      // Skip fuzzy matching if entity has a uuid property (indicating it's from a structured dataset)
+      if (!entity.uuid && entity.embedding && candidateLabels.length > 0 && primaryLabel !== 'Thing') {
         for (const label of candidateLabels) {
           const indexName = `${label.toLowerCase()}_embeddings`;
           let searchResult;
@@ -379,6 +387,9 @@ export class Neo4jIngestionService {
 
         entity.resolvedId = nodeId;
       }
+      if (primaryLabel === 'Ontology') {
+        logger.info(`Creating Ontology node: ${entity.name} (id: ${entity.id}) with properties: ${JSON.stringify(entity.properties)}`);
+      }
     }
     
     // Create Communication Node and link entities
@@ -436,17 +447,33 @@ export class Neo4jIngestionService {
         const targetLabelsCypher = targetInfo.labels.map((l: string) => '\`' + l + '\`').join(':');
         const relType = rel.type.replace(/ /g, '_').toUpperCase();
 
-        await this.session.run(
-          `
-          MATCH (a:${sourceLabelsCypher} {id: $sourceId})
-          MATCH (b:${targetLabelsCypher} {id: $targetId})
-          MERGE (a)-[:\`${relType}\`]->(b)
-        `,
-          {
-            sourceId: sourceEntity.resolvedId,
-            targetId: targetEntity.resolvedId,
-          },
-        );
+        if (rel.properties && Object.keys(rel.properties).length > 0) {
+          await this.session.run(
+            `
+            MATCH (a:${sourceLabelsCypher} {id: $sourceId})
+            MATCH (b:${targetLabelsCypher} {id: $targetId})
+            MERGE (a)-[r:\`${relType}\`]->(b)
+            SET r += $relProps
+            `,
+            {
+              sourceId: sourceEntity.resolvedId,
+              targetId: targetEntity.resolvedId,
+              relProps: rel.properties,
+            },
+          );
+        } else {
+          await this.session.run(
+            `
+            MATCH (a:${sourceLabelsCypher} {id: $sourceId})
+            MATCH (b:${targetLabelsCypher} {id: $targetId})
+            MERGE (a)-[:\`${relType}\`]->(b)
+            `,
+            {
+              sourceId: sourceEntity.resolvedId,
+              targetId: targetEntity.resolvedId,
+            },
+          );
+        }
       }
     }
     logger.info(`Merged ${nonPropertyRelationships.length} non-property relationships between entities.`);

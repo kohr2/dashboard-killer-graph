@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "description": "International Standard Classification of Occupations (ISCO) ontology for standardized occupational classification",
   "entities": {
+    "Ontology": {
+      "description": "Represents the ontology itself.",
+      "vectorIndex": false
+    },
     "ISCOMajorGroup": {
+      "vectorIndex": true,
       "properties": {
         "code": { "type": "string", "required": true, "description": "ISCO major group code (1-digit)" },
         "name": { "type": "string", "required": true, "description": "ISCO major group name" },
@@ -60,6 +65,7 @@
       }
       },
     "ISCOGroup": {
+      "vectorIndex": true,
       "properties": {
         "code": { "type": "string", "required": true, "description": "ISCO group code" },
         "name": { "type": "string", "required": true, "description": "ISCO group name" },
@@ -73,6 +79,7 @@
     }
   },
     "JobTitle": {
+      "vectorIndex": true,
       "properties": {
         "title": { "type": "string", "required": true, "description": "Job title name" },
         "normalizedTitle": { "type": "string", "description": "Normalized job title for matching" },

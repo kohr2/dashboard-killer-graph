@@ -24,9 +24,15 @@ async function main() {
   const ontologyName = getArgValue(args, '--ontology-name');
   const ontologyNames = getArgValue(args, '--ontology-names');
   const summary = args.includes('--summary');
+  const database = getArgValue(args, '--database') || 'dashboardkiller';
 
   // Create verification service
-  const verificationService = new OntologyVerificationService();
+  const verificationService = new OntologyVerificationService(
+    undefined, // uri
+    undefined, // username
+    undefined, // password
+    database
+  );
 
   try {
     if (summary) {
