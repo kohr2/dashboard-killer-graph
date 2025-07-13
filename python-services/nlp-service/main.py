@@ -28,12 +28,12 @@ else:
 # --- Pydantic Models for API data validation ---
 class ExtractionRequest(BaseModel):
     text: str
-    ontology_name: Optional[str] = None  # New field for ontology scoping
+    ontology: Optional[str] = None  # New field for ontology scoping
     database: Optional[str] = None  # New field for database specification
     
 class BatchExtractionRequest(BaseModel):
     texts: List[str]
-    ontology_name: Optional[str] = None  # New field for ontology scoping
+    ontology: Optional[str] = None  # New field for ontology scoping
     database: Optional[str] = None  # New field for database specification
     
 class Entity(BaseModel):
@@ -92,7 +92,7 @@ class OntologyUpdateRequest(BaseModel):
     relationship_descriptions: Optional[Dict[str, str]] = None
     # New compact ontology format
     compact_ontology: Optional[Dict[str, Any]] = None
-    ontology_name: Optional[str] = None  # New field to name the ontology
+    ontology: Optional[str] = None  # New field to name the ontology
 
 # --- Global State ---
 VALID_ONTOLOGY_TYPES: List[str] = []
@@ -264,26 +264,26 @@ def create_relationship_graph_data(relationship: Dict[str, Any], ontology_config
     return graph_data
 
 # Helper functions for ontology management
-def get_ontology_by_name(ontology_name: Optional[str] = None) -> Dict[str, Any]:
+def get_ontology_by_name(ontology: Optional[str] = None) -> Dict[str, Any]:
     """
     Get ontology configuration by name. Falls back to default if not found.
     
     Args:
-        ontology_name: Name of the ontology to retrieve
+        ontology: Name of the ontology to retrieve
         
     Returns:
         Ontology configuration dictionary
     """
-    if not ontology_name:
-        ontology_name = DEFAULT_ONTOLOGY_NAME
+    if not ontology:
+        ontology = DEFAULT_ONTOLOGY_NAME
     
     # Return the specific ontology if it exists
-    if ontology_name in ONTOLOGIES:
-        return ONTOLOGIES[ontology_name]
+    if ontology in ONTOLOGIES:
+        return ONTOLOGIES[ontology]
     
     # Fall back to default ontology
     if DEFAULT_ONTOLOGY_NAME in ONTOLOGIES:
-        print(f"⚠️  Ontology '{ontology_name}' not found, using default ontology")
+        print(f"⚠️  Ontology '{ontology}' not found, using default ontology")
         return ONTOLOGIES[DEFAULT_ONTOLOGY_NAME]
     
     # Fall back to global state (legacy support)
@@ -305,17 +305,17 @@ def get_available_ontologies() -> List[str]:
     """
     return list(ONTOLOGIES.keys())
 
-def validate_ontology_name(ontology_name: str) -> bool:
+def validate_ontology_name(ontology: str) -> bool:
     """
     Check if an ontology name is valid.
     
     Args:
-        ontology_name: Name to validate
+        ontology: Name to validate
         
     Returns:
         True if valid, False otherwise
     """
-    return ontology_name in ONTOLOGIES or ontology_name == DEFAULT_ONTOLOGY_NAME
+    return ontology in ONTOLOGIES or ontology == DEFAULT_ONTOLOGY_NAME
 
 # --- Entity Extractor Class (adapted from the original script) ---
 class SpacyEntityExtractor:
@@ -330,11 +330,11 @@ class SpacyEntityExtractor:
         
         ruler = self.nlp.add_pipe("entity_ruler", before="ner")
         patterns = [
-            {"label": "STOCK_SYMBOL", "pattern": [{"TEXT": {"REGEX": r"^\([A-Z]+:[A-Z]{1,5}\)$"}}]},
-            {"label": "CURRENCY", "pattern": [{"TEXT": {"REGEX": r"^\$[\d,]+(?:\.\d{2})?$"}}]},
-            {"label": "FINANCIAL_ORG", "pattern": [{"LOWER": "goldman"}, {"LOWER": "sachs"}]},
-            {"label": "FINANCIAL_ORG", "pattern": [{"LOWER": "jpmorgan"}]},
-            {"label": "JOB_TITLE", "pattern": [{"LOWER": "cfa"}]},
+            {"label": "StockSymbol", "pattern": [{"TEXT": {"REGEX": r"^\([A-Z]+:[A-Z]{1,5}\)$"}}]},
+            {"label": "Currency", "pattern": [{"TEXT": {"REGEX": r"^\$[\d,]+(?:\.\d{2})?$"}}]},
+            {"label": "FinancialOrg", "pattern": [{"LOWER": "goldman"}, {"LOWER": "sachs"}]},
+            {"label": "FinancialOrg", "pattern": [{"LOWER": "jpmorgan"}]},
+            {"label": "JobTitle", "pattern": [{"LOWER": "cfa"}]},
         ]
         ruler.add_patterns(patterns)
     
@@ -363,16 +363,25 @@ class SpacyEntityExtractor:
         return entities
     
     def _map_entity_label(self, spacy_label: str) -> str:
-        mapping = { "PERSON": "PERSON_NAME", "ORG": "COMPANY_NAME", "GPE": "LOCATION", "MONEY": "MONETARY_AMOUNT" }
+        mapping = { 
+            "PERSON": "PersonName", 
+            "ORG": "Company", 
+            "GPE": "Location", 
+            "MONEY": "MonetaryAmount",
+            "StockSymbol": "StockSymbol",
+            "Currency": "Currency", 
+            "FinancialOrg": "FinancialOrg",
+            "JobTitle": "JobTitle"
+        }
         return mapping.get(spacy_label, spacy_label)
 
 # --- ASYNC LLM Graph Extraction Logic ---
-async def extract_graph_with_llm_async(text: str, ontology_name: Optional[str] = None, database: Optional[str] = None) -> Dict[str, Any]:
+async def extract_graph_with_llm_async(text: str, ontology: Optional[str] = None, database: Optional[str] = None) -> Dict[str, Any]:
     if not async_client:
         raise HTTPException(status_code=503, detail="OpenAI async client not configured.")
     
     # Get ontology configuration
-    ontology_config = get_ontology_by_name(ontology_name)
+    ontology_config = get_ontology_by_name(ontology)
     entity_types = ontology_config.get("entity_types", [])
     
     if not entity_types:
@@ -404,46 +413,41 @@ async def extract_graph_with_llm_async(text: str, ontology_name: Optional[str] =
                         compact_ontology["r"].append([source, rel_type, target])
 
     prompt = f"""
-    You are an expert financial analyst creating a knowledge graph from a text. Your goal is to extract entities and relationships to build a graph. Your final output must be a single JSON object with "entities" and "relationships" keys.
+You are an expert knowledge graph builder. Your task is to extract entities and relationships from the following text, using ONLY the provided ontology.
 
-    **Ontology format:**
-    - "e" is the list of entity types.
-    - "r" is the list of relationships, each as [source_entity, relationship_type, target_entity].
+**Ontology:**
+{json.dumps(compact_ontology, indent=2)}
 
-    **Ontology:**
-    {json.dumps(compact_ontology, indent=2)}
+**Instructions:**
+1. Carefully analyze the text.
+2. Extract all entities that match the ontology's entity types.
+3. Extract all relationships that match the ontology's relationship types and patterns.
+4. Do not invent types or relationships not present in the ontology.
+5. Return a JSON object with "entities" and "relationships" arrays.
 
-    **Instructions:**
-    1. Analyze the provided text carefully
-    2. Extract entities that match the ontology types
-    3. Identify relationships between entities using the provided patterns
-    4. Return a JSON object with "entities" and "relationships" arrays
-    5. Each entity should have: value, type, properties
-    6. Each relationship should have: source, target, type
-
-    **Output Format:**
+**Output Format:**
+{{
+  "entities": [
     {{
-      "entities": [
-        {{
-          "value": "entity name",
-          "type": "entity type",
-          "properties": {{}}
-        }}
-      ],
-      "relationships": [
-        {{
-          "source": "source entity value",
-          "target": "target entity value", 
-          "type": "relationship type"
-        }}
-      ]
+      "value": "entity name",
+      "type": "entity type",
+      "properties": {{}}
     }}
+  ],
+  "relationships": [
+    {{
+      "source": "source entity value",
+      "target": "target entity value",
+      "type": "relationship type"
+    }}
+  ]
+}}
 
-    **Text to Analyze:**
-    ---
-    {text}
-    ---
-    """
+**Text to Analyze:**
+---
+{text}
+---
+"""
     
     # --- DEBUG: Persist prompt to disk (optional) ---
     if os.getenv("ENABLE_PROMPT_DEBUG", "0") == "1":
@@ -451,7 +455,7 @@ async def extract_graph_with_llm_async(text: str, ontology_name: Optional[str] =
             debug_dir = Path(os.getenv("PROMPT_DEBUG_DIR", "/tmp/llm-prompts"))
             debug_dir.mkdir(parents=True, exist_ok=True)
             ts = int(time.time() * 1000)
-            prompt_file = debug_dir / f"prompt-{ontology_name or 'default'}-{ts}.txt"
+            prompt_file = debug_dir / f"prompt-{ontology or 'default'}-{ts}.txt"
             prompt_file.write_text(prompt)
             print(f"📝 Prompt persisted to {prompt_file}")
         except Exception as e:
@@ -488,7 +492,7 @@ async def extract_graph_with_llm_async(text: str, ontology_name: Optional[str] =
                 return {
                     "entities": entities, 
                     "relationships": relationships, 
-                    "refinement_info": f"LLM extraction successful using ontology: {ontology_name or 'default'}"
+                    "refinement_info": f"LLM extraction successful using ontology: {ontology or 'default'}"
                 }
         
         return {"entities": [], "relationships": [], "refinement_info": "LLM parsing failed"}
@@ -498,12 +502,12 @@ async def extract_graph_with_llm_async(text: str, ontology_name: Optional[str] =
         return {"entities": [], "relationships": [], "refinement_info": f"LLM graph extraction error: {str(e)}"}
 
 # --- LLM Graph Extraction Logic ---
-def extract_graph_with_llm(text: str, ontology_name: Optional[str] = None, database: Optional[str] = None) -> Dict[str, Any]:
+def extract_graph_with_llm(text: str, ontology: Optional[str] = None, database: Optional[str] = None) -> Dict[str, Any]:
     if not client:
         raise HTTPException(status_code=503, detail="OpenAI client not configured.")
     
     # Get ontology configuration
-    ontology_config = get_ontology_by_name(ontology_name)
+    ontology_config = get_ontology_by_name(ontology)
     entity_types = ontology_config.get("entity_types", [])
     
     if not entity_types:
@@ -535,46 +539,41 @@ def extract_graph_with_llm(text: str, ontology_name: Optional[str] = None, datab
                         compact_ontology["r"].append([source, rel_type, target])
 
     prompt = f"""
-    You are an expert financial analyst creating a knowledge graph from a text. Your goal is to extract entities and relationships to build a graph. Your final output must be a single JSON object with "entities" and "relationships" keys.
+You are an expert knowledge graph builder. Your task is to extract entities and relationships from the following text, using ONLY the provided ontology.
 
-    **Ontology format:**
-    - "e" is the list of entity types.
-    - "r" is the list of relationships, each as [source_entity, relationship_type, target_entity].
+**Ontology:**
+{json.dumps(compact_ontology, indent=2)}
 
-    **Ontology:**
-    {json.dumps(compact_ontology, indent=2)}
+**Instructions:**
+1. Carefully analyze the text.
+2. Extract all entities that match the ontology's entity types.
+3. Extract all relationships that match the ontology's relationship types and patterns.
+4. Do not invent types or relationships not present in the ontology.
+5. Return a JSON object with "entities" and "relationships" arrays.
 
-    **Instructions:**
-    1. Analyze the provided text carefully
-    2. Extract entities that match the ontology types
-    3. Identify relationships between entities using the provided patterns
-    4. Return a JSON object with "entities" and "relationships" arrays
-    5. Each entity should have: value, type, properties
-    6. Each relationship should have: source, target, type
-
-    **Output Format:**
+**Output Format:**
+{{
+  "entities": [
     {{
-      "entities": [
-        {{
-          "value": "entity name",
-          "type": "entity type",
-          "properties": {{}}
-        }}
-      ],
-      "relationships": [
-        {{
-          "source": "source entity value",
-          "target": "target entity value", 
-          "type": "relationship type"
-        }}
-      ]
+      "value": "entity name",
+      "type": "entity type",
+      "properties": {{}}
     }}
+  ],
+  "relationships": [
+    {{
+      "source": "source entity value",
+      "target": "target entity value",
+      "type": "relationship type"
+    }}
+  ]
+}}
 
-    **Text to Analyze:**
-    ---
-    {text}
-    ---
-    """
+**Text to Analyze:**
+---
+{text}
+---
+"""
     
     # --- DEBUG: Persist prompt to disk (optional) ---
     if os.getenv("ENABLE_PROMPT_DEBUG", "0") == "1":
@@ -582,7 +581,7 @@ def extract_graph_with_llm(text: str, ontology_name: Optional[str] = None, datab
             debug_dir = Path(os.getenv("PROMPT_DEBUG_DIR", "/tmp/llm-prompts"))
             debug_dir.mkdir(parents=True, exist_ok=True)
             ts = int(time.time() * 1000)
-            prompt_file = debug_dir / f"prompt-{ontology_name or 'default'}-{ts}.txt"
+            prompt_file = debug_dir / f"prompt-{ontology or 'default'}-{ts}.txt"
             prompt_file.write_text(prompt)
             print(f"📝 Prompt persisted to {prompt_file}")
         except Exception as e:
@@ -708,12 +707,12 @@ async def extract_entities_endpoint(request: ExtractionRequest):
     """
     Extracts named entities using spaCy (raw output).
     - **text**: The input string to process.
-    - **ontology_name**: Optional ontology name to scope the extraction.
+    - **ontology**: Optional ontology name to scope the extraction.
     """
     entities = extractor.extract_entities(request.text)
     
     # Get ontology configuration for graph data
-    ontology_config = get_ontology_by_name(request.ontology_name)
+    ontology_config = get_ontology_by_name(request.ontology)
     
     # Add graph data to each entity
     for entity in entities:
@@ -726,7 +725,7 @@ async def refine_entities_endpoint(request: ExtractionRequest):
     """
     Extracts entities with spaCy and then refines the list using a Large Language Model.
     - **text**: The input string to process.
-    - **ontology_name**: Optional ontology name to scope the extraction.
+    - **ontology**: Optional ontology name to scope the extraction.
     """
     request_id = generate_request_id()
     
@@ -737,7 +736,7 @@ async def refine_entities_endpoint(request: ExtractionRequest):
     refined_entities = refine_entities_with_llm(request.text, raw_entities)
     
     # Get ontology configuration for graph data
-    ontology_config = get_ontology_by_name(request.ontology_name)
+    ontology_config = get_ontology_by_name(request.ontology)
     
     # Add graph data to entities
     for entity in raw_entities:
@@ -754,7 +753,7 @@ async def refine_entities_endpoint(request: ExtractionRequest):
         "text_length": len(request.text),
         "raw_entity_count": len(raw_entities),
         "refined_entity_count": len(refined_entities),
-        "ontology_used": request.ontology_name or "default",
+        "ontology_used": request.ontology or "default",
         "extraction_timestamp": time.time()
     }
     
@@ -763,7 +762,7 @@ async def refine_entities_endpoint(request: ExtractionRequest):
         raw_entities=[Entity(**e) for e in raw_entities],
         refined_entities=[Entity(**e) for e in refined_entities],
         refinement_info="Entities refined by LLM.",
-        ontology_used=request.ontology_name,
+        ontology_used=request.ontology,
         graph_metadata=graph_metadata
     )
 
@@ -774,17 +773,17 @@ async def extract_graph_endpoint(request: ExtractionRequest):
     constrained by a predefined ontology.
 
     - **text**: The input string to process.
-    - **ontology_name**: Optional ontology name to scope the extraction.
+    - **ontology**: Optional ontology name to scope the extraction.
     """
     request_id = generate_request_id()
     
     # Get database name from request or environment
     database_name = get_database_name(request.database)
     
-    graph_data = extract_graph_with_llm(request.text, request.ontology_name, database_name)
+    graph_data = extract_graph_with_llm(request.text, request.ontology, database_name)
     
     # Get ontology configuration for graph data
-    ontology_config = get_ontology_by_name(request.ontology_name)
+    ontology_config = get_ontology_by_name(request.ontology)
     
     # Process entities: add IDs and graph data
     entities = graph_data.get("entities", [])
@@ -815,7 +814,7 @@ async def extract_graph_endpoint(request: ExtractionRequest):
         "text_length": len(request.text),
         "entity_count": len(entities),
         "relationship_count": len(relationships),
-        "ontology_used": request.ontology_name or "default",
+        "ontology_used": request.ontology or "default",
         "database_used": database_name,
         "extraction_timestamp": time.time(),
         "has_embedding": embedding is not None
@@ -827,7 +826,7 @@ async def extract_graph_endpoint(request: ExtractionRequest):
         relationships=[Relationship(**r) for r in relationships],
         refinement_info=graph_data.get("refinement_info", "Graph generated directly by LLM based on dynamic ontology."),
         embedding=embedding,
-        ontology_used=request.ontology_name,
+        ontology_used=request.ontology,
         database_used=database_name,
         graph_metadata=graph_metadata
     )
@@ -850,17 +849,17 @@ async def update_ontologies(request: OntologyUpdateRequest):
     Receives the latest ontology from the TypeScript backend including optional
     descriptions so the LLM can leverage richer schema context.
     Supports both full ontology format and compact format.
-    - **ontology_name**: Optional name for the ontology (defaults to 'default').
+    - **ontology**: Optional name for the ontology (defaults to 'default').
     """
     global VALID_ONTOLOGY_TYPES, VALID_RELATIONSHIP_TYPES, PROPERTY_ENTITY_TYPES
     global ENTITY_DESCRIPTIONS, RELATIONSHIP_DESCRIPTIONS
 
     # Determine ontology name
-    ontology_name = request.ontology_name or DEFAULT_ONTOLOGY_NAME
+    ontology = request.ontology or DEFAULT_ONTOLOGY_NAME
     
     # Initialize ontology if it doesn't exist
-    if ontology_name not in ONTOLOGIES:
-        ONTOLOGIES[ontology_name] = {}
+    if ontology not in ONTOLOGIES:
+        ONTOLOGIES[ontology] = {}
 
     # Handle compact ontology format
     if request.compact_ontology:
@@ -878,7 +877,7 @@ async def update_ontologies(request: OntologyUpdateRequest):
                 relationship_types.append(rel[1])  # rel[1] is the relationship type
         
         # Store in the specific ontology
-        ONTOLOGIES[ontology_name] = {
+        ONTOLOGIES[ontology] = {
             "entity_types": entity_types,
             "relationship_types": relationship_types,
             "property_types": property_types,
@@ -895,7 +894,7 @@ async def update_ontologies(request: OntologyUpdateRequest):
         RELATIONSHIP_DESCRIPTIONS = relationship_descriptions
         
         print(
-            f"✅ Compact ontology '{ontology_name}' updated: {len(entity_types)} entities, "
+            f"✅ Compact ontology '{ontology}' updated: {len(entity_types)} entities, "
             f"{len(relationship_types)} relationships"
         )
 
@@ -905,7 +904,7 @@ async def update_ontologies(request: OntologyUpdateRequest):
                 debug_dir = Path(os.getenv("PROMPT_DEBUG_DIR", "/tmp/llm-prompts"))
                 debug_dir.mkdir(parents=True, exist_ok=True)
                 ts = int(time.time() * 1000)
-                ont_file = debug_dir / f"compact-ontology-{ontology_name}-{ts}.json"
+                ont_file = debug_dir / f"compact-ontology-{ontology}-{ts}.json"
                 ont_file.write_text(json.dumps(compact, indent=2))
                 print(f"📝 Compact ontology persisted to {ont_file}")
             except Exception as e:
@@ -919,7 +918,7 @@ async def update_ontologies(request: OntologyUpdateRequest):
         relationship_descriptions = request.relationship_descriptions or {}
         
         # Store in the specific ontology
-        ONTOLOGIES[ontology_name] = {
+        ONTOLOGIES[ontology] = {
             "entity_types": entity_types,
             "relationship_types": relationship_types,
             "property_types": property_types,
@@ -935,7 +934,7 @@ async def update_ontologies(request: OntologyUpdateRequest):
         RELATIONSHIP_DESCRIPTIONS = relationship_descriptions
         
         print(
-            f"✅ Full ontology '{ontology_name}' updated: {len(entity_types)} entities, "
+            f"✅ Full ontology '{ontology}' updated: {len(entity_types)} entities, "
             f"{len(property_types)} property types, "
             f"{len(relationship_types)} relationships, "
             f"{len(entity_descriptions)} descriptions"
@@ -947,12 +946,12 @@ async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
     Processes a batch of texts concurrently to extract knowledge graphs.
     This is much more efficient than calling /extract-graph in a loop.
     - **texts**: List of texts to process.
-    - **ontology_name**: Optional ontology name to scope the extraction.
+    - **ontology**: Optional ontology name to scope the extraction.
     """
     # Get database name from request or environment
     database_name = get_database_name(request.database)
     
-    print(f"--- Received batch request for {len(request.texts)} documents using ontology: {request.ontology_name or 'default'} and database: {database_name} ---")
+    print(f"--- Received batch request for {len(request.texts)} documents using ontology: {request.ontology or 'default'} and database: {database_name} ---")
     batch_start_time = time.time()
 
     # Process each text individually to add IDs and graph data
@@ -960,10 +959,10 @@ async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
     for i, text in enumerate(request.texts):
         try:
             # Extract graph data
-            graph_data = extract_graph_with_llm(text, request.ontology_name, database_name)
+            graph_data = extract_graph_with_llm(text, request.ontology, database_name)
             
             # Get ontology configuration for graph data
-            ontology_config = get_ontology_by_name(request.ontology_name)
+            ontology_config = get_ontology_by_name(request.ontology)
             
             # Generate request ID
             request_id = generate_request_id()
@@ -997,7 +996,7 @@ async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
                 "text_length": len(text),
                 "entity_count": len(entities),
                 "relationship_count": len(relationships),
-                "ontology_used": request.ontology_name or "default",
+                "ontology_used": request.ontology or "default",
                 "database_used": database_name,
                 "extraction_timestamp": time.time(),
                 "has_embedding": embedding is not None,
@@ -1011,7 +1010,7 @@ async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
                 relationships=[Relationship(**r) for r in relationships],
                 refinement_info=graph_data.get("refinement_info", "Graph generated directly by LLM based on dynamic ontology."),
                 embedding=embedding,
-                ontology_used=request.ontology_name,
+                ontology_used=request.ontology,
                 database_used=database_name,
                 graph_metadata=graph_metadata
             )
@@ -1027,7 +1026,7 @@ async def batch_extract_graph_endpoint(request: BatchExtractionRequest):
                 relationships=[],
                 refinement_info=f"Error processing text: {str(e)}",
                 embedding=None,
-                ontology_used=request.ontology_name,
+                ontology_used=request.ontology,
                 database_used=database_name,
                 graph_metadata={
                     "error": str(e),
