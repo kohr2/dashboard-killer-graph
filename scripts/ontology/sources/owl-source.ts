@@ -202,269 +202,128 @@ export class OwlSource implements OntologySource {
         });
 
         return { entities, relationships };
-      } catch (ttlErr) {
-        console.warn('⚠️  Failed to parse Turtle content, falling back to XML parsing:', (ttlErr as Error).message);
-        // Fallthrough to XML path below
+      } catch (error) {
+        console.warn('⚠️  Turtle parsing failed, falling back to XML parsing');
       }
     }
 
-    // Try XML parsing, fallback to Turtle if it fails
+    // ------------------------------------------------------------------
+    // 2) XML/RDF parsing (primary path)
+    // ------------------------------------------------------------------
     try {
-      // Sanitize invalid XML entities before parsing
+      // Sanitize XML entities before parsing
       const sanitizedContent = this.sanitizeXmlEntities(trimmed);
-      console.log(`[DEBUG] After sanitization (first 3 lines):\n${sanitizedContent.split('\n').slice(0, 3).join('\n')}\n---`);
-      
-      // Pre-process XML to resolve entity references
       const resolvedContent = this.resolveXmlEntities(sanitizedContent);
-      console.log(`[DEBUG] After entity resolution (first 3 lines):\n${resolvedContent.split('\n').slice(0, 3).join('\n')}\n---`);
+      
+      console.log(`[DEBUG] After sanitization (first 3 lines):\n${resolvedContent.split('\n').slice(0, 3).join('\n')}\n---`);
       
       const parser = new xml2js.Parser({
         explicitArray: false,
-        mergeAttrs: false,
-        explicitRoot: true
+        mergeAttrs: true,
+        normalize: true,
+        normalizeTags: false,
+        trim: true
       });
-      // Debug: show exact bytes and character codes at the start
-      const firstBytes = resolvedContent.substring(0, 50);
-      const charCodes = Array.from(firstBytes).map(c => c.charCodeAt(0));
-      console.log(`[DEBUG] First 50 chars: "${firstBytes}"`);
-      console.log(`[DEBUG] Character codes: [${charCodes.join(', ')}]`);
-      
-      // Additional debugging for potential hidden characters
-      console.log(`[DEBUG] Raw content length: ${resolvedContent.length}`);
-      console.log(`[DEBUG] First 10 chars raw:`, Array.from(resolvedContent.substring(0, 10)).map(c => `'${c}' (${c.charCodeAt(0)})`));
-      console.log(`[DEBUG] Content starts with XML declaration: ${resolvedContent.trim().startsWith('<?xml')}`);
-      
-      const xml = await parser.parseStringPromise(resolvedContent);
-      
-      const entities: Entity[] = [];
-      const relationships: Relationship[] = [];
 
-      // Find the root: usually rdf:RDF, but fallback to owl:Ontology or the first key
-      let rdfRoot = xml['rdf:RDF'] || xml['owl:Ontology'];
-      if (!rdfRoot) {
-        // Fallback: use the first key if present
-        const keys = Object.keys(xml);
-        if (keys.length === 1) {
-          rdfRoot = xml[keys[0]];
-        } else {
-          rdfRoot = xml;
-        }
-      }
+      const result = await parser.parseStringPromise(resolvedContent);
+      const rdfRoot = result['rdf:RDF'] || result;
 
-      // Namespace-agnostic extraction for classes, properties, and descriptions
-      const datatypeProperties = new Map<string, any>();
+      // Extract all elements first
       const allKeys = Object.keys(rdfRoot);
-      // Helper to collect all elements matching a suffix (e.g., ':Class')
-      const collectElements = (suffix: string) =>
-        allKeys.filter(k => k.endsWith(suffix)).flatMap(k => this.getArrayElements(rdfRoot, k));
+      console.log(`[DEBUG] All keys in rdfRoot:`, allKeys.slice(0, 10)); // Show first 10 keys
+      
+      // Always collect all rdf:Description elements
+      const descriptionElements = this.getArrayElements(rdfRoot, 'rdf:Description');
+      console.log('[DEBUG] Sample rdf:Description elements:', JSON.stringify(descriptionElements.slice(0, 3), null, 2));
+      
+      // Filter description elements that are classes
+      const classDescriptions = descriptionElements.filter((desc: any) => {
+        const typeElement = desc['rdf:type'] && desc['rdf:type']['rdf:resource'];
+        return typeElement && this.isClassType(typeElement);
+      });
+      // Filter description elements that are object properties
+      const objectPropertyDescriptions = descriptionElements.filter((desc: any) => {
+        const typeElement = desc['rdf:type'] && desc['rdf:type']['rdf:resource'];
+        return typeElement && this.isObjectPropertyType(typeElement);
+      });
+      // Filter description elements that are datatype properties
+      const datatypePropertyDescriptions = descriptionElements.filter((desc: any) => {
+        const typeElement = desc['rdf:type'] && desc['rdf:type']['rdf:resource'];
+        return typeElement && this.isDatatypePropertyType(typeElement);
+      });
+      
+      // For legacy support, also collect any direct owl:Class, owl:ObjectProperty, owl:DatatypeProperty
+      const classElements = this.getArrayElements(rdfRoot, 'owl:Class');
+      const objectPropertyElements = this.getArrayElements(rdfRoot, 'owl:ObjectProperty');
+      const datatypePropertyElements = this.getArrayElements(rdfRoot, 'owl:DatatypeProperty');
+      
+      const allClassElements = [...classElements, ...classDescriptions];
+      console.log(`[OWLSource] Found ${allClassElements.length} class elements`);
+      const allObjectPropertyElements = [...objectPropertyElements, ...objectPropertyDescriptions];
+      console.log(`[OWLSource] Found ${allObjectPropertyElements.length} object property elements`);
+      const allDatatypePropertyElements = [...datatypePropertyElements, ...datatypePropertyDescriptions];
+      console.log(`[OWLSource] Found ${allDatatypePropertyElements.length} datatype property elements`);
 
-      // Collect all descriptions (for ePO-style and datatype properties)
-      const descriptions = collectElements(':Description');
-      for (const desc of descriptions) {
-        if (desc.$ && desc.$['rdf:about']) {
-          const uri = desc.$['rdf:about'];
-          // Collect datatype properties
-          if (desc['rdf:type'] && this.isDatatypePropertyType(desc['rdf:type'])) {
-            const propName = this.extractNameFromUri(uri);
-            if (propName) {
-              datatypeProperties.set(propName, {
-                name: propName,
-                definition: this.extractDefinition(desc),
-                label: this.extractLabel(desc),
-                documentation: uri
-              });
-            }
-          }
-        }
-      }
-
-      // Extract OWL Classes (namespace-agnostic)
-      const classes = collectElements(':Class');
-      console.log(`[OWLSource] Found ${classes.length} class elements`);
-      for (const cls of classes) {
-        console.log(`[OWLSource] Class element structure:`, JSON.stringify(cls, null, 2).substring(0, 500));
-        if (cls.$ && cls.$['rdf:about']) {
-          let className = this.extractNameFromUri(cls.$['rdf:about']);
-          className = this.normalizeEntityName(className);
-          console.log(`[OWLSource] Processing class: ${cls.$['rdf:about']} -> ${className}`);
-          if (className && !this.isSystemClass(className) && this.isValidEntityName(className)) {
-            const entity = this.buildEntity(cls, className, cls.$['rdf:about'], datatypeProperties);
-            entities.push(entity);
-            console.log(`[OWLSource] Added entity: ${className}`);
-          } else {
-            console.log(`[OWLSource] Skipped class ${className}: isSystemClass=${className ? this.isSystemClass(className) : 'null'}, isValidName=${className ? this.isValidEntityName(className) : 'null'}`);
-          }
-        } else {
-          console.log(`[OWLSource] Class without rdf:about:`, cls);
-        }
-      }
-
-      // Extract OWL Object Properties (namespace-agnostic)
-      const properties = collectElements(':ObjectProperty');
-      console.log(`[OWLSource] Found ${properties.length} object property elements`);
-      for (const prop of properties) {
-        console.log(`[OWLSource] Property element structure:`, JSON.stringify(prop, null, 2).substring(0, 500));
+      // Build datatype property map for entity property extraction
+      const datatypeProperties = new Map<string, any>();
+      allDatatypePropertyElements.forEach((prop: any) => {
         if (prop.$ && prop.$['rdf:about']) {
           const propName = this.extractNameFromUri(prop.$['rdf:about']);
-          console.log(`[OWLSource] Processing property: ${prop.$['rdf:about']} -> ${propName}`);
-          if (propName && !this.isSystemProperty(propName)) {
-            const relationship = this.buildRelationship(prop, propName, prop.$['rdf:about']);
-            relationships.push(relationship);
-            console.log(`[OWLSource] Added relationship: ${propName}`);
-          } else {
-            console.log(`[OWLSource] Skipped property ${propName}: isSystemProperty=${propName ? this.isSystemProperty(propName) : 'null'}`);
-          }
-        } else {
-          console.log(`[OWLSource] Property without rdf:about:`, prop);
+          if (propName) {
+            datatypeProperties.set(propName, prop);
         }
       }
-
-      // Handle rdf:Description elements with rdf:type (ePO structure)
-      console.log(`[OWLSource] Processing ${descriptions.length} rdf:Description elements`);
-      for (const desc of descriptions) {
-        if (desc.$ && desc.$['rdf:about']) {
-          const uri = desc.$['rdf:about'];
-          // Check if it's a class
-          if (desc['rdf:type'] && this.isClassType(desc['rdf:type'])) {
-            let className = this.extractNameFromUri(uri);
-            className = this.normalizeEntityName(className);
-            console.log(`[OWLSource] Processing description class: ${uri} -> ${className}`);
-            if (className && !this.isSystemClass(className) && this.isValidEntityName(className)) {
-              const entity = this.buildEntity(desc, className, uri, datatypeProperties);
-              entities.push(entity);
-              console.log(`[OWLSource] Added entity from description: ${className}`);
-            } else {
-              console.log(`[OWLSource] Skipped description class ${className}: isSystemClass=${className ? this.isSystemClass(className) : 'null'}, isValidName=${className ? this.isValidEntityName(className) : 'null'}`);
-            }
-          }
-          // Check if it's an object property
-          if (desc['rdf:type'] && this.isObjectPropertyType(desc['rdf:type'])) {
-            const propName = this.extractNameFromUri(uri);
-            console.log(`[OWLSource] Processing description property: ${uri} -> ${propName}`);
-            if (propName && !this.isSystemProperty(propName)) {
-              const relationship = this.buildRelationship(desc, propName, uri);
-              relationships.push(relationship);
-              console.log(`[OWLSource] Added relationship from description: ${propName}`);
-            } else {
-              console.log(`[OWLSource] Skipped description property ${propName}: isSystemProperty=${propName ? this.isSystemProperty(propName) : 'null'}`);
-            }
-          }
-        }
-      }
-
-      // If nothing found, log root keys and a sample for debugging
-      if (entities.length === 0 && relationships.length === 0) {
-        console.warn('[OWLSource] No entities or relationships found. Root keys:', allKeys);
-        const sampleKey = allKeys[0];
-        if (sampleKey && rdfRoot[sampleKey]) {
-          console.warn('[OWLSource] Sample data for', sampleKey, ':', JSON.stringify(rdfRoot[sampleKey], null, 2).substring(0, 1000));
-        }
-      }
-
-      // Recursively process owl:imports to include referenced ontologies
-      const rawImportUrls: string[] = this.extractImportUrls(rdfRoot);
-
-      // Filter imports: skip those that do not match ontologyKey unless includeExternalImports = true
-      const filteredImports = rawImportUrls.filter(url => {
-        if (!url) return false;
-        if (this.includeExternalImports) return true;
-        if (!this.ontologyKey) return true; // no filter available
-        return url.toLowerCase().includes(this.ontologyKey);
       });
 
-      // Remove already visited URLs and mark the rest as visited immediately to avoid race conditions
-      const newImports = filteredImports.filter(url => {
-        if (this.visited.has(url)) return false;
-        this.visited.add(url);
-        return true;
+      // Build entities first
+      const entities: Entity[] = [];
+      const entityNames = new Set<string>();
+
+      allClassElements.forEach((classElement: any) => {
+        // Support both xml2js styles: attributes at top-level or under $
+        const uri = classElement['rdf:about'] || (classElement.$ && classElement.$['rdf:about']);
+        let name = uri ? this.extractNameFromUri(uri) : undefined;
+        
+        if (!name || this.isSystemClass(name) || !this.isValidEntityName(name)) {
+          return;
+            }
+
+        name = this.normalizeEntityName(name) || name;
+        
+        // Skip if we already have this entity
+        if (entityNames.has(name)) {
+          return;
+        }
+        
+        entityNames.add(name);
+        const entity = this.buildEntity(classElement, name, uri, datatypeProperties);
+        entities.push(entity);
       });
 
-      // Parse all imports concurrently for better performance
-      const parsedImports = await Promise.all(
-        newImports.map(async importUrl => {
-          try {
-            const importContent = await this.fetch(importUrl);
-            return await this.parse(importContent);
-          } catch (err) {
-            console.warn(`⚠️  Failed to process import ${importUrl}: ${(err as Error).message}`);
-            return { entities: [], relationships: [] } as ParsedOntology;
-          }
-        })
-      );
+      // Build relationships with access to entity names for definition parsing
+      const relationships: Relationship[] = [];
+      const availableEntityNames = entities.map(e => e.name);
 
-      for (const pi of parsedImports) {
-        entities.push(...pi.entities);
-        relationships.push(...pi.relationships);
-      }
+      allObjectPropertyElements.forEach((propElement: any) => {
+        // Support both xml2js styles: attributes at top-level or under $
+        const uri = propElement['rdf:about'] || (propElement.$ && propElement.$['rdf:about']);
+        const name = uri ? this.extractNameFromUri(uri) : undefined;
+        
+        if (!name || this.isSystemProperty(name)) {
+          return;
+        }
 
-      // Deduplicate entities and relationships by name
-      const uniqueEntitiesMap = new Map<string, Entity>();
-      for (const entity of entities) {
-        uniqueEntitiesMap.set(entity.name, entity);
-      }
-      const uniqueEntities = Array.from(uniqueEntitiesMap.values());
+        const relationship = this.buildRelationshipWithEntities(propElement, name, uri, availableEntityNames);
+        relationships.push(relationship);
+      });
 
-      const uniqueRelationshipsMap = new Map<string, Relationship>();
-      for (const rel of relationships) {
-        uniqueRelationshipsMap.set(rel.name, rel);
-      }
-      const uniqueRelationships = Array.from(uniqueRelationshipsMap.values());
+      // Aggregate parent labels for better entity recognition
+      this.aggregateParentLabels(entities);
 
-      // Aggregate parent labels as synonyms
-      this.aggregateParentLabels(uniqueEntities);
-
-      return { entities: uniqueEntities, relationships: uniqueRelationships };
-    } catch (error) {
-      // If XML parsing fails, try Turtle as a fallback
-      console.warn('⚠️  XML parsing failed, attempting Turtle fallback:', (error as Error).message);
-      try {
-        const store = rdf.graph();
-        rdf.parse(trimmed, store, 'http://example.com/', 'text/turtle');
-        const entities: Entity[] = [];
-        const relationships: Relationship[] = [];
-        const classSubjects = store.each(null, RDF_TYPE, OWL_CLASS);
-        classSubjects.forEach((subject: any) => {
-          if (!subject.value) return;
-          let entityName = this.extractNameFromUri(subject.value);
-          entityName = this.normalizeEntityName(entityName);
-          if (!entityName || this.isSystemClass(entityName) || !this.isValidEntityName(entityName)) return;
-          const labelLit = store.any(subject, RDFS_LABEL, null) as any;
-          const description = labelLit ? (labelLit.value as string) : '';
-          entities.push({
-            name: entityName,
-            description,
-            properties: {},
-            keyProperties: [],
-            vectorIndex: false,
-            documentation: subject.value
-          });
-        });
-        const propSubjects = store.each(null, RDF_TYPE, OWL_OBJECT_PROPERTY);
-        propSubjects.forEach((subject: any) => {
-          if (!subject.value) return;
-          const propName = this.extractNameFromUri(subject.value);
-          if (!propName || this.isSystemProperty(propName)) return;
-          const labelLit = store.any(subject, RDFS_LABEL, null) as any;
-          const description = labelLit ? (labelLit.value as string) : '';
-          const domainNode = store.any(subject, RDFS_DOMAIN, null) as any;
-          const rangeNode = store.any(subject, RDFS_RANGE, null) as any;
-          let domainName = domainNode ? this.extractNameFromUri(domainNode.value) : 'Entity';
-          let rangeName = rangeNode ? this.extractNameFromUri(rangeNode.value) : 'Entity';
-          domainName = this.normalizeEntityName(domainName) || 'Entity';
-          rangeName = this.normalizeEntityName(rangeName) || 'Entity';
-          relationships.push({
-            name: propName,
-            description,
-            source: domainName,
-            target: rangeName,
-            documentation: subject.value
-          });
-        });
         return { entities, relationships };
-      } catch (ttlErr2) {
-        console.error('Error parsing OWL content (Turtle fallback also failed):', ttlErr2);
-        return { entities: [], relationships: [] };
-      }
+    } catch (error) {
+      console.error('Error parsing OWL content (Turtle fallback also failed):', error);
+      throw error;
     }
   }
 
@@ -576,37 +435,16 @@ export class OwlSource implements OntologySource {
     return true;
   }
 
-  private isClassType(typeElement: any): boolean {
-    if (Array.isArray(typeElement)) {
-      return typeElement.some(type => 
-        type.$ && type.$['rdf:resource'] && 
-        type.$['rdf:resource'].includes('owl#Class')
-      );
-    }
-    return typeElement.$ && typeElement.$['rdf:resource'] && 
-           typeElement.$['rdf:resource'].includes('owl#Class');
+  private isClassType(typeElement: string): boolean {
+    return typeElement.includes('owl#Class');
   }
 
-  private isObjectPropertyType(typeElement: any): boolean {
-    if (Array.isArray(typeElement)) {
-      return typeElement.some(type => 
-        type.$ && type.$['rdf:resource'] && 
-        type.$['rdf:resource'].includes('owl#ObjectProperty')
-      );
-    }
-    return typeElement.$ && typeElement.$['rdf:resource'] && 
-           typeElement.$['rdf:resource'].includes('owl#ObjectProperty');
+  private isObjectPropertyType(typeElement: string): boolean {
+    return typeElement.includes('owl#ObjectProperty');
   }
 
-  private isDatatypePropertyType(typeElement: any): boolean {
-    if (Array.isArray(typeElement)) {
-      return typeElement.some(type => 
-        type.$ && type.$['rdf:resource'] && 
-        type.$['rdf:resource'].includes('owl#DatatypeProperty')
-      );
-    }
-    return typeElement.$ && typeElement.$['rdf:resource'] && 
-           typeElement.$['rdf:resource'].includes('owl#DatatypeProperty');
+  private isDatatypePropertyType(typeElement: string): boolean {
+    return typeElement.includes('owl#DatatypeProperty');
   }
 
   private extractDefinition(element: any): string | null {
@@ -706,11 +544,28 @@ export class OwlSource implements OntologySource {
     };
   }
 
-  private buildRelationship(element: any, name: string, uri: string): Relationship {
+  /**
+   * Build a relationship with access to available entity names for definition parsing.
+   * This method is ontology agnostic and uses the actual entity list for pattern matching.
+   */
+  private buildRelationshipWithEntities(element: any, name: string, uri: string, availableEntityNames: string[]): Relationship {
     // Source and target may refer to class names; normalise them as well
     const description = this.extractDefinition(element) || this.extractLabel(element) || `${name} relationship`;
-    const domain = this.normalizeEntityName(this.extractDomain(element));
-    const range = this.normalizeEntityName(this.extractRange(element));
+    let domain = this.normalizeEntityName(this.extractDomain(element));
+    let range = this.normalizeEntityName(this.extractRange(element));
+    
+    // If domain or range is missing, try to extract from definition text
+    if (!domain || !range) {
+      const definition = this.extractDefinition(element);
+      if (definition) {
+        const extractedEntities = this.extractEntitiesFromDefinition(definition, availableEntityNames);
+        if (extractedEntities.length >= 2) {
+          if (!domain) domain = extractedEntities[0];
+          if (!range) range = extractedEntities[1];
+        }
+      }
+    }
+    
     // Compose full URI for documentation if needed
     let documentation = uri;
     if (documentation && !documentation.includes('://')) {
@@ -728,6 +583,53 @@ export class OwlSource implements OntologySource {
       documentation
     };
   }
+
+  /**
+   * Extract entity names from definition text by matching against available entity names.
+   * This method is ontology agnostic and derives patterns from the actual entity list.
+   * 
+   * @param definition The definition text to parse
+   * @param availableEntityNames Array of available entity names from the ontology
+   * @returns Array of entity names found in the definition, in order of appearance
+   */
+  private extractEntitiesFromDefinition(definition: any, availableEntityNames: string[]): string[] {
+    // Handle definition as object (with _ property) or string
+    let defText = definition;
+    if (typeof defText === 'object' && defText !== null && typeof defText._ === 'string') {
+      defText = defText._;
+    }
+    if (typeof defText !== 'string') {
+      return [];
+    }
+    if (availableEntityNames.length === 0) {
+      return [];
+    }
+
+    const foundEntities: { name: string; index: number }[] = [];
+    const definitionLower = defText.toLowerCase();
+    
+    for (const entityName of availableEntityNames) {
+      const entityNameLower = entityName.toLowerCase();
+      // Use word boundary regex to avoid partial matches
+      const regex = new RegExp(`\\b${entityNameLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+      const match = regex.exec(defText);
+      if (match) {
+        foundEntities.push({ name: entityName, index: match.index });
+      }
+    }
+    // Sort by first appearance in the definition
+    foundEntities.sort((a, b) => a.index - b.index);
+    // Return unique entities in order of appearance
+    const uniqueEntities: string[] = [];
+    for (const entity of foundEntities) {
+      if (!uniqueEntities.includes(entity.name)) {
+        uniqueEntities.push(entity.name);
+      }
+    }
+    return uniqueEntities;
+  }
+
+
 
   private extractEntityProperties(element: any, datatypeProperties: Map<string, any>): Record<string, any> {
     const properties: Record<string, any> = {};
