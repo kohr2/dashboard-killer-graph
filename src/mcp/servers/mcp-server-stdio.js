@@ -171,12 +171,9 @@ function configureActiveOntologies() {
       pluginRegistry.setPluginEnabled(plugin.name, false);
     }
     
-    // Enable core (always required) and requested ontologies
-    pluginRegistry.setPluginEnabled('core', true);
+    // Enable only requested ontologies
     for (const ontology of requestedOntologies) {
-      if (ontology.toLowerCase() !== 'core') {
-        pluginRegistry.setPluginEnabled(ontology.toLowerCase(), true);
-      }
+      pluginRegistry.setPluginEnabled(ontology.toLowerCase(), true);
     }
     
     const summary = pluginRegistry.getPluginSummary();

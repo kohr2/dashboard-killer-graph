@@ -59,16 +59,15 @@ function configureActiveOntologies() {
     const requestedOntologies = activeOntologiesEnv.split(',').map(s => s.trim());
     console.log(`🔧 Configuring active ontologies: ${requestedOntologies.join(', ')}`);
     
+    // Disable all plugins first
     const allPlugins = pluginRegistry.getPluginDetails();
     for (const plugin of allPlugins) {
       pluginRegistry.setPluginEnabled(plugin.name, false);
     }
     
-    pluginRegistry.setPluginEnabled('core', true);
+    // Enable only requested ontologies
     for (const ontology of requestedOntologies) {
-      if (ontology.toLowerCase() !== 'core') {
-        pluginRegistry.setPluginEnabled(ontology.toLowerCase(), true);
-      }
+      pluginRegistry.setPluginEnabled(ontology.toLowerCase(), true);
     }
     
     const summary = pluginRegistry.getPluginSummary();
