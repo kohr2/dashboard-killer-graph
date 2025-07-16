@@ -14,6 +14,6 @@
       "@src/*": ["src/*"]
     }
   },
-  "include": ["**/*.ts", "../shared/**/*.ts", "../common/**/*.ts"],
+  "include": ["**/*.ts", "../shared/**/*.ts", "../common/**/*.ts", "../platform/**/*.ts"],
   "exclude": ["**/*.test.ts"]
 } 

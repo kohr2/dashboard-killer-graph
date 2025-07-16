@@ -1,0 +1,16 @@
+{
+  "name": "testont",
+  "source": {
+    "url": "https://example.com/test-ontology",
+    "type": "test",
+    "version": "1.0.0",
+    "description": "Test ontology for unit testing"
+  },
+  "metadata": {
+    "createdAt": "2024-01-01T00:00:00Z",
+    "version": "1.0.0",
+    "description": "Test ontology for unit testing"
+  },
+  "ignoredEntities": [],
+  "ignoredRelationships": []
+} 

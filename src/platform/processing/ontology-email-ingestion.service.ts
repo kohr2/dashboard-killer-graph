@@ -34,16 +34,18 @@ export class OntologyEmailIngestionService {
    * Ingest a fixture email for the specified ontology
    * @param ontologyName - The name of the ontology (e.g., 'fibo', 'procurement')
    * @param buildOptions - Optional build options to limit entities/relationships
+   * @param generateNewEmail - If true, generate a new email; otherwise use existing fixture
+   * @param emailPath - If provided, use this email file instead of default logic
    */
-  async ingestOntologyEmail(ontologyName: string, buildOptions?: Partial<BuildOptions>): Promise<void> {
+  async ingestOntologyEmail(ontologyName: string, buildOptions?: Partial<BuildOptions>, generateNewEmail: boolean = false, emailPath?: string): Promise<void> {
     logger.info(`🚀 Starting ontology email ingestion for: ${ontologyName}`);
 
     try {
       // Step 1: Build ontology service
       await this.buildOntologyService(ontologyName, buildOptions);
 
-      // Step 2: Generate fixture email
-      const emailContent = await this.generateFixtureEmail(ontologyName);
+      // Step 2: Get fixture email (generate if asked, else use existing, or use provided path)
+      const emailContent = await this.getFixtureEmail(ontologyName, generateNewEmail, emailPath);
 
       // Step 3: Process and ingest email
       await this.processAndIngestEmail(emailContent, ontologyName);
@@ -65,9 +67,14 @@ export class OntologyEmailIngestionService {
     logger.info(`🔧 Step 1: Building ontology service for ${ontologyName}`);
     
     try {
-      // Always register all ontologies first to ensure they're loaded into the service
-      const { registerAllOntologies } = require('../../register-ontologies');
-      registerAllOntologies();
+      // Register only the selected ontology (plus core) if ontologyName is provided, otherwise register all
+      if (ontologyName) {
+        const { registerSelectedOntologies } = require('../../register-ontologies');
+        registerSelectedOntologies([ontologyName]);
+      } else {
+        const { registerAllOntologies } = require('../../register-ontologies');
+        registerAllOntologies();
+      }
       
       // If build options are provided, use the ontology build service
       if (buildOptions) {
@@ -91,23 +98,35 @@ export class OntologyEmailIngestionService {
   }
 
   /**
-   * Step 2: Generate fixture email
+   * Step 2: Get fixture email (generate if asked, else use existing, or use provided path)
    */
-  private async generateFixtureEmail(ontologyName: string): Promise<string> {
-    logger.info(`📧 Step 2: Generating fixture email for ${ontologyName}`);
-    
-    try {
-      // Use the EmailFixtureGenerationService to generate a fixture email
-      const emailPath = await this.emailFixtureGenerationService.generateSingleEmailFixture(ontologyName);
-      
-      // Read the generated email file
+  private async getFixtureEmail(ontologyName: string, generateNewEmail: boolean, emailPath?: string): Promise<string> {
+    logger.info(`📧 Step 2: Getting fixture email for ${ontologyName}`);
+    if (emailPath) {
+      // Use the provided email file
       const emailContent = await fs.readFile(emailPath, 'utf-8');
-      
-      logger.info(`✅ Generated fixture email for ${ontologyName}`);
+      logger.info(`✅ Loaded provided email file: ${emailPath}`);
       return emailContent;
-    } catch (error) {
-      logger.error(`❌ Failed to generate fixture email for ${ontologyName}:`, error);
-      throw error;
+    }
+    if (generateNewEmail) {
+      // Use the EmailFixtureGenerationService to generate a fixture email
+      const generatedPath = await this.emailFixtureGenerationService.generateSingleEmailFixture(ontologyName);
+      const emailContent = await fs.readFile(generatedPath, 'utf-8');
+      logger.info(`✅ Generated new fixture email for ${ontologyName}`);
+      return emailContent;
+    } else {
+      // Use the first existing fixture email for the ontology
+      const fixtureDir = path.join(__dirname, '../../../test/fixtures', ontologyName, 'emails');
+      const files = await fs.readdir(fixtureDir);
+      const emlFiles = files.filter(f => f.endsWith('.eml'));
+      if (emlFiles.length === 0) {
+        throw new Error(`No fixture emails found for ontology '${ontologyName}' in ${fixtureDir}`);
+      }
+      const selectedEmail = emlFiles.sort()[0];
+      const emailPath = path.join(fixtureDir, selectedEmail);
+      const emailContent = await fs.readFile(emailPath, 'utf-8');
+      logger.info(`✅ Loaded existing fixture email: ${emailPath}`);
+      return emailContent;
     }
   }
 
@@ -126,6 +145,7 @@ export class OntologyEmailIngestionService {
         this.contentProcessingService,
         this.neo4jIngestionService,
         undefined,
+        undefined, // relationshipInferenceService - will use default
         (input: IngestionInput) => input.content,
         ontologyName
       );

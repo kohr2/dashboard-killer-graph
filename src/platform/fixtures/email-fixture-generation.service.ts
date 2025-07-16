@@ -13,7 +13,7 @@ export interface SourceOntology {
     description: string;
   };
   entities: OntologyEntity[];
-  relationships?: any[];
+  relationships?: OntologyRelationship[];
   metadata?: any;
 }
 
@@ -29,6 +29,40 @@ export interface OntologyEntity {
   documentation?: string;
 }
 
+export interface OntologyRelationship {
+  name: string;
+  description: {
+    _: string;
+    $?: Record<string, any>;
+  };
+  source: string;
+  target: string;
+  documentation?: string;
+}
+
+export interface OntologyConfig {
+  name: string;
+  source: {
+    url: string;
+    type: string;
+    version: string;
+    description: string;
+  };
+  extraction?: any;
+  overrides?: any;
+  metadata?: any;
+  emailGeneration?: {
+    currencies?: string[];
+    locations?: string[];
+    statuses?: string[];
+    emailTypes?: string[];
+    categories?: string[];
+    vendors?: string[];
+    promptTemplate?: string;
+    systemPrompt?: string;
+  };
+}
+
 export interface EmailGenerationOptions {
   ontologyName: string;
   count?: number;
@@ -37,68 +71,23 @@ export interface EmailGenerationOptions {
 
 @singleton()
 export class EmailFixtureGenerationService {
-  private readonly FAKE_PEOPLE = {
-    procurement: [
-      { firstName: 'Sarah', lastName: 'Mitchell', title: 'Procurement Manager', email: 'sarah.mitchell@company.com' },
-      { firstName: 'Michael', lastName: 'Chen', title: 'Senior Buyer', email: 'michael.chen@company.com' },
-      { firstName: 'Jennifer', lastName: 'Rodriguez', title: 'Procurement Specialist', email: 'jennifer.rodriguez@company.com' },
-      { firstName: 'David', lastName: 'Thompson', title: 'Strategic Sourcing Manager', email: 'david.thompson@company.com' },
-      { firstName: 'Lisa', lastName: 'Anderson', title: 'Contract Manager', email: 'lisa.anderson@company.com' },
-      { firstName: 'Robert', lastName: 'Williams', title: 'Procurement Director', email: 'robert.williams@company.com' },
-      { firstName: 'Amanda', lastName: 'Garcia', title: 'Supplier Relations Manager', email: 'amanda.garcia@company.com' },
-      { firstName: 'James', lastName: 'Johnson', title: 'Category Manager', email: 'james.johnson@company.com' }
-    ],
-    financial: [
-      { firstName: 'Alexandra', lastName: 'Smith', title: 'Investment Manager', email: 'alexandra.smith@company.com' },
-      { firstName: 'Christopher', lastName: 'Brown', title: 'Portfolio Manager', email: 'christopher.brown@company.com' },
-      { firstName: 'Victoria', lastName: 'Davis', title: 'Financial Analyst', email: 'victoria.davis@company.com' },
-      { firstName: 'Daniel', lastName: 'Wilson', title: 'Deal Manager', email: 'daniel.wilson@company.com' },
-      { firstName: 'Rachel', lastName: 'Taylor', title: 'Investment Director', email: 'rachel.taylor@company.com' },
-      { firstName: 'Kevin', lastName: 'Martinez', title: 'Fund Manager', email: 'kevin.martinez@company.com' },
-      { firstName: 'Nicole', lastName: 'Garcia', title: 'Financial Controller', email: 'nicole.garcia@company.com' },
-      { firstName: 'Thomas', lastName: 'Lee', title: 'Investment Analyst', email: 'thomas.lee@company.com' }
-    ],
-    crm: [
-      { firstName: 'Emily', lastName: 'Clark', title: 'Sales Manager', email: 'emily.clark@company.com' },
-      { firstName: 'Ryan', lastName: 'Lewis', title: 'Account Executive', email: 'ryan.lewis@company.com' },
-      { firstName: 'Jessica', lastName: 'Walker', title: 'Customer Success Manager', email: 'jessica.walker@company.com' },
-      { firstName: 'Andrew', lastName: 'Hall', title: 'Sales Director', email: 'andrew.hall@company.com' },
-      { firstName: 'Stephanie', lastName: 'Young', title: 'Lead Development Rep', email: 'stephanie.young@company.com' },
-      { firstName: 'Brandon', lastName: 'Allen', title: 'Account Manager', email: 'brandon.allen@company.com' },
-      { firstName: 'Lauren', lastName: 'King', title: 'Sales Operations Manager', email: 'lauren.king@company.com' },
-      { firstName: 'Matthew', lastName: 'Wright', title: 'Customer Relations Director', email: 'matthew.wright@company.com' }
-    ],
-    legal: [
-      { firstName: 'Patricia', lastName: 'Scott', title: 'General Counsel', email: 'patricia.scott@company.com' },
-      { firstName: 'Jonathan', lastName: 'Green', title: 'Senior Legal Counsel', email: 'jonathan.green@company.com' },
-      { firstName: 'Michelle', lastName: 'Baker', title: 'Legal Manager', email: 'michelle.baker@company.com' },
-      { firstName: 'Steven', lastName: 'Adams', title: 'Compliance Officer', email: 'steven.adams@company.com' },
-      { firstName: 'Ashley', lastName: 'Nelson', title: 'Legal Director', email: 'ashley.nelson@company.com' },
-      { firstName: 'Brian', lastName: 'Carter', title: 'Contract Attorney', email: 'brian.carter@company.com' },
-      { firstName: 'Kimberly', lastName: 'Mitchell', title: 'Legal Specialist', email: 'kimberly.mitchell@company.com' },
-      { firstName: 'Jason', lastName: 'Perez', title: 'Regulatory Counsel', email: 'jason.perez@company.com' }
-    ],
-    healthcare: [
-      { firstName: 'Dr. Samantha', lastName: 'Roberts', title: 'Medical Director', email: 'samantha.roberts@company.com' },
-      { firstName: 'Dr. Mark', lastName: 'Turner', title: 'Clinical Research Manager', email: 'mark.turner@company.com' },
-      { firstName: 'Dr. Rebecca', lastName: 'Phillips', title: 'Regulatory Affairs Director', email: 'rebecca.phillips@company.com' },
-      { firstName: 'Dr. Jeffrey', lastName: 'Campbell', title: 'Medical Affairs Manager', email: 'jeffrey.campbell@company.com' },
-      { firstName: 'Dr. Nicole', lastName: 'Parker', title: 'Clinical Trial Manager', email: 'nicole.parker@company.com' },
-      { firstName: 'Dr. Timothy', lastName: 'Evans', title: 'Medical Officer', email: 'timothy.evans@company.com' },
-      { firstName: 'Dr. Amanda', lastName: 'Edwards', title: 'Regulatory Specialist', email: 'amanda.edwards@company.com' },
-      { firstName: 'Dr. Robert', lastName: 'Stewart', title: 'Clinical Director', email: 'robert.stewart@company.com' }
-    ],
-    fibo: [
-      { firstName: 'Caroline', lastName: 'Sanchez', title: 'Risk Manager', email: 'caroline.sanchez@company.com' },
-      { firstName: 'Gregory', lastName: 'Morris', title: 'Compliance Director', email: 'gregory.morris@company.com' },
-      { firstName: 'Hannah', lastName: 'Rogers', title: 'Financial Risk Analyst', email: 'hannah.rogers@company.com' },
-      { firstName: 'Nathan', lastName: 'Reed', title: 'Regulatory Manager', email: 'nathan.reed@company.com' },
-      { firstName: 'Olivia', lastName: 'Cook', title: 'Risk Director', email: 'olivia.cook@company.com' },
-      { firstName: 'Philip', lastName: 'Morgan', title: 'Compliance Analyst', email: 'philip.morgan@company.com' },
-      { firstName: 'Sophia', lastName: 'Bell', title: 'Financial Controller', email: 'sophia.bell@company.com' },
-      { firstName: 'William', lastName: 'Murphy', title: 'Regulatory Affairs Manager', email: 'william.murphy@company.com' }
-    ]
-  };
+  // Generic first names and last names that can work with any ontology
+  private readonly FIRST_NAMES = [
+    'Sarah', 'Michael', 'Jennifer', 'David', 'Lisa', 'Robert', 'Amanda', 'James',
+    'Patricia', 'Christopher', 'Maria', 'Nicole', 'Mark', 'Alexander', 'Rebecca',
+    'John', 'Emily', 'Daniel', 'Jessica', 'Matthew', 'Ashley', 'Andrew', 'Stephanie'
+  ];
+
+  private readonly LAST_NAMES = [
+    'Mitchell', 'Chen', 'Rodriguez', 'Thompson', 'Anderson', 'Williams', 'Garcia', 'Johnson',
+    'Martinez', 'Davis', 'Gonzalez', 'Kim', 'Brown', 'Wilson', 'Taylor', 'Smith',
+    'Clark', 'Lewis', 'Walker', 'Hall', 'Young', 'Allen', 'King', 'Wright'
+  ];
+
+  private readonly GENERIC_TITLES = [
+    'Manager', 'Specialist', 'Coordinator', 'Analyst', 'Supervisor', 'Director',
+    'Lead', 'Consultant', 'Advisor', 'Representative', 'Officer', 'Administrator'
+  ];
 
   private readonly VENDOR_CONTACTS = [
     { firstName: 'John', lastName: 'Smith', title: 'Account Manager', email: 'john.smith' },
@@ -113,39 +102,6 @@ export class EmailFixtureGenerationService {
     { firstName: 'Amanda', lastName: 'Taylor', title: 'Account Director', email: 'amanda.taylor' }
   ];
 
-  private readonly EMAIL_CONFIGS = {
-    procurement: {
-      emailTypes: ['contract-award', 'rfq-request', 'purchase-order', 'supplier-evaluation', 'tender-notification'],
-      vendors: ['ABC Corp', 'Global Supplies Ltd', 'BlueOcean Logistics', 'Helix Manufacturing', 'Vertex Construction'],
-      categories: ['raw materials', 'office equipment', 'IT hardware', 'transport services', 'maintenance services']
-    },
-    financial: {
-      emailTypes: ['deal-announcement', 'investment-update', 'fund-raising', 'merger-notification', 'ipo-announcement'],
-      vendors: ['Goldman Sachs', 'Morgan Stanley', 'BlackRock', 'Vanguard', 'Fidelity Investments'],
-      categories: ['private equity', 'venture capital', 'real estate', 'infrastructure', 'debt financing']
-    },
-    crm: {
-      emailTypes: ['lead-qualification', 'opportunity-update', 'customer-onboarding', 'account-review', 'sales-pitch'],
-      vendors: ['Salesforce', 'HubSpot', 'Microsoft Dynamics', 'Oracle CRM', 'SAP CRM'],
-      categories: ['lead management', 'opportunity tracking', 'customer service', 'account management', 'sales automation']
-    },
-    legal: {
-      emailTypes: ['contract-review', 'legal-consultation', 'compliance-alert', 'litigation-update', 'regulatory-notice'],
-      vendors: ['Baker McKenzie', 'Skadden', 'Latham & Watkins', 'Kirkland & Ellis', 'Sullivan & Cromwell'],
-      categories: ['contract law', 'corporate law', 'compliance', 'litigation', 'regulatory']
-    },
-    healthcare: {
-      emailTypes: ['patient-referral', 'medical-supply-order', 'clinical-trial-update', 'regulatory-approval', 'insurance-claim'],
-      vendors: ['Johnson & Johnson', 'Pfizer', 'Merck', 'Novartis', 'Roche'],
-      categories: ['pharmaceuticals', 'medical devices', 'clinical trials', 'regulatory affairs', 'insurance']
-    },
-    fibo: {
-      emailTypes: ['financial-instrument-trade', 'risk-assessment', 'compliance-report', 'market-data-update', 'regulatory-filing'],
-      vendors: ['Bloomberg', 'Reuters', 'S&P Global', 'Moody\'s', 'Fitch Ratings'],
-      categories: ['financial instruments', 'risk management', 'compliance', 'market data', 'regulatory reporting']
-    }
-  };
-
   /**
    * Load ontology from file
    */
@@ -156,83 +112,240 @@ export class EmailFixtureGenerationService {
       const content = await fs.readFile(ontologyPath, 'utf8');
       return JSON.parse(content);
     } catch (error) {
-      logger.error(`❌ Failed to load ontology from ${ontologyPath}:`, error);
+      logger.error(`Failed to load ontology from ${ontologyPath}:`, error);
       throw error;
     }
   }
 
   /**
-   * Generate email content using LLM
+   * Load ontology config from file
    */
-  private async generateEmailWithLLM(ontology: SourceOntology, emailType: string, vendor: string, category: string, poNumber: string, amount: string, currency: string, sender: any, recipient: any): Promise<{ subject: string; body: string }> {
+  async loadOntologyConfig(ontologyName: string): Promise<OntologyConfig> {
+    const configPath = join(process.cwd(), `ontologies/${ontologyName}/config.json`);
+    
+    try {
+      const content = await fs.readFile(configPath, 'utf8');
+      return JSON.parse(content);
+    } catch (error) {
+      logger.error(`Failed to load ontology config from ${configPath}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Generate people data dynamically based on ontology entities
+   */
+  private generatePeopleFromOntology(ontology: SourceOntology): Array<{ firstName: string; lastName: string; title: string; email: string }> {
+    const people: Array<{ firstName: string; lastName: string; title: string; email: string }> = [];
+    
+    // Select a random subset of entities to generate people from
+    const shuffledEntities = [...ontology.entities].sort(() => Math.random() - 0.5);
+    const selectedEntities = shuffledEntities.slice(0, 10);
+
+    // Generate people for selected entities
+    selectedEntities.forEach((entity) => {
+      const firstName = this.random(this.FIRST_NAMES);
+      const lastName = this.random(this.LAST_NAMES);
+      const title = this.generateTitleFromEntity(entity);
+      const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@company.com`;
+      
+      // Avoid duplicates
+      if (!people.find(p => p.email === email)) {
+        people.push({ firstName, lastName, title, email });
+      }
+    });
+
+    // Add some generic people if we don't have enough
+    while (people.length < 15) {
+      const firstName = this.random(this.FIRST_NAMES);
+      const lastName = this.random(this.LAST_NAMES);
+      const title = this.random(this.GENERIC_TITLES);
+      const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@company.com`;
+      
+      // Avoid duplicates
+      if (!people.find(p => p.email === email)) {
+        people.push({ firstName, lastName, title, email });
+      }
+    }
+
+    return people;
+  }
+
+  /**
+   * Generate title from entity name dynamically
+   */
+  private generateTitleFromEntity(entity: OntologyEntity): string {
+    const name = entity.name;
+    
+    // Extract the last meaningful word from the entity name as a potential title
+    const words = name.replace(/([A-Z])/g, ' $1').trim().split(' ');
+    const lastWord = words[words.length - 1];
+    
+    // If the last word looks like a role/title, use it
+    if (lastWord && lastWord.length > 3 && /^[A-Z]/.test(lastWord)) {
+      return lastWord;
+    }
+    
+    // Otherwise use a generic title
+    return this.random(this.GENERIC_TITLES);
+  }
+
+  /**
+   * Extract relevant entities for email generation
+   */
+  private extractRelevantEntities(ontology: SourceOntology): OntologyEntity[] {
+    // Get all entities, prioritizing those with descriptions
+    return ontology.entities
+      .filter(entity => entity.description && entity.description._)
+      .sort((a, b) => {
+        // Prioritize entities with more detailed descriptions
+        const aDescLength = a.description._?.length || 0;
+        const bDescLength = b.description._?.length || 0;
+        return bDescLength - aDescLength;
+      })
+      .slice(0, 20); // Limit to top 20 most relevant entities
+  }
+
+  /**
+   * Extract relevant relationships for email generation
+   */
+  private extractRelevantRelationships(ontology: SourceOntology): OntologyRelationship[] {
+    if (!ontology.relationships) return [];
+    
+    return ontology.relationships
+      .filter(rel => rel.description && rel.description._)
+      .sort((a, b) => {
+        // Prioritize relationships with more detailed descriptions
+        const aDescLength = a.description._?.length || 0;
+        const bDescLength = b.description._?.length || 0;
+        return bDescLength - aDescLength;
+      })
+      .slice(0, 10); // Limit to top 10 most relevant relationships
+  }
+
+  /**
+   * Generate mock data based on ontology config
+   */
+  private generateMockDataFromConfig(config: OntologyConfig): {
+    referenceNumbers: string[];
+    amounts: string[];
+    currencies: string[];
+    dates: string[];
+    locations: string[];
+    statuses: string[];
+    emailTypes: string[];
+    categories: string[];
+    vendors: string[];
+  } {
+    const emailConfig = config.emailGeneration || {};
+    
+    const mockData = {
+      referenceNumbers: [] as string[],
+      amounts: [] as string[],
+      currencies: emailConfig.currencies || ['USD', 'EUR', 'GBP'],
+      dates: [] as string[],
+      locations: emailConfig.locations || ['Headquarters', 'Main Office'],
+      statuses: emailConfig.statuses || ['Pending', 'Approved', 'In Progress'],
+      emailTypes: emailConfig.emailTypes || ['notification', 'request', 'update'],
+      categories: emailConfig.categories || ['services', 'materials'],
+      vendors: emailConfig.vendors || ['ABC Corp', 'Global Solutions']
+    };
+
+    // Generate reference numbers based on ontology name
+    for (let i = 0; i < 10; i++) {
+      const refNum = `${config.name.toUpperCase()}-${Math.floor(100000 + Math.random() * 900000)}`;
+      mockData.referenceNumbers.push(refNum);
+    }
+
+    // Generate amounts
+    for (let i = 0; i < 10; i++) {
+      const amount = (Math.random() * 50000 + 500).toFixed(2);
+      mockData.amounts.push(amount);
+    }
+
+    // Generate dates
+    for (let i = 0; i < 10; i++) {
+      const date = new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000);
+      mockData.dates.push(date.toISOString().split('T')[0]);
+    }
+
+    return mockData;
+  }
+
+  /**
+   * Generate email content using LLM with ontology-agnostic approach
+   */
+  private async generateEmailWithLLM(
+    ontology: SourceOntology,
+    config: OntologyConfig,
+    emailType: string, 
+    vendor: string, 
+    category: string, 
+    referenceNumber: string, 
+    amount: string, 
+    currency: string, 
+    sender: any, 
+    recipient: any
+  ): Promise<{ subject: string; body: string }> {
     // Check for OpenAI API key
     if (!process.env.OPENAI_API_KEY) {
-      logger.warn('⚠️ OPENAI_API_KEY not found, using fallback email generation');
+      logger.warn('OPENAI_API_KEY not found, using fallback email generation');
       return this.generateFallbackEmail(emailType, vendor, category, sender, recipient);
     }
 
     try {
       const openai = new OpenAI();
       
-      // Extract entity names and descriptions from the ontology
-      const entityInfo = ontology.entities.slice(0, 10).map(entity => 
-        `${entity.name}: ${entity.description._ || entity.description}`
+      // Extract relevant entities and relationships dynamically
+      const relevantEntities = this.extractRelevantEntities(ontology);
+      const relevantRelationships = this.extractRelevantRelationships(ontology);
+      
+      // Create entity context
+      const entityInfo = relevantEntities.map(entity => 
+        `${entity.name}: ${entity.description._}`
       ).join('\n');
       
-      // Extract relationship names from the ontology
-      const relationshipInfo = ontology.relationships ? 
-        ontology.relationships.slice(0, 5).map(rel => 
-          `${rel.name}: ${typeof rel.description === 'string' ? rel.description : rel.description?._ || 'No description'}`
-        ).join('\n') : 'No relationships defined';
+      // Create relationship context
+      const relationshipInfo = relevantRelationships.map(rel => 
+        `${rel.name}: ${rel.description._} (${rel.source} → ${rel.target})`
+      ).join('\n');
       
-      const prompt = `You are ${sender.firstName} ${sender.lastName}, ${sender.title} at the ${ontology.name} department. Generate a professional email for ${emailType} regarding ${category} with vendor ${vendor}.
+      // Get prompt template from config or use default
+      const emailConfig = config.emailGeneration || {};
+      const promptTemplate = emailConfig.promptTemplate || this.getDefaultPromptTemplate();
+      const systemPrompt = emailConfig.systemPrompt || this.getDefaultSystemPrompt();
+      
+      // Replace placeholders in prompt template
+      const prompt = promptTemplate
+        .replace(/{senderName}/g, `${sender.firstName} ${sender.lastName}`)
+        .replace(/{senderTitle}/g, sender.title)
+        .replace(/{ontologyName}/g, ontology.name)
+        .replace(/{ontologyDescription}/g, ontology.source.description)
+        .replace(/{ontologyVersion}/g, ontology.source.version)
+        .replace(/{emailType}/g, emailType)
+        .replace(/{category}/g, category)
+        .replace(/{vendor}/g, vendor)
+        .replace(/{referenceNumber}/g, referenceNumber)
+        .replace(/{amount}/g, amount)
+        .replace(/{currency}/g, currency)
+        .replace(/{date}/g, new Date().toLocaleDateString())
+        .replace(/{recipientName}/g, `${recipient.firstName} ${recipient.lastName}`)
+        .replace(/{recipientTitle}/g, recipient.title)
+        .replace(/{entityInfo}/g, entityInfo)
+        .replace(/{relationshipInfo}/g, relationshipInfo);
 
-Ontology Context:
-- Name: ${ontology.name}
-- Source: ${ontology.source.description}
-- Version: ${ontology.source.version}
-- URL: ${ontology.source.url}
-
-Relevant Entities from this ontology (use these entity names in your email):
-${entityInfo}
-
-Relevant Relationships from this ontology (use these relationship names in your email):
-${relationshipInfo}
-
-Email Context:
-- Email Type: ${emailType}
-- Vendor: ${vendor}
-- Category: ${category}
-- Reference Number: ${poNumber}
-- Amount: ${amount} ${currency}
-- Date: ${new Date().toLocaleDateString()}
-- Sender: ${sender.firstName} ${sender.lastName} (${sender.title})
-- Recipient: ${recipient.firstName} ${recipient.lastName} (${recipient.title})
-
-Requirements:
-- Generate both a subject line and email body
-- Keep the email professional and concise (under 150 words)
-- Use appropriate tone for ${ontology.name} operations
-- Include relevant details like reference numbers and amounts
-- Reference specific entities from the ontology where appropriate (use the exact entity names listed above)
-- Reference specific relationships from the ontology where appropriate (use the exact relationship names listed above)
-- End with appropriate signature including sender's name and title
-- Address the recipient by their name
-
-Format your response as:
-SUBJECT: [subject line]
-BODY: [email body]`;
+      const finalSystemPrompt = systemPrompt.replace(/{ontologyName}/g, ontology.name);
 
       const completion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [
           {
             role: 'system',
-            content: `You are a professional email writer specializing in ${ontology.name} communications. Always respond with SUBJECT: and BODY: sections. Use the provided ontology entities and relationships to make emails more specific and accurate.`,
+            content: finalSystemPrompt,
           },
           { role: 'user', content: prompt },
         ],
-        max_tokens: 400,
+        max_tokens: 500,
         temperature: 0.8,
       });
 
@@ -254,9 +367,59 @@ BODY: [email body]`;
         body: bodyMatch[1].trim()
       };
     } catch (error) {
-      logger.warn('⚠️ LLM generation failed, using fallback email generation:', error);
+      logger.warn('LLM generation failed, using fallback email generation:', error);
       return this.generateFallbackEmail(emailType, vendor, category, sender, recipient);
     }
+  }
+
+  /**
+   * Get default prompt template if not provided in config
+   */
+  private getDefaultPromptTemplate(): string {
+    return `You are {senderName}, {senderTitle} at the {ontologyName} department. Generate a professional email for {emailType} regarding {category} with vendor {vendor}.
+
+Ontology Context:
+- Name: {ontologyName}
+- Source: {ontologyDescription}
+- Version: {ontologyVersion}
+
+Relevant Entities from this ontology (use these entity names naturally in your email):
+{entityInfo}
+
+Relevant Relationships from this ontology (use these relationship names naturally in your email):
+{relationshipInfo}
+
+Email Context:
+- Email Type: {emailType}
+- Vendor: {vendor}
+- Category: {category}
+- Reference Number: {referenceNumber}
+- Amount: {amount} {currency}
+- Date: {date}
+- Sender: {senderName} ({senderTitle})
+- Recipient: {recipientName} ({recipientTitle})
+
+Requirements:
+- Generate both a subject line and email body
+- Keep the email professional and concise (under 200 words)
+- Use appropriate tone for {ontologyName} operations
+- Include relevant details like reference numbers and amounts
+- Reference specific entities from the ontology naturally (use the exact entity names listed above)
+- Reference specific relationships from the ontology naturally (use the exact relationship names listed above)
+- End with appropriate signature including sender's name and title
+- Address the recipient by their name
+- Make the email realistic and contextually appropriate
+
+Format your response as:
+SUBJECT: [subject line]
+BODY: [email body]`;
+  }
+
+  /**
+   * Get default system prompt if not provided in config
+   */
+  private getDefaultSystemPrompt(): string {
+    return `You are a professional email writer specializing in {ontologyName} communications. Always respond with SUBJECT: and BODY: sections. Use the provided ontology entities and relationships to make emails more specific and accurate.`;
   }
 
   /**
@@ -304,33 +467,41 @@ ${sender.title}`;
   /**
    * Create a simple RFC-2822 formatted email string
    */
-  private async buildEmail(ontology: SourceOntology, index: number): Promise<{ filename: string; content: string }> {
-    const config = this.EMAIL_CONFIGS[ontology.name as keyof typeof this.EMAIL_CONFIGS];
-    if (!config) {
-      throw new Error(`No email configuration found for ontology: ${ontology.name}`);
-    }
-    
-    const emailType = this.random(config.emailTypes);
-    const vendor = this.random(config.vendors);
-    const category = this.random(config.categories);
-    const amount = (Math.random() * 50000 + 500).toFixed(2);
-    const currency = this.random(['USD', 'EUR', 'GBP', 'CAD']);
-    const poNumber = `${ontology.name.toUpperCase()}-${Math.floor(100000 + Math.random() * 900000)}`;
+  private async buildEmail(ontology: SourceOntology, config: OntologyConfig, index: number): Promise<{ filename: string; content: string }> {
+    // Generate random data using config
+    const mockData = this.generateMockDataFromConfig(config);
+    const emailType = this.random(mockData.emailTypes);
+    const vendor = this.random(mockData.vendors);
+    const category = this.random(mockData.categories);
+    const amount = this.random(mockData.amounts);
+    const currency = this.random(mockData.currencies);
+    const referenceNumber = this.random(mockData.referenceNumbers);
 
     const date = new Date().toUTCString();
 
-    // Get random sender and recipient
-    const senders = this.FAKE_PEOPLE[ontology.name as keyof typeof this.FAKE_PEOPLE] || this.FAKE_PEOPLE.procurement;
-    const sender = this.random(senders);
+    // Generate people data dynamically from ontology
+    const people = this.generatePeopleFromOntology(ontology);
+    const sender = this.random(people);
     const recipient = this.random(this.VENDOR_CONTACTS);
     
     // Generate vendor domain from vendor name
     const vendorDomain = this.slugify(vendor).replace(/-/g, '') + '.com';
     const recipientEmail = `${recipient.email}@${vendorDomain}`;
 
-    const { subject, body } = await this.generateEmailWithLLM(ontology, emailType, vendor, category, poNumber, amount, currency, sender, recipient);
+    const { subject, body } = await this.generateEmailWithLLM(
+      ontology,
+      config,
+      emailType, 
+      vendor, 
+      category, 
+      referenceNumber, 
+      amount, 
+      currency, 
+      sender, 
+      recipient
+    );
 
-    const messageId = `<${poNumber.toLowerCase()}@${ontology.name}.company.com>`;
+    const messageId = `<${referenceNumber.toLowerCase()}@${ontology.name}.company.com>`;
 
     const email = `Message-ID: ${messageId}
 From: "${sender.firstName} ${sender.lastName}" <${sender.email}>
@@ -351,9 +522,10 @@ ${body}`;
   async generateEmailFixtures(options: EmailGenerationOptions): Promise<string[]> {
     const { ontologyName, count = 1, outputDir } = options;
     
-    logger.info(`📚 Loading ontology: ${ontologyName}`);
+    logger.info(`Loading ontology: ${ontologyName}`);
     const ontology = await this.loadOntology(ontologyName);
-    logger.info(`✅ Loaded ${ontology.entities.length} entities from ${ontology.name} ontology`);
+    const config = await this.loadOntologyConfig(ontologyName);
+    logger.info(`Loaded ${ontology.entities.length} entities from ${ontology.name} ontology`);
     
     // Determine output directory
     const fixtureRoot = outputDir || join(process.cwd(), 'test', 'fixtures', ontologyName, 'emails');
@@ -361,10 +533,10 @@ ${body}`;
 
     const emails: string[] = [];
     
-    logger.info(`🤖 Generating ${count} emails...`);
+    logger.info(`Generating ${count} emails...`);
     
     for (let i = 0; i < count; i++) {
-      const email = await this.buildEmail(ontology, i + 1);
+      const email = await this.buildEmail(ontology, config, i + 1);
       const emailPath = join(fixtureRoot, email.filename);
       
       await fs.writeFile(emailPath, email.content, 'utf8');
@@ -375,7 +547,7 @@ ${body}`;
       }
     }
 
-    logger.info(`✅ Generated ${count} ${ontology.name} email fixtures in ${fixtureRoot}`);
+    logger.info(`Generated ${count} ${ontology.name} email fixtures in ${fixtureRoot}`);
     return emails;
   }
 

@@ -9,6 +9,8 @@ export interface IngestionResult {
   relationships: any[];
 }
 
+import { RelationshipInferenceService, InferredRelationship } from '@platform/processing/relationship-inference.service';
+
 /**
  * GenericIngestionPipeline
  * -----------------------
@@ -16,6 +18,7 @@ export interface IngestionResult {
  * – Accepts an array of `IngestionInput` objects.
  * – Delegates text-level processing to any service exposing `processContentBatch`.
  * – Delegates DB write-back to any service exposing `ingestEntitiesAndRelationships`.
+ * – Includes post-processing to infer relationships between entities.
  *
  * Keeping this here (src/ingestion) ensures the class is framework-agnostic and
  * reusable across layers (platform services, tests, demo scripts).
@@ -30,6 +33,7 @@ export class GenericIngestionPipeline {
   private readonly reasoningOrchestrator?: {
     executeAllReasoning: () => Promise<{ success: boolean; message: string }>;
   };
+  private readonly relationshipInferenceService: RelationshipInferenceService;
   private readonly extractor: (input: IngestionInput) => string;
   private readonly ontologyName?: string;
 
@@ -43,14 +47,26 @@ export class GenericIngestionPipeline {
     reasoningOrchestrator?: {
       executeAllReasoning: () => Promise<{ success: boolean; message: string }>;
     },
+    relationshipInferenceService?: RelationshipInferenceService,
     extractor: (input: IngestionInput) => string = (input) => input.content,
     ontologyName?: string,
   ) {
     this.processingService = processingService;
     this.neo4jService = neo4jService;
     this.reasoningOrchestrator = reasoningOrchestrator;
+    this.relationshipInferenceService = relationshipInferenceService || new RelationshipInferenceService();
     this.extractor = extractor;
     this.ontologyName = ontologyName;
+  }
+
+  /**
+   * Infers relationships between entities using the relationship inference service.
+   * This post-processing step creates relationships that the NLP service might not extract explicitly.
+   */
+  private async inferRelationships(entities: any[]): Promise<InferredRelationship[]> {
+    return await this.relationshipInferenceService.inferRelationships(entities, {
+      ontologyName: this.ontologyName
+    });
   }
 
   /**
@@ -59,8 +75,21 @@ export class GenericIngestionPipeline {
   public async run(inputs: IngestionInput[]): Promise<void> {
     const contents = inputs.map(this.extractor);
     const results = await this.processingService.processContentBatch(contents, this.ontologyName);
+    
     for (const result of results) {
-      await this.neo4jService.ingestEntitiesAndRelationships(result);
+      // Post-process to infer relationships
+      const inferredRelationships = await this.inferRelationships(result.entities);
+      
+      // Merge inferred relationships with existing ones
+      const enhancedResult = {
+        ...result,
+        relationships: [
+          ...result.relationships,
+          ...inferredRelationships
+        ]
+      };
+      
+      await this.neo4jService.ingestEntitiesAndRelationships(enhancedResult);
     }
 
     if (this.reasoningOrchestrator) {

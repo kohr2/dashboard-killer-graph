@@ -26,5 +26,15 @@
     "lastExtraction": "",
     "sourceVersion": "2024.06",
     "localVersion": "1.0.0"
+  },
+  "emailGeneration": {
+    "currencies": ["USD", "EUR", "GBP", "CAD", "JPY"],
+    "locations": ["Headquarters", "Regional Office", "Main Facility", "Service Center"],
+    "statuses": ["Pending", "Approved", "In Progress", "Completed", "Under Review"],
+    "emailTypes": ["notification", "request", "confirmation", "update", "review", "award", "evaluation", "submission", "participation", "contract"],
+    "categories": ["services", "materials", "equipment", "supplies", "consulting", "maintenance", "development", "analysis", "support", "training"],
+    "vendors": ["ABC Corp", "Global Solutions Ltd", "BlueOcean Services", "Helix Technologies", "Vertex Solutions", "Prime Partners", "Elite Enterprises", "Core Systems", "Advanced Solutions", "Innovation Labs"],
+    "promptTemplate": "You are {senderName}, {senderTitle} at the {ontologyName} department. Generate a professional email for {emailType} regarding {category} with vendor {vendor}.\n\nOntology Context:\n- Name: {ontologyName}\n- Source: {ontologyDescription}\n- Version: {ontologyVersion}\n\nRelevant Entities from this ontology (use these entity names naturally in your email):\n{entityInfo}\n\nRelevant Relationships from this ontology (use these relationship names naturally in your email):\n{relationshipInfo}\n\nEmail Context:\n- Email Type: {emailType}\n- Vendor: {vendor}\n- Category: {category}\n- Reference Number: {referenceNumber}\n- Amount: {amount} {currency}\n- Date: {date}\n- Sender: {senderName} ({senderTitle})\n- Recipient: {recipientName} ({recipientTitle})\n\nRequirements:\n- Generate both a subject line and email body\n- Keep the email professional and concise (under 200 words)\n- Use appropriate tone for {ontologyName} operations\n- Include relevant details like reference numbers and amounts\n- Reference specific entities from the ontology naturally (use the exact entity names listed above)\n- Reference specific relationships from the ontology naturally (use the exact relationship names listed above)\n- End with appropriate signature including sender's name and title\n- Address the recipient by their name\n- Make the email realistic and contextually appropriate\n\nFormat your response as:\nSUBJECT: [subject line]\nBODY: [email body]",
+    "systemPrompt": "You are a professional email writer specializing in {ontologyName} communications. Always respond with SUBJECT: and BODY: sections. Use the provided ontology entities and relationships to make emails more specific and accurate."
   }
 } 

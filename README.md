@@ -168,6 +168,7 @@ curl -X POST http://localhost:3001/api/chat \
 -   [x] **Compact Ontology & Prompt Partitioning**: New compact ontology format (≈ 98 % size reduction) and partitioned prompt generation for efficient LLM interaction. Entity (`e`) and relationship (`r`) lists are now alphabetically sorted for deterministic diffing.
 -   [x] **Automated Code Generation**: Ontology-to-code generation with plugin templates.
 -   [x] **TDD Foundation**: Comprehensive test structure with Jest.
+-   [x] **Unified Email Ingestion**: Comprehensive email processing system with ontology-specific and bulk processing modes, configurable build options, and rich CLI interface.
 
 ### 🔧 Recent Fixes
 -   [x] **Chat Service Database Selection**: Fixed ChatService to use configured database instead of default
@@ -179,9 +180,36 @@ curl -X POST http://localhost:3001/api/chat \
 -   **Advanced Query Types**: Support for complex aggregations and analytics.
 -   **User Authentication**: Multi-user support with role-based access control.
 -   **Agentic Workflows**: Develop AI agents that can reason across different ontologies.
--   **Email Processing**: Automated entity extraction from email attachments.
+-   **Enhanced Email Processing**: Advanced entity extraction and relationship inference from email content.
 
 See the [Development Roadmap](./docs/development/roadmap.md) for more details.
+
+## 📧 Email Ingestion
+
+The platform includes a unified email ingestion system for processing emails with ontology-specific entity extraction:
+
+```bash
+# Process single ontology with generated email
+npx ts-node scripts/demo/ingest-email.ts fibo --generate
+
+# Process with custom email and build options
+npx ts-node scripts/demo/ingest-email.ts procurement --email=./custom-email.eml --top-entities=20
+
+# Bulk process emails from fixtures
+npx ts-node scripts/demo/ingest-email.ts --folder=procurement/emails --ontology=procurement
+
+# Process with database reset and limits
+npx ts-node scripts/demo/ingest-email.ts --folder=emails --limit=10 --reset-db
+```
+
+### Features
+- **Dual Mode Operation**: Ontology-specific and bulk processing modes
+- **Build Options**: Configurable ontology building with entity/relationship limits
+- **Flexible Input**: Generate emails, use existing fixtures, or specify custom files
+- **Database Management**: Optional database reset and configuration
+- **Rich CLI**: Comprehensive command-line interface
+
+See [Scripts Documentation](./scripts/README.md#-unified-email-ingestion-script) for complete usage details.
 
 ## 🧪 Testing
 
@@ -198,6 +226,9 @@ npm run chat:test
 
 # Test query translator
 npx ts-node -r tsconfig-paths/register test-query-translator.ts
+
+# Run email ingestion tests
+npm test -- --testPathPattern=email-ingestion
 ```
 
 ## 🐞 Troubleshooting

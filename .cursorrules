@@ -6,6 +6,7 @@ logic:
   - rule: "make sure the application is able to handle multiple data sources"
   - rule: "make sure the application is able to handle multiple data formats"
   - rule: "make sure the application is able to handle multiple data sources"
+  - rule: "edit existing scripts, don't create new ones"
 
 # Instructions for Test-Driven Development (TDD)
 # These rules guide the AI to follow a strict TDD approach.

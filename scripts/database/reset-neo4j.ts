@@ -2,8 +2,14 @@ import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 
-async function resetDatabase() {
-  console.log('🔥 Wiping the Neo4j database...');
+async function resetDatabase(databaseName?: string) {
+  if (databaseName) {
+    process.env.NEO4J_DATABASE = databaseName;
+    console.log(`🔥 Wiping the Neo4j database: ${databaseName}...`);
+  } else {
+    console.log('🔥 Wiping the Neo4j database...');
+  }
+  
   // Since this is a standalone script, we need to register dependencies manually.
   // We're not using the full app's dependency injection container here.
   container.register<Neo4jConnection>(Neo4jConnection, {
@@ -27,7 +33,10 @@ export { resetDatabase };
 
 // If the script is run directly, execute the function
 if (require.main === module) {
-  resetDatabase()
+  const args = process.argv.slice(2);
+  const databaseName = args[0]; // First argument is the database name
+  
+  resetDatabase(databaseName)
     .then(() => {
       console.log('Database reset complete.');
       process.exit(0);

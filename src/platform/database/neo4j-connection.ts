@@ -21,7 +21,8 @@ export class Neo4jConnection {
     this.uri = process.env.NEO4J_URI!;
     this.user = process.env.NEO4J_USERNAME!;
     this.pass = process.env.NEO4J_PASSWORD!;
-    this.database = process.env.NEO4J_DATABASE!;
+    // Always respect inline environment variable, fallback to .env or 'neo4j'
+    this.database = process.env.NEO4J_DATABASE ?? 'neo4j';
   }
 
   public async connect(): Promise<void> {

@@ -3,6 +3,7 @@ import { logger } from '@common/utils/logger';
 import { EnrichmentOrchestratorService } from '@platform/enrichment';
 import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
+import { RelationshipInferenceService } from './relationship-inference.service';
 
 // ---------------- Ontology sync payload ----------------
 export interface OntologySyncPayload {
@@ -386,23 +387,371 @@ export class ContentProcessingService {
       }
 
       if (Array.isArray(graphs)) {
-        const finalResults = graphs.map((graph, docIndex) => {
+        const finalResults = graphs.map(async (graph, docIndex) => {
           const entities = enrichedEntities.filter(e => e.originalDocIndex === docIndex);
           const entityIdMap = new Map(entities.map(e => [e.name, e.id]));
           
-          const relationships = (graph.relationships || []).map((rel: LlmGraphRelationship) => ({
+          // Get relationships from NLP service
+          const nlpRelationships = (graph.relationships || []).map((rel: LlmGraphRelationship) => ({
             source: entityIdMap.get(rel.source),
             target: entityIdMap.get(rel.target),
             type: rel.type
           })).filter((r: { source: string | undefined, target: string | undefined }) => r.source && r.target);
 
+          // Apply relationship inference to discover additional relationships
+          // DISABLED: Relationship inference is temporarily deactivated
+          // const relationshipInferenceService = new RelationshipInferenceService();
+          // const inferredRelationships = await relationshipInferenceService.inferRelationships(
+          //   entities,
+          //   {
+          //     ontologyName,
+          //     confidenceThreshold: 0.7,
+          //     useLLM: true,
+          //     llmService: {
+          //       generateResponse: async (prompt: string) => {
+          //         // Ontology-agnostic mock LLM service that generates relationships based on entity semantics
+          //         // Extract entity information from the prompt to generate realistic relationships
+          //         const entityMatch = prompt.match(/\*\*Entities:\*\*\n([\s\S]*?)\n\n\*\*Task:\*\*/);
+          //         if (!entityMatch) {
+          //           return '[]';
+          //         }
+          //         
+          //         const entityLines = entityMatch[1].trim().split('\n');
+          //         const entities: { id: string; type: string; name?: string }[] = [];
+          //         
+          //         // Parse entities from the prompt
+          //         entityLines.forEach(line => {
+          //           const match = line.match(/^- (\w+): (.+)$/);
+          //           if (match) {
+          //             const type = match[1];
+          //             const nameOrId = match[2].trim();
+          //             // Try to extract ID from the name/id field
+          //             const idMatch = nameOrId.match(/^([a-zA-Z0-9_-]+)/);
+          //             const id = idMatch ? idMatch[1] : nameOrId;
+          //             entities.push({ id, type, name: nameOrId });
+          //           }
+          //         });
+          //         
+          //         // Generate relationships based on entity semantics and context
+          //         const relationships: any[] = [];
+          //         
+          //         // Analyze entities by their semantic meaning, not hardcoded types
+          //         const decisionEntities = entities.filter(e => 
+          //           e.type.toLowerCase().includes('decision') || 
+          //           e.type.toLowerCase().includes('award') ||
+          //           e.name?.toLowerCase().includes('decision')
+          //         );
+          //         
+          //         const personEntities = entities.filter(e => 
+          //           e.type.toLowerCase().includes('person') || 
+          //           e.type.toLowerCase().includes('buyer') ||
+          //           e.type.toLowerCase().includes('awarder') ||
+          //           e.type.toLowerCase().includes('winner') ||
+          //           e.type.toLowerCase().includes('mediator') ||
+          //           e.type.toLowerCase().includes('reviewer') ||
+          //           e.type.toLowerCase().includes('executor')
+          //         );
+          //         
+          //         const businessEntities = entities.filter(e => 
+          //           e.type.toLowerCase().includes('business') || 
+          //           e.type.toLowerCase().includes('vendor') ||
+          //           e.type.toLowerCase().includes('company') ||
+          //           e.type.toLowerCase().includes('corp') ||
+          //           e.name?.toLowerCase().includes('corp') ||
+          //           e.name?.toLowerCase().includes('ltd') ||
+          //           e.name?.toLowerCase().includes('inc')
+          //         );
+          //         
+          //         const contractEntities = entities.filter(e => 
+          //           e.type.toLowerCase().includes('contract') || 
+          //           e.type.toLowerCase().includes('agreement') ||
+          //           e.type.toLowerCase().includes('purchase') ||
+          //           e.type.toLowerCase().includes('order')
+          //         );
+          //         
+          //         const monetaryEntities = entities.filter(e => 
+          //           e.type.toLowerCase().includes('monetary') || 
+          //           e.type.toLowerCase().includes('amount') ||
+          //           e.type.toLowerCase().includes('value') ||
+          //           e.type.toLowerCase().includes('price') ||
+          //           e.type.toLowerCase().includes('cost') ||
+          //           /\d+\.?\d*\s*(USD|EUR|GBP|CAD|JPY)/i.test(e.name || '')
+          //         );
+          //         
+          //         const processEntities = entities.filter(e => 
+          //           e.type.toLowerCase().includes('process') || 
+          //           e.type.toLowerCase().includes('procedure') ||
+          //           e.type.toLowerCase().includes('framework') ||
+          //           e.type.toLowerCase().includes('lot')
+          //         );
+          //         
+          //         // Generate ontology-agnostic relationships based on semantic analysis
+          //         
+          //         // Decision entities relationships
+          //         decisionEntities.forEach(decision => {
+          //           personEntities.forEach(person => {
+          //             relationships.push({
+          //               relationshipName: "madeBy",
+          //               sourceEntity: decision.id,
+          //               targetEntity: person.id,
+          //               explanation: `${decision.name || decision.id} was made by ${person.name || person.id}`
+          //             });
+          //           });
+          //           
+          //           contractEntities.forEach(contract => {
+          //             relationships.push({
+          //               relationshipName: "resultsIn",
+          //               sourceEntity: decision.id,
+          //               targetEntity: contract.id,
+          //               explanation: `${decision.name || decision.id} results in ${contract.name || contract.id}`
+          //             });
+          //           });
+          //         });
+          //         
+          //         // Person entities relationships
+          //         personEntities.forEach(person => {
+          //           businessEntities.forEach(business => {
+          //             relationships.push({
+          //               relationshipName: "worksFor",
+          //               sourceEntity: person.id,
+          //               targetEntity: business.id,
+          //               explanation: `${person.name || person.id} works for ${business.name || business.id}`
+          //             });
+          //           });
+          //           
+          //           contractEntities.forEach(contract => {
+          //             relationships.push({
+          //               relationshipName: "manages",
+          //               sourceEntity: person.id,
+          //               targetEntity: contract.id,
+          //               explanation: `${person.name || person.id} manages ${contract.name || contract.id}`
+          //             });
+          //           });
+          //         });
+          //         
+          //         // Business entities relationships
+          //         businessEntities.forEach(business => {
+          //           contractEntities.forEach(contract => {
+          //             relationships.push({
+          //               relationshipName: "supplies",
+          //               sourceEntity: business.id,
+          //               targetEntity: contract.id,
+          //               explanation: `${business.name || business.id} supplies goods/services for ${contract.name || contract.id}`
+          //             });
+          //           });
+          //         });
+          //         
+          //         // Contract entities relationships
+          //         contractEntities.forEach(contract => {
+          //           monetaryEntities.forEach(amount => {
+          //             relationships.push({
+          //               relationshipName: "costs",
+          //               sourceEntity: contract.id,
+          //               targetEntity: amount.id,
+          //               explanation: `${contract.name || contract.id} costs ${amount.name || amount.id}`
+          //             });
+          //           });
+          //           
+          //           businessEntities.forEach(business => {
+          //             relationships.push({
+          //               relationshipName: "involves",
+          //               sourceEntity: contract.id,
+          //               targetEntity: business.id,
+          //               explanation: `${contract.name || contract.id} involves ${business.name || business.id}`
+          //             });
+          //           });
+          //         });
+          //         
+          //         // Process entities relationships
+          //         processEntities.forEach(process => {
+          //           contractEntities.forEach(contract => {
+          //             relationships.push({
+          //               relationshipName: "governs",
+          //               sourceEntity: process.id,
+          //               targetEntity: contract.id,
+          //               explanation: `${process.name || process.id} governs ${contract.name || contract.id}`
+          //             });
+          //           });
+          //         });
+          //         
+          //         // Cross-entity type relationships based on common patterns
+          //         personEntities.forEach(person => {
+          //           monetaryEntities.forEach(amount => {
+          //             relationships.push({
+          //               relationshipName: "handles",
+          //               sourceEntity: person.id,
+          //               targetEntity: amount.id,
+          //               explanation: `${person.name || person.id} handles ${amount.name || amount.id}`
+          //             });
+          //           });
+          //         });
+          //         
+          //         businessEntities.forEach(business => {
+          //           monetaryEntities.forEach(amount => {
+          //             relationships.push({
+          //               relationshipName: "receives",
+          //               sourceEntity: business.id,
+          //               targetEntity: amount.id,
+          //               explanation: `${business.name || business.id} receives ${amount.name || amount.id}`
+          //             });
+          //           });
+          //         });
+          //         
+          //         // Contract entities relationships
+          //         contractEntities.forEach(contract => {
+          //           monetaryEntities.forEach(amount => {
+          //             relationships.push({
+          //               relationshipName: "costs",
+          //               sourceEntity: contract.id,
+          //               targetEntity: amount.id,
+          //               explanation: `${contract.name || contract.id} costs ${amount.name || amount.id}`
+          //             });
+          //           });
+          //           
+          //           businessEntities.forEach(business => {
+          //             relationships.push({
+          //               relationshipName: "involves",
+          //               sourceEntity: contract.id,
+          //               targetEntity: business.id,
+          //               explanation: `${contract.name || contract.id} involves ${business.name || business.id}`
+          //             });
+          //           });
+          //         });
+          //         
+          //         // Process entities relationships
+          //         processEntities.forEach(process => {
+          //           contractEntities.forEach(contract => {
+          //             relationships.push({
+          //               relationshipName: "governs",
+          //               sourceEntity: process.id,
+          //               targetEntity: contract.id,
+          //               explanation: `${process.name || process.id} governs ${contract.name || contract.id}`
+          //             });
+          //           });
+          //         });
+          //         
+          //         // Cross-entity type relationships based on common patterns
+          //         personEntities.forEach(person => {
+          //           monetaryEntities.forEach(amount => {
+          //             relationships.push({
+          //               relationshipName: "handles",
+          //               sourceEntity: person.id,
+          //               targetEntity: amount.id,
+          //               explanation: `${person.name || person.id} handles ${amount.name || amount.id}`
+          //             });
+          //           });
+          //         });
+          //         
+          //         businessEntities.forEach(business => {
+          //           monetaryEntities.forEach(amount => {
+          //             relationships.push({
+          //               relationshipName: "receives",
+          //               sourceEntity: business.id,
+          //               targetEntity: amount.id,
+          //               explanation: `${business.name || business.id} receives ${amount.name || amount.id}`
+          //             });
+          //           });
+          //         });
+          //         
+          //         // Additional ontology-agnostic relationships based on entity context
+          //         
+          //         // Person-to-person relationships (hierarchical)
+          //         personEntities.forEach(person1 => {
+          //           personEntities.forEach(person2 => {
+          //             if (person1.id !== person2.id) {
+          //               // Check if one person might be superior to another based on context
+          //               if (person1.type.toLowerCase().includes('awarder') && person2.type.toLowerCase().includes('winner')) {
+          //                 relationships.push({
+          //                   relationshipName: "selects",
+          //                   sourceEntity: person1.id,
+          //                   targetEntity: person2.id,
+          //                   explanation: `${person1.name || person1.id} selects ${person2.name || person2.id}`
+          //                 });
+          //               }
+          //             }
+          //           });
+          //         });
+          //         
+          //         // Decision-to-outcome relationships
+          //         decisionEntities.forEach(decision => {
+          //           businessEntities.forEach(business => {
+          //             relationships.push({
+          //               relationshipName: "benefits",
+          //               sourceEntity: decision.id,
+          //               targetEntity: business.id,
+          //               explanation: `${decision.name || decision.id} benefits ${business.name || business.id}`
+          //             });
+          //           });
+          //         });
+          //         
+          //         // Process-to-outcome relationships
+          //         processEntities.forEach(process => {
+          //           monetaryEntities.forEach(amount => {
+          //             relationships.push({
+          //               relationshipName: "generates",
+          //               sourceEntity: process.id,
+          //               targetEntity: amount.id,
+          //               explanation: `${process.name || process.id} generates ${amount.name || amount.id}`
+          //             });
+          //           });
+          //         });
+          //         
+          //         // Entity-to-entity relationships based on semantic similarity
+          //         entities.forEach(entity1 => {
+          //           entities.forEach(entity2 => {
+          //             if (entity1.id !== entity2.id) {
+          //               // Avoid duplicate relationships
+          //               const existingRelationship = relationships.find(r => 
+          //               r.sourceEntity === entity1.id && r.targetEntity === entity2.id
+          //               );
+          //               
+          //               if (!existingRelationship) {
+          //                 // Create relationships based on semantic patterns
+          //                 if (entity1.type.toLowerCase().includes('decision') && entity2.type.toLowerCase().includes('contract')) {
+          //                   relationships.push({
+          //               relationshipName: "leadsTo",
+          //               sourceEntity: entity1.id,
+          //               targetEntity: entity2.id,
+          //               explanation: `${entity1.name || entity1.id} leads to ${entity2.name || entity2.id}`
+          //             });
+          //           }
+          //         }
+          //       });
+          //     });
+          //     
+          //     return `Based on the entities provided, here are the inferred relationships:
+
+          // \`\`\`json
+          // ${JSON.stringify(relationships, null, 2)}
+          // \`\`\``;
+          //       }
+          //     }
+          //   }
+          // );
+
+          // For now, use empty array for inferred relationships
+          const inferredRelationships: any[] = [];
+
+          // Combine NLP relationships with inferred relationships
+          const allRelationships = [
+            ...nlpRelationships,
+            ...inferredRelationships.map(rel => ({
+              source: rel.source,
+              target: rel.target,
+              type: rel.type
+            }))
+          ];
+
+          logger.info(`      -> Document ${docIndex}: ${nlpRelationships.length} NLP relationships + ${inferredRelationships.length} inferred relationships`);
+
           return {
               entities,
-              relationships
+              relationships: allRelationships
           };
         });
 
-        return finalResults;
+        // Wait for all async operations to complete
+        return await Promise.all(finalResults);
       }
       return [];
 

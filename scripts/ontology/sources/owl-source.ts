@@ -437,11 +437,11 @@ export class OwlSource implements OntologySource {
 
   private isClassType(typeElement: string): boolean {
     return typeElement.includes('owl#Class');
-  }
+    }
 
   private isObjectPropertyType(typeElement: string): boolean {
     return typeElement.includes('owl#ObjectProperty');
-  }
+    }
 
   private isDatatypePropertyType(typeElement: string): boolean {
     return typeElement.includes('owl#DatatypeProperty');
@@ -592,27 +592,19 @@ export class OwlSource implements OntologySource {
    * @param availableEntityNames Array of available entity names from the ontology
    * @returns Array of entity names found in the definition, in order of appearance
    */
-  private extractEntitiesFromDefinition(definition: any, availableEntityNames: string[]): string[] {
-    // Handle definition as object (with _ property) or string
-    let defText = definition;
-    if (typeof defText === 'object' && defText !== null && typeof defText._ === 'string') {
-      defText = defText._;
-    }
-    if (typeof defText !== 'string') {
-      return [];
-    }
+  private extractEntitiesFromDefinition(definition: string, availableEntityNames: string[]): string[] {
     if (availableEntityNames.length === 0) {
       return [];
     }
 
     const foundEntities: { name: string; index: number }[] = [];
-    const definitionLower = defText.toLowerCase();
+    const definitionLower = definition.toLowerCase();
     
     for (const entityName of availableEntityNames) {
       const entityNameLower = entityName.toLowerCase();
       // Use word boundary regex to avoid partial matches
       const regex = new RegExp(`\\b${entityNameLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
-      const match = regex.exec(defText);
+      const match = regex.exec(definition);
       if (match) {
         foundEntities.push({ name: entityName, index: match.index });
       }
