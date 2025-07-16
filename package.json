@@ -9,7 +9,7 @@
     "dev": "ts-node-dev --respawn --transpile-only src/api.ts",
     "dev:nlp": "cd python-services/nlp-service && source venv/bin/activate && uvicorn main:app --host 127.0.0.1 --port 8000",
     "dev:all": "concurrently -n \"API,NLP\" -c \"blue,magenta\" \"npm:dev\" \"npm:dev:nlp\"",
-    "dev:mcp": "node src/mcp/servers/mcp-server-simple.js",
+    "dev:mcp": "node src/mcp/servers/mcp-server-stdio.js",
     "ts": "TS_NODE_PROJECT=scripts/tsconfig.json ts-node -r tsconfig-paths/register",
     "build": "npm run ontologies:generate && tsc -p config/tsconfig.build.json",
     "start": "node dist/src/api.js",

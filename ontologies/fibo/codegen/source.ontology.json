@@ -9,11 +9,9 @@
   "entities": [],
   "relationships": [],
   "metadata": {
-    "sourceUrl": "https://spec.edmcouncil.org/fibo/ontology/master/latest/AboutFIBOProd-TBoxOnly.rdf",
-    "extractionDate": "2025-07-16T22:37:59.658Z",
-    "sourceVersion": "2025-07",
-    "entityCount": 0,
-    "relationshipCount": 0
+    "lastExtraction": "2025-07-16T23:01:56.399Z",
+    "sourceVersion": "2024-01",
+    "localVersion": "1.0.0"
   },
   "ignoredEntities": [],
   "ignoredRelationships": []

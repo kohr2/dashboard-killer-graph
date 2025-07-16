@@ -126,8 +126,8 @@ async function buildOntology(options: BuildOptions = {}) {
         ]);
         CORE_ENTITY_WHITELIST.forEach(coreName => topEntityNames.add(coreName));
 
-        const allEntityNames = new Set(result.sourceOntology.entities.map((e: Entity) => e.name));
-        const ignoredEntities = Array.from(allEntityNames).filter((name: string) => !topEntityNames.has(name));
+        const allEntityNames = new Set<string>(result.sourceOntology.entities.map((e: Entity) => e.name));
+        const ignoredEntities = Array.from(allEntityNames).filter((name) => !topEntityNames.has(name));
         result.sourceOntology.ignoredEntities = ignoredEntities;
         result.sourceOntology.entities = result.sourceOntology.entities.filter((e: Entity) => topEntityNames.has(e.name));
       }
@@ -142,8 +142,8 @@ async function buildOntology(options: BuildOptions = {}) {
         const relAnalysis = await analyzer.analyzeRelationshipImportance(relInputs, contextDescription, options.topRelationships);
         // Keep only the top relationships by importance
         const topRelNames = new Set(relAnalysis.slice(0, options.topRelationships).map(r => r.relationshipName));
-        const allRelNames = new Set(result.sourceOntology.relationships.map((r: Relationship) => r.name));
-        const ignoredRelationships = Array.from(allRelNames).filter((name: string) => !topRelNames.has(name));
+        const allRelNames = new Set<string>(result.sourceOntology.relationships.map((r: Relationship) => r.name));
+        const ignoredRelationships = Array.from(allRelNames).filter((name) => !topRelNames.has(name));
         result.sourceOntology.ignoredRelationships = ignoredRelationships;
         result.sourceOntology.relationships = result.sourceOntology.relationships.filter((r: Relationship) => topRelNames.has(r.name));
       }
@@ -160,7 +160,8 @@ async function buildOntology(options: BuildOptions = {}) {
         
         // Update each entity in the final ontology
         for (const [entityName, entity] of Object.entries(result.finalOntology.entities)) {
-          const hasNameProperty = entity.properties && Object.keys(entity.properties).some(propName =>
+          const entityObj = entity as any;
+          const hasNameProperty = entityObj.properties && Object.keys(entityObj.properties).some((propName: string) =>
             propName.toLowerCase() === 'name' || propName.toLowerCase() === 'label'
           );
           const importanceScore = importanceScores.get(entityName) || 0;
@@ -170,18 +171,18 @@ async function buildOntology(options: BuildOptions = {}) {
           let contextRelevant = false;
           if (contextDescription) {
             const contextWords = contextDescription.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
-            const fullText = `${entityName.toLowerCase()} ${(typeof entity.description === 'string' ? entity.description : (entity.description as any)?._ || '').toLowerCase()}`;
+            const fullText = `${entityName.toLowerCase()} ${(typeof entityObj.description === 'string' ? entityObj.description : (entityObj.description as any)?._ || '').toLowerCase()}`;
             contextRelevant = contextWords.some(w => fullText.includes(w));
           }
 
           // Set vectorIndex true if entity is very important OR context relevant (and has name/label prop)
-          entity.vectorIndex = hasNameProperty && (isVeryImportant || contextRelevant);
+          entityObj.vectorIndex = hasNameProperty && (isVeryImportant || contextRelevant);
 
-          const reason = entity.vectorIndex
+          const reason = entityObj.vectorIndex
             ? (isVeryImportant ? 'very important' : 'context match')
             : (!hasNameProperty ? 'no name/label property' : `low importance (score: ${importanceScore.toFixed(2)})`);
 
-          console.log(`${entity.vectorIndex ? '  ✅' : '  ❌'} ${entityName}: vectorIndex = ${entity.vectorIndex} (${reason})`);
+          console.log(`${entityObj.vectorIndex ? '  ✅' : '  ❌'} ${entityName}: vectorIndex = ${entityObj.vectorIndex} (${reason})`);
         }
       }
     }
@@ -189,7 +190,7 @@ async function buildOntology(options: BuildOptions = {}) {
     // After topRelationships filtering add relationship pruning
     if (result.sourceOntology) {
       // Prune any relationships that reference entities that are no longer present
-      const allowedEntityNames = new Set(result.sourceOntology.entities.map((e: Entity) => e.name));
+      const allowedEntityNames = new Set<string>(result.sourceOntology.entities.map((e: Entity) => e.name));
       const { kept: keptRels, prunedNames } = pruneRelationshipsByEntities(result.sourceOntology.relationships, allowedEntityNames);
       if (prunedNames.length > 0) {
         result.sourceOntology.relationships = keptRels;

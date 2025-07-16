@@ -8,36 +8,6 @@
   },
   "entities": [
     {
-      "name": "AccessTerm",
-      "description": {
-        "_": "Conditions and stipulations about where and how to access the Procurement Documents.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "Term"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#AccessTerm",
-      "parent": "Term"
-    },
-    {
       "name": "AcquiringCentralPurchasingBody",
       "description": {
         "_": "Role of an Agent procuring activities conducted on a permanent basis in the form of the acquisition of supplies and/or services intended for other Buyers. Additional Information: In Public Procurement the Role of Acquiring Central Purchasing Body is carried out by a Central Purchasing Body for other Contracting Authorities.",
@@ -169,36 +139,6 @@
       "parent": "AgentInRole"
     },
     {
-      "name": "AwardCriteriaSummary",
-      "description": {
-        "_": "Overview of the Award Criteria.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "ProcurementCriteriaSummary"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#AwardCriteriaSummary",
-      "parent": "ProcurementCriteriaSummary"
-    },
-    {
       "name": "AwardCriterion",
       "description": {
         "_": "Criterion that describes a Requirement that the Tender needs to resolve and on which the Tender is evaluated and ranked.",
@@ -279,32 +219,6 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Awarder",
       "parent": "AcquiringParty"
-    },
-    {
-      "name": "AwardEvaluationTerm",
-      "description": {
-        "_": "Conditions and stipulations defining particularities of the evaluation of Award Criteria.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "alternativeLabels": [
-          "EvaluationTerm"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#AwardEvaluationTerm",
-      "parent": "EvaluationTerm"
     },
     {
       "name": "AwardingCentralPurchasingBody",
@@ -668,7 +582,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ChangeInformation",
       "parent": "ContextDescription"
     },
@@ -889,66 +803,6 @@
       "parent": "OfferingParty"
     },
     {
-      "name": "ContractTerm",
-      "description": {
-        "_": "Conditions and stipulations defining particularities of the Post Award Phase.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "Term"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ContractTerm",
-      "parent": "Term"
-    },
-    {
-      "name": "DesignContestRegimeTerm",
-      "description": {
-        "_": "Conditions and stipulations defining particularities of a Design Contest.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "Term"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#DesignContestRegimeTerm",
-      "parent": "Term"
-    },
-    {
       "name": "DirectAwardTerm",
       "description": {
         "_": "Conditions and stipulations defining particularities of the award of a Contract without prior publication. Addtional Information: Direct award may refer to a previous Procedure and/or specific Lot(s). It may also refer to other justified situations whereby there is no previous Procedure. See Directive 2014/24/EU Article 32.",
@@ -1035,24 +889,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#Document"
     },
     {
-      "name": "Documentation",
-      "description": {
-        "_": "Documentation",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#Documentation"
-    },
-    {
       "name": "DynamicPurchaseSystemTechnique",
       "description": {
         "_": "A Technique that allows the selection of Candidates throughout the Procedure via the Qualification Criteria, followed by individual Mini-Competitions for the Award of Purchase Contracts.",
@@ -1113,36 +949,6 @@
       "parent": "Technique"
     },
     {
-      "name": "EconomicStandingSummary",
-      "description": {
-        "_": "Overview of the financial viability of the economic operator.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "SelectionCriteriaSummary"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#EconomicStandingSummary",
-      "parent": "SelectionCriteriaSummary"
-    },
-    {
       "name": "ElectronicSignature",
       "description": {
         "_": "Data in electronic form which is attached to or logically associated with other data in electronic form and which is used by the signatory to sign. Additional information: The definition comes from REGULATION (EU) No 910/2014.",
@@ -1167,94 +973,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ElectronicSignature"
-    },
-    {
-      "name": "EmploymentDocumentation",
-      "description": {
-        "_": "Employment Documentation",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "alternativeLabels": [
-          "Documentation"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#EmploymentDocumentation",
-      "parent": "Documentation"
-    },
-    {
-      "name": "EmploymentInformationProvider",
-      "description": {
-        "_": "A Role of an Agent responsible for providing information concerning the general regulatory framework for employment protection and working conditions.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#EmploymentInformationProvider"
-    },
-    {
-      "name": "EnergyEfficiencyInformation",
-      "description": {
-        "_": "Energy Efficiency Information",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "alternativeLabels": [
-          "ContextDescription"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#EnergyEfficiencyInformation",
-      "parent": "ContextDescription"
-    },
-    {
-      "name": "EnvironmentalDocumentation",
-      "description": {
-        "_": "Environmental Documentation",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "alternativeLabels": [
-          "Documentation"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#EnvironmentalDocumentation",
-      "parent": "Documentation"
     },
     {
       "name": "EnvironmentalProtectionInformationProvider",
@@ -1305,36 +1023,6 @@
       "parent": "ContextDescription"
     },
     {
-      "name": "EvaluationTerm",
-      "description": {
-        "_": "Conditions and stipulations defining particularities of the Tender evaluation.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "Term"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#EvaluationTerm",
-      "parent": "Term"
-    },
-    {
       "name": "ExclusionGround",
       "description": {
         "_": "Criterion that describes a legal Requirement to be met by the Economic Operator to be a Candidate in the Procurement.",
@@ -1363,36 +1051,6 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ExclusionGround",
       "parent": "QualificationCriterion"
-    },
-    {
-      "name": "ExclusionGroundsSummary",
-      "description": {
-        "_": "Overview of the Exclusion Grounds.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "QualificationCriteriaSummary"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ExclusionGroundsSummary",
-      "parent": "QualificationCriteriaSummary"
     },
     {
       "name": "ExpressionOfInterest",
@@ -1481,32 +1139,6 @@
       "parent": "Technique"
     },
     {
-      "name": "FrameworkAgreementTerm",
-      "description": {
-        "_": "Conditions and stipulations defining particularities in a Framework Agreement.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "alternativeLabels": [
-          "Term"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#FrameworkAgreementTerm",
-      "parent": "Term"
-    },
-    {
       "name": "Fund",
       "description": {
         "_": "A financial resource used to support the Procurement. Additional Information: In the context of EU, Funds can be divided into programmes, actions and projects. Examples of EU funds are: the European Structural and Investment Funds, European Social Fund (ESF), the Connecting Europe Facility (CEF) programme, or the ISA2 programme and its actions (e.g. Action 2016.05 European Public Procurement Initiative, which supports the eProcurement Ontology under sub-action 3). Funds may change between the lot and the contract, for example in the case of an emergency crisis, a contract may be financed by a budget that was not foreseen in the call.",
@@ -1585,28 +1217,6 @@
       "parent": "StrategicProcurement"
     },
     {
-      "name": "InternationalProcurementInstrumentMeasuresInformation",
-      "description": {
-        "_": "International Procurement Instrument Measures Information",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "alternativeLabels": [
-          "ContextDescription"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#InternationalProcurementInstrumentMeasuresInformation",
-      "parent": "ContextDescription"
-    },
-    {
       "name": "JuryMember",
       "description": {
         "_": "Role of an Agent who evaluates a design contest.",
@@ -1665,24 +1275,6 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#LeadBuyer",
       "parent": "Buyer"
-    },
-    {
-      "name": "LocalLegalBasisInformation",
-      "description": {
-        "_": "Local Legal Basis Information",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#LocalLegalBasisInformation"
     },
     {
       "name": "Lot",
@@ -1765,50 +1357,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#LotGroup"
-    },
-    {
-      "name": "LotGroupAwardInformation",
-      "description": {
-        "_": "Award information related to a given Group of Lots.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "alternativeLabels": [
-          "ContextDescription"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#LotGroupAwardInformation",
-      "parent": "ContextDescription"
-    },
-    {
-      "name": "MaskableObject",
-      "description": {
-        "_": "Maskable Object",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#MaskableObject"
     },
     {
       "name": "Mediator",
@@ -1902,36 +1450,6 @@
       "isProperty": true
     },
     {
-      "name": "MultipleStageProcedureTerm",
-      "description": {
-        "_": "Conditions and stipulations defining particularities of Procedures carried out in several steps Additional Information: Generally this refers to Procedures where selection is carried out to qualify Tenderers who are then requested to submit the rest of their Tender for evaluation is Restricted Procedure.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "Term"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#MultipleStageProcedureTerm",
-      "parent": "Term"
-    },
-    {
       "name": "NonDisclosureAgreementTerm",
       "description": {
         "_": "Conditions and stipulations about a non-disclosure agreement. Additional information: A non-disclosure agreement is a Contract between different parties which ensures information is not shared with other parties.",
@@ -2012,32 +1530,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Notice"
-    },
-    {
-      "name": "NoticeAwardInformation",
-      "description": {
-        "_": "Information about an Award Notice.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "alternativeLabels": [
-          "ContextDescription"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#NoticeAwardInformation",
-      "parent": "ContextDescription"
     },
     {
       "name": "Offer",
@@ -2148,36 +1640,6 @@
       "parent": "AcquiringParty"
     },
     {
-      "name": "OpeningTerm",
-      "description": {
-        "_": "Conditions and stipulations defining particularities of the opening of Tenders. Additional Information: The opening of Tenders is the event when Tenders are made accessible for evaluation, it is generally the same date and time for all Tenders.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "Term"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#OpeningTerm",
-      "parent": "Term"
-    },
-    {
       "name": "OrganisationGroup",
       "description": {
         "_": "Agreed collaboration of several Organisations. Additional Information: This concept has been created to fulfill the need to represent a grouping of Organisations that is not necessarily registered i.e, consortia.",
@@ -2231,66 +1693,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#OriginatorRequest"
     },
     {
-      "name": "ParticipationCondition",
-      "description": {
-        "_": "Criterion that describes a Requirement to take part in a procurement.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "ProcurementCriterion"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ParticipationCondition",
-      "parent": "ProcurementCriterion"
-    },
-    {
-      "name": "ParticipationConditionsSummary",
-      "description": {
-        "_": "Overview of the Participation Conditions.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "ProcurementCriteriaSummary"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ParticipationConditionsSummary",
-      "parent": "ProcurementCriteriaSummary"
-    },
-    {
       "name": "ParticipationRequestProcessor",
       "description": {
         "_": "A Role of an Agent responsible for processing Requests To Participate.",
@@ -2315,58 +1717,6 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ParticipationRequestProcessor",
       "parent": "AcquiringParty"
-    },
-    {
-      "name": "ParticipationRequestReceiver",
-      "description": {
-        "_": "A Role of an Agent responsible for receiving Requests To Participate.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "alternativeLabels": [
-          "AcquiringParty"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ParticipationRequestReceiver",
-      "parent": "AcquiringParty"
-    },
-    {
-      "name": "ParticipationRequestTerm",
-      "description": {
-        "_": "Conditions and stipulations defining particularities of requesting participation in a Procedure.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "alternativeLabels": [
-          "Term"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ParticipationRequestTerm",
-      "parent": "Term"
     },
     {
       "name": "PaymentExecutor",
@@ -2412,7 +1762,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#PlannedProcurement",
       "parent": "ProcurementElement"
     },
@@ -2469,7 +1819,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#Prize"
     },
     {
@@ -2503,89 +1853,6 @@
       "parent": "ProcurementObject"
     },
     {
-      "name": "ProcedureTerm",
-      "description": {
-        "_": "Conditions and stipulations defining particularities of the Procedure.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "MaskableObject"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ProcedureTerm",
-      "parent": "MaskableObject"
-    },
-    {
-      "name": "ProcessPlanningTerm",
-      "description": {
-        "_": "Conditions and stipulations defining particularities of the unfolding of the Procurement Process.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "alternativeLabels": [
-          "Term"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ProcessPlanningTerm",
-      "parent": "Term"
-    },
-    {
-      "name": "ProcurementCriteriaSummary",
-      "description": {
-        "_": "Overview of the Procurement Criteria.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ProcurementCriteriaSummary",
-      "parent": "Requirement"
-    },
-    {
       "name": "ProcurementCriterion",
       "description": {
         "_": "A criterion specific to Procurement. Additional Information: This Procurement Criterion can be only Exclusion Ground, Selection Criterion or Award Criterion. Each of these Criteria can contain subcriteria (Criterion class).",
@@ -2611,32 +1878,6 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#ProcurementCriterion",
       "parent": "Criterion"
-    },
-    {
-      "name": "ProcurementDocument",
-      "description": {
-        "_": "Document produced or referred to by the Buyer to describe or determine elements of the Procurement. Additional information: Procurement Documents are to be accessible since the date of publication of the Contract Notice or the prior information Notice when used as a call for competition. Examples of Procurement Documents are Technical Specifications, the Descriptive Document, proposed conditions of Contract, formats for the presentation of Documents by Candidates and Tenderers, information on generally applicable obligations. Other Documents related to the Procedure such as Notices are not considered to be Procurement Documents.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ProcurementDocument"
     },
     {
       "name": "ProcurementElement",
@@ -2769,36 +2010,6 @@
       "parent": "AcquiringParty"
     },
     {
-      "name": "ProfessionalSuitabilitySummary",
-      "description": {
-        "_": "Overview of the professional ability required for the economic operator to execute the contract.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "SelectionCriteriaSummary"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ProfessionalSuitabilitySummary",
-      "parent": "SelectionCriteriaSummary"
-    },
-    {
       "name": "Project",
       "description": {
         "_": "A collaborative enterprise that is carefully planned to achieve a particular aim.",
@@ -2871,36 +2082,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Purpose"
-    },
-    {
-      "name": "QualificationCriteriaSummary",
-      "description": {
-        "_": "Overview of the Qualification Criteria.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "ProcurementCriteriaSummary"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#QualificationCriteriaSummary",
-      "parent": "ProcurementCriteriaSummary"
     },
     {
       "name": "QualificationCriterion",
@@ -2982,28 +2163,6 @@
       "parent": "OfferingParty"
     },
     {
-      "name": "ReviewDecision",
-      "description": {
-        "_": "Information about Review Decisions.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ReviewDecision"
-    },
-    {
       "name": "Reviewer",
       "description": {
         "_": "Role of an Agent who investigates the overall correctness of a Procurement Procedure, producing a related report. Additional Information: Any Organisation or Person may request a review of a Procurement Procedure.",
@@ -3032,54 +2191,6 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#Reviewer",
       "parent": "AcquiringParty"
-    },
-    {
-      "name": "ReviewInformation",
-      "description": {
-        "_": "Review Information",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ReviewInformation"
-    },
-    {
-      "name": "ReviewIrregularitySummary",
-      "description": {
-        "_": "Overview of the number and type of requests the Buyer received to review any of its decisions (e.g. the Technical Specifications, Award Decision).",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "MaskableObject"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ReviewIrregularitySummary",
-      "parent": "MaskableObject"
     },
     {
       "name": "ReviewProcedureInformationProvider",
@@ -3130,7 +2241,7 @@
       "keyProperties": [
         "name"
       ],
-      "vectorIndex": true,
+      "vectorIndex": false,
       "documentation": "http://data.europa.eu/a4g/ontology#ReviewRequest"
     },
     {
@@ -3164,153 +2275,6 @@
       "parent": "OfferingParty"
     },
     {
-      "name": "ReviewRequestSummary",
-      "description": {
-        "_": "Overview of the requests received by the Buyer to review any of its decisions (e.g. the technical specifications, award decision), as set out in Art. 1(5) of Directive 89/665/EEC and Directive 92/13/EEC, and about the complainants that submitted the requests.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "StatisticalInformation"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ReviewRequestSummary",
-      "parent": "StatisticalInformation"
-    },
-    {
-      "name": "ReviewTerm",
-      "description": {
-        "_": "Conditions and stipulations defining particularities of the review.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "Term"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#ReviewTerm",
-      "parent": "Term"
-    },
-    {
-      "name": "SecurityClearanceTerm",
-      "description": {
-        "_": "Conditions and stipulations about the status requested of individuals allowing them access to classified information (state or organisational secrets) or to restricted areas, after completion of a thorough background check.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "Term"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#SecurityClearanceTerm",
-      "parent": "Term"
-    },
-    {
-      "name": "SelectedCandidateList",
-      "description": {
-        "_": "Record of Candidates admitted to take part in award phases of procurements.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#SelectedCandidateList",
-      "isProperty": true
-    },
-    {
-      "name": "SelectionCriteriaSummary",
-      "description": {
-        "_": "Overview of the Selection Criteria.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "QualificationCriteriaSummary"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#SelectionCriteriaSummary",
-      "parent": "QualificationCriteriaSummary"
-    },
-    {
       "name": "SelectionCriterion",
       "description": {
         "_": "Criterion that describes a capacity Requirement that the Economic Operator needs to fulfill to participate in the procurement. Additional Information: Selection criteria may relate to: (a) suitability to pursue the professional activity; (b) economic and financial standing; (c) technical and professional ability",
@@ -3341,32 +2305,6 @@
       "parent": "QualificationCriterion"
     },
     {
-      "name": "SelectionEvaluationTerm",
-      "description": {
-        "_": "Conditions and stipulations defining particularities of the evaluation of Selection Criteria.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "alternativeLabels": [
-          "EvaluationTerm"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#SelectionEvaluationTerm",
-      "parent": "EvaluationTerm"
-    },
-    {
       "name": "SocialProcurement",
       "description": {
         "_": "Approach whereby Buyers seek to procure by fulfilling social objectives. Additional Information: Socially Responsible Public Procurement (SRPP) - ‘SRPP’ means Procurement Operations that take into account one or more of the following social considerations: employment opportunities, decent work, compliance with social and labour rights, social inclusion (including persons with disabilities), equal opportunities, accessibility design for all, taking account of sustainability criteria, including ethical trade issues and wider voluntary compliance with corporate social responsibility (CSR), while observing the principles enshrined in the Treaty for the European Union (TFEU) and the Procurement Directives. See Article 18 and Annex X Directive 2014/24.",
@@ -3391,24 +2329,6 @@
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#SocialProcurement",
       "parent": "StrategicProcurement"
-    },
-    {
-      "name": "SpecificationInformation",
-      "description": {
-        "_": "Specification Information",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#SpecificationInformation"
     },
     {
       "name": "StatisticalInformation",
@@ -3528,92 +2448,6 @@
       "parent": "OfferingParty"
     },
     {
-      "name": "SubcontractTerm",
-      "description": {
-        "_": "A concept to describe the main information regarding the share of parts of the Contract to third parties.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "alternativeLabels": [
-          "Term"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#SubcontractTerm",
-      "parent": "Term"
-    },
-    {
-      "name": "SubmissionStatisticalInformation",
-      "description": {
-        "_": "Statistical information about submissions on a given competition, either at Lot level or Mini-Competition level.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "StatisticalInformation"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#SubmissionStatisticalInformation",
-      "parent": "StatisticalInformation"
-    },
-    {
-      "name": "SubmissionTerm",
-      "description": {
-        "_": "Conditions and stipulations defining particularities of submitting Documents to the Buyer. Additional Information: These Documents can be Tenders, Request To Participate and expressions of interest.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "Term"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#SubmissionTerm",
-      "parent": "Term"
-    },
-    {
       "name": "System",
       "description": {
         "_": "Software application used for performing Procurement activities.",
@@ -3641,28 +2475,6 @@
       "parent": "Agent"
     },
     {
-      "name": "TaxDocumentation",
-      "description": {
-        "_": "Tax Documentation",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "alternativeLabels": [
-          "Documentation"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#TaxDocumentation",
-      "parent": "Documentation"
-    },
-    {
       "name": "TaxInformationProvider",
       "description": {
         "_": "A Role of an Agent responsible for providing information concerning the general regulatory framework for taxes.",
@@ -3683,36 +2495,6 @@
       ],
       "vectorIndex": true,
       "documentation": "http://data.europa.eu/a4g/ontology#TaxInformationProvider"
-    },
-    {
-      "name": "TechnicalAbilitySummary",
-      "description": {
-        "_": "Overview of the expertise required for the economic operator to execute the contract.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "historyNote": {
-          "type": "string",
-          "description": "Version history and approval information"
-        },
-        "alternativeLabels": [
-          "SelectionCriteriaSummary"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#TechnicalAbilitySummary",
-      "parent": "SelectionCriteriaSummary"
     },
     {
       "name": "TechnicalSpecification",
@@ -3927,50 +2709,6 @@
       "parent": "AcquiringParty"
     },
     {
-      "name": "Term",
-      "description": {
-        "_": "A governing condition or stipulation.",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        }
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#Term"
-    },
-    {
-      "name": "UniqueResponsibleOfTheProcurement",
-      "description": {
-        "_": "Unique Responsible Of The Procurement",
-        "xml:lang": "en"
-      },
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "alternativeLabels": [
-          "AcquiringParty"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "http://data.europa.eu/a4g/ontology#UniqueResponsibleOfTheProcurement",
-      "parent": "AcquiringParty"
-    },
-    {
       "name": "Winner",
       "description": {
         "_": "A Role of an Agent to whom a Lot is awarded.",
@@ -4011,156 +2749,6 @@
       "source": "AgentInRole",
       "target": "ProcurementObject",
       "documentation": "http://data.europa.eu/a4g/ontology#contextualisedBy"
-    },
-    {
-      "name": "definesBudgetProvider",
-      "description": {
-        "_": "Relation indicating a ProcedureTerm has a BudgetProvider.",
-        "xml:lang": "en"
-      },
-      "source": "ProcedureTerm",
-      "target": "BudgetProvider",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesBudgetProvider"
-    },
-    {
-      "name": "definesCatalogueProvider",
-      "description": {
-        "_": "Relation indicating an AccessTerm has a CatalogueProvider.",
-        "xml:lang": "en"
-      },
-      "source": "AccessTerm",
-      "target": "CatalogueProvider",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesCatalogueProvider"
-    },
-    {
-      "name": "definesCatalogueReceiver",
-      "description": {
-        "_": "Relation indicating an AccessTerm has a CatalogueReceiver.",
-        "xml:lang": "en"
-      },
-      "source": "AccessTerm",
-      "target": "CatalogueReceiver",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesCatalogueReceiver"
-    },
-    {
-      "name": "definesLotGroup",
-      "description": {
-        "_": "Relation indicating a ProcedureTerm has a LotGroup.",
-        "xml:lang": "en"
-      },
-      "source": "ProcedureTerm",
-      "target": "LotGroup",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesLotGroup"
-    },
-    {
-      "name": "definesMediator",
-      "description": {
-        "_": "Relation indicating a ProcedureTerm has a Mediator.",
-        "xml:lang": "en"
-      },
-      "source": "ProcedureTerm",
-      "target": "Mediator",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesMediator"
-    },
-    {
-      "name": "definesOfflineAccessProvider",
-      "description": {
-        "_": "Relation indicating an AccessTerm has an OfflineAccessProvider.",
-        "xml:lang": "en"
-      },
-      "source": "AccessTerm",
-      "target": "OfflineAccessProvider",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesOfflineAccessProvider"
-    },
-    {
-      "name": "definesParticipationRequestProcessor",
-      "description": {
-        "_": "Relation indicating a ParticipationRequestTerm has a ParticipationRequestProcessor.",
-        "xml:lang": "en"
-      },
-      "source": "ParticipationRequestTerm",
-      "target": "ParticipationRequestProcessor",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesParticipationRequestProcessor"
-    },
-    {
-      "name": "definesParticipationRequestReceiver",
-      "description": {
-        "_": "Relation indicating a ParticipationRequestTerm has a ParticipationRequestReceiver.",
-        "xml:lang": "en"
-      },
-      "source": "ParticipationRequestTerm",
-      "target": "ParticipationRequestReceiver",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesParticipationRequestReceiver"
-    },
-    {
-      "name": "definesPaymentExecutor",
-      "description": {
-        "_": "Relation indicating a ContractTerm has a PaymentExecutor.",
-        "xml:lang": "en"
-      },
-      "source": "ContractTerm",
-      "target": "PaymentExecutor",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesPaymentExecutor"
-    },
-    {
-      "name": "definesPrize",
-      "description": {
-        "_": "Relation indicating a DesignContestRegimeTerm has a Prize.",
-        "xml:lang": "en"
-      },
-      "source": "DesignContestRegimeTerm",
-      "target": "Prize",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesPrize"
-    },
-    {
-      "name": "definesProcurementProcedureInformationProvider",
-      "description": {
-        "_": "Relation indicating an AccessTerm has a ProcurementProcedureInformationProvider.",
-        "xml:lang": "en"
-      },
-      "source": "AccessTerm",
-      "target": "ProcurementProcedureInformationProvider",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesProcurementProcedureInformationProvider"
-    },
-    {
-      "name": "definesReviewer",
-      "description": {
-        "_": "Relation indicating a ReviewTerm has a Reviewer.",
-        "xml:lang": "en"
-      },
-      "source": "ReviewTerm",
-      "target": "Reviewer",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesReviewer"
-    },
-    {
-      "name": "definesReviewProcedureInformationProvider",
-      "description": {
-        "_": "Relation indicating a ReviewTerm has a ReviewProcedureInformationProvider.",
-        "xml:lang": "en"
-      },
-      "source": "ReviewTerm",
-      "target": "ReviewProcedureInformationProvider",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesReviewProcedureInformationProvider"
-    },
-    {
-      "name": "definesTenderProcessor",
-      "description": {
-        "_": "Relation indicating a SubmissionTerm has a TenderProcessor.",
-        "xml:lang": "en"
-      },
-      "source": "SubmissionTerm",
-      "target": "TenderProcessor",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesTenderProcessor"
-    },
-    {
-      "name": "definesTenderReceiver",
-      "description": {
-        "_": "Relation indicating a SubmissionTerm has a TenderReceiver.",
-        "xml:lang": "en"
-      },
-      "source": "SubmissionTerm",
-      "target": "TenderReceiver",
-      "documentation": "http://data.europa.eu/a4g/ontology#definesTenderReceiver"
     },
     {
       "name": "foreseesSubcontractor",
@@ -4323,36 +2911,6 @@
       "documentation": "http://data.europa.eu/a4g/ontology#isFundedBy"
     },
     {
-      "name": "isResponsibilityOfBuyer",
-      "description": {
-        "_": "The buyer in charge of the procedure.",
-        "xml:lang": "en"
-      },
-      "source": "Buyer",
-      "target": "Procedure",
-      "documentation": "http://data.europa.eu/a4g/ontology#isResponsibilityOfBuyer"
-    },
-    {
-      "name": "needsToBeATenderer",
-      "description": {
-        "_": "The Winner must be a Tenderer.",
-        "xml:lang": "en"
-      },
-      "source": "Winner",
-      "target": "Tenderer",
-      "documentation": "http://data.europa.eu/a4g/ontology#needsToBeATenderer"
-    },
-    {
-      "name": "needsToBeAWinner",
-      "description": {
-        "_": "The Contractor must be a Winner.",
-        "xml:lang": "en"
-      },
-      "source": "Contractor",
-      "target": "Winner",
-      "documentation": "http://data.europa.eu/a4g/ontology#needsToBeAWinner"
-    },
-    {
       "name": "resultsFromLotAwardOutcome",
       "description": {
         "_": "Relation to indicate that a given type of Contract is a consequence of a given LotAwardOutcome.",
@@ -4365,12 +2923,61 @@
   ],
   "metadata": {
     "sourceUrl": "https://raw.githubusercontent.com/OP-TED/ePO/master/implementation/ePO_core/owl_ontology/ePO_core.rdf",
-    "extractionDate": "2025-07-16T22:49:49.425Z",
+    "extractionDate": "2025-07-16T23:02:09.316Z",
     "sourceVersion": "2024.06",
     "entityCount": 148,
     "relationshipCount": 395
   },
-  "ignoredEntities": [],
+  "ignoredEntities": [
+    "AccessTerm",
+    "AwardCriteriaSummary",
+    "AwardEvaluationTerm",
+    "ContractTerm",
+    "DesignContestRegimeTerm",
+    "Documentation",
+    "EconomicStandingSummary",
+    "EmploymentDocumentation",
+    "EmploymentInformationProvider",
+    "EnergyEfficiencyInformation",
+    "EnvironmentalDocumentation",
+    "EvaluationTerm",
+    "ExclusionGroundsSummary",
+    "FrameworkAgreementTerm",
+    "InternationalProcurementInstrumentMeasuresInformation",
+    "LocalLegalBasisInformation",
+    "LotGroupAwardInformation",
+    "MaskableObject",
+    "MultipleStageProcedureTerm",
+    "NoticeAwardInformation",
+    "OpeningTerm",
+    "ParticipationCondition",
+    "ParticipationConditionsSummary",
+    "ParticipationRequestReceiver",
+    "ParticipationRequestTerm",
+    "ProcedureTerm",
+    "ProcessPlanningTerm",
+    "ProcurementCriteriaSummary",
+    "ProcurementDocument",
+    "ProfessionalSuitabilitySummary",
+    "QualificationCriteriaSummary",
+    "ReviewDecision",
+    "ReviewInformation",
+    "ReviewIrregularitySummary",
+    "ReviewRequestSummary",
+    "ReviewTerm",
+    "SecurityClearanceTerm",
+    "SelectedCandidateList",
+    "SelectionCriteriaSummary",
+    "SelectionEvaluationTerm",
+    "SpecificationInformation",
+    "SubcontractTerm",
+    "SubmissionStatisticalInformation",
+    "SubmissionTerm",
+    "TaxDocumentation",
+    "TechnicalAbilitySummary",
+    "Term",
+    "UniqueResponsibleOfTheProcurement"
+  ],
   "ignoredRelationships": [
     "actsOnBehalfOf",
     "agreedByBuyer",
@@ -4418,12 +3025,27 @@
     "concernsTender",
     "conformsToLegalBasis",
     "containsCandidate",
+    "definesBudgetProvider",
+    "definesCatalogueProvider",
+    "definesCatalogueReceiver",
     "definesContractDuration",
     "definesContractPeriod",
     "definesEstimatedContractDuration",
     "definesInformationProvider",
+    "definesLotGroup",
+    "definesMediator",
+    "definesOfflineAccessProvider",
+    "definesParticipationRequestProcessor",
+    "definesParticipationRequestReceiver",
+    "definesPaymentExecutor",
+    "definesPrize",
+    "definesProcurementProcedureInformationProvider",
+    "definesReviewer",
+    "definesReviewProcedureInformationProvider",
     "definesSpecificPlaceOfPerformance",
     "definesSubcontractingTerm",
+    "definesTenderProcessor",
+    "definesTenderReceiver",
     "delegatesAncillaryActivitiesTo",
     "describesDirectAwardPrenotificationNotice",
     "describesLotGroup",
@@ -4654,6 +3276,7 @@
     "isExecutedByProcurementServiceProvider",
     "isOwnedByAgent",
     "isReinforcedBy",
+    "isResponsibilityOfBuyer",
     "isSubjectToGrouping",
     "isSubjectToTerm",
     "isSubmittedBy",
@@ -4664,6 +3287,8 @@
     "isSupportedBy",
     "isUsedInProfile",
     "leadBy",
+    "needsToBeATenderer",
+    "needsToBeAWinner",
     "ownsSystem",
     "playedBy",
     "preparesForPotentialProcurementObject",
