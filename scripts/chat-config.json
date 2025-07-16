@@ -1,0 +1,98 @@
+{
+  "chat_configurations": {
+    "procurement": {
+      "database": "procurement",
+      "ontology": "procurement",
+      "config_path": "ontologies/procurement/config.json",
+      "description": "Uses procurement ontology configuration",
+      "example_queries": [
+        "show all contracts",
+        "list all buyers", 
+        "find tenders related to [company]",
+        "show award decisions",
+        "list all procedures"
+      ]
+    },
+    "fibo": {
+      "database": "fibo", 
+      "ontology": "fibo",
+      "config_path": "ontologies/fibo/config.json",
+      "description": "Uses FIBO ontology configuration",
+      "example_queries": [
+        "show all organizations",
+        "list all deals",
+        "find companies related to [company]",
+        "show investments",
+        "list all persons"
+      ]
+    },
+    "geonames": {
+      "database": "geonames",
+      "ontology": "geonames", 
+      "config_path": "ontologies/geonames/config.json",
+      "description": "Uses GeoNames ontology configuration",
+      "example_queries": [
+        "show all cities",
+        "list all countries",
+        "find locations in [country]",
+        "show geographic features",
+        "list all regions"
+      ]
+    },
+    "isco": {
+      "database": "isco",
+      "ontology": "isco",
+      "config_path": "ontologies/isco/config.json",
+      "description": "Uses ISCO ontology configuration",
+      "example_queries": [
+        "show all occupations",
+        "list all job categories",
+        "find skills related to [occupation]",
+        "show professional classifications",
+        "list all employment types"
+      ]
+    },
+    "sp500": {
+      "database": "sp500",
+      "ontology": "sp500",
+      "config_path": "ontologies/sp500/config.json",
+      "description": "Uses S&P 500 ontology configuration",
+      "example_queries": [
+        "show all companies",
+        "list all stocks",
+        "find companies in [sector]",
+        "show market data",
+        "list all sectors"
+      ]
+    },
+    "testont": {
+      "database": "testont",
+      "ontology": "testont",
+      "config_path": "ontologies/testont/config.json",
+      "description": "Uses test ontology configuration",
+      "example_queries": [
+        "show all test entities",
+        "list all test data",
+        "find test relationships",
+        "show test structure"
+      ]
+    },
+    "default": {
+      "database": "neo4j",
+      "ontology": "core",
+      "config_path": "config/ontology/core.ontology.json",
+      "description": "Uses core system ontology",
+      "example_queries": [
+        "show all entities",
+        "list all nodes",
+        "find relationships",
+        "show graph structure"
+      ]
+    }
+  },
+  "default_config": "procurement",
+  "ontology_loader": {
+    "description": "This configuration references actual ontology config.json files. The system will load the specific ontology configuration from the config_path when launching the chat.",
+    "note": "Each ontology's config.json contains the actual ontology metadata, extraction rules, and domain-specific settings."
+  }
+} 

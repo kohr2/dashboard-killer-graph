@@ -397,7 +397,7 @@ export class ContentProcessingService {
             type: rel.type
           })).filter((r: { source: string | undefined, target: string | undefined, type: string }) => {
             if (!r.source || !r.target) return false;
-            if (r.type && r.type.endsWith('_INFERED')) return true;
+            if (r.type && r.type.endsWith('_INFERRED')) return true;
             return true; // keep all for now, or add stricter checks if needed
           });
 

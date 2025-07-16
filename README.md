@@ -100,29 +100,66 @@ The system is composed of a central **Platform** and multiple **Extensions**.
 
 This modular design allows new capabilities to be added without modifying the core platform.
 
-## 💬 Chat Interface Features
+## 💬 Chat System
 
-The system includes a fully functional conversational interface that:
+The platform includes a powerful **ontology-agnostic chat system** that can work with any ontology. The chat system reads actual ontology configurations and provides intelligent conversational access to your knowledge graph.
 
-- ✅ **Natural Language Processing**: Understands queries like "show me all deals" or "list all people"
-- ✅ **Multi-language Support**: Works in English, French, and other languages
-- ✅ **Entity Recognition**: Recognizes synonyms (people/persons, deals/projects)
-- ✅ **Relationship Queries**: Can find related entities ("show organizations related to Rick")
-- ✅ **Rich Responses**: Uses OpenAI to format results in natural language
-- ✅ **Real-time Data**: Queries live data from Neo4j knowledge graph
-- ✅ **Database-aware**: Automatically queries the configured database
-- ✅ **Dependency Injection**: Proper service initialization and dependency management
+### 🚀 Quick Start
 
-### Example Queries
+```bash
+# List all available ontologies
+npm run chat:list
+
+# Launch chat with specific ontology
+npm run chat:procurement    # Procurement & tendering data
+npm run chat:fibo          # Financial Industry Business Ontology
+npm run chat:geonames      # Geographic and location data
+npm run chat:isco          # Occupational classifications
+npm run chat:sp500         # S&P 500 companies and market data
+
+# Launch all services together
+npm run chat:all
 ```
-"show all deals"
-"list all people"
-"show me organizations"
-"find contacts related to Thoma Bravo"
-"show me all persons"
-"trouve moi les entreprises" (French)
-"show all Organization" (explicit entity type)
+
+### 🏗️ Ontology-Agnostic Features
+
+- ✅ **No hardcoded ontology logic** - Works with any ontology automatically
+- ✅ **Dynamic configuration** - Reads from actual ontology `config.json` files
+- ✅ **Real metadata display** - Shows entity counts, descriptions, versions
+- ✅ **Multiple databases** - Each ontology can use its own database
+- ✅ **Natural language queries** - "show all contracts", "list all buyers"
+- ✅ **Multi-language support** - Works in English, French, and other languages
+- ✅ **Rich responses** - Uses OpenAI to format results naturally
+- ✅ **Real-time data** - Queries live data from Neo4j knowledge graph
+
+### 📋 Available NPM Commands
+
+```bash
+# Chat launchers
+npm run chat:launch        # Smart launcher with prompts
+npm run chat:procurement   # Direct procurement chat
+npm run chat:fibo         # Direct FIBO chat
+npm run chat:geonames     # Direct GeoNames chat
+npm run chat:isco         # Direct ISCO chat
+npm run chat:sp500        # Direct S&P 500 chat
+
+# Individual services
+npm run chat:ui           # Just the React chat interface
+npm run chat:backend      # Just the Node.js API backend
+npm run chat:nlp          # Just the Python NLP service
+npm run chat:all          # All services together
+
+# Discovery
+npm run chat:list         # List all available ontologies
 ```
+
+### Example Queries by Ontology
+
+**Procurement**: "show all contracts", "list all buyers", "find tenders related to [company]"
+**FIBO**: "show all organizations", "list all deals", "find companies related to [company]"
+**GeoNames**: "show all cities", "list all countries", "find locations in [country]"
+**ISCO**: "show all occupations", "list all job categories", "find skills related to [occupation]"
+**S&P 500**: "show all companies", "list all stocks", "find companies in [sector]"
 
 ### Chat API Endpoints
 ```bash
@@ -136,6 +173,8 @@ curl -X POST http://localhost:3001/api/chat \
   "response": "Here are the organizations found:\n\n1. **Vista Equity Partners**\n   - ID: vista_equity_partners\n\n2. **Morgan Stanley**\n   - ID: morgan_stanley\n..."
 }
 ```
+
+📖 **For detailed chat system documentation, see [Chat System Guide](./docs/features/chat-system-guide.md)**
 
 ## 📚 Documentation
 

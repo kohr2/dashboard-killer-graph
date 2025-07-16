@@ -20,18 +20,16 @@ export class OntologyBuildService {
   async checkOntologyExists(ontologyName: string): Promise<boolean> {
     try {
       const ontologyDir = path.join(process.cwd(), `ontologies/${ontologyName}`);
-      const sourceOntologyPath = path.join(ontologyDir, 'source.ontology.json');
       const finalOntologyPath = path.join(ontologyDir, 'ontology.json');
       
-      const sourceExists = fs.existsSync(sourceOntologyPath);
       const finalExists = fs.existsSync(finalOntologyPath);
       
-      if (!sourceExists || !finalExists) {
-        logger.warn(`⚠️ Ontology files missing for ${ontologyName}. Source: ${sourceExists}, Final: ${finalExists}`);
+      if (!finalExists) {
+        logger.warn(`⚠️ Ontology file missing for ${ontologyName}. Final: ${finalExists}`);
         return false;
       }
       
-      logger.info(`✅ Ontology files found for ${ontologyName}`);
+      logger.info(`✅ Ontology file found for ${ontologyName}`);
       return true;
     } catch (error) {
       logger.error(`❌ Error checking ontology ${ontologyName}:`, error);

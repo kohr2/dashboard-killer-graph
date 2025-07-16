@@ -428,7 +428,7 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
 1. Carefully analyze the text.
 2. Extract all entities that match the ontology's entity types.
 3. Extract all relationships that match the ontology's relationship types and patterns.
-4. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST append the suffix _INFERED to its type (e.g., SUPERVISES_INFERED, ASSOCIATED_WITH_INFERED).
+4. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST use ALL_CAPS with underscores only between words, and append the suffix _INFERRED to its type (e.g., SUPERVISES_INFERRED, ASSOCIATED_WITH_INFERRED). Do NOT use underscores between every letter.
 5. Return a JSON object with "entities" and "relationships" arrays.
 
 **Output Format:**
@@ -548,10 +548,10 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
 1. Extract EVERY entity you can identify in the text, regardless of whether it matches the ontology.
 2. For each entity, first try to match it to the most appropriate type from the provided ontology.
 3. If an entity matches multiple ontology types, include all relevant types in a 'types' array.
-4. If an entity doesn't match any ontology type exactly, create a descriptive label and append Infered to it (e.g., "CompanyNameInfered", "DateInfered", "CategoryInfered").
-5. IMPORTANT: Do not skip any entity just because it doesn't match the ontology. Extract ALL entities and use Infered suffix when needed.
+4. If an entity doesn't match any ontology type exactly, create a descriptive label and append Inferred to it (e.g., "CompanyNameInferred", "DateInferred", "CategoryInferred").
+5. IMPORTANT: Do not skip any entity just because it doesn't match the ontology. Extract ALL entities and use Inferred suffix when needed.
 6. Extract all relationships that match the ontology's relationship types and patterns.
-7. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST append the suffix Infered to its type (e.g., supervisesInfered, associatedWithInfered).
+7. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST use ALL_CAPS with underscores only between words, and append the suffix Inferred to its type (e.g., SUPERVISES_INFERRED, ASSOCIATED_WITH_INFERRED). Do NOT use underscores between every letter.
 8. Return a JSON object with "entities" and "relationships" arrays.
 
 **Output Format:**

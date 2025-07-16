@@ -6,7 +6,7 @@ module.exports = {
   testEnvironment: 'node',
   clearMocks: true,
   coverageDirectory: 'coverage',
-  roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/scripts'],
+  roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/scripts', '<rootDir>/ontologies'],
   
   moduleNameMapper: {
     '^@src/(.*)$': '<rootDir>/src/$1',

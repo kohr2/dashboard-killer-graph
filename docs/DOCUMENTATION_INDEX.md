@@ -55,6 +55,10 @@ This index provides navigation to all documentation files in the Knowledge Graph
 - **[Enhanced Entity Extraction](features/enhanced-entity-extraction.md)** - Advanced entity extraction capabilities
 - **[NLP Service Ontology Scoping](features/nlp-service-ontology-scoping.md)** - Multi-ontology support for improved extraction accuracy
 
+### Chat System
+- **[Chat System Guide](features/chat-system-guide.md)** - Complete guide to the ontology-agnostic chat system
+- **[Chat Configuration](features/chat-configuration.md)** - Chat system configuration and customization
+
 ## 📋 Documentation by Category
 
 ### For New Users

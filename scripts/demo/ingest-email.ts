@@ -5,15 +5,15 @@ import { promises as fs } from 'fs';
 import { simpleParser, ParsedMail } from 'mailparser';
 import { container } from 'tsyringe';
 
-import { OntologyEmailIngestionService } from '@platform/processing/ontology-email-ingestion.service';
-import { GenericIngestionPipeline, IngestionInput } from '@ingestion/pipeline/generic-ingestion-pipeline';
-import { ContentProcessingService } from '@platform/processing/content-processing.service';
-import { Neo4jIngestionService } from '@platform/processing/neo4j-ingestion.service';
-import { registerAllOntologies } from '@src/register-ontologies';
-import { OntologyService } from '@platform/ontology/ontology.service';
+import { OntologyEmailIngestionService } from '../../src/platform/processing/ontology-email-ingestion.service';
+import { GenericIngestionPipeline, IngestionInput } from '../../src/ingestion/pipeline/generic-ingestion-pipeline';
+import { ContentProcessingService } from '../../src/platform/processing/content-processing.service';
+import { Neo4jIngestionService } from '../../src/platform/processing/neo4j-ingestion.service';
+import { registerAllOntologies } from '../../src/register-ontologies';
+import { OntologyService } from '../../src/platform/ontology/ontology.service';
 import { resetDatabase } from '../database/reset-neo4j';
-import { logger } from '@common/utils/logger';
-import { ReasoningOrchestratorService } from '@platform/reasoning/reasoning-orchestrator.service';
+import { logger } from '../../src/common/utils/logger';
+import { ReasoningOrchestratorService } from '../../src/platform/reasoning/reasoning-orchestrator.service';
 
 interface ParsedEmailWithSource extends ParsedMail { sourceFile: string; }
 
@@ -149,6 +149,12 @@ async function runOntologyMode(flags: CliFlags): Promise<void> {
   }
 
   logger.info(`🚀 Starting ontology-specific email ingestion for: ${flags.ontology}`);
+  
+  // Set database if specified
+  if (flags.database) {
+    process.env.NEO4J_DATABASE = flags.database;
+    logger.info(`🗄️  Target DB: ${flags.database}`);
+  }
   
   // Reset database if requested
   if (flags.resetDb) {

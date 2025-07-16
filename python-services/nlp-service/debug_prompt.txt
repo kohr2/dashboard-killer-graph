@@ -341,7 +341,7 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
 1. Carefully analyze the text.
 2. Extract all entities that match the ontology's entity types.
 3. Extract all relationships that match the ontology's relationship types and patterns.
-4. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST append the suffix _INFERED to its type (e.g., SUPERVISES_INFERED, ASSOCIATED_WITH_INFERED).
+4. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST use ALL_CAPS with underscores only between words, and append the suffix _INFERRED to its type (e.g., SUPERVISES_INFERRED, ASSOCIATED_WITH_INFERRED). Do NOT use underscores between every letter.
 5. Return a JSON object with "entities" and "relationships" arrays.
 
 **Output Format:**
