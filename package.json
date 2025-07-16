@@ -10,6 +10,9 @@
     "dev:nlp": "cd python-services/nlp-service && source venv/bin/activate && uvicorn main:app --host 127.0.0.1 --port 8000",
     "dev:all": "concurrently -n \"API,NLP\" -c \"blue,magenta\" \"npm:dev\" \"npm:dev:nlp\"",
     "dev:mcp": "node src/mcp/servers/mcp-server-stdio.js",
+    "dev:mcp:stdio": "node src/mcp/servers/mcp-server-stdio.js",
+    "dev:mcp:http": "node src/mcp/servers/mcp-server-http.js",
+    "dev:mcp:interactive": "echo 'Choose MCP transport:' && echo '1) stdio (for Claude Desktop)' && echo '2) http (for web clients)' && read -p 'Enter choice (1 or 2): ' choice && if [ \"$choice\" = \"1\" ]; then npm run dev:mcp:stdio; elif [ \"$choice\" = \"2\" ]; then npm run dev:mcp:http; else echo 'Invalid choice'; fi",
     "ts": "TS_NODE_PROJECT=scripts/tsconfig.json ts-node -r tsconfig-paths/register",
     "build": "npm run ontologies:generate && tsc -p config/tsconfig.build.json",
     "start": "node dist/src/api.js",
@@ -84,7 +87,14 @@
     "chat:simple:fibo": "./scripts/launch-chat-simple.sh fibo",
     "chat:simple:geonames": "./scripts/launch-chat-simple.sh geonames",
     "chat:simple:isco": "./scripts/launch-chat-simple.sh isco",
-    "chat:simple:sp500": "./scripts/launch-chat-simple.sh sp500"
+    "chat:simple:sp500": "./scripts/launch-chat-simple.sh sp500",
+    "mcp:stdio": "NEO4J_DATABASE=dashboard-killer MCP_ACTIVE_ONTOLOGIES=core,fibo,procurement,geonames npm run dev:mcp:stdio",
+    "mcp:http": "NEO4J_DATABASE=dashboard-killer MCP_ACTIVE_ONTOLOGIES=core,fibo,procurement,geonames MCP_HTTP_PORT=3002 npm run dev:mcp:http",
+    "mcp:fibo": "NEO4J_DATABASE=fibo MCP_ACTIVE_ONTOLOGIES=core,fibo npm run dev:mcp:stdio",
+    "mcp:procurement": "NEO4J_DATABASE=procurement MCP_ACTIVE_ONTOLOGIES=core,procurement npm run dev:mcp:stdio",
+    "mcp:geonames": "NEO4J_DATABASE=geonames MCP_ACTIVE_ONTOLOGIES=core,geonames npm run dev:mcp:stdio",
+    "mcp:procurement-only": "NEO4J_DATABASE=procurement MCP_ACTIVE_ONTOLOGIES=procurement npm run dev:mcp:stdio",
+    "mcp:test": "./scripts/test-mcp-transport.sh"
   },
   "keywords": [
     "knowledge-graph",

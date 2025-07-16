@@ -33,6 +33,7 @@ export interface Relationship {
 export interface ProcessingResult {
   entities: IngestionEntity[];
   relationships: Relationship[];
+  metadata?: Record<string, any>;
 }
 
 @singleton()
@@ -393,7 +394,14 @@ export class Neo4jIngestionService {
     }
     
     // Create Communication Node and link entities
-    const communicationId = uuidv4();
+    const metadata = result.metadata || {};
+    const sourceFile = metadata.sourceFile || 'unknown-email';
+    const communicationId = `communication_${sourceFile}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    logger.info(`[DEBUG] Creating Communication node with metadata: ${JSON.stringify(metadata)}`);
+    logger.info(`[DEBUG] SourceFile: ${sourceFile}`);
+    logger.info(`[DEBUG] CommunicationId: ${communicationId}`);
+    
     await this.session.run(
       `
       MERGE (c:Communication {id: $id})
@@ -404,7 +412,7 @@ export class Neo4jIngestionService {
         subject: 'Email Communication',
         from: 'Unknown Sender',
         date: new Date().toISOString(),
-        sourceFile: 'email',
+        sourceFile: sourceFile,
         createdAt: new Date().toISOString(),
       },
     );

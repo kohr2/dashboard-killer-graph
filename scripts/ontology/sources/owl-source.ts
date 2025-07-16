@@ -284,6 +284,20 @@ export class OwlSource implements OntologySource {
         entities.push(entity);
       }
 
+      // Build entities from direct owl:Class elements
+      for (const classElement of classElements) {
+        // Support both xml2js styles: attributes at top-level or under $
+        const uri = classElement['rdf:about'] || (classElement.$ && classElement.$['rdf:about']);
+        const name = uri ? this.extractNameFromUri(uri) : undefined;
+        
+        if (!name || this.isSystemClass(name) || !this.isValidEntityName(name)) {
+          continue;
+        }
+
+        const entity = this.buildEntity(classElement, name, uri, datatypeProperties);
+        entities.push(entity);
+      }
+
       // Build relationships with access to entity names for definition parsing
       const relationships: Relationship[] = [];
       const availableEntityNames = entities.map(e => e.name);
@@ -386,9 +400,10 @@ export class OwlSource implements OntologySource {
       return isValid;
     });
 
-    // If the config.path contains a specific ontology keyword, filter strictly
+    // For FIBO, include all valid entities from imported modules
+    // The filtering by documentation was too restrictive for imported entities
     if (config.path.includes('fibo')) {
-      return validEntities.filter(entity => entity.documentation?.includes('fibo'));
+      return validEntities;
     }
     if (config.path.includes('o-cream')) {
       return validEntities.filter(entity => entity.documentation?.includes('o-cream'));
@@ -398,9 +413,10 @@ export class OwlSource implements OntologySource {
   }
 
   async extractRelationships(config: ExtractionRule, parsed: ParsedOntology): Promise<Relationship[]> {
-    // If the config.path contains a specific ontology keyword, filter strictly
+    // For FIBO, include all relationships from imported modules
+    // The filtering by documentation was too restrictive for imported relationships
     if (config.path.includes('fibo')) {
-      return parsed.relationships.filter(rel => rel.documentation?.includes('fibo'));
+      return parsed.relationships;
     }
     if (config.path.includes('o-cream')) {
       return parsed.relationships.filter(rel => rel.documentation?.includes('o-cream'));

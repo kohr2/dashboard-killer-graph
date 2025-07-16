@@ -2,9 +2,9 @@
   "name": "fibo",
   "source": {
     "url": "https://spec.edmcouncil.org/fibo/ontology/master/latest/AboutFIBOProd-TBoxOnly.rdf",
-    "type": "rdf",
+    "type": "owl",
     "version": "2025-07",
-    "description": "Financial Industry Business Ontology (FIBO) - Production T-Box only (schema) from EDM Council"
+    "description": "Financial Industry Business Ontology (FIBO) - Complete Production T-Box from EDM Council"
   },
   "dataset": {
     "downloadUrl": "https://spec.edmcouncil.org/fibo/ontology/master/latest/AboutFIBOProd-TBoxOnly.rdf",

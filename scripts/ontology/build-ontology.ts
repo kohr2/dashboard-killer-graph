@@ -127,7 +127,7 @@ async function buildOntology(options: BuildOptions = {}) {
         CORE_ENTITY_WHITELIST.forEach(coreName => topEntityNames.add(coreName));
 
         const allEntityNames = new Set<string>(result.sourceOntology.entities.map((e: Entity) => e.name));
-        const ignoredEntities = Array.from(allEntityNames).filter((name) => !topEntityNames.has(name));
+        const ignoredEntities = Array.from(allEntityNames).filter((name: string) => !topEntityNames.has(name));
         result.sourceOntology.ignoredEntities = ignoredEntities;
         result.sourceOntology.entities = result.sourceOntology.entities.filter((e: Entity) => topEntityNames.has(e.name));
       }
@@ -143,7 +143,7 @@ async function buildOntology(options: BuildOptions = {}) {
         // Keep only the top relationships by importance
         const topRelNames = new Set(relAnalysis.slice(0, options.topRelationships).map(r => r.relationshipName));
         const allRelNames = new Set<string>(result.sourceOntology.relationships.map((r: Relationship) => r.name));
-        const ignoredRelationships = Array.from(allRelNames).filter((name) => !topRelNames.has(name));
+        const ignoredRelationships = Array.from(allRelNames).filter((name: string) => !topRelNames.has(name));
         result.sourceOntology.ignoredRelationships = ignoredRelationships;
         result.sourceOntology.relationships = result.sourceOntology.relationships.filter((r: Relationship) => topRelNames.has(r.name));
       }

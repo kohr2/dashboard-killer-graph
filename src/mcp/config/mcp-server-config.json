@@ -7,8 +7,8 @@
       ],
       "cwd": ".",
       "env": {
-        "NEO4J_DATABASE": "dashboard-killer",
-        "MCP_ACTIVE_ONTOLOGIES": "core,fibo,procurement,geonames"
+        "NEO4J_DATABASE": "procurement",
+        "MCP_ACTIVE_ONTOLOGIES": "procurement"
       }
     }
   }

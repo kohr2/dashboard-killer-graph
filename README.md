@@ -32,7 +32,7 @@ npm run dev
 cd chat-ui && npm run dev
 
 # 6. Start the MCP Server for Claude Desktop (optional, in a separate terminal)
-npm run dev:mcp
+npm run dev:mcp  # Currently configured for procurement-only
 ```
 
 ## 🎯 Access Points
@@ -56,6 +56,7 @@ NEO4J_DATABASE=fibo  # Target database name
 ```
 
 ### Available Databases
+- **`procurement`**: Public procurement data (current default)
 - **`fibo`**: Financial Industry Business Ontology data
 - **`dashboard-killer`**: Default application database
 - **`neo4j`**: System default database
@@ -66,12 +67,12 @@ To change the target database for chat queries:
 1. **Via Environment File** (recommended):
    ```bash
    # Edit .env file
-   NEO4J_DATABASE=fibo
+   NEO4J_DATABASE=procurement  # Current default
    ```
 
 2. **Via Environment Variable**:
    ```bash
-   export NEO4J_DATABASE=fibo
+   export NEO4J_DATABASE=procurement
    npm run dev
    ```
 
@@ -155,7 +156,7 @@ npm run chat:list         # List all available ontologies
 
 ### Example Queries by Ontology
 
-**Procurement**: "show all contracts", "list all buyers", "find tenders related to [company]"
+**Procurement** (Current Default): "show all contracts", "list all buyers", "find tenders related to [company]"
 **FIBO**: "show all organizations", "list all deals", "find companies related to [company]"
 **GeoNames**: "show all cities", "list all countries", "find locations in [country]"
 **ISCO**: "show all occupations", "list all job categories", "find skills related to [occupation]"

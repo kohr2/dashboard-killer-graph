@@ -162,8 +162,8 @@ describe('OntologyService.getSchemaRepresentation', () => {
         },
         relationships: {
           WORKS_FOR: {
-            domain: 'Person',
-            range: 'Organization',
+            source: 'Person',
+            target: 'Organization',
           },
         },
       };
@@ -189,8 +189,8 @@ describe('OntologyService.getSchemaRepresentation', () => {
         },
         relationships: {
           INVOLVES: {
-            domain: ['Person', 'Organization'],
-            range: ['Deal', 'Organization'],
+            source: ['Person', 'Organization'],
+            target: ['Deal', 'Organization'],
             description: 'Involvement relationship',
           },
         },
@@ -216,8 +216,8 @@ describe('OntologyService.getSchemaRepresentation', () => {
         },
         relationships: {
           INVOLVES: {
-            domain: 'Person',
-            range: ['Deal', 'Organization'],
+            source: 'Person',
+            target: ['Deal', 'Organization'],
             description: 'Mixed relationship',
           },
         },
@@ -283,8 +283,8 @@ describe('OntologyService.getSchemaRepresentation', () => {
         entities: {},
         relationships: {
           WORKS_FOR: {
-            domain: 'Person',
-            range: 'Organization',
+            source: 'Person',
+            target: 'Organization',
             description: 'Employment relationship',
           },
         },
@@ -311,8 +311,8 @@ describe('OntologyService.getSchemaRepresentation', () => {
         },
         relationships: {
           WORKS_FOR: {
-            domain: 'Person',
-            range: 'Organization',
+            source: 'Person',
+            target: 'Organization',
             description: 'Employment',
           },
         },
@@ -325,8 +325,8 @@ describe('OntologyService.getSchemaRepresentation', () => {
         },
         relationships: {
           INVOLVES: {
-            domain: 'Deal',
-            range: 'Organization',
+            source: 'Deal',
+            target: 'Organization',
             description: 'Involvement',
           },
         },

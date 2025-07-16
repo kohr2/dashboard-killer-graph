@@ -13,10 +13,10 @@ describe('OntologyService - Procurement Plugin Loading', () => {
     const allTypes = ontologyService.getAllEntityTypes();
     expect(allTypes).toEqual(
       expect.arrayContaining([
-        'ProcurementProcedure',
         'Contract',
         'Tender',
-        'ProcuringEntity',
+        'Buyer',
+        'AgentInRole',
       ]),
     );
   });
