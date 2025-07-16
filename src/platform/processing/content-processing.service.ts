@@ -3,7 +3,6 @@ import { logger } from '@common/utils/logger';
 import { EnrichmentOrchestratorService } from '@platform/enrichment';
 import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { RelationshipInferenceService } from './relationship-inference.service';
 
 // ---------------- Ontology sync payload ----------------
 export interface OntologySyncPayload {
@@ -398,17 +397,8 @@ export class ContentProcessingService {
             type: rel.type
           })).filter((r: { source: string | undefined, target: string | undefined }) => r.source && r.target);
 
-          // Apply relationship inference to discover additional relationships
-          // DISABLED: Relationship inference is temporarily deactivated
-          // const relationshipInferenceService = new RelationshipInferenceService();
-          // const inferredRelationships = await relationshipInferenceService.inferRelationships(
-          //   entities,
-          //   {
-          //     ontologyName,
-          //     confidenceThreshold: 0.7,
-          //     useLLM: true,
-          //     llmService: {
-          //       generateResponse: async (prompt: string) => {
+          // Relationship inference disabled - only use NLP service relationships
+          const inferredRelationships: any[] = [];
           //         // Ontology-agnostic mock LLM service that generates relationships based on entity semantics
           //         // Extract entity information from the prompt to generate realistic relationships
           //         const entityMatch = prompt.match(/\*\*Entities:\*\*\n([\s\S]*?)\n\n\*\*Task:\*\*/);
@@ -729,8 +719,7 @@ export class ContentProcessingService {
           //   }
           // );
 
-          // For now, use empty array for inferred relationships
-          const inferredRelationships: any[] = [];
+          // Use the inferred relationships from the service
 
           // Combine NLP relationships with inferred relationships
           const allRelationships = [

@@ -149,6 +149,12 @@ async function runOntologyMode(flags: CliFlags): Promise<void> {
 
   logger.info(`🚀 Starting ontology-specific email ingestion for: ${flags.ontology}`);
   
+  // Reset database if requested
+  if (flags.resetDb) {
+    await resetDatabase();
+    logger.info('🧹 Database cleared');
+  }
+
   // Prepare build options if any are specified
   const buildOptions: any = {};
   if (flags.topEntities !== undefined) buildOptions.topEntities = flags.topEntities;
@@ -210,9 +216,8 @@ async function runBulkMode(flags: CliFlags): Promise<void> {
     contentProcessing, 
     neo4jService, 
     reasoningOrchestrator,
-    undefined, // relationshipInferenceService - will use default
     (input: IngestionInput) => input.content,
-    flags.ontology // Pass ontology name to pipeline for relationship inference
+    flags.ontology // Pass ontology name to pipeline
   );
 
   // Read emails from directory

@@ -145,7 +145,6 @@ export class OntologyEmailIngestionService {
         this.contentProcessingService,
         this.neo4jIngestionService,
         undefined,
-        undefined, // relationshipInferenceService - will use default
         (input: IngestionInput) => input.content,
         ontologyName
       );

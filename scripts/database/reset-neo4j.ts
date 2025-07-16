@@ -18,7 +18,8 @@ async function resetDatabase(databaseName?: string) {
   const connection = container.resolve(Neo4jConnection);
   try {
     await connection.connect();
-    const session = connection.getDriver().session();
+    // Always open the session for the correct database
+    const session = connection.getDriver().session({ database: databaseName || process.env.NEO4J_DATABASE || 'neo4j' });
     await session.run('MATCH (n) DETACH DELETE n');
     console.log('✅ Database wiped successfully.');
   } catch (error) {

@@ -9,7 +9,7 @@ export interface IngestionResult {
   relationships: any[];
 }
 
-import { RelationshipInferenceService, InferredRelationship } from '@platform/processing/relationship-inference.service';
+// Relationship inference removed - only use NLP service relationships
 
 /**
  * GenericIngestionPipeline
@@ -33,7 +33,6 @@ export class GenericIngestionPipeline {
   private readonly reasoningOrchestrator?: {
     executeAllReasoning: () => Promise<{ success: boolean; message: string }>;
   };
-  private readonly relationshipInferenceService: RelationshipInferenceService;
   private readonly extractor: (input: IngestionInput) => string;
   private readonly ontologyName?: string;
 
@@ -47,26 +46,14 @@ export class GenericIngestionPipeline {
     reasoningOrchestrator?: {
       executeAllReasoning: () => Promise<{ success: boolean; message: string }>;
     },
-    relationshipInferenceService?: RelationshipInferenceService,
     extractor: (input: IngestionInput) => string = (input) => input.content,
     ontologyName?: string,
   ) {
     this.processingService = processingService;
     this.neo4jService = neo4jService;
     this.reasoningOrchestrator = reasoningOrchestrator;
-    this.relationshipInferenceService = relationshipInferenceService || new RelationshipInferenceService();
     this.extractor = extractor;
     this.ontologyName = ontologyName;
-  }
-
-  /**
-   * Infers relationships between entities using the relationship inference service.
-   * This post-processing step creates relationships that the NLP service might not extract explicitly.
-   */
-  private async inferRelationships(entities: any[]): Promise<InferredRelationship[]> {
-    return await this.relationshipInferenceService.inferRelationships(entities, {
-      ontologyName: this.ontologyName
-    });
   }
 
   /**
@@ -77,19 +64,8 @@ export class GenericIngestionPipeline {
     const results = await this.processingService.processContentBatch(contents, this.ontologyName);
     
     for (const result of results) {
-      // Post-process to infer relationships
-      const inferredRelationships = await this.inferRelationships(result.entities);
-      
-      // Merge inferred relationships with existing ones
-      const enhancedResult = {
-        ...result,
-        relationships: [
-          ...result.relationships,
-          ...inferredRelationships
-        ]
-      };
-      
-      await this.neo4jService.ingestEntitiesAndRelationships(enhancedResult);
+      // Use only NLP service relationships (relationship inference disabled)
+      await this.neo4jService.ingestEntitiesAndRelationships(result);
     }
 
     if (this.reasoningOrchestrator) {
