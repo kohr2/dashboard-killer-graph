@@ -1,9 +1,9 @@
-import { parseGeonamesLine, transformGeonamesData } from '../../ontologies/geonames/transform-geonames-data';
+import { parseGeonamesLine, transformGeonamesData } from 'ontologies/geonames/transform-geonames-data';
 
 describe('GeoNames Data Transformation', () => {
   describe('parseGeonamesLine', () => {
     it('should parse a valid GeoNames line correctly', () => {
-      const sampleLine = '5128581\tNew York\tNew York\tNYC,New York,Big Apple\t40.71427\t-74.00597\tP\tPPL\tUS\t\t\t\t\t\t\t\t\t\t8175133\tAmerica/New_York\t2023-01-01';
+      const sampleLine = '5128581\tNew York\tNew York\tNYC,New York,Big Apple\t40.71427\t-74.00597\tP\tPPL\tUS\t\tNY\t\t\t\t8175133\t10\t20\tAmerica/New_York\t2023-01-01';
       
       const result = parseGeonamesLine(sampleLine);
       
@@ -17,7 +17,7 @@ describe('GeoNames Data Transformation', () => {
         featureClass: 'P',
         featureCode: 'PPL',
         countryCode: 'US',
-        admin1Code: '',
+        admin1Code: 'NY',
         population: 8175133,
         timezone: 'America/New_York',
         modificationDate: '2023-01-01'

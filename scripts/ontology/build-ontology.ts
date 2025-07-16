@@ -10,6 +10,7 @@ import { EntityImportanceAnalysis } from './entity-importance-analyzer';
 import { sortNamedArray, sortRecord, sortEntityProperties } from './sort-utils';
 import { pruneRelationshipsByEntities } from './relationship-utils';
 import { compactOntology } from './compact-ontology';
+import { Entity, Relationship } from './ontology-source';
 
 interface BuildOptions {
   configPath?: string;
@@ -53,12 +54,31 @@ async function buildOntology(options: BuildOptions = {}) {
     
     // Initialize processor with available sources
     const ontologyKey = options.ontologyName?.toLowerCase();
-    const owlSource = new OwlSource({ ontologyKey, includeExternalImports: options.includeExternal });
-    const processor = new OntologyProcessor([owlSource]);
-    
-    // Process ontology
-    console.log('🔄 Processing ontology...');
-    const result = await processor.processOntology(config);
+    // For FIBO, we want to recursively process all owl:imports
+    const owlSource = new OwlSource({ ontologyKey, includeExternalImports: true });
+    let processor: OntologyProcessor;
+    let result: any;
+    if (ontologyKey === 'fibo') {
+      // Use the new recursive import extraction for FIBO
+      const fiboUrl = config.source.url;
+      const parsed = await owlSource.parseWithImports(fiboUrl);
+      // Simulate the result structure expected by the rest of the script
+      result = {
+        success: true,
+        sourceOntology: {
+          entities: parsed.entities,
+          relationships: parsed.relationships,
+          ignoredEntities: [] as string[],
+          ignoredRelationships: [] as string[]
+        },
+        metadata: config.metadata
+      };
+    } else {
+      processor = new OntologyProcessor([owlSource]);
+      // Process ontology
+      console.log('🔄 Processing ontology...');
+      result = await processor.processOntology(config);
+    }
     
     if (!result.success) {
       console.error('❌ Failed to process ontology:', result.error);
@@ -77,7 +97,7 @@ async function buildOntology(options: BuildOptions = {}) {
       console.log(`🔍 Debug: entities count: ${result.sourceOntology.entities?.length || 0}`);
       console.log(`🔍 Debug: relationships count: ${result.sourceOntology.relationships?.length || 0}`);
       if (result.sourceOntology.entities && result.sourceOntology.entities.length > 0) {
-        console.log(`🔍 Debug: sample entities: ${result.sourceOntology.entities.slice(0, 5).map(e => e.name).join(', ')}`);
+        console.log(`🔍 Debug: sample entities: ${result.sourceOntology.entities.slice(0, 5).map((e: any) => e.name).join(', ')}`);
       }
     }
     
@@ -90,7 +110,7 @@ async function buildOntology(options: BuildOptions = {}) {
       
       if (options.topEntities && result.sourceOntology) {
         // Prepare entity data for analysis
-        const entityInputs = result.sourceOntology.entities.map(e => ({
+        const entityInputs = result.sourceOntology.entities.map((e: Entity) => ({
           name: e.name,
           description: typeof e.description === 'string' ? e.description : (e.description as any)?._ || e.description || '',
           properties: e.properties || {}
@@ -106,14 +126,14 @@ async function buildOntology(options: BuildOptions = {}) {
         ]);
         CORE_ENTITY_WHITELIST.forEach(coreName => topEntityNames.add(coreName));
 
-        const allEntityNames = new Set(result.sourceOntology.entities.map(e => e.name));
-        const ignoredEntities = Array.from(allEntityNames).filter(name => !topEntityNames.has(name));
+        const allEntityNames = new Set(result.sourceOntology.entities.map((e: Entity) => e.name));
+        const ignoredEntities = Array.from(allEntityNames).filter((name: string) => !topEntityNames.has(name));
         result.sourceOntology.ignoredEntities = ignoredEntities;
-        result.sourceOntology.entities = result.sourceOntology.entities.filter(e => topEntityNames.has(e.name));
+        result.sourceOntology.entities = result.sourceOntology.entities.filter((e: Entity) => topEntityNames.has(e.name));
       }
       if (options.topRelationships && result.sourceOntology) {
         // Prepare relationship data for analysis
-        const relInputs = result.sourceOntology.relationships.map(r => ({
+        const relInputs = result.sourceOntology.relationships.map((r: Relationship) => ({
           name: r.name,
           description: typeof r.description === 'string' ? r.description : (r.description as any)?._ || r.description || '',
           sourceType: r.source || 'Entity',
@@ -122,10 +142,10 @@ async function buildOntology(options: BuildOptions = {}) {
         const relAnalysis = await analyzer.analyzeRelationshipImportance(relInputs, contextDescription, options.topRelationships);
         // Keep only the top relationships by importance
         const topRelNames = new Set(relAnalysis.slice(0, options.topRelationships).map(r => r.relationshipName));
-        const allRelNames = new Set(result.sourceOntology.relationships.map(r => r.name));
-        const ignoredRelationships = Array.from(allRelNames).filter(name => !topRelNames.has(name));
+        const allRelNames = new Set(result.sourceOntology.relationships.map((r: Relationship) => r.name));
+        const ignoredRelationships = Array.from(allRelNames).filter((name: string) => !topRelNames.has(name));
         result.sourceOntology.ignoredRelationships = ignoredRelationships;
-        result.sourceOntology.relationships = result.sourceOntology.relationships.filter(r => topRelNames.has(r.name));
+        result.sourceOntology.relationships = result.sourceOntology.relationships.filter((r: Relationship) => topRelNames.has(r.name));
       }
       
       // Add vectorIndex property based on importance analysis
@@ -169,7 +189,7 @@ async function buildOntology(options: BuildOptions = {}) {
     // After topRelationships filtering add relationship pruning
     if (result.sourceOntology) {
       // Prune any relationships that reference entities that are no longer present
-      const allowedEntityNames = new Set(result.sourceOntology.entities.map(e => e.name));
+      const allowedEntityNames = new Set(result.sourceOntology.entities.map((e: Entity) => e.name));
       const { kept: keptRels, prunedNames } = pruneRelationshipsByEntities(result.sourceOntology.relationships, allowedEntityNames);
       if (prunedNames.length > 0) {
         result.sourceOntology.relationships = keptRels;
@@ -239,7 +259,7 @@ async function buildOntology(options: BuildOptions = {}) {
       if (reservedKeywords.includes(name)) return false;
       return true;
     };
-    const filteredEntities = result.sourceOntology?.entities ? result.sourceOntology.entities.filter(e => isValidEntityName(e.name)) : [];
+    const filteredEntities = result.sourceOntology?.entities ? result.sourceOntology.entities.filter((e: Entity) => isValidEntityName(e.name)) : [];
 
     // Alphabetically sort ignored lists (deduplicated)
     const alpha = (arr: string[] = []) => [...new Set(arr)].sort((a, b) => a.localeCompare(b));
@@ -260,12 +280,12 @@ async function buildOntology(options: BuildOptions = {}) {
     // Generate compact ontology
     // Convert to the format expected by compactOntology function
     const compactOntologyInput = {
-      entities: sourceOntology.entities.map(entity => ({
+      entities: sourceOntology.entities.map((entity: any) => ({
         name: entity.name,
         description: typeof entity.description === 'string' ? entity.description : (entity.description as any)?._ || '',
         properties: Object.keys(entity.properties || {})
       })),
-      relationships: sourceOntology.relationships.map(rel => ({
+      relationships: sourceOntology.relationships.map((rel: any) => ({
         source: rel.source,
         target: rel.target,
         type: rel.name,
@@ -289,7 +309,7 @@ async function buildOntology(options: BuildOptions = {}) {
     // Display sample entities
     if (result.sourceOntology?.entities.length) {
       console.log('\n📋 Sample entities:');
-      result.sourceOntology.entities.slice(0, 5).forEach(entity => {
+      result.sourceOntology.entities.slice(0, 5).forEach((entity: any) => {
         const description = typeof entity.description === 'string' 
           ? entity.description 
           : (entity.description as any)?._ || entity.description;
@@ -300,7 +320,7 @@ async function buildOntology(options: BuildOptions = {}) {
     // Display sample relationships
     if (result.sourceOntology?.relationships.length) {
       console.log('\n🔗 Sample relationships:');
-      result.sourceOntology.relationships.slice(0, 5).forEach(rel => {
+      result.sourceOntology.relationships.slice(0, 5).forEach((rel: any) => {
         console.log(`  - ${rel.name}: ${rel.source} -> ${rel.target}`);
       });
     }

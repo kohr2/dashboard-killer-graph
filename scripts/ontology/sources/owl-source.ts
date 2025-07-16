@@ -275,30 +275,14 @@ export class OwlSource implements OntologySource {
       }
       });
 
-      // Build entities first
+      // Build entities from classDescriptions (ensure parent extraction)
       const entities: Entity[] = [];
-      const entityNames = new Set<string>();
-
-      allClassElements.forEach((classElement: any) => {
-        // Support both xml2js styles: attributes at top-level or under $
-        const uri = classElement['rdf:about'] || (classElement.$ && classElement.$['rdf:about']);
-        let name = uri ? this.extractNameFromUri(uri) : undefined;
-        
-        if (!name || this.isSystemClass(name) || !this.isValidEntityName(name)) {
-          return;
-            }
-
-        name = this.normalizeEntityName(name) || name;
-        
-        // Skip if we already have this entity
-        if (entityNames.has(name)) {
-          return;
-        }
-        
-        entityNames.add(name);
-        const entity = this.buildEntity(classElement, name, uri, datatypeProperties);
+      for (const desc of classDescriptions) {
+        const name = this.extractNameFromUri(desc['rdf:about']);
+        if (!name || this.isSystemClass(name) || !this.isValidEntityName(name)) continue;
+        const entity = this.buildEntity(desc, name, desc['rdf:about'], new Map());
         entities.push(entity);
-      });
+      }
 
       // Build relationships with access to entity names for definition parsing
       const relationships: Relationship[] = [];
@@ -325,6 +309,71 @@ export class OwlSource implements OntologySource {
       console.error('Error parsing OWL content (Turtle fallback also failed):', error);
       throw error;
     }
+  }
+
+  /**
+   * Recursively parse an RDF/OWL file and all its owl:imports, aggregating entities and relationships.
+   * @param url The URL of the RDF file to process
+   * @param visited Set of already visited URLs to avoid cycles
+   * @returns Aggregated entities and relationships from all files
+   */
+  async parseWithImports(url: string, visited = new Set<string>()): Promise<ParsedOntology> {
+    if (visited.has(url)) {
+      return { entities: [], relationships: [] };
+    }
+    visited.add(url);
+    let content: string;
+    try {
+      content = await this.fetch(url);
+    } catch (e) {
+      console.warn(`Failed to fetch ${url}:`, (e as Error).message);
+      return { entities: [], relationships: [] };
+    }
+    // Parse the current file
+    const parsed = await this.parse(content);
+    let allEntities = [...parsed.entities];
+    let allRelationships = [...parsed.relationships];
+    // Find owl:imports
+    let importUrls: string[] = [];
+    try {
+      const parser = new xml2js.Parser({ explicitArray: false, mergeAttrs: true, normalize: true, trim: true });
+      const result = await parser.parseStringPromise(content);
+      const rdfRoot = result['rdf:RDF'] || result;
+      // owl:imports can be an array or single object
+      const ontologyElement = rdfRoot['owl:Ontology'];
+      if (ontologyElement && ontologyElement['owl:imports']) {
+        const imports = ontologyElement['owl:imports'];
+        if (Array.isArray(imports)) {
+          importUrls = imports.map((imp: any) => imp['rdf:resource'] || imp);
+        } else if (typeof imports === 'object' && imports['rdf:resource']) {
+          importUrls = [imports['rdf:resource']];
+        } else if (typeof imports === 'string') {
+          importUrls = [imports];
+        }
+      }
+    } catch (e) {
+      // Ignore import extraction errors
+    }
+    // Recursively process imports if enabled
+    if (this.includeExternalImports && importUrls.length > 0) {
+      for (const importUrl of importUrls) {
+        if (importUrl && typeof importUrl === 'string' && !visited.has(importUrl)) {
+          const imported = await this.parseWithImports(importUrl, visited);
+          allEntities = allEntities.concat(imported.entities);
+          allRelationships = allRelationships.concat(imported.relationships);
+        }
+      }
+    }
+    // Deduplicate by entity/relationship name
+    const entityMap = new Map<string, Entity>();
+    for (const e of allEntities) {
+      if (e.name && !entityMap.has(e.name)) entityMap.set(e.name, e);
+    }
+    const relMap = new Map<string, Relationship>();
+    for (const r of allRelationships) {
+      if (r.name && !relMap.has(r.name)) relMap.set(r.name, r);
+    }
+    return { entities: Array.from(entityMap.values()), relationships: Array.from(relMap.values()) };
   }
 
   async extractEntities(config: ExtractionRule, parsed: ParsedOntology): Promise<Entity[]> {
@@ -485,9 +534,43 @@ export class OwlSource implements OntologySource {
   }
 
   private extractParentClass(element: any): string | null {
-    if (element['rdfs:subClassOf'] && element['rdfs:subClassOf'].$ && element['rdfs:subClassOf'].$['rdf:resource']) {
-      return this.extractNameFromUri(element['rdfs:subClassOf'].$['rdf:resource']);
+    // Handle different RDF structures for subClassOf
+    const subClassOf = element['rdfs:subClassOf'];
+    if (!subClassOf) return null;
+
+    // Case 1: Direct resource reference: <rdfs:subClassOf rdf:resource="..."/>
+    if (subClassOf['rdf:resource']) {
+      return this.extractNameFromUri(subClassOf['rdf:resource']);
     }
+
+    // Case 2: Direct resource reference with $ property: <rdfs:subClassOf rdf:resource="..."/>
+    if (subClassOf.$ && subClassOf.$['rdf:resource']) {
+      return this.extractNameFromUri(subClassOf.$['rdf:resource']);
+    }
+
+    // Case 3: Array of subClassOf elements
+    if (Array.isArray(subClassOf)) {
+      for (const subClass of subClassOf) {
+        if (subClass['rdf:resource']) {
+          const parentName = this.extractNameFromUri(subClass['rdf:resource']);
+          if (parentName && !this.isSystemClass(parentName)) {
+            return parentName;
+          }
+        }
+        if (subClass.$ && subClass.$['rdf:resource']) {
+          const parentName = this.extractNameFromUri(subClass.$['rdf:resource']);
+          if (parentName && !this.isSystemClass(parentName)) {
+            return parentName;
+          }
+        }
+      }
+    }
+
+    // Case 4: Nested class definition (less common)
+    if (subClassOf['owl:Class'] && subClassOf['owl:Class'].$ && subClassOf['owl:Class'].$['rdf:about']) {
+      return this.extractNameFromUri(subClassOf['owl:Class'].$['rdf:about']);
+    }
+
     return null;
   }
 

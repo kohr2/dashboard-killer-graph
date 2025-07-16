@@ -1,14 +1,14 @@
 import { container } from 'tsyringe';
-import { OntologyService } from '@platform/ontology/ontology.service';
+import { OntologyService } from '../ontology/ontology.service';
 import { ContentProcessingService } from './content-processing.service';
 import { Neo4jIngestionService } from './neo4j-ingestion.service';
 import { EmailFixtureGenerationService } from '../fixtures/email-fixture-generation.service';
-import { OntologyBuildService, BuildOptions } from '@platform/ontology/ontology-build.service';
+import { OntologyBuildService, BuildOptions } from '../ontology/ontology-build.service';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { simpleParser } from 'mailparser';
-import { logger } from '@common/utils/logger';
-import { GenericIngestionPipeline, IngestionInput } from '@ingestion/pipeline/generic-ingestion-pipeline';
+import { logger } from '../../common/utils/logger';
+import { GenericIngestionPipeline, IngestionInput } from '../../ingestion/pipeline/generic-ingestion-pipeline';
 
 /**
  * Service for ingesting ontology-specific fixture emails into the database

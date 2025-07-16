@@ -4,8 +4,8 @@ import * as path from 'path';
 import * as glob from 'glob';
 import { singleton } from 'tsyringe';
 import { z } from 'zod';
-import { logger } from '@common/utils/logger';
-import { OntologyPlugin } from '@platform/ontology/ontology.plugin';
+import { logger } from '../../common/utils/logger';
+import { OntologyPlugin } from './ontology.plugin';
 
 // Local interface for testing - matches the generated DTO structure
 interface OrganizationDTO {
