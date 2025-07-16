@@ -9,6 +9,7 @@ import { EntityImportanceAnalyzer } from './entity-importance-analyzer';
 import { EntityImportanceAnalysis } from './entity-importance-analyzer';
 import { sortNamedArray, sortRecord, sortEntityProperties } from './sort-utils';
 import { pruneRelationshipsByEntities } from './relationship-utils';
+import { compactOntology } from './compact-ontology';
 
 interface BuildOptions {
   configPath?: string;
@@ -202,8 +203,16 @@ async function buildOntology(options: BuildOptions = {}) {
     console.log(`📊 Entities kept: ${result.sourceOntology?.entities.length || 0}`);
     console.log(`🔗 Relationships kept: ${result.sourceOntology?.relationships.length || 0}`);
     
-    // Determine output directory
-    const outputDir = options.outputDir || path.dirname(configPath);
+    // Determine output directory - create codegen directory within ontology directory
+    const ontologyDir = path.dirname(configPath);
+    const codegenDir = path.join(ontologyDir, 'codegen');
+    
+    // Create codegen directory if it doesn't exist
+    if (!fs.existsSync(codegenDir)) {
+      fs.mkdirSync(codegenDir, { recursive: true });
+    }
+    
+    const outputDir = options.outputDir || codegenDir;
     
     // Save source ontology (raw extraction)
     const sourceOntologyPath = path.join(outputDir, 'source.ontology.json');
@@ -237,8 +246,30 @@ async function buildOntology(options: BuildOptions = {}) {
     fs.writeFileSync(sourceOntologyPath, JSON.stringify(sourceOntology, null, 2));
     console.log(`💾 Source ontology saved to: ${sourceOntologyPath}`);
     
+    // Generate compact ontology
+    // Convert to the format expected by compactOntology function
+    const compactOntologyInput = {
+      entities: sourceOntology.entities.map(entity => ({
+        name: entity.name,
+        description: typeof entity.description === 'string' ? entity.description : (entity.description as any)?._ || '',
+        properties: Object.keys(entity.properties || {})
+      })),
+      relationships: sourceOntology.relationships.map(rel => ({
+        source: rel.source,
+        target: rel.target,
+        type: rel.name,
+        name: rel.name,
+        description: typeof rel.description === 'string' ? rel.description : (rel.description as any)?._ || ''
+      }))
+    };
+    
+    const compactOntologyData = compactOntology(compactOntologyInput);
+    const compactOntologyPath = path.join(outputDir, 'ontology.compact.json');
+    fs.writeFileSync(compactOntologyPath, JSON.stringify(compactOntologyData, null, 2));
+    console.log(`💾 Compact ontology saved to: ${compactOntologyPath}`);
+    
     // Removed automatic writing of final ontology (ontology.json).
-    // Only source.ontology.json is generated; copy/paste to ontology.json manually as needed.
+    // Only source.ontology.json and ontology.compact.json are generated; copy/paste to ontology.json manually as needed.
     
     // Display sample entities
     if (result.sourceOntology?.entities.length) {

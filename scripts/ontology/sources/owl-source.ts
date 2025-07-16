@@ -533,6 +533,9 @@ export class OwlSource implements OntologySource {
     const parentClassRaw = this.extractParentClass(element);
     const parent = parentClassRaw ? (this.normalizeEntityName(parentClassRaw) || parentClassRaw) : undefined;
 
+    // Auto-detect property entities based on name patterns
+    const isProperty = this.isPropertyEntity(cleanName);
+
     return {
       name: cleanName,
       description,
@@ -541,6 +544,7 @@ export class OwlSource implements OntologySource {
       vectorIndex: true,
       documentation,
       ...(parent ? { parent } : {}),
+      ...(isProperty ? { isProperty: true } : {}),
     };
   }
 
@@ -592,19 +596,29 @@ export class OwlSource implements OntologySource {
    * @param availableEntityNames Array of available entity names from the ontology
    * @returns Array of entity names found in the definition, in order of appearance
    */
-  private extractEntitiesFromDefinition(definition: string, availableEntityNames: string[]): string[] {
+  private extractEntitiesFromDefinition(definition: string | any, availableEntityNames: string[]): string[] {
     if (availableEntityNames.length === 0) {
       return [];
     }
 
+    // Handle different definition formats
+    let definitionText = '';
+    if (typeof definition === 'string') {
+      definitionText = definition;
+    } else if (definition && typeof definition === 'object' && definition._) {
+      definitionText = definition._;
+    } else {
+      return [];
+    }
+
     const foundEntities: { name: string; index: number }[] = [];
-    const definitionLower = definition.toLowerCase();
+    const definitionLower = definitionText.toLowerCase();
     
     for (const entityName of availableEntityNames) {
       const entityNameLower = entityName.toLowerCase();
       // Use word boundary regex to avoid partial matches
       const regex = new RegExp(`\\b${entityNameLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
-      const match = regex.exec(definition);
+      const match = regex.exec(definitionText);
       if (match) {
         foundEntities.push({ name: entityName, index: match.index });
       }
@@ -834,5 +848,35 @@ export class OwlSource implements OntologySource {
         }
       }
     }
+  }
+
+  /**
+   * Determine if an entity should be treated as a property based on its name
+   * Entities containing amount/value/currency patterns are automatically marked as properties
+   */
+  private isPropertyEntity(entityName: string): boolean {
+    const propertyPatterns = [
+      /amount/i,
+      /value/i,
+      /currency/i,
+      /price/i,
+      /cost/i,
+      /rate/i,
+      /percentage/i,
+      /percent/i,
+      /quantity/i,
+      /number/i,
+      /identifier/i,
+      /code/i,
+      /date/i,
+      /time/i,
+      /email/i,
+      /address/i,
+      /phone/i,
+      /url/i,
+      /website/i
+    ];
+
+    return propertyPatterns.some(pattern => pattern.test(entityName));
   }
 } 
