@@ -67,14 +67,17 @@ export class GenericIngestionPipeline {
       const result = results[i];
       const input = inputs[i];
       
-      // Add metadata to the result
-      const resultWithMetadata = {
+      // Infer relationships based on ontology patterns
+      const inferredRelationships = this.inferRelationships(result.entities);
+      
+      // Merge extracted and inferred relationships
+      const mergedResult = {
         ...result,
+        relationships: [...(result.relationships || []), ...inferredRelationships],
         metadata: input.meta || {}
       };
       
-      // Use only NLP service relationships (relationship inference disabled)
-      await this.neo4jService.ingestEntitiesAndRelationships(resultWithMetadata);
+      await this.neo4jService.ingestEntitiesAndRelationships(mergedResult);
     }
 
     if (this.reasoningOrchestrator) {
@@ -105,13 +108,34 @@ export class GenericIngestionPipeline {
       const ontologyData = JSON.parse(fs.readFileSync(ontologyPath, 'utf8'));
       const relationships = ontologyData.relationships || [];
       
-      // Return the relationships from the ontology (no inference needed for tests)
-      return relationships.map((rel: any) => ({
-        source: rel.source,
-        target: rel.target,
-        type: rel.name,
-        description: rel.description?._ || rel.description
-      }));
+      // Create inferred relationships between entities that match ontology patterns
+      const inferred: any[] = [];
+      const createdRelationships = new Set<string>(); // Track created relationships to avoid duplicates
+      
+      for (const rel of relationships) {
+        if (rel.source && rel.target) {
+          // Check if we have entities that match the source and target patterns
+          const sourceEntities = entities.filter(e => e.type === rel.source);
+          const targetEntities = entities.filter(e => e.type === rel.target);
+          
+          if (sourceEntities.length > 0 && targetEntities.length > 0) {
+            const relationshipKey = `${rel.name}:${sourceEntities[0].id}:${targetEntities[0].id}`;
+            
+            // Only create if we haven't already created this relationship
+            if (!createdRelationships.has(relationshipKey)) {
+              inferred.push({
+                source: sourceEntities[0].id,
+                target: targetEntities[0].id,
+                type: rel.name,
+                confidence: 0.8
+              });
+              createdRelationships.add(relationshipKey);
+            }
+          }
+        }
+      }
+      
+      return inferred;
     } catch (error) {
       return [];
     }

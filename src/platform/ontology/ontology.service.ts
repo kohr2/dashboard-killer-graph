@@ -319,8 +319,9 @@ export class OntologyService {
     const relationshipEntries = allRelationshipEntries.slice(0, MAX_ITEMS);
     const relationshipLines = relationshipEntries.map(([name, def]) => {
       // Support both source/target and domain/range formats
-      const source = Array.isArray(def.source || def.domain) ? (def.source || def.domain).join(' | ') : (def.source || def.domain);
-      const target = Array.isArray(def.target || def.range) ? (def.target || def.range).join(' | ') : (def.target || def.range);
+      const defAny = def as any;
+      const source = Array.isArray(defAny.source || defAny.domain) ? (defAny.source || defAny.domain).join(' | ') : (defAny.source || defAny.domain);
+      const target = Array.isArray(defAny.target || defAny.range) ? (defAny.target || defAny.range).join(' | ') : (defAny.target || defAny.range);
       const arrow = ' → ';
       const desc = def.description ? `: ${def.description}` : '';
       return `- ${name} (${source}${arrow}${target})${desc}`;

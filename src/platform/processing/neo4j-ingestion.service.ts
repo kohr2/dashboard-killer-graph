@@ -404,8 +404,7 @@ export class Neo4jIngestionService {
     
     await this.session.run(
       `
-      MERGE (c:Communication {id: $id})
-      ON CREATE SET c.subject = $subject, c.from = $from, c.date = datetime($date), c.sourceFile = $sourceFile, c.createdAt = $createdAt
+      CREATE (c:Communication {id: $id, subject: $subject, from: $from, date: datetime($date), sourceFile: $sourceFile, createdAt: $createdAt})
     `,
       {
         id: communicationId,
@@ -416,7 +415,7 @@ export class Neo4jIngestionService {
         createdAt: new Date().toISOString(),
       },
     );
-    logger.info('Merged Communication node.');
+    logger.info('Created Communication node.');
     
     // Link non-property entities to communication
     for (const entity of nonPropertyEntities) {

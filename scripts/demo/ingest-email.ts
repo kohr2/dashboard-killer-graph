@@ -1,4 +1,32 @@
 #!/usr/bin/env ts-node
+
+// Set database environment variable before any imports
+const args = process.argv.slice(2);
+let database: string | undefined;
+const scopeFlag = args.find(a => a.startsWith('--scope='));
+const databaseFlag = args.find(a => a.startsWith('--database='));
+
+if (scopeFlag) {
+  const scope = scopeFlag.split('=')[1];
+  if (scope === 'procurement') {
+    database = 'procurement';
+  } else if (scope === 'fibo') {
+    database = 'fibo';
+  } else if (scope === 'geonames') {
+    database = 'geonames';
+  } else if (scope === 'isco') {
+    database = 'isco';
+  } else if (scope === 'sp500') {
+    database = 'sp500';
+  }
+}
+if (databaseFlag) {
+  database = databaseFlag.split('=')[1];
+}
+if (database) {
+  process.env.NEO4J_DATABASE = database;
+}
+
 import 'reflect-metadata';
 import { join } from 'path';
 import { promises as fs } from 'fs';
@@ -72,7 +100,6 @@ function parseCliFlags(): CliFlags {
   // Parse scope and apply scope-specific settings
   const scope = flag('scope');
   let ontology = hasOntologyArg ? args[0] : flag('ontology');
-  let database = flag('database');
   let folder = flag('folder', 'emails');
 
   if (scope) {
@@ -80,27 +107,22 @@ function parseCliFlags(): CliFlags {
     switch (scope.toLowerCase()) {
       case 'procurement':
         ontology = ontology || 'procurement';
-        database = database || 'procurement';
         folder = folder || 'procurement/emails';
         break;
       case 'fibo':
         ontology = ontology || 'fibo';
-        database = database || 'fibo';
         folder = folder || 'financial/emails';
         break;
       case 'geonames':
         ontology = ontology || 'geonames';
-        database = database || 'geonames';
         folder = folder || 'geonames/emails';
         break;
       case 'isco':
         ontology = ontology || 'isco';
-        database = database || 'isco';
         folder = folder || 'isco/emails';
         break;
       case 'sp500':
         ontology = ontology || 'sp500';
-        database = database || 'sp500';
         folder = folder || 'financial/emails';
         break;
       default:
@@ -247,10 +269,9 @@ async function runOntologyMode(flags: CliFlags): Promise<void> {
 }
 
 async function runBulkMode(flags: CliFlags): Promise<void> {
-  logger.info(`🚀 Starting bulk email ingestion`);
-  
-  // Set database
+  // Set database BEFORE any Neo4j services are instantiated
   process.env.NEO4J_DATABASE = flags.database;
+  logger.info(`🚀 Starting bulk email ingestion`);
   logger.info(`🗄️  Target DB: ${flags.database}`);
 
   // Register ontologies

@@ -7,6 +7,7 @@ async function queryDatabase() {
   
   try {
     await connection.connect();
+    console.log(`Querying database: ${connection.getDatabase()}`);
     const session = connection.getSession();
     
     // Count Communication nodes

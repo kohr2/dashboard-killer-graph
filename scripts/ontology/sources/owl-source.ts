@@ -350,13 +350,17 @@ export class OwlSource implements OntologySource {
     // Find owl:imports
     let importUrls: string[] = [];
     try {
+      // First, sanitize the XML content to handle character entities
+      const sanitizedContent = this.sanitizeXmlEntities(content);
       const parser = new xml2js.Parser({ explicitArray: false, mergeAttrs: true, normalize: true, trim: true });
-      const result = await parser.parseStringPromise(content);
+      const result = await parser.parseStringPromise(sanitizedContent);
       const rdfRoot = result['rdf:RDF'] || result;
       // owl:imports can be an array or single object
       const ontologyElement = rdfRoot['owl:Ontology'];
+      console.log(`[DEBUG] Ontology element found:`, !!ontologyElement);
       if (ontologyElement && ontologyElement['owl:imports']) {
         const imports = ontologyElement['owl:imports'];
+        console.log(`[DEBUG] Found imports:`, typeof imports, Array.isArray(imports) ? imports.length : 'not array');
         if (Array.isArray(imports)) {
           importUrls = imports.map((imp: any) => imp['rdf:resource'] || imp);
         } else if (typeof imports === 'object' && imports['rdf:resource']) {
@@ -364,19 +368,34 @@ export class OwlSource implements OntologySource {
         } else if (typeof imports === 'string') {
           importUrls = [imports];
         }
+        console.log(`[DEBUG] Extracted import URLs:`, importUrls.length);
+        if (importUrls.length > 0) {
+          console.log(`[DEBUG] First few import URLs:`, importUrls.slice(0, 3));
+        }
+      } else {
+        console.log(`[DEBUG] No imports found in ontology element`);
       }
     } catch (e) {
+      console.log(`[DEBUG] Error extracting imports:`, (e as Error).message);
       // Ignore import extraction errors
     }
     // Recursively process imports if enabled
+    console.log(`[DEBUG] includeExternalImports:`, this.includeExternalImports, `importUrls.length:`, importUrls.length);
     if (this.includeExternalImports && importUrls.length > 0) {
+      console.log(`[DEBUG] Processing imports...`);
       for (const importUrl of importUrls) {
         if (importUrl && typeof importUrl === 'string' && !visited.has(importUrl)) {
+          console.log(`[DEBUG] Processing import:`, importUrl);
           const imported = await this.parseWithImports(importUrl, visited);
+          console.log(`[DEBUG] Import result:`, imported.entities.length, `entities,`, imported.relationships.length, `relationships`);
           allEntities = allEntities.concat(imported.entities);
           allRelationships = allRelationships.concat(imported.relationships);
+        } else {
+          console.log(`[DEBUG] Skipping import:`, importUrl, `(visited:`, visited.has(importUrl), `)`);
         }
       }
+    } else {
+      console.log(`[DEBUG] Not processing imports (includeExternalImports:`, this.includeExternalImports, `, importUrls.length:`, importUrls.length, `)`);
     }
     // Deduplicate by entity/relationship name
     const entityMap = new Map<string, Entity>();
