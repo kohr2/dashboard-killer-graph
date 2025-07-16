@@ -65,8 +65,8 @@ export function buildOntologySyncPayload(
           const name = rel.name || rel.label || rel.id;
           if (!name) continue;
           relationshipTypes.add(name);
-          const source = Array.isArray(rel.domain) ? rel.domain[0] : rel.domain || rel.source || 'UnknownSource';
-          const target = Array.isArray(rel.range) ? rel.range[0] : rel.range || rel.target || 'UnknownTarget';
+          const source = Array.isArray(rel.source) ? rel.source[0] : rel.source || 'UnknownSource';
+          const target = Array.isArray(rel.target) ? rel.target[0] : rel.target || 'UnknownTarget';
           if (source && target) {
             relationshipPatterns.add(`${source}-${name}->${target}`);
           }
@@ -77,8 +77,8 @@ export function buildOntologySyncPayload(
         for (const [key, rel] of Object.entries(ont.relationships as Record<string, any>)) {
           const name = rel.name || key;
           relationshipTypes.add(name);
-          const source = Array.isArray(rel.domain) ? rel.domain[0] : rel.domain || rel.source || 'UnknownSource';
-          const target = Array.isArray(rel.range) ? rel.range[0] : rel.range || rel.target || 'UnknownTarget';
+          const source = Array.isArray(rel.source) ? rel.source[0] : rel.source || 'UnknownSource';
+          const target = Array.isArray(rel.target) ? rel.target[0] : rel.target || 'UnknownTarget';
           if (source && target) {
             relationshipPatterns.add(`${source}-${name}->${target}`);
           }
@@ -101,7 +101,7 @@ export function buildOntologySyncPayload(
 }
 
 export interface CompactOntologySyncPayload {
-  ontologyName: string | undefined;
+  ontology: string | undefined;
   compact_ontology: {
     e: string[];
     r: [string, string, string][];
@@ -148,8 +148,8 @@ export function buildCompactOntologySyncPayload(
           const name = rel.name || rel.label || rel.id;
           if (!name) continue;
           
-          const source = Array.isArray(rel.domain) ? rel.domain[0] : rel.domain || rel.source || 'UnknownSource';
-          const target = Array.isArray(rel.range) ? rel.range[0] : rel.range || rel.target || 'UnknownTarget';
+          const source = Array.isArray(rel.source) ? rel.source[0] : rel.source || 'UnknownSource';
+          const target = Array.isArray(rel.target) ? rel.target[0] : rel.target || 'UnknownTarget';
           
           // Skip generic relationships
           if (['Thing', 'Entity', 'UnrecognizedEntity'].includes(source) || 
@@ -169,8 +169,8 @@ export function buildCompactOntologySyncPayload(
         for (const [key, rel] of Object.entries(ont.relationships as Record<string, any>)) {
           const name = rel.name || key;
           
-          const source = Array.isArray(rel.domain) ? rel.domain[0] : rel.domain || rel.source || 'UnknownSource';
-          const target = Array.isArray(rel.range) ? rel.range[0] : rel.range || rel.target || 'UnknownTarget';
+          const source = Array.isArray(rel.source) ? rel.source[0] : rel.source || 'UnknownSource';
+          const target = Array.isArray(rel.target) ? rel.target[0] : rel.target || 'UnknownTarget';
           
           // Skip generic relationships
           if (['Thing', 'Entity', 'UnrecognizedEntity'].includes(source) || 
@@ -200,7 +200,7 @@ export function buildCompactOntologySyncPayload(
   });
 
   return {
-    ontologyName,
+    ontology: ontologyName,
     compact_ontology: {
       e: sortedEntities,
       r: relationshipPatterns
@@ -275,7 +275,7 @@ export class ContentProcessingService {
       logger.info(`   🧠 Calling batch /extract-graph endpoint for ${contents.length} documents...`);
       const batchResponse = await axios.post<LlmGraphResponse[]>(
         `${this.nlpServiceUrl}/batch-extract-graph`,
-        { texts: contents, ontology_name: ontologyName },
+        { texts: contents, ontology: ontologyName },
         { timeout: 360000 } // 360-second timeout for the full batch
       );
 
@@ -395,7 +395,11 @@ export class ContentProcessingService {
             source: entityIdMap.get(rel.source),
             target: entityIdMap.get(rel.target),
             type: rel.type
-          })).filter((r: { source: string | undefined, target: string | undefined }) => r.source && r.target);
+          })).filter((r: { source: string | undefined, target: string | undefined, type: string }) => {
+            if (!r.source || !r.target) return false;
+            if (r.type && r.type.endsWith('_INFERED')) return true;
+            return true; // keep all for now, or add stricter checks if needed
+          });
 
           // Relationship inference disabled - only use NLP service relationships
           const inferredRelationships: any[] = [];

@@ -397,23 +397,29 @@ async def extract_graph_with_llm_async(text: str, ontology: Optional[str] = None
         "r": []  # We'll populate this from relationship types if available
     }
     
-    # Get relationship types
+    # Get relationship types and build compact ontology relationships
     relationship_types = ontology_config.get("relationship_types", [])
     
-    # If we have relationship patterns, convert them to compact format
-    if hasattr(globals(), 'RELATIONSHIP_PATTERNS') and 'RELATIONSHIP_PATTERNS' in globals():
-        for pattern in globals()['RELATIONSHIP_PATTERNS']:
-            if '-' in pattern and '->' in pattern:
-                parts = pattern.split('-')
-                if len(parts) >= 2:
-                    source = parts[0]
-                    rest = '-'.join(parts[1:])
-                    if '->' in rest:
-                        rel_type, target = rest.split('->', 1)
-                        compact_ontology["r"].append([source, rel_type, target])
+    # Get compact ontology from the configuration if available
+    compact_ontology_config = ontology_config.get("compact_ontology", {})
+    if compact_ontology_config and "r" in compact_ontology_config:
+        compact_ontology["r"] = compact_ontology_config["r"]
+    else:
+        # Fallback: create simple relationship patterns from relationship types
+        # This is a simplified approach - the backend should provide proper patterns
+        for rel_type in relationship_types:
+            # Create generic patterns for common relationship types
+            if "Value" in rel_type or "Amount" in rel_type:
+                compact_ontology["r"].append(["Awarder", rel_type, "MonetaryValue"])
+                compact_ontology["r"].append(["Tenderer", rel_type, "MonetaryValue"])
+            elif "Winner" in rel_type:
+                compact_ontology["r"].append(["AwardDecision", rel_type, "Winner"])
+            elif "Award" in rel_type:
+                compact_ontology["r"].append(["Awarder", rel_type, "Tenderer"])
+                compact_ontology["r"].append(["Awarder", rel_type, "Winner"])
 
     prompt = f"""
-You are an expert knowledge graph builder. Your task is to extract entities and relationships from the following text, using ONLY the provided ontology.
+You are an expert knowledge graph builder. Your task is to extract entities and relationships from the following text, using the provided ontology as a guide.
 
 **Ontology:**
 {json.dumps(compact_ontology, indent=2)}
@@ -422,7 +428,7 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
 1. Carefully analyze the text.
 2. Extract all entities that match the ontology's entity types.
 3. Extract all relationships that match the ontology's relationship types and patterns.
-4. Do not invent types or relationships not present in the ontology.
+4. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST append the suffix _INFERED to its type (e.g., SUPERVISES_INFERED, ASSOCIATED_WITH_INFERED).
 5. Return a JSON object with "entities" and "relationships" arrays.
 
 **Output Format:**
@@ -449,18 +455,6 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
 ---
 """
     
-    # --- DEBUG: Persist prompt to disk (optional) ---
-    if os.getenv("ENABLE_PROMPT_DEBUG", "0") == "1":
-        try:
-            debug_dir = Path(os.getenv("PROMPT_DEBUG_DIR", "/tmp/llm-prompts"))
-            debug_dir.mkdir(parents=True, exist_ok=True)
-            ts = int(time.time() * 1000)
-            prompt_file = debug_dir / f"prompt-{ontology or 'default'}-{ts}.txt"
-            prompt_file.write_text(prompt)
-            print(f"📝 Prompt persisted to {prompt_file}")
-        except Exception as e:
-            print(f"⚠️  Failed to write prompt for debugging: {e}")
-
     try:
         llm_start_time = time.time()
 
@@ -523,40 +517,48 @@ def extract_graph_with_llm(text: str, ontology: Optional[str] = None, database: 
         "r": []  # We'll populate this from relationship types if available
     }
     
-    # Get relationship types
+    # Get relationship types and build compact ontology relationships
     relationship_types = ontology_config.get("relationship_types", [])
     
-    # If we have relationship patterns, convert them to compact format
-    if hasattr(globals(), 'RELATIONSHIP_PATTERNS') and 'RELATIONSHIP_PATTERNS' in globals():
-        for pattern in globals()['RELATIONSHIP_PATTERNS']:
-            if '-' in pattern and '->' in pattern:
-                parts = pattern.split('-')
-                if len(parts) >= 2:
-                    source = parts[0]
-                    rest = '-'.join(parts[1:])
-                    if '->' in rest:
-                        rel_type, target = rest.split('->', 1)
-                        compact_ontology["r"].append([source, rel_type, target])
+    # Get compact ontology from the configuration if available
+    compact_ontology_config = ontology_config.get("compact_ontology", {})
+    if compact_ontology_config and "r" in compact_ontology_config:
+        compact_ontology["r"] = compact_ontology_config["r"]
+    else:
+        # Fallback: create simple relationship patterns from relationship types
+        # This is a simplified approach - the backend should provide proper patterns
+        for rel_type in relationship_types:
+            # Create generic patterns for common relationship types
+            if "Value" in rel_type or "Amount" in rel_type:
+                compact_ontology["r"].append(["Awarder", rel_type, "MonetaryValue"])
+                compact_ontology["r"].append(["Tenderer", rel_type, "MonetaryValue"])
+            elif "Winner" in rel_type:
+                compact_ontology["r"].append(["AwardDecision", rel_type, "Winner"])
+            elif "Award" in rel_type:
+                compact_ontology["r"].append(["Awarder", rel_type, "Tenderer"])
+                compact_ontology["r"].append(["Awarder", rel_type, "Winner"])
 
     prompt = f"""
-You are an expert knowledge graph builder. Your task is to extract entities and relationships from the following text, using ONLY the provided ontology.
+You are an expert knowledge graph builder. Your task is to extract entities and relationships from the following text, using the provided ontology as a guide.
 
 **Ontology:**
 {json.dumps(compact_ontology, indent=2)}
 
 **Instructions:**
-1. Carefully analyze the text.
-2. Extract all entities that match the ontology's entity types.
-3. Extract all relationships that match the ontology's relationship types and patterns.
-4. Do not invent types or relationships not present in the ontology.
-5. Return a JSON object with "entities" and "relationships" arrays.
+1. Carefully analyze the text and extract ALL possible entities you can identify.
+2. For each entity, try to match it to the most appropriate type from the provided ontology.
+3. If an entity matches multiple ontology types, include all relevant types in a 'types' array.
+4. If an entity doesn't match any ontology type exactly, create a descriptive label and append Infered to it (e.g., "CompanyNameInfered", "DateInfered").
+5. Extract all relationships that match the ontology's relationship types and patterns.
+6. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST append the suffix Infered to its type (e.g., SUPERVISESInfered, ASSOCIATED_WITHInfered).
+7. Return a JSON object with "entities" and "relationships" arrays.
 
 **Output Format:**
 {{
   "entities": [
     {{
       "value": "entity name",
-      "type": "entity type",
+      "types": ["entity type 1", "entity type 2"],
       "properties": {{}}
     }}
   ],
@@ -574,18 +576,6 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
 {text}
 ---
 """
-    
-    # --- DEBUG: Persist prompt to disk (optional) ---
-    if os.getenv("ENABLE_PROMPT_DEBUG", "0") == "1":
-        try:
-            debug_dir = Path(os.getenv("PROMPT_DEBUG_DIR", "/tmp/llm-prompts"))
-            debug_dir.mkdir(parents=True, exist_ok=True)
-            ts = int(time.time() * 1000)
-            prompt_file = debug_dir / f"prompt-{ontology or 'default'}-{ts}.txt"
-            prompt_file.write_text(prompt)
-            print(f"📝 Prompt persisted to {prompt_file}")
-        except Exception as e:
-            print(f"⚠️  Failed to write prompt for debugging: {e}")
     
     try:
         print("      [LLM Trace] Starting LLM graph extraction...")
@@ -613,10 +603,15 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
                 entities = graph_data.get("entities", [])
                 relationships = graph_data.get("relationships", [])
 
-                # Add default confidence if missing
+                # Patch: Support both 'type' and 'types' fields for entities
                 for entity in entities:
-                    if isinstance(entity, dict) and "confidence" not in entity:
-                        entity["confidence"] = 0.9
+                    if isinstance(entity, dict):
+                        if "types" in entity and isinstance(entity["types"], list) and entity["types"]:
+                            entity["type"] = entity["types"][0]  # Use the first type for compatibility
+                        elif "type" not in entity and "types" not in entity:
+                            entity["type"] = "Unknown"
+                        if "confidence" not in entity:
+                            entity["confidence"] = 0.9
                 for rel in relationships:
                     if isinstance(rel, dict) and "confidence" not in rel:
                         rel["confidence"] = 0.9
@@ -788,6 +783,12 @@ async def extract_graph_endpoint(request: ExtractionRequest):
     # Process entities: add IDs and graph data
     entities = graph_data.get("entities", [])
     for entity in entities:
+        # Patch: Ensure 'type' is present for Entity model
+        if "type" not in entity:
+            if "types" in entity and isinstance(entity["types"], list) and entity["types"]:
+                entity["type"] = entity["types"][0]
+            else:
+                entity["type"] = "Unknown"
         if "id" not in entity:
             entity["id"] = generate_entity_id(entity.get("type", ""), entity.get("value", ""))
         entity["graph_data"] = create_entity_graph_data(entity, ontology_config)

@@ -4,72 +4,72 @@
       "id": "Company",
       "name": "Company",
       "description": "A business organization or corporation",
-      "properties": [
-        { "name": "name", "type": "string", "description": "Company name" },
-        { "name": "ticker", "type": "string", "description": "Stock ticker symbol" },
-        { "name": "cik", "type": "string", "description": "Central Index Key (SEC identifier)" },
-        { "name": "founded", "type": "date", "description": "Company founding date" },
-        { "name": "headquarters", "type": "string", "description": "Company headquarters location" },
-        { "name": "website", "type": "string", "description": "Company website URL" },
-        { "name": "description", "type": "text", "description": "Company description" },
-        { "name": "marketCap", "type": "number", "description": "Market capitalization" },
-        { "name": "employees", "type": "number", "description": "Number of employees" },
-        { "name": "revenue", "type": "number", "description": "Annual revenue" },
-        { "name": "lei", "type": "string", "description": "Legal Entity Identifier" }
-      ]
+      "properties": {
+        "name": { "type": "string", "description": "Company name" },
+        "ticker": { "type": "string", "description": "Stock ticker symbol" },
+        "cik": { "type": "string", "description": "Central Index Key (SEC identifier)" },
+        "founded": { "type": "date", "description": "Company founding date" },
+        "headquarters": { "type": "string", "description": "Company headquarters location" },
+        "website": { "type": "string", "description": "Company website URL" },
+        "description": { "type": "text", "description": "Company description" },
+        "marketCap": { "type": "number", "description": "Market capitalization" },
+        "employees": { "type": "number", "description": "Number of employees" },
+        "revenue": { "type": "number", "description": "Annual revenue" },
+        "lei": { "type": "string", "description": "Legal Entity Identifier" }
+      }
     },
     "Industry": {
       "id": "Industry",
       "name": "Industry",
       "description": "A specific business industry or sector",
-      "properties": [
-        { "name": "name", "type": "string", "description": "Industry name" },
-        { "name": "code", "type": "string", "description": "Industry classification code" },
-        { "name": "description", "type": "text", "description": "Industry description" },
-        { "name": "parentIndustry", "type": "string", "description": "Parent industry if applicable" }
-      ]
+      "properties": {
+        "name": { "type": "string", "description": "Industry name" },
+        "code": { "type": "string", "description": "Industry classification code" },
+        "description": { "type": "text", "description": "Industry description" },
+        "parentIndustry": { "type": "string", "description": "Parent industry if applicable" }
+      }
     },
     "Sector": {
       "id": "Sector",
       "name": "Sector",
       "description": "A broad business sector category",
-      "properties": [
-        { "name": "name", "type": "string", "description": "Sector name" },
-        { "name": "code", "type": "string", "description": "Sector classification code" },
-        { "name": "description", "type": "text", "description": "Sector description" }
-      ]
+      "properties": {
+        "name": { "type": "string", "description": "Sector name" },
+        "code": { "type": "string", "description": "Sector classification code" },
+        "description": { "type": "text", "description": "Sector description" }
+      }
     },
     "BusinessType": {
       "id": "BusinessType",
       "name": "BusinessType",
       "description": "Type of business organization",
-      "properties": [
-        { "name": "name", "type": "string", "description": "Business type name" },
-        { "name": "description", "type": "text", "description": "Business type description" },
-        { "name": "legalStructure", "type": "string", "description": "Legal structure type" }
-      ]
+      "properties": {
+        "name": { "type": "string", "description": "Business type name" },
+        "description": { "type": "text", "description": "Business type description" },
+        "legalStructure": { "type": "string", "description": "Legal structure type" }
+      }
     },
     "CompanySize": {
       "id": "CompanySize",
       "name": "CompanySize",
       "description": "Classification of company size",
-      "properties": [
-        { "name": "name", "type": "string", "description": "Size category name" },
-        { "name": "description", "type": "text", "description": "Size category description" },
-        { "name": "employeeRange", "type": "string", "description": "Employee count range" },
-        { "name": "revenueRange", "type": "string", "description": "Revenue range" }
-      ]
+      "properties": {
+        "name": { "type": "string", "description": "Size category name" },
+        "description": { "type": "text", "description": "Size category description" },
+        "employeeRange": { "type": "string", "description": "Employee count range" },
+        "revenueRange": { "type": "string", "description": "Revenue range" }
+      }
     },
     "StockExchange": {
       "id": "StockExchange",
       "name": "StockExchange",
       "description": "Stock exchange where company is listed",
-      "properties": [
-        { "name": "name", "type": "string", "description": "Exchange name" },
-        { "name": "code", "type": "string", "description": "Exchange code" },
-        { "name": "country", "type": "string", "description": "Exchange country" },
-        { "name": "description", "type": "text", "description": "Exchange description" }
-      ]
+      "properties": {
+        "name": { "type": "string", "description": "Exchange name" },
+        "code": { "type": "string", "description": "Exchange code" },
+        "country": { "type": "string", "description": "Exchange country" },
+        "description": { "type": "text", "description": "Exchange description" }
+      }
     }
   },
   "relationships": {
@@ -79,10 +79,10 @@
       "description": "Company belongs to a specific industry",
       "sourceEntity": "Company",
       "targetEntity": "Industry",
-      "properties": [
-        { "name": "primary", "type": "boolean", "description": "Whether this is the primary industry" },
-        { "name": "percentage", "type": "number", "description": "Percentage of business in this industry" }
-      ]
+      "properties": {
+        "primary": { "type": "boolean", "description": "Whether this is the primary industry" },
+        "percentage": { "type": "number", "description": "Percentage of business in this industry" }
+      }
     },
     "BELONGS_TO_SECTOR": {
       "id": "BELONGS_TO_SECTOR",
@@ -90,9 +90,9 @@
       "description": "Company belongs to a specific sector",
       "sourceEntity": "Company",
       "targetEntity": "Sector",
-      "properties": [
-        { "name": "primary", "type": "boolean", "description": "Whether this is the primary sector" }
-      ]
+      "properties": {
+        "primary": { "type": "boolean", "description": "Whether this is the primary sector" }
+      }
     },
     "HAS_BUSINESS_TYPE": {
       "id": "HAS_BUSINESS_TYPE",
@@ -100,7 +100,7 @@
       "description": "Company has a specific business type",
       "sourceEntity": "Company",
       "targetEntity": "BusinessType",
-      "properties": []
+      "properties": {}
     },
     "HAS_SIZE": {
       "id": "HAS_SIZE",
@@ -108,9 +108,9 @@
       "description": "Company has a specific size classification",
       "sourceEntity": "Company",
       "targetEntity": "CompanySize",
-      "properties": [
-        { "name": "asOfDate", "type": "date", "description": "Date of size classification" }
-      ]
+      "properties": {
+        "asOfDate": { "type": "date", "description": "Date of size classification" }
+      }
     },
     "LISTED_ON": {
       "id": "LISTED_ON",
@@ -118,11 +118,11 @@
       "description": "Company is listed on a stock exchange",
       "sourceEntity": "Company",
       "targetEntity": "StockExchange",
-      "properties": [
-        { "name": "ticker", "type": "string", "description": "Ticker symbol on this exchange" },
-        { "name": "listingDate", "type": "date", "description": "Date of listing" },
-        { "name": "active", "type": "boolean", "description": "Whether listing is currently active" }
-      ]
+      "properties": {
+        "ticker": { "type": "string", "description": "Ticker symbol on this exchange" },
+        "listingDate": { "type": "date", "description": "Date of listing" },
+        "active": { "type": "boolean", "description": "Whether listing is currently active" }
+      }
     },
     "SUBSIDIARY_OF": {
       "id": "SUBSIDIARY_OF",
@@ -130,10 +130,10 @@
       "description": "Company is a subsidiary of another company",
       "sourceEntity": "Company",
       "targetEntity": "Company",
-      "properties": [
-        { "name": "ownershipPercentage", "type": "number", "description": "Percentage ownership" },
-        { "name": "relationshipType", "type": "string", "description": "Type of subsidiary relationship" }
-      ]
+      "properties": {
+        "ownershipPercentage": { "type": "number", "description": "Percentage ownership" },
+        "relationshipType": { "type": "string", "description": "Type of subsidiary relationship" }
+      }
     },
     "COMPETES_WITH": {
       "id": "COMPETES_WITH",
@@ -141,10 +141,10 @@
       "description": "Company competes with another company",
       "sourceEntity": "Company",
       "targetEntity": "Company",
-      "properties": [
-        { "name": "competitionLevel", "type": "string", "description": "Level of competition" },
-        { "name": "marketOverlap", "type": "number", "description": "Market overlap percentage" }
-      ]
+      "properties": {
+        "competitionLevel": { "type": "string", "description": "Level of competition" },
+        "marketOverlap": { "type": "number", "description": "Market overlap percentage" }
+      }
     },
     "INDUSTRY_BELONGS_TO_SECTOR": {
       "id": "INDUSTRY_BELONGS_TO_SECTOR",
@@ -152,7 +152,7 @@
       "description": "Industry belongs to a sector",
       "sourceEntity": "Industry",
       "targetEntity": "Sector",
-      "properties": []
+      "properties": {}
     }
   },
   "entityExtractionPatterns": {
@@ -199,28 +199,19 @@
         "name": "Company Industry Classification",
         "description": "Classifies companies into industries based on their business description and keywords",
         "entityType": "Company",
-        "factors": ["description", "name", "business_activities"],
-        "weights": [0.6, 0.3, 0.1],
+        "factors": ["description", "keywords", "businessActivities"],
+        "weights": [0.4, 0.3, 0.3],
         "threshold": 0.7,
         "relationshipType": "BELONGS_TO_INDUSTRY"
       },
-      "company_size_classification": {
-        "name": "Company Size Classification",
-        "description": "Classifies companies by size based on employee count and revenue",
+      "market_cap_classification": {
+        "name": "Market Cap Classification",
+        "description": "Classifies companies by size based on market capitalization",
         "entityType": "Company",
-        "factors": ["employees", "revenue", "marketCap"],
-        "weights": [0.4, 0.4, 0.2],
+        "factors": ["marketCap"],
+        "weights": [1.0],
         "threshold": 0.8,
         "relationshipType": "HAS_SIZE"
-      },
-      "competitor_identification": {
-        "name": "Competitor Identification",
-        "description": "Identifies competing companies based on industry overlap and market positioning",
-        "entityType": "Company",
-        "factors": ["industry", "sector", "market_cap", "geographic_region"],
-        "weights": [0.4, 0.3, 0.2, 0.1],
-        "threshold": 0.6,
-        "relationshipType": "COMPETES_WITH"
       }
     }
   }

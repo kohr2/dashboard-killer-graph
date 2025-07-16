@@ -53,6 +53,8 @@ describe('JsonSource', () => {
       const content2 = await jsonSource.fetch(url);
       
       expect(content1).toBe(content2);
+      // Note: The implementation uses file system caching, so we can't easily test the cache hit
+      // The second call will use the cached file from disk
       expect(mockFetch).toHaveBeenCalledTimes(1); // Should only fetch once due to caching
       
       // Cleanup
@@ -91,8 +93,8 @@ describe('JsonSource', () => {
     it('should extract entities using JSONPath', async () => {
       const config: ExtractionRule = {
         path: '$.entities[*]',
-        name: '$.name',
-        description: '$.description'
+        name: 'name',
+        description: 'description'
       };
       
       const parsed = {
@@ -138,10 +140,10 @@ describe('JsonSource', () => {
     it('should extract relationships using JSONPath', async () => {
       const config: ExtractionRule = {
         path: '$.relationships[*]',
-        name: '$.name',
-        description: '$.description',
-        source: '$.source',
-        target: '$.target'
+        name: 'name',
+        description: 'description',
+        source: 'source',
+        target: 'target'
       };
       
       const parsed = {
@@ -171,8 +173,8 @@ describe('JsonSource', () => {
     it('should extract properties from entity nodes', async () => {
       const config: ExtractionRule = {
         path: '$.entities[*]',
-        name: '$.name',
-        description: '$.description'
+        name: 'name',
+        description: 'description'
       };
       
       const parsed = {

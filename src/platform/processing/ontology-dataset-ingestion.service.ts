@@ -409,6 +409,7 @@ export class OntologyDatasetIngestionService {
         contentProcessingService,
         neo4jIngestionService,
         undefined,
+        undefined, // relationshipInferenceService - use default
         (input: any) => input.content,
         ontologyName
       );

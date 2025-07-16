@@ -44,12 +44,9 @@ const OntologyEntitySchema = z.object({
     .optional(),
 });
 
-// Updated to handle both formats: domain/range and source/target
+// Updated to use unified source/target pattern
 const OntologyRelationshipSchema = z.object({
-  // Expected format (domain/range)
-  domain: z.union([z.string(), z.array(z.string())]).optional(),
-  range: z.union([z.string(), z.array(z.string())]).optional(),
-  // Actual format used in ontology files (source/target)
+  // Unified format using source/target
   source: z.union([z.string(), z.array(z.string())]).optional(),
   target: z.union([z.string(), z.array(z.string())]).optional(),
   // Handle both string and object descriptions
@@ -321,11 +318,11 @@ export class OntologyService {
     const allRelationshipEntries = Object.entries(this.schema.relationships);
     const relationshipEntries = allRelationshipEntries.slice(0, MAX_ITEMS);
     const relationshipLines = relationshipEntries.map(([name, def]) => {
-      const domain = Array.isArray(def.domain) ? def.domain.join(' | ') : def.domain;
-      const range = Array.isArray(def.range) ? def.range.join(' | ') : def.range;
+      const source = Array.isArray(def.source) ? def.source.join(' | ') : def.source;
+      const target = Array.isArray(def.target) ? def.target.join(' | ') : def.target;
       const arrow = ' → ';
       const desc = def.description ? `: ${def.description}` : '';
-      return `- ${name} (${domain}${arrow}${range})${desc}`;
+      return `- ${name} (${source}${arrow}${target})${desc}`;
     });
 
     const parts: string[] = [];

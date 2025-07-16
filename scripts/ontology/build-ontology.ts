@@ -61,6 +61,10 @@ async function buildOntology(options: BuildOptions = {}) {
     
     if (!result.success) {
       console.error('❌ Failed to process ontology:', result.error);
+      // In test environment, throw error instead of exiting
+      if (process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID) {
+        throw new Error(`Failed to process ontology: ${result.error}`);
+      }
       process.exit(1);
     }
     

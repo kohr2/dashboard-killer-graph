@@ -143,6 +143,7 @@ EXAMPLES:
 }
 
 async function runOntologyMode(flags: CliFlags): Promise<void> {
+  logger.info(`🚀 [DEBUG] Starting runOntologyMode with flags:`, JSON.stringify(flags));
   if (!flags.ontology) {
     throw new Error('Ontology name is required for ontology mode');
   }
@@ -151,6 +152,7 @@ async function runOntologyMode(flags: CliFlags): Promise<void> {
   
   // Reset database if requested
   if (flags.resetDb) {
+    logger.info(`🧹 [DEBUG] About to reset database`);
     await resetDatabase();
     logger.info('🧹 Database cleared');
   }
@@ -163,9 +165,12 @@ async function runOntologyMode(flags: CliFlags): Promise<void> {
   if (flags.configPath) buildOptions.configPath = flags.configPath;
   if (flags.outputDir) buildOptions.outputDir = flags.outputDir;
   
+  logger.info(`🔧 [DEBUG] About to create OntologyEmailIngestionService`);
   const service = new OntologyEmailIngestionService();
+  logger.info(`✅ [DEBUG] OntologyEmailIngestionService created successfully`);
   
   try {
+    logger.info(`🚀 [DEBUG] About to call service.ingestOntologyEmail`);
     await service.ingestOntologyEmail(
       flags.ontology,
       Object.keys(buildOptions).length > 0 ? buildOptions : undefined,
@@ -175,6 +180,8 @@ async function runOntologyMode(flags: CliFlags): Promise<void> {
     logger.info('✅ Ontology email ingestion complete.');
   } catch (err) {
     logger.error('❌ Ontology email ingestion failed:', err);
+    logger.error(`❌ [DEBUG] Error JSON: ${JSON.stringify(err)}`);
+    logger.error(`❌ [DEBUG] Error type: ${typeof err}`);
     throw err;
   }
 }
@@ -295,5 +302,9 @@ async function main(): Promise<void> {
 
 if (require.main === module) {
   console.log('NEO4J_DATABASE at startup:', process.env.NEO4J_DATABASE);
-  main();
+  main().catch((err: any) => {
+    logger.error('❌ Uncaught error in email ingestion script:', err && (err.stack || err.message || err));
+    console.error(err);
+    process.exit(1);
+  });
 } 

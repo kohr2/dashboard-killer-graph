@@ -418,7 +418,9 @@ describe('RelationshipInferenceService', () => {
         relationshipCount: 2,
         averageConfidence: expect.closeTo(0.85, 5),
         entityTypes: ['Contract', 'PaymentExecutor'],
-        relationshipTypes: ['definesPaymentExecutor']
+        relationshipTypes: ['definesPaymentExecutor'],
+        ontologyRelationships: 2,
+        inferredRelationships: 0
       });
     });
 
@@ -439,7 +441,9 @@ describe('RelationshipInferenceService', () => {
         relationshipCount: 0,
         averageConfidence: 0,
         entityTypes: ['Contract'],
-        relationshipTypes: []
+        relationshipTypes: [],
+        ontologyRelationships: 0,
+        inferredRelationships: 0
       });
     });
   });

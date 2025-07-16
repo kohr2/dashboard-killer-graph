@@ -38,24 +38,35 @@ export class OntologyEmailIngestionService {
    * @param emailPath - If provided, use this email file instead of default logic
    */
   async ingestOntologyEmail(ontologyName: string, buildOptions?: Partial<BuildOptions>, generateNewEmail: boolean = false, emailPath?: string): Promise<void> {
+    logger.info(`🚀 [DEBUG] Starting ingestOntologyEmail for: ${ontologyName}`);
     logger.info(`🚀 Starting ontology email ingestion for: ${ontologyName}`);
 
     try {
       // Step 1: Build ontology service
+      logger.info(`🔧 [DEBUG] About to call buildOntologyService`);
       await this.buildOntologyService(ontologyName, buildOptions);
+      logger.info(`✅ [DEBUG] buildOntologyService completed successfully`);
 
       // Step 2: Get fixture email (generate if asked, else use existing, or use provided path)
+      logger.info(`📧 [DEBUG] About to call getFixtureEmail`);
       const emailContent = await this.getFixtureEmail(ontologyName, generateNewEmail, emailPath);
+      logger.info(`✅ [DEBUG] getFixtureEmail completed successfully, email length: ${emailContent.length}`);
 
       // Step 3: Process and ingest email
+      logger.info(`🔄 [DEBUG] About to call processAndIngestEmail`);
       await this.processAndIngestEmail(emailContent, ontologyName);
+      logger.info(`✅ [DEBUG] processAndIngestEmail completed successfully`);
 
       // Step 4: Gracefully close Neo4j resources so the Node process can exit
+      logger.info(`🔒 [DEBUG] About to close Neo4j service`);
       await this.neo4jIngestionService.close();
+      logger.info(`✅ [DEBUG] Neo4j service closed successfully`);
 
       logger.info(`✅ Successfully ingested ontology email for: ${ontologyName}`);
-    } catch (error) {
-      logger.error(`❌ Failed to ingest ontology email for ${ontologyName}:`, error);
+    } catch (error: any) {
+      logger.error(`❌ Failed to ingest ontology email for ${ontologyName}: ${error && (error.stack || error.message || error)}`);
+      logger.error(`❌ [DEBUG] Error JSON: ${JSON.stringify(error)}`);
+      logger.error(`❌ [DEBUG] Error type: ${typeof error}`);
       throw error;
     }
   }
@@ -91,8 +102,8 @@ export class OntologyEmailIngestionService {
       }
       
       logger.info(`✅ Ontology service built successfully for ${ontologyName}`);
-    } catch (error) {
-      logger.error(`❌ Failed to build ontology service for ${ontologyName}:`, error);
+    } catch (error: any) {
+      logger.error(`❌ Failed to build ontology service for ${ontologyName}: ${error && (error.stack || error.message || error)}`);
       throw error;
     }
   }
@@ -164,8 +175,8 @@ export class OntologyEmailIngestionService {
       await pipeline.run([emailInput]);
       
       logger.info(`✅ Successfully processed and ingested email for ${ontologyName}`);
-    } catch (error) {
-      logger.error(`❌ Failed to process and ingest email for ${ontologyName}:`, error);
+    } catch (error: any) {
+      logger.error(`❌ Failed to process and ingest email for ${ontologyName}: ${error && (error.stack || error.message || error)}`);
       throw error;
     }
   }

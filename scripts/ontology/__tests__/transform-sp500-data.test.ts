@@ -1,4 +1,4 @@
-import { SP500DataTransformer } from '../transform-sp500-data';
+import { SP500DataTransformer } from '../../ontologies/sp500/transform-sp500-data';
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';

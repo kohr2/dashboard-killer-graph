@@ -10,7 +10,8 @@ interface OntologyEntity {
 interface OntologyRelationship {
   source: string;
   target: string;
-  type: string;
+  type?: string;
+  name?: string;
   description?: string;
 }
 
@@ -38,8 +39,11 @@ export function compactOntology(ontology: Ontology): CompactOntology {
   // Filter out generic relationships and format as tuples
   const compactRelationships: [string, string, string][] = ontology.relationships
     .filter(rel => {
+      // Handle both 'type' and 'name' fields for relationship type
+      const relType = rel.type || rel.name;
+      
       // Skip relationships with null or empty type
-      if (!rel.type || rel.type === 'null' || rel.type === '') {
+      if (!relType || relType === 'null' || relType === '') {
         return false;
       }
       
@@ -56,7 +60,7 @@ export function compactOntology(ontology: Ontology): CompactOntology {
       
       // Skip very generic relationship types
       const genericTypes = ['hasProperty', 'hasAttribute', 'hasValue', 'hasType', 'hasName', 'hasId'];
-      if (genericTypes.includes(rel.type)) {
+      if (genericTypes.includes(relType)) {
         return false;
       }
       
@@ -67,7 +71,10 @@ export function compactOntology(ontology: Ontology): CompactOntology {
       
       return true;
     })
-    .map(rel => [rel.source, rel.type, rel.target] as [string, string, string]);
+    .map(rel => {
+      const relType = rel.type || rel.name;
+      return [rel.source, relType, rel.target] as [string, string, string];
+    });
 
   return {
     e: compactEntities,

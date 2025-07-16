@@ -1,4 +1,4 @@
-import { parseGeonamesLine, transformGeonamesData } from '../transform-geonames-data';
+import { parseGeonamesLine, transformGeonamesData } from '../../ontologies/geonames/transform-geonames-data';
 
 describe('GeoNames Data Transformation', () => {
   describe('parseGeonamesLine', () => {

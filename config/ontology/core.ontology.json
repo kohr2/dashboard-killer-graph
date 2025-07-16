@@ -56,23 +56,23 @@
   },
   "relationships": {
     "CONTAINS_ENTITY": {
-      "domain": "Communication",
-      "range": "Thing",
+      "source": "Communication",
+      "target": "Thing",
       "description": "Links a communication to entities mentioned or involved in it"
     },
     "PARTICIPANT_IN": {
-      "domain": "Thing",
-      "range": "Communication",
+      "source": "Thing",
+      "target": "Communication",
       "description": "Links an entity (person, organization) to communications they participated in"
     },
     "SENDER_OF": {
-      "domain": "Thing",
-      "range": "Communication",
+      "source": "Thing",
+      "target": "Communication",
       "description": "Links a sender entity to communications they sent"
     },
     "RECIPIENT_OF": {
-      "domain": "Thing",
-      "range": "Communication",
+      "source": "Thing",
+      "target": "Communication",
       "description": "Links a recipient entity to communications they received"
     }
   },
