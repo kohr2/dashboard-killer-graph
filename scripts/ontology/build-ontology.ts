@@ -268,8 +268,12 @@ async function buildOntology(options: BuildOptions = {}) {
     fs.writeFileSync(compactOntologyPath, JSON.stringify(compactOntologyData, null, 2));
     console.log(`💾 Compact ontology saved to: ${compactOntologyPath}`);
     
-    // Removed automatic writing of final ontology (ontology.json).
-    // Only source.ontology.json and ontology.compact.json are generated; copy/paste to ontology.json manually as needed.
+    // Also update the main ontology.json file in the ontology directory
+    const mainOntologyPath = path.join(ontologyDir, 'ontology.json');
+    fs.writeFileSync(mainOntologyPath, JSON.stringify(sourceOntology, null, 2));
+    console.log(`💾 Main ontology updated: ${mainOntologyPath}`);
+    
+    // Note: source.ontology.json and ontology.compact.json are also generated in codegen/ directory
     
     // Display sample entities
     if (result.sourceOntology?.entities.length) {

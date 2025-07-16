@@ -106,14 +106,23 @@ export class EmailFixtureGenerationService {
    * Load ontology from file
    */
   async loadOntology(ontologyName: string): Promise<SourceOntology> {
-    const ontologyPath = join(process.cwd(), `ontologies/${ontologyName}/source.ontology.json`);
+    // Try to load from the main ontology.json file first (what plugins expect)
+    let ontologyPath = join(process.cwd(), `ontologies/${ontologyName}/ontology.json`);
     
     try {
       const content = await fs.readFile(ontologyPath, 'utf8');
       return JSON.parse(content);
     } catch (error) {
-      logger.error(`Failed to load ontology from ${ontologyPath}:`, error);
-      throw error;
+      // Fallback to source.ontology.json in codegen directory
+      ontologyPath = join(process.cwd(), `ontologies/${ontologyName}/codegen/source.ontology.json`);
+      
+      try {
+        const content = await fs.readFile(ontologyPath, 'utf8');
+        return JSON.parse(content);
+      } catch (fallbackError) {
+        logger.error(`Failed to load ontology from ${ontologyPath}:`, fallbackError);
+        throw fallbackError;
+      }
     }
   }
 
