@@ -170,6 +170,15 @@ class PluginRegistry {
     this.plugins.clear();
     this.initializePlugins();
   }
+
+  /**
+   * Disable all plugins (for pure-ontology mode)
+   */
+  public disableAllPlugins(): void {
+    for (const plugin of this.plugins.values()) {
+      plugin.enabled = false;
+    }
+  }
 }
 
 // Create singleton instance
@@ -180,6 +189,7 @@ export const getEnabledPlugins = () => pluginRegistry.getEnabledPlugins();
 export const getPluginSummary = () => pluginRegistry.getPluginSummary();
 export const isPluginEnabled = (pluginName: string) => pluginRegistry.isPluginEnabled(pluginName);
 export const getPluginDetails = () => pluginRegistry.getPluginDetails();
+export const disableAllPlugins = () => pluginRegistry.disableAllPlugins();
 
 // Export the registry for advanced usage
 export { pluginRegistry };

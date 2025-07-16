@@ -165,11 +165,8 @@ function configureActiveOntologies() {
     const requestedOntologies = activeOntologiesEnv.split(',').map(s => s.trim());
     process.stderr.write(`🔧 Configuring active ontologies: ${requestedOntologies.join(', ')}\n`);
     
-    // Disable all plugins first
-    const allPlugins = pluginRegistry.getPluginDetails();
-    for (const plugin of allPlugins) {
-      pluginRegistry.setPluginEnabled(plugin.name, false);
-    }
+    // Disable all plugins first (including core and sp500)
+    pluginRegistry.disableAllPlugins();
     
     // Enable only requested ontologies
     for (const ontology of requestedOntologies) {
