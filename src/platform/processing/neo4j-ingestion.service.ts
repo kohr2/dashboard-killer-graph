@@ -445,7 +445,7 @@ export class Neo4jIngestionService {
         const targetInfo = entityMap.get(targetEntity.name);
         const sourceLabelsCypher = sourceInfo.labels.map((l: string) => '\`' + l + '\`').join(':');
         const targetLabelsCypher = targetInfo.labels.map((l: string) => '\`' + l + '\`').join(':');
-        const relType = rel.type.replace(/ /g, '_').toUpperCase();
+        const relType = this.convertCamelCaseToSnakeCase(rel.type).replace(/ /g, '_').toUpperCase();
 
         if (rel.properties && Object.keys(rel.properties).length > 0) {
           await this.session.run(
@@ -478,6 +478,18 @@ export class Neo4jIngestionService {
     }
     logger.info(`Merged ${nonPropertyRelationships.length} non-property relationships between entities.`);
     logger.info('Neo4j ingestion complete.');
+  }
+
+  /**
+   * Convert camelCase relationship types to snake_case format
+   * @param camelCase - The camelCase string to convert
+   * @returns The snake_case version of the string
+   */
+  private convertCamelCaseToSnakeCase(camelCase: string): string {
+    return camelCase
+      .replace(/([A-Z])/g, '_$1') // Add underscore before capital letters
+      .toLowerCase() // Convert to lowercase
+      .replace(/^_/, ''); // Remove leading underscore if present
   }
 
   getSession(): Session | null {
