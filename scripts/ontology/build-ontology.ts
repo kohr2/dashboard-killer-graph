@@ -71,6 +71,16 @@ async function buildOntology(options: BuildOptions = {}) {
     
     console.log('✅ Ontology processed successfully!');
     
+    // Debug: Check what was extracted
+    console.log(`🔍 Debug: sourceOntology exists: ${!!result.sourceOntology}`);
+    if (result.sourceOntology) {
+      console.log(`🔍 Debug: entities count: ${result.sourceOntology.entities?.length || 0}`);
+      console.log(`🔍 Debug: relationships count: ${result.sourceOntology.relationships?.length || 0}`);
+      if (result.sourceOntology.entities && result.sourceOntology.entities.length > 0) {
+        console.log(`🔍 Debug: sample entities: ${result.sourceOntology.entities.slice(0, 5).map(e => e.name).join(', ')}`);
+      }
+    }
+    
     // Apply optional importance-based filtering
     if (options.topEntities || options.topRelationships) {
       console.log('⚙️  Applying importance-based (LLM) filters...');
@@ -85,6 +95,7 @@ async function buildOntology(options: BuildOptions = {}) {
           description: typeof e.description === 'string' ? e.description : (e.description as any)?._ || e.description || '',
           properties: e.properties || {}
         }));
+        console.log(`🔍 Debug: entityInputs count: ${entityInputs.length}`);
         entityAnalysis = await analyzer.analyzeEntityImportance(entityInputs, contextDescription, options.topEntities);
         // Keep only the top entities by importance
         const topEntityNames = new Set(entityAnalysis.slice(0, options.topEntities).map(e => e.entityName));

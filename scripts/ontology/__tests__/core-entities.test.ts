@@ -4,45 +4,35 @@ import path from 'path';
 import { jest } from '@jest/globals';
 
 /**
- * Failing test – ensure that core entities like Buyer and Organization are not pruned.
+ * Test to ensure that core entities like Buyer and Organization are not pruned.
  */
 
 describe('buildOntology core entity retention', () => {
   const BUILD_SCRIPT = path.join(process.cwd(), 'scripts', 'ontology', 'build-ontology.ts');
 
   it('keeps Buyer and Organization in FIBO slice', async () => {
-    // Spy on fs.writeFileSync to capture source.ontology.json output
-    const spy = jest.spyOn(fs, 'writeFileSync').mockImplementation((filePath, data) => {
-      // If it's the source ontology, capture contents
-      if (typeof filePath === 'string' && filePath.endsWith('source.ontology.json')) {
-        // Save to variable for assertion later
-        capturedPath = filePath;
-        capturedData = data.toString();
-      }
-      return undefined as any;
-    });
-
-    let capturedPath = '';
-    let capturedData = '';
-
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { buildOntology } = require(BUILD_SCRIPT);
 
+    // Build the FIBO ontology
     await buildOntology({ ontologyName: 'fibo', topEntities: 250, topRelationships: 250 });
 
-    // Parse captured ontology JSON
-    expect(capturedData).not.toEqual('');
-    const ontology = JSON.parse(capturedData);
-
-    const entityNames = ontology.entities.map((e: any) => e.name);
+    // Check the source ontology file for core entities
+    const sourceOntologyPath = 'ontologies/fibo/source.ontology.json';
+    expect(fs.existsSync(sourceOntologyPath)).toBe(true);
+    
+    const sourceData = fs.readFileSync(sourceOntologyPath, 'utf8');
+    const sourceOntology = JSON.parse(sourceData);
+    
+    const entityNames = sourceOntology.entities.map((e: any) => e.name);
+    
+    // Verify core entities are present
     expect(entityNames).toContain('Buyer');
     expect(entityNames).toContain('Organization');
 
     // Also ensure they are NOT in ignoredEntities
-    const ignored = ontology.ignoredEntities || [];
+    const ignored = sourceOntology.ignoredEntities || [];
     expect(ignored).not.toContain('Buyer');
     expect(ignored).not.toContain('Organization');
-
-    spy.mockRestore();
   }, 180000);
 }); 

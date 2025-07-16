@@ -443,9 +443,9 @@ export class Neo4jIngestionService {
       if (sourceEntity && sourceEntity.resolvedId && targetEntity && targetEntity.resolvedId) {
         const sourceInfo = entityMap.get(sourceEntity.name);
         const targetInfo = entityMap.get(targetEntity.name);
-        const sourceLabelsCypher = sourceInfo.labels.map((l: string) => '\`' + l + '\`').join(':');
-        const targetLabelsCypher = targetInfo.labels.map((l: string) => '\`' + l + '\`').join(':');
-        const relType = this.convertCamelCaseToSnakeCase(rel.type).replace(/ /g, '_').toUpperCase();
+        const sourceLabelsCypher = sourceInfo.labels.map((l: string) => '`' + l + '`').join(':');
+        const targetLabelsCypher = targetInfo.labels.map((l: string) => '`' + l + '`').join(':');
+        const relType = this.convertCamelCaseToSnakeCase(rel.type); // no .toUpperCase()
 
         if (rel.properties && Object.keys(rel.properties).length > 0) {
           await this.session.run(
@@ -481,15 +481,24 @@ export class Neo4jIngestionService {
   }
 
   /**
-   * Convert camelCase relationship types to snake_case format
-   * @param camelCase - The camelCase string to convert
-   * @returns The snake_case version of the string
+   * Convert camelCase, PascalCase, or colon-suffixed relationship types to capitalized snake_case
+   * E.g. associatedWith:INFERRED -> ASSOCIATED_WITH_INFERRED
    */
-  private convertCamelCaseToSnakeCase(camelCase: string): string {
-    return camelCase
-      .replace(/([A-Z])/g, '_$1') // Add underscore before capital letters
-      .toLowerCase() // Convert to lowercase
-      .replace(/^_/, ''); // Remove leading underscore if present
+  private convertCamelCaseToSnakeCase(input: string): string {
+    // Split on colon (for :INFERRED or similar)
+    const [main, suffix] = input.split(/[:.]/);
+    // Convert main part to snake_case
+    const snake = main
+      .replace(/([a-z0-9])([A-Z])/g, '$1_$2') // camelCase to snake_case
+      .replace(/([A-Z])([A-Z][a-z])/g, '$1_$2') // PascalCase to snake_case
+      .replace(/[^a-zA-Z0-9]+/g, '_') // non-alphanum to _
+      .replace(/_+/g, '_') // collapse multiple _
+      .replace(/^_+|_+$/g, '') // trim leading/trailing _
+      .toLowerCase();
+    if (suffix) {
+      return `${snake}_${suffix.toLowerCase()}`.toUpperCase();
+    }
+    return snake.toUpperCase();
   }
 
   getSession(): Session | null {

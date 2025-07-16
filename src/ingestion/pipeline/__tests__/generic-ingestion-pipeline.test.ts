@@ -1,4 +1,4 @@
-import { GenericIngestionPipeline, IngestionInput, InferredRelationship } from '../generic-ingestion-pipeline';
+import { GenericIngestionPipeline, IngestionInput } from '../generic-ingestion-pipeline';
 import * as fs from 'fs';
 import * as path from 'path';
 

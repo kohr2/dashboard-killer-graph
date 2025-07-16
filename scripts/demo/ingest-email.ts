@@ -27,6 +27,7 @@ interface CliFlags {
   limit?: number;
   resetDb?: boolean;
   mode: 'ontology' | 'bulk';
+  scope?: string;
   // Build options
   topEntities?: number;
   topRelationships?: number;
@@ -68,16 +69,59 @@ function parseCliFlags(): CliFlags {
     mode = 'ontology'; // default to ontology mode
   }
 
+  // Parse scope and apply scope-specific settings
+  const scope = flag('scope');
+  let ontology = hasOntologyArg ? args[0] : flag('ontology');
+  let database = flag('database');
+  let folder = flag('folder', 'emails');
+
+  if (scope) {
+    // Apply scope-specific settings
+    switch (scope.toLowerCase()) {
+      case 'procurement':
+        ontology = ontology || 'procurement';
+        database = database || 'procurement';
+        folder = folder || 'procurement/emails';
+        break;
+      case 'fibo':
+        ontology = ontology || 'fibo';
+        database = database || 'fibo';
+        folder = folder || 'financial/emails';
+        break;
+      case 'geonames':
+        ontology = ontology || 'geonames';
+        database = database || 'geonames';
+        folder = folder || 'geonames/emails';
+        break;
+      case 'isco':
+        ontology = ontology || 'isco';
+        database = database || 'isco';
+        folder = folder || 'isco/emails';
+        break;
+      case 'sp500':
+        ontology = ontology || 'sp500';
+        database = database || 'sp500';
+        folder = folder || 'financial/emails';
+        break;
+      default:
+        console.warn(`⚠️  Unknown scope: ${scope}. Using default settings.`);
+    }
+  }
+
+  // Set default database if not specified
+  database = database || 'neo4j';
+
   return {
-    ontology: hasOntologyArg ? args[0] : flag('ontology'),
+    ontology,
     generate: hasFlag('generate'),
     email: flag('email'),
-    folder: flag('folder', 'emails'),
+    folder,
     file: flag('file'),
-    database: flag('database', 'neo4j'),
+    database,
     limit: parseInt(flag('limit', '0') as string) || 0,
     resetDb: hasFlag('reset-db'),
     mode,
+    scope,
     // Build options
     topEntities: numericFlag('top-entities'),
     topRelationships: numericFlag('top-relationships'),
@@ -118,6 +162,7 @@ OPTIONS:
   # Common options
   --ontology=<name>       Ontology name (for bulk mode) or override (for ontology mode)
   --database=<name>       Neo4j database name (default: neo4j)
+  --scope=<name>          Set ontology, database, and folder at once (procurement, fibo, geonames, isco, sp500)
   --reset-db              Clear database before ingesting
   --help, -h              Show this help message
 
@@ -130,6 +175,10 @@ EXAMPLES:
   
   # Process single ontology with custom build configuration
   npx ts-node scripts/demo/ingest-email.ts fibo --generate --top-entities=50 --include-external
+  
+  # Use scope to set ontology, database, and folder at once
+  npx ts-node scripts/demo/ingest-email.ts --scope=procurement --generate --reset-db
+  npx ts-node scripts/demo/ingest-email.ts --scope=fibo --generate --reset-db
   
   # Bulk process all emails from procurement folder
   npx ts-node scripts/demo/ingest-email.ts --folder=procurement/emails --ontology=procurement
@@ -146,6 +195,11 @@ async function runOntologyMode(flags: CliFlags): Promise<void> {
   logger.info(`🚀 [DEBUG] Starting runOntologyMode with flags:`, JSON.stringify(flags));
   if (!flags.ontology) {
     throw new Error('Ontology name is required for ontology mode');
+  }
+
+  // Log scope information if used
+  if (flags.scope) {
+    logger.info(`🎯 Using scope: ${flags.scope} (ontology: ${flags.ontology}, database: ${flags.database}, folder: ${flags.folder})`);
   }
 
   logger.info(`🚀 Starting ontology-specific email ingestion for: ${flags.ontology}`);
