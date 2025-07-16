@@ -545,13 +545,14 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
 {json.dumps(compact_ontology, indent=2)}
 
 **Instructions:**
-1. Carefully analyze the text and extract ALL possible entities you can identify.
-2. For each entity, try to match it to the most appropriate type from the provided ontology.
+1. Extract EVERY entity you can identify in the text, regardless of whether it matches the ontology.
+2. For each entity, first try to match it to the most appropriate type from the provided ontology.
 3. If an entity matches multiple ontology types, include all relevant types in a 'types' array.
-4. If an entity doesn't match any ontology type exactly, create a descriptive label and append Infered to it (e.g., "CompanyNameInfered", "DateInfered").
-5. Extract all relationships that match the ontology's relationship types and patterns.
-6. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST append the suffix Infered to its type (e.g., SUPERVISESInfered, ASSOCIATED_WITHInfered).
-7. Return a JSON object with "entities" and "relationships" arrays.
+4. If an entity doesn't match any ontology type exactly, create a descriptive label and append Infered to it (e.g., "CompanyNameInfered", "DateInfered", "CategoryInfered").
+5. IMPORTANT: Do not skip any entity just because it doesn't match the ontology. Extract ALL entities and use Infered suffix when needed.
+6. Extract all relationships that match the ontology's relationship types and patterns.
+7. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST append the suffix Infered to its type (e.g., supervisesInfered, associatedWithInfered).
+8. Return a JSON object with "entities" and "relationships" arrays.
 
 **Output Format:**
 {{
