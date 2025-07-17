@@ -2,7 +2,7 @@ import type { AxiosInstance } from 'axios';
 import axios from 'axios';
 import { IEnrichmentService } from './i-enrichment-service.interface';
 import { GenericEntity } from './dto-aliases';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
@@ -48,9 +48,9 @@ export class EdgarEnrichmentService implements IEnrichmentService {
    */
   public async enrich(entity: GenericEntity): Promise<GenericEntity | {}> {
     try {
-      // Only enrich Organization entities
-      if (entity.type !== 'Organization') {
-        logger.debug(`Skipping EDGAR enrichment for non-Organization entity: ${entity.type}`);
+      // Only enrich Organization and Business entities
+      if (entity.type !== 'Organization' && entity.type !== 'Business') {
+        logger.debug(`Skipping EDGAR enrichment for non-Organization/Business entity: ${entity.type}`);
         return {};
       }
 
@@ -87,8 +87,12 @@ export class EdgarEnrichmentService implements IEnrichmentService {
       // Fetch detailed company data
       const companyUrl = `https://data.sec.gov/submissions/CIK${matchingEntry.cik_str.toString().padStart(10, '0')}.json`;
       const companyResponse = await axios.get<CompanyData>(companyUrl, {
-        headers: { 'User-Agent': this.userAgent },
-        timeout: 5000
+        headers: { 
+          'User-Agent': this.userAgent,
+          'Accept': 'application/json',
+          'Accept-Encoding': 'gzip, deflate, br'
+        },
+        timeout: 15000
       });
 
       // Return enriched entity

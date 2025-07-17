@@ -3,7 +3,7 @@
 
 import neo4j, { Driver, Session } from 'neo4j-driver';
 import { config } from 'dotenv';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import { container, singleton } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
 

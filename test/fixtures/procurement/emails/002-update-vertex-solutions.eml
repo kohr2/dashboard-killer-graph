@@ -1,0 +1,20 @@
+Message-ID: <procurement-213751@procurement.company.com>
+From: "Matthew Martinez" <matthew.martinez@company.com>
+To: "John Smith" <john.smith@vertexsolutions.com>
+Subject: Update on Supplies Procurement with Vertex Solutions - Reference Number PROCUREMENT-213751
+Date: Wed, 16 Jul 2025 23:59:15 GMT
+Content-Type: text/plain; charset="UTF-8"
+
+Dear John Smith,
+
+I am writing to provide you with an update on the ongoing procurement process for supplies with Vertex Solutions. The estimated value for the procurement is 4575.27 JPY, and we have received the financial offer from the tenderers.
+
+As per the "hasFinancialOfferValue" relationship, the next step involves evaluating the offers received. Once the evaluation is completed, we will notify you of the final decision in accordance with the "resultsFromLotAwardOutcome" relationship.
+
+If you require any additional information or have any specific queries regarding the procurement process, please feel free to reach out.
+
+Thank you for your attention to this matter.
+
+Best regards,
+Matthew Martinez
+Party at the Procurement Department

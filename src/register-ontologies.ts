@@ -1,4 +1,4 @@
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { pluginRegistry } from '../config/ontology/plugins.config';
 

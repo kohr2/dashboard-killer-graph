@@ -1,5 +1,5 @@
 import { singleton } from 'tsyringe';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import OpenAI from 'openai';
@@ -204,15 +204,17 @@ export class EmailFixtureGenerationService {
    */
   private extractRelevantEntities(ontology: SourceOntology): OntologyEntity[] {
     // Get all entities, prioritizing those with descriptions
-    return ontology.entities
+    const allEntities = ontology.entities
       .filter(entity => entity.description && entity.description._)
       .sort((a, b) => {
         // Prioritize entities with more detailed descriptions
         const aDescLength = a.description._?.length || 0;
         const bDescLength = b.description._?.length || 0;
         return bDescLength - aDescLength;
-      })
-      .slice(0, 20); // Limit to top 20 most relevant entities
+      });
+    
+    // Use more entities for richer content - up to 50 entities
+    return allEntities.slice(0, Math.min(50, allEntities.length));
   }
 
   /**
@@ -221,15 +223,17 @@ export class EmailFixtureGenerationService {
   private extractRelevantRelationships(ontology: SourceOntology): OntologyRelationship[] {
     if (!ontology.relationships) return [];
     
-    return ontology.relationships
+    const allRelationships = ontology.relationships
       .filter(rel => rel.description && rel.description._)
       .sort((a, b) => {
         // Prioritize relationships with more detailed descriptions
         const aDescLength = a.description._?.length || 0;
         const bDescLength = b.description._?.length || 0;
         return bDescLength - aDescLength;
-      })
-      .slice(0, 10); // Limit to top 10 most relevant relationships
+      });
+    
+    // Use more relationships for richer content - up to 25 relationships
+    return allRelationships.slice(0, Math.min(25, allRelationships.length));
   }
 
   /**
@@ -308,6 +312,9 @@ export class EmailFixtureGenerationService {
       // Extract relevant entities and relationships dynamically
       const relevantEntities = this.extractRelevantEntities(ontology);
       const relevantRelationships = this.extractRelevantRelationships(ontology);
+      
+      // Log the number of entities and relationships being used
+      logger.info(`📧 Email generation using ${relevantEntities.length} entities and ${relevantRelationships.length} relationships from ${ontology.name} ontology`);
       
       // Create entity context
       const entityInfo = relevantEntities.map(entity => 
@@ -410,14 +417,16 @@ Email Context:
 
 Requirements:
 - Generate both a subject line and email body
-- Keep the email professional and concise (under 200 words)
+- Keep the email professional and concise (under 300 words)
 - Use appropriate tone for {ontologyName} operations
 - Include relevant details like reference numbers and amounts
-- Reference specific entities from the ontology naturally (use the exact entity names listed above)
-- Reference specific relationships from the ontology naturally (use the exact relationship names listed above)
+- CRITICAL: Reference between 8-12 specific entities from the ontology naturally in your email (use the exact entity names listed above)
+- CRITICAL: Reference at least 2-4 specific relationships from the ontology naturally in your email (use the exact relationship names listed above)
+- Make the email content rich with procurement-specific terminology and concepts
+- Include specific procurement processes, roles, documents, or procedures mentioned in the entities
 - End with appropriate signature including sender's name and title
 - Address the recipient by their name
-- Make the email realistic and contextually appropriate
+- Make the email realistic and contextually appropriate for procurement operations
 
 Format your response as:
 SUBJECT: [subject line]
@@ -428,7 +437,15 @@ BODY: [email body]`;
    * Get default system prompt if not provided in config
    */
   private getDefaultSystemPrompt(): string {
-    return `You are a professional email writer specializing in {ontologyName} communications. Always respond with SUBJECT: and BODY: sections. Use the provided ontology entities and relationships to make emails more specific and accurate.`;
+    return `You are a professional email writer specializing in {ontologyName} communications. Always respond with SUBJECT: and BODY: sections. 
+
+CRITICAL INSTRUCTIONS:
+- You MUST use the provided ontology entities and relationships naturally in your email content
+- Reference specific entity names (like "Buyer", "Tenderer", "AwardDecision", etc.) in context
+- Reference specific relationship names (like "definesBuyer", "definesTenderer", etc.) in context
+- Make the email content rich with domain-specific terminology
+- Ensure the email sounds professional and realistic for the procurement domain
+- Use the exact entity and relationship names provided in the ontology context`;
   }
 
   /**
@@ -540,17 +557,24 @@ ${body}`;
     const fixtureRoot = outputDir || join(process.cwd(), 'test', 'fixtures', ontologyName, 'emails');
     await fs.mkdir(fixtureRoot, { recursive: true });
 
+    // --- APPEND MODE: Find the next available index ---
+    // This ensures we never overwrite existing emails by default
+    const existingFiles = (await fs.readdir(fixtureRoot)).filter(f => f.endsWith('.eml'));
+    const usedIndices = existingFiles
+      .map(f => parseInt(f.split('-')[0], 10))
+      .filter(n => !isNaN(n));
+    const maxIndex = usedIndices.length > 0 ? Math.max(...usedIndices) : 0;
+    let nextIndex = maxIndex + 1;
+
     const emails: string[] = [];
     
-    logger.info(`Generating ${count} emails...`);
+    logger.info(`Generating ${count} emails starting at index ${nextIndex}...`);
     
     for (let i = 0; i < count; i++) {
-      const email = await this.buildEmail(ontology, config, i + 1);
+      const email = await this.buildEmail(ontology, config, nextIndex + i);
       const emailPath = join(fixtureRoot, email.filename);
-      
       await fs.writeFile(emailPath, email.content, 'utf8');
       emails.push(emailPath);
-      
       if ((i + 1) % 10 === 0) {
         logger.info(`   Generated ${i + 1}/${count} emails...`);
       }

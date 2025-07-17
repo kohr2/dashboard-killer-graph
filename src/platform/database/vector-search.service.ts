@@ -1,6 +1,6 @@
 import { autoInjectable, inject } from 'tsyringe';
 import { Neo4jConnection } from './neo4j-connection';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 
 export interface VectorSearchResult {
   node: Record<string, any>;

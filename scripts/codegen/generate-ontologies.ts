@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as Handlebars from 'handlebars';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 
 // Register Handlebars helper to fix HTML encoding in types
 Handlebars.registerHelper('replaceType', function(type: string) {

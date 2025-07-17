@@ -1,4 +1,4 @@
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import { IEnrichmentService } from './platform/enrichment/i-enrichment-service.interface';
 import { OntologyAgnosticEnrichmentService } from './platform/enrichment/ontology-agnostic-enrichment.service';
 import * as fs from 'fs';

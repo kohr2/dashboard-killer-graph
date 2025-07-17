@@ -10,7 +10,7 @@ import axios from 'axios';
 import { ContentProcessingService } from '@platform/processing/content-processing.service';
 import { registerAllOntologies } from '@src/register-ontologies';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 
 interface EntityAnalysis {
   emailId: string;

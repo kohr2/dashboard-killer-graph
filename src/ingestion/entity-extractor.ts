@@ -7,7 +7,7 @@
  */
 
 import axios from 'axios';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 
 // TODO: Update these imports to use unified types
 // import { NormalizedData } from '../../core/types/normalized-data.interface';

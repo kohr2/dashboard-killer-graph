@@ -1,6 +1,6 @@
 import { Session } from 'neo4j-driver';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 
 export interface TemporalRelationship {
   source: string;

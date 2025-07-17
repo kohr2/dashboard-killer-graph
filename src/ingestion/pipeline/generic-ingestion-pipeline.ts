@@ -35,6 +35,7 @@ export class GenericIngestionPipeline {
   };
   private readonly extractor: (input: IngestionInput) => string;
   private readonly ontologyName?: string;
+  private readonly batchSize: number;
 
   constructor(
     processingService: {
@@ -48,12 +49,14 @@ export class GenericIngestionPipeline {
     },
     extractor: (input: IngestionInput) => string = (input) => input.content,
     ontologyName?: string,
+    batchSize: number = 10,
   ) {
     this.processingService = processingService;
     this.neo4jService = neo4jService;
     this.reasoningOrchestrator = reasoningOrchestrator;
     this.extractor = extractor;
     this.ontologyName = ontologyName;
+    this.batchSize = batchSize;
   }
 
   /**
@@ -63,21 +66,36 @@ export class GenericIngestionPipeline {
     const contents = inputs.map(this.extractor);
     const results = await this.processingService.processContentBatch(contents, this.ontologyName);
     
-    for (let i = 0; i < results.length; i++) {
-      const result = results[i];
-      const input = inputs[i];
+    // Process results in batches sequentially to avoid Neo4j session conflicts
+    for (let i = 0; i < results.length; i += this.batchSize) {
+      const batchResults = results.slice(i, i + this.batchSize);
+      const batchInputs = inputs.slice(i, i + this.batchSize);
       
-      // Infer relationships based on ontology patterns
-      const inferredRelationships = this.inferRelationships(result.entities);
+      // Process each batch sequentially but prepare all results first
+      const batchPromises = batchResults.map((result, batchIndex) => {
+        const inputIndex = i + batchIndex;
+        const input = batchInputs[batchIndex];
+        
+        // Infer relationships based on ontology patterns
+        const inferredRelationships = this.inferRelationships(result.entities);
+        
+        // Merge extracted and inferred relationships
+        const mergedResult = {
+          ...result,
+          relationships: [...(result.relationships || []), ...inferredRelationships],
+          metadata: input.meta || {}
+        };
+        
+        return mergedResult;
+      });
       
-      // Merge extracted and inferred relationships
-      const mergedResult = {
-        ...result,
-        relationships: [...(result.relationships || []), ...inferredRelationships],
-        metadata: input.meta || {}
-      };
+      // Wait for all results in the batch to be prepared, then ingest them
+      const preparedResults = await Promise.all(batchPromises);
       
-      await this.neo4jService.ingestEntitiesAndRelationships(mergedResult);
+      // Ingest all results in the batch
+      for (const result of preparedResults) {
+        await this.neo4jService.ingestEntitiesAndRelationships(result);
+      }
     }
 
     if (this.reasoningOrchestrator) {

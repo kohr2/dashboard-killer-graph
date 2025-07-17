@@ -1,4 +1,4 @@
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import { IEnrichmentService } from './i-enrichment-service.interface';
 import { GenericEntity } from './dto-aliases';
 import * as fs from 'fs';

@@ -8,7 +8,7 @@
 import { DataSource, SourceType } from '../types/data-source.interface';
 import { IngestionPipeline as IPipeline, ProcessingResult, PipelineMetrics, ProcessingError } from '../types/pipeline.interface';
 import { NormalizedData } from '../types/normalized-data.interface';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import type { EntityExtractor, EntityExtraction } from '../entity-extractor.interface';
 import type { IAdvancedGraphService } from '@common/interfaces/advanced-graph.interface';
 import type { IOntologyService } from '@common/interfaces/ontology.interface';

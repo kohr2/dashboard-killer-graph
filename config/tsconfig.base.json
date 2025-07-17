@@ -23,7 +23,7 @@
       "@crm/*": ["ontologies/crm/*"],
       "@financial/*": ["ontologies/financial/*"],
       "@procurement/*": ["ontologies/procurement/*"],
-      "@shared/utils/logger": ["src/common/utils/logger.ts"],
+      "@shared/utils/logger": ["src/shared/utils/logger.ts"],
       "@common/*": ["src/common/*"],
       "@shared/*": ["src/shared/*"],
       "@mcp/*": ["src/mcp/*"],

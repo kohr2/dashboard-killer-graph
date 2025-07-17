@@ -1,7 +1,7 @@
 import type { AxiosInstance } from 'axios';
 import { IEnrichmentService } from './i-enrichment-service.interface';
 import { GenericEntity } from './dto-aliases';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 
 /**
  * Salesforce Enrichment Service

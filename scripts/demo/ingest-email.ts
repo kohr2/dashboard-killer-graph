@@ -56,6 +56,7 @@ interface CliFlags {
   resetDb?: boolean;
   mode: 'ontology' | 'bulk';
   scope?: string;
+  batchSize?: number;
   // Build options
   topEntities?: number;
   topRelationships?: number;
@@ -84,6 +85,12 @@ function parseCliFlags(): CliFlags {
     return value ? parseInt(value) : def;
   }
 
+  // Helper function to get batch size flag
+  function batchSizeFlag(name: string, def?: number): number | undefined {
+    const value = flag(name);
+    return value ? parseInt(value) : def;
+  }
+
   // Determine mode based on arguments
   const hasOntologyArg = args[0] && !args[0].startsWith('--');
   const hasBulkFlags = hasFlag('folder') || hasFlag('file') || flag('limit') !== undefined;
@@ -100,7 +107,7 @@ function parseCliFlags(): CliFlags {
   // Parse scope and apply scope-specific settings
   const scope = flag('scope');
   let ontology = hasOntologyArg ? args[0] : flag('ontology');
-  let folder = flag('folder', 'emails');
+  let folder = flag('folder');
 
   if (scope) {
     // Apply scope-specific settings
@@ -130,6 +137,9 @@ function parseCliFlags(): CliFlags {
     }
   }
 
+  // Set default folder if not specified by scope or explicit flag
+  folder = folder || 'emails';
+
   // Set default database if not specified
   database = database || 'neo4j';
 
@@ -144,6 +154,7 @@ function parseCliFlags(): CliFlags {
     resetDb: hasFlag('reset-db'),
     mode,
     scope,
+    batchSize: batchSizeFlag('batch-size', 10),
     // Build options
     topEntities: numericFlag('top-entities'),
     topRelationships: numericFlag('top-relationships'),
@@ -185,6 +196,7 @@ OPTIONS:
   --ontology=<name>       Ontology name (for bulk mode) or override (for ontology mode)
   --database=<name>       Neo4j database name (default: neo4j)
   --scope=<name>          Set ontology, database, and folder at once (procurement, fibo, geonames, isco, sp500)
+  --batch-size=<number>   Number of emails to process in parallel (default: 10)
   --reset-db              Clear database before ingesting
   --help, -h              Show this help message
 
@@ -305,7 +317,8 @@ async function runBulkMode(flags: CliFlags): Promise<void> {
     neo4jService, 
     reasoningOrchestrator,
     (input: IngestionInput) => input.content,
-    flags.ontology // Pass ontology name to pipeline
+    flags.ontology, // Pass ontology name to pipeline
+    flags.batchSize // Pass batch size to pipeline
   );
 
   // Read emails from directory
@@ -351,7 +364,7 @@ async function runBulkMode(flags: CliFlags): Promise<void> {
   }
 
   // Process through pipeline
-  logger.info(`📧 Ingesting ${inputs.length} emails...`);
+  logger.info(`📧 Ingesting ${inputs.length} emails in batches of ${flags.batchSize || 10}...`);
   await pipeline.run(inputs);
   logger.info('✅ All emails ingested.');
 

@@ -1,6 +1,6 @@
 import { IEnrichmentService } from './i-enrichment-service.interface';
 import { GenericEntity, EnrichmentResult } from './dto-aliases';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
 

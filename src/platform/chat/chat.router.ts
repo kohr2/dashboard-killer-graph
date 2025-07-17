@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { Router, Request, Response } from 'express';
 import { ChatService } from './application/services/chat.service';
 import { User } from '@platform/security/domain/user';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 
 export const createChatRouter = (chatService: ChatService): Router => {
   const chatRouter = Router();

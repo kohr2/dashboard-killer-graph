@@ -200,6 +200,8 @@ export class OntologyService {
                   ...rel,
                   domain: rel.domain || rel.source,
                   range: rel.range || rel.target,
+                  source: rel.source || rel.domain,
+                  target: rel.target || rel.range,
                   description: typeof rel.description === 'string'
                     ? rel.description
                     : (hasUnderscoreProp(rel.description)
@@ -320,8 +322,8 @@ export class OntologyService {
     const relationshipLines = relationshipEntries.map(([name, def]) => {
       // Support both source/target and domain/range formats
       const defAny = def as any;
-      const source = Array.isArray(defAny.source || defAny.domain) ? (defAny.source || defAny.domain).join(' | ') : (defAny.source || defAny.domain);
-      const target = Array.isArray(defAny.target || defAny.range) ? (defAny.target || defAny.range).join(' | ') : (defAny.target || defAny.range);
+      const source = Array.isArray(defAny.domain || defAny.source) ? (defAny.domain || defAny.source).join(' | ') : (defAny.domain || defAny.source);
+      const target = Array.isArray(defAny.range || defAny.target) ? (defAny.range || defAny.target).join(' | ') : (defAny.range || defAny.target);
       const arrow = ' → ';
       const desc = def.description ? `: ${def.description}` : '';
       return `- ${name} (${source}${arrow}${target})${desc}`;

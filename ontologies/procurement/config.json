@@ -6,6 +6,40 @@
     "version": "2024.06",
     "description": "eProcurement Ontology (ePO) by Publications Office of the EU"
   },
+  "enrichment": {
+    "services": [
+      {
+        "name": "company_info_enrichment",
+        "description": "Enriches company entities with additional information from S&P 500 dataset",
+        "type": "dataset_lookup",
+        "config": {
+          "dataset": "sp500_companies",
+          "matchFields": ["ticker", "name"],
+          "outputFields": ["ticker", "cik", "name"]
+        }
+      },
+      {
+        "name": "financial_data_enrichment",
+        "description": "Enriches companies with financial data from Fortune 500 dataset",
+        "type": "dataset_lookup",
+        "config": {
+          "dataset": "fortune500_companies",
+          "matchFields": ["name"],
+          "outputFields": ["revenue", "employees", "rank"]
+        }
+      },
+      {
+        "name": "industry_classification",
+        "description": "Classifies companies into industries based on NAICS codes",
+        "type": "classification",
+        "config": {
+          "dataset": "industry_classifications",
+          "algorithm": "keyword_matching",
+          "outputFields": ["industry_code", "industry_name", "sector"]
+        }
+      }
+    ]
+  },
   "extraction": {
     "entities": {
       "path": "//owl:Class[contains(@rdf:about, \"a4g/ontology\")]",

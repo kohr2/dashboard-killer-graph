@@ -1,4 +1,4 @@
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import { registerEnrichmentService } from './register-enrichments';
 import * as fs from 'fs';
 import * as path from 'path';

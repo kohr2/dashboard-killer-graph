@@ -10,7 +10,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 
 import { bootstrap } from './bootstrap';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 
 import { ChatService } from '@platform/chat/application/services/chat.service';
 import { QueryTranslator } from '@platform/chat/application/services/query-translator.service';

@@ -9,7 +9,7 @@ process.env.NEO4J_DATABASE = testDatabaseName;
 import { container } from 'tsyringe';
 import { OntologyEmailIngestionService } from '@platform/processing/ontology-email-ingestion.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 
 describe('Ontology Email Integration E2E', () => {
   let ontologyEmailIngestionService: OntologyEmailIngestionService;

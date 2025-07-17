@@ -6,7 +6,7 @@
  * src/ontologies/crm/application/services/email-processing.service.ts
  */
 
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import type { IEmailParsingService, ParsedEmailDataMinimal as ParsedEmailData } from '@common/interfaces/email-parsing.interface';
 import type { IAttachmentProcessingService, AttachmentProcessingResultMinimal as AttachmentProcessingResult } from '@common/interfaces/attachment-processing.interface';
 import { EmailAttachment, ExtractedEntity } from '../types/email.interface';

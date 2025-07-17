@@ -87,6 +87,16 @@
       }
     },
     {
+      "entityType": "Business",
+      "enrichmentService": "edgar",
+      "priority": 1,
+      "enabled": true,
+      "conditions": {
+        "hasName": true,
+        "minNameLength": 2
+      }
+    },
+    {
       "entityType": "Person",
       "enrichmentService": "linkedin",
       "priority": 2,

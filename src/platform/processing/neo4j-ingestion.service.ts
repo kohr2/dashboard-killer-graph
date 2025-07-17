@@ -4,7 +4,7 @@ import { container } from 'tsyringe';
 import { singleton } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import { flattenEnrichmentData, flattenEntityProperties } from './utils/enrichment.utils';
 import { ContentProcessingService } from './content-processing.service';
 

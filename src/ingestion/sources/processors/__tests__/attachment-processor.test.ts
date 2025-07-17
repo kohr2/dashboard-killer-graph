@@ -5,7 +5,7 @@
 
 import { AttachmentProcessingService, AttachmentProcessingResult } from '@platform/processing/attachment-processing.service';
 import { EmailAttachment } from '@platform/processing/email-parsing.service';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 
 // Mock external dependencies
 jest.mock('officeparser', () => ({
@@ -28,7 +28,7 @@ jest.mock('node-xlsx', () => ({
 }));
 
 // Mock the logger
-jest.mock('@common/utils/logger', () => ({
+jest.mock('@shared/utils/logger', () => ({
   logger: {
     info: jest.fn(),
     warn: jest.fn(),

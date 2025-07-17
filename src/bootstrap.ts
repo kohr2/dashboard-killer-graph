@@ -8,7 +8,7 @@ import { OntologyService } from '@platform/ontology/ontology.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { ChatService } from '@platform/chat/application/services/chat.service';
 import { QueryTranslator } from '@platform/chat/application/services/query-translator.service';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 
 /**
  * Centralized bootstrap for scripts, tests and the API.  

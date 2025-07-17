@@ -13,9 +13,13 @@
  */
 
 import 'reflect-metadata'; // make sure tsyringe & class-decorators work
+import { config } from 'dotenv'; // Load environment variables from .env file
 import { container } from 'tsyringe';
 import { EmailFixtureGenerationService } from '../../src/platform/fixtures/email-fixture-generation.service';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
+
+// Load environment variables
+config();
 
 // ----------------------- CLI OPTIONS -------------------------
 const argvFlags = process.argv.slice(2);

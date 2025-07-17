@@ -5,7 +5,7 @@
 
 import { DataSource, SourceType, SourceConfig, FetchParams, HealthStatus } from '../types/data-source.interface';
 import { existsSync } from 'fs';
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 
 export interface EmailSourceConfig extends SourceConfig {
   provider: 'eml' | 'imap' | 'exchange' | 'gmail';

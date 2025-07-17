@@ -1,4 +1,4 @@
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import xlsx from 'node-xlsx';
 import * as officeParser from 'officeparser';
 import { EmailAttachment } from './email-parsing.service';
