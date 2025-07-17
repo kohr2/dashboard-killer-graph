@@ -253,7 +253,7 @@ export class ContentProcessingService {
       // Use dependency injection to get the orchestrator
       this.enrichmentOrchestrator = container.resolve(EnrichmentOrchestratorService);
     }
-    this.nlpServiceUrl = process.env.NLP_SERVICE_URL || 'http://127.0.0.1:8001';
+    this.nlpServiceUrl = process.env.NLP_SERVICE_URL || 'http://127.0.0.1:8000';
   }
 
   public async processContentBatch(

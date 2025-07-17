@@ -446,7 +446,7 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
 5. Extract all relationships that match the ontology's relationship types and patterns.
 6. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST use ALL_CAPS with underscores only between words, and append the suffix "Inferred" to its type (e.g., SUPERVISES_INFERRED, ASSOCIATED_WITH_INFERRED).
 
-**Output Format:**
+**Output Format (JSON):**
 {{
   "entities": [
     {{
@@ -463,6 +463,8 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
     }}
   ]
 }}
+
+Please respond with a valid JSON object following this exact format.
 
 **Text to Analyze:**
 ---
@@ -581,7 +583,7 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
 5. Extract all relationships that match the ontology's relationship types and patterns.
 6. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST use ALL_CAPS with underscores only between words, and append the suffix "Inferred" to its type (e.g., SUPERVISES_INFERRED, ASSOCIATED_WITH_INFERRED).
 
-**Output Format:**
+**Output Format (JSON):**
 {{
   "entities": [
     {{
@@ -598,6 +600,8 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
     }}
   ]
 }}
+
+Please respond with a valid JSON object following this exact format.
 
 **Text to Analyze:**
 ---
