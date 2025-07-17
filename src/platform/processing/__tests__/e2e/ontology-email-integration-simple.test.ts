@@ -189,19 +189,12 @@ async function verifyIngestionResults(ontologyName: string, neo4jService?: any):
 }
 
 /**
- * Clean up test data and fixtures
+ * Clean up test data (database only, preserve fixtures)
  */
 async function cleanup(ontologyName: string): Promise<void> {
   logger.info(`🧹 Cleaning up test data for ${ontologyName}`);
   
   try {
-    // Clean up test fixtures - match the fixture generation script path
-    const testFixturesDir = path.join(__dirname, '../../../../../test/fixtures', ontologyName);
-    if (fs.existsSync(testFixturesDir)) {
-      fs.rmSync(testFixturesDir, { recursive: true, force: true });
-      logger.info(`✅ Cleaned up test fixtures directory: ${testFixturesDir}`);
-    }
-    
     // Clean up test database using the existing service
     const neo4jIngestionService = container.resolve(Neo4jIngestionService);
     await neo4jIngestionService.close();

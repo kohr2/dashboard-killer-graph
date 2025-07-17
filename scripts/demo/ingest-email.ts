@@ -32,6 +32,7 @@ import { join } from 'path';
 import { promises as fs } from 'fs';
 import { simpleParser, ParsedMail } from 'mailparser';
 import { container } from 'tsyringe';
+import { bootstrap } from '../../src/bootstrap';
 
 import { OntologyEmailIngestionService } from '../../src/platform/processing/ontology-email-ingestion.service';
 import { GenericIngestionPipeline, IngestionInput } from '../../src/ingestion/pipeline/generic-ingestion-pipeline';
@@ -307,11 +308,21 @@ async function runBulkMode(flags: CliFlags): Promise<void> {
   }
 
   // Initialize services
+  logger.info('🔧 Resolving ContentProcessingService...');
   const contentProcessing = container.resolve(ContentProcessingService);
+  logger.info('✅ ContentProcessingService resolved');
+  
+  logger.info('🔧 Resolving Neo4jIngestionService...');
   const neo4jService = container.resolve(Neo4jIngestionService);
+  logger.info('✅ Neo4jIngestionService resolved');
+  
+  logger.info('🔧 Initializing Neo4jIngestionService...');
   await neo4jService.initialize();
+  logger.info('✅ Neo4jIngestionService initialized');
 
+  logger.info('🔧 Resolving ReasoningOrchestratorService...');
   const reasoningOrchestrator = container.resolve(ReasoningOrchestratorService);
+  logger.info('✅ ReasoningOrchestratorService resolved');
   const pipeline = new GenericIngestionPipeline(
     contentProcessing, 
     neo4jService, 
@@ -372,6 +383,9 @@ async function runBulkMode(flags: CliFlags): Promise<void> {
 }
 
 async function main(): Promise<void> {
+  // Bootstrap the application to register all services
+  bootstrap();
+  
   const args = process.argv.slice(2);
   
   // Show help if requested

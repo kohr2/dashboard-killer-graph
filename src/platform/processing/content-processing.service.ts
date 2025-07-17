@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { logger } from '@shared/utils/logger';
+import { logger } from '../../common/utils/logger';
 import { EnrichmentOrchestratorService } from '@platform/enrichment';
 import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
@@ -250,18 +250,8 @@ export class ContentProcessingService {
     if (enrichmentOrchestrator) {
       this.enrichmentOrchestrator = enrichmentOrchestrator;
     } else {
-      // Create orchestrator with registered services
-      const { container } = require('tsyringe');
-      const { registerAvailableEnrichmentServices } = require('../register-enrichment-services');
-      
-      // Ensure enrichment services are registered
-      registerAvailableEnrichmentServices();
-      
-      // Create orchestrator with EDGAR service
-      const { EdgarEnrichmentService } = require('../platform/enrichment/edgar-enrichment.service');
-      const edgarService = new EdgarEnrichmentService('Dashboard Killer Graph Bot 1.0 (contact@example.com)');
-      
-      this.enrichmentOrchestrator = new EnrichmentOrchestratorService([edgarService]);
+      // Use dependency injection to get the orchestrator
+      this.enrichmentOrchestrator = container.resolve(EnrichmentOrchestratorService);
     }
     this.nlpServiceUrl = process.env.NLP_SERVICE_URL || 'http://127.0.0.1:8001';
   }

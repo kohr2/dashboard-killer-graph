@@ -9,11 +9,9 @@ import { injectable } from 'tsyringe';
  * Enrichment Orchestrator Service (back-compat)
  * -------------------------------------------------
  * 1. Legacy tests expect:
- *    • constructor(ontologyService)
  *    • register(service)
  *    • enrich(entity) → merged *entity* (not array)
  * 2. Newer code relies on:
- *    • constructor() with no args
  *    • addService / getService helpers
  */
 @injectable()
@@ -21,17 +19,8 @@ export class EnrichmentOrchestratorService {
   private readonly services: IEnrichmentService[] = [];
   private readonly ontologyService: OntologyService;
 
-  constructor(param?: OntologyService | IEnrichmentService[]) {
-    if (Array.isArray(param)) {
-      // Constructor called with service list (new style)
-      this.services.push(...param);
-      this.ontologyService = container.resolve(OntologyService);
-    } else if (param) {
-      // Legacy style: first argument is OntologyService
-      this.ontologyService = param;
-    } else {
-      this.ontologyService = container.resolve(OntologyService);
-    }
+  constructor() {
+    this.ontologyService = container.resolve(OntologyService);
   }
 
   // Legacy alias
