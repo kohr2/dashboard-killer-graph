@@ -196,7 +196,7 @@ async function cleanup(ontologyName: string): Promise<void> {
   
   try {
     // Clean up test fixtures - match the fixture generation script path
-    const testFixturesDir = path.join(__dirname, '../fixtures', ontologyName);
+    const testFixturesDir = path.join(__dirname, '../../../../../test/fixtures', ontologyName);
     if (fs.existsSync(testFixturesDir)) {
       fs.rmSync(testFixturesDir, { recursive: true, force: true });
       logger.info(`✅ Cleaned up test fixtures directory: ${testFixturesDir}`);

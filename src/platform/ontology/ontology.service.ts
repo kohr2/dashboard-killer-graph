@@ -44,11 +44,14 @@ const OntologyEntitySchema = z.object({
     .optional(),
 });
 
-// Updated to use unified source/target pattern
+// Support both source/target and domain/range formats
 const OntologyRelationshipSchema = z.object({
-  // Unified format using source/target
+  // Source/target format
   source: z.union([z.string(), z.array(z.string())]).optional(),
   target: z.union([z.string(), z.array(z.string())]).optional(),
+  // Domain/range format (for compatibility)
+  domain: z.union([z.string(), z.array(z.string())]).optional(),
+  range: z.union([z.string(), z.array(z.string())]).optional(),
   // Handle both string and object descriptions
   description: z.union([
     z.string(),

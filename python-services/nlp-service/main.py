@@ -424,19 +424,34 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
 **Ontology:**
 {json.dumps(compact_ontology, indent=2)}
 
-**Instructions:**
-1. Carefully analyze the text.
-2. Extract all entities that match the ontology's entity types.
-3. Extract all relationships that match the ontology's relationship types and patterns.
-4. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST use ALL_CAPS with underscores only between words, and append the suffix _INFERRED to its type (e.g., SUPERVISES_INFERRED, ASSOCIATED_WITH_INFERRED). Do NOT use underscores between every letter.
-5. Return a JSON object with "entities" and "relationships" arrays.
+**CRITICAL INSTRUCTIONS FOR ENTITY EXTRACTION:**
+1. **ALWAYS extract the ACTUAL TEXT from the document** that represents each entity. NEVER use the entity type name as the entity value.
+2. **Entity Value Rules:**
+   - For companies: Extract the actual company name (e.g., "ABC Corp", "Microsoft", "Goldman Sachs")
+   - For people: Extract the actual person name (e.g., "John Smith", "CEO Tim Cook")
+   - For monetary values: Extract the actual amount (e.g., "$170,000 CAD", "50 million USD")
+   - For procurement objects: Extract what is being procured (e.g., "raw materials", "transport services", "steel and aluminum")
+   - For contracts: Extract the actual contract reference or description (e.g., "PROCUREMENT-816467", "purchase order for materials")
+   - For locations: Extract the actual location name (e.g., "New York", "London office")
+3. **Entity Type Matching:**
+   - Match each extracted text to the most appropriate ontology type
+   - If an entity doesn't match any ontology type exactly, create a descriptive label and append "Inferred" to it
+   - NEVER use the entity type name as the entity value
+4. **Examples of CORRECT extraction:**
+   - Text: "Contract awarded to ABC Corp for raw materials"
+   - Correct: {{"value": "ABC Corp", "type": "Business"}}, {{"value": "raw materials", "type": "ProcurementObject"}}
+   - WRONG: {{"value": "Business", "type": "Business"}}, {{"value": "ProcurementObject", "type": "ProcurementObject"}}
+
+**Relationship Extraction:**
+5. Extract all relationships that match the ontology's relationship types and patterns.
+6. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST use ALL_CAPS with underscores only between words, and append the suffix "Inferred" to its type (e.g., SUPERVISES_INFERRED, ASSOCIATED_WITH_INFERRED).
 
 **Output Format:**
 {{
   "entities": [
     {{
-      "value": "entity name",
-      "type": "entity type",
+      "value": "actual text from document",
+      "type": "entity type from ontology",
       "properties": {{}}
     }}
   ],
@@ -544,22 +559,34 @@ You are an expert knowledge graph builder. Your task is to extract entities and 
 **Ontology:**
 {json.dumps(compact_ontology, indent=2)}
 
-**Instructions:**
-1. Extract EVERY entity you can identify in the text, regardless of whether it matches the ontology.
-2. For each entity, first try to match it to the most appropriate type from the provided ontology.
-3. If an entity matches multiple ontology types, include all relevant types in a 'types' array.
-4. If an entity doesn't match any ontology type exactly, create a descriptive label and append Inferred to it (e.g., "CompanyNameInferred", "DateInferred", "CategoryInferred").
-5. IMPORTANT: Do not skip any entity just because it doesn't match the ontology. Extract ALL entities and use Inferred suffix when needed.
-6. Extract all relationships that match the ontology's relationship types and patterns.
-7. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST use ALL_CAPS with underscores only between words, and append the suffix Inferred to its type (e.g., SUPERVISES_INFERRED, ASSOCIATED_WITH_INFERRED). Do NOT use underscores between every letter.
-8. Return a JSON object with "entities" and "relationships" arrays.
+**CRITICAL INSTRUCTIONS FOR ENTITY EXTRACTION:**
+1. **ALWAYS extract the ACTUAL TEXT from the document** that represents each entity. NEVER use the entity type name as the entity value.
+2. **Entity Value Rules:**
+   - For companies: Extract the actual company name (e.g., "ABC Corp", "Microsoft", "Goldman Sachs")
+   - For people: Extract the actual person name (e.g., "John Smith", "CEO Tim Cook")
+   - For monetary values: Extract the actual amount (e.g., "$170,000 CAD", "50 million USD")
+   - For procurement objects: Extract what is being procured (e.g., "raw materials", "transport services", "steel and aluminum")
+   - For contracts: Extract the actual contract reference or description (e.g., "PROCUREMENT-816467", "purchase order for materials")
+   - For locations: Extract the actual location name (e.g., "New York", "London office")
+3. **Entity Type Matching:**
+   - Match each extracted text to the most appropriate ontology type
+   - If an entity doesn't match any ontology type exactly, create a descriptive label and append "Inferred" to it
+   - NEVER use the entity type name as the entity value
+4. **Examples of CORRECT extraction:**
+   - Text: "Contract awarded to ABC Corp for raw materials"
+   - Correct: {{"value": "ABC Corp", "type": "Business"}}, {{"value": "raw materials", "type": "ProcurementObject"}}
+   - WRONG: {{"value": "Business", "type": "Business"}}, {{"value": "ProcurementObject", "type": "ProcurementObject"}}
+
+**Relationship Extraction:**
+5. Extract all relationships that match the ontology's relationship types and patterns.
+6. If you find a relationship between two entities that does not match any ontology pattern, you may invent a relationship type, but you MUST use ALL_CAPS with underscores only between words, and append the suffix "Inferred" to its type (e.g., SUPERVISES_INFERRED, ASSOCIATED_WITH_INFERRED).
 
 **Output Format:**
 {{
   "entities": [
     {{
-      "value": "entity name",
-      "types": ["entity type 1", "entity type 2"],
+      "value": "actual text from document",
+      "type": "entity type from ontology",
       "properties": {{}}
     }}
   ],

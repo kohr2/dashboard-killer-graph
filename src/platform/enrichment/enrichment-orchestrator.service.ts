@@ -3,6 +3,7 @@ import { GenericEntity, EnrichmentResult } from './dto-aliases';
 import { logger } from '@shared/utils/logger';
 import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
+import { injectable } from 'tsyringe';
 
 /**
  * Enrichment Orchestrator Service (back-compat)
@@ -15,6 +16,7 @@ import { OntologyService } from '@platform/ontology/ontology.service';
  *    • constructor() with no args
  *    • addService / getService helpers
  */
+@injectable()
 export class EnrichmentOrchestratorService {
   private readonly services: IEnrichmentService[] = [];
   private readonly ontologyService: OntologyService;

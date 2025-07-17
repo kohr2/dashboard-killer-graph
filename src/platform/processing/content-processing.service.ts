@@ -3,6 +3,7 @@ import { logger } from '@shared/utils/logger';
 import { EnrichmentOrchestratorService } from '@platform/enrichment';
 import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
+import { injectable } from 'tsyringe';
 
 // ---------------- Ontology sync payload ----------------
 export interface OntologySyncPayload {
@@ -237,6 +238,7 @@ interface IngestionEntity {
   embedding?: number[];
 }
 
+@injectable()
 export class ContentProcessingService {
   private nlpServiceUrl: string;
   private enrichmentOrchestrator: EnrichmentOrchestratorService;
@@ -261,7 +263,7 @@ export class ContentProcessingService {
       
       this.enrichmentOrchestrator = new EnrichmentOrchestratorService([edgarService]);
     }
-    this.nlpServiceUrl = 'http://127.0.0.1:8000';
+    this.nlpServiceUrl = process.env.NLP_SERVICE_URL || 'http://127.0.0.1:8001';
   }
 
   public async processContentBatch(
