@@ -48,13 +48,12 @@ describe('JsonSource', () => {
       
       global.fetch = mockFetch;
       
-      const url = 'https://example.com/test.json';
+      // Use a unique URL to avoid cache conflicts
+      const url = 'https://example.com/test-cache-' + Date.now() + '.json';
       const content1 = await jsonSource.fetch(url);
       const content2 = await jsonSource.fetch(url);
       
       expect(content1).toBe(content2);
-      // Note: The implementation uses file system caching, so we can't easily test the cache hit
-      // The second call will use the cached file from disk
       expect(mockFetch).toHaveBeenCalledTimes(1); // Should only fetch once due to caching
       
       // Cleanup

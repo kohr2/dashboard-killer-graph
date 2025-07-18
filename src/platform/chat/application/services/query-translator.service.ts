@@ -215,24 +215,33 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
     try {
       // Get all loaded ontologies from the ontology service
       const loadedOntologies = this.ontologyService.getAllOntologies();
+      logger.info('Loaded ontologies:', loadedOntologies);
       
       // For now, use the first loaded ontology's prompts
       // In the future, this could be enhanced to support multiple ontologies
       for (const ontologyName of loadedOntologies) {
-        const configPath = `ontologies/${ontologyName}/config.json`;
         const fs = require('fs');
         const path = require('path');
+        
+        // Use absolute path to ensure we find the config file
+        const configPath = path.join(process.cwd(), 'ontologies', ontologyName, 'config.json');
+        
+        logger.info(`Checking config path: ${configPath}`);
+        logger.info(`File exists: ${fs.existsSync(configPath)}`);
         
         if (fs.existsSync(configPath)) {
           const configContent = fs.readFileSync(configPath, 'utf-8');
           const config = JSON.parse(configContent);
           
+          logger.info(`Config has prompts: ${!!config.prompts}`);
           if (config.prompts) {
+            logger.info('Found prompts in ontology config:', Object.keys(config.prompts));
             return config.prompts;
           }
         }
       }
       
+      logger.warn('No ontology prompts found in any config files');
       return null;
     } catch (error) {
       logger.warn('Failed to load ontology prompts:', error);
@@ -397,11 +406,40 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
   }
 
     /**
-   * Use LLM to generate semantic mappings based on actual ontology entities
+   * Load semantic mappings from ontology config or generate with LLM as fallback
    */
   private async generateSemanticMappingsWithLLM(validEntityTypes: string[]): Promise<void> {
     try {
-      logger.info('Starting LLM semantic mapping generation...');
+      logger.info('Loading semantic mappings from ontology config...');
+      
+      // First, try to load semantic mappings from ontology config
+      const ontologyPrompts = await this.getOntologyPrompts();
+      const configSemanticMappings = ontologyPrompts?.queryTranslation?.semanticMappings;
+      
+      if (configSemanticMappings && typeof configSemanticMappings === 'object') {
+        logger.info('Found semantic mappings in ontology config:', Object.keys(configSemanticMappings));
+        
+        // Cache the config-based mappings
+        for (const [commonTerm, entityTypes] of Object.entries(configSemanticMappings)) {
+          if (Array.isArray(entityTypes)) {
+            const validMappedTypes = entityTypes.filter((type: string) => 
+              validEntityTypes.includes(type)
+            );
+            if (validMappedTypes.length > 0) {
+              this.semanticMappingsCache[commonTerm.toLowerCase()] = validMappedTypes;
+              logger.info(`Cached config mapping: "${commonTerm}" -> [${validMappedTypes.join(', ')}]`);
+            }
+          }
+        }
+        
+        // Mark as generated so we use cache in future calls
+        this.semanticMappingsGenerated = true;
+        logger.info('Semantic mappings loaded from ontology config successfully');
+        return;
+      }
+      
+      // Fallback to LLM generation if no config mappings found
+      logger.info('No config mappings found, falling back to LLM generation...');
       
       const entityDescriptions = validEntityTypes.map(entityType => {
         const altLabels = this.ontologyService.getAlternativeLabels(entityType);
@@ -412,7 +450,6 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
       logger.info('Sample entities:', validEntityTypes.slice(0, 5));
 
       // Get ontology-specific semantic prompt if available
-      const ontologyPrompts = await this.getOntologyPrompts();
       const baseSemanticPrompt = ontologyPrompts?.queryTranslation?.semanticPrompt || `
 You are an expert at analyzing ontology entities and creating semantic mappings for natural language queries.
 
@@ -478,7 +515,7 @@ Return only the JSON object, no other text.
             );
             if (validMappedTypes.length > 0) {
               this.semanticMappingsCache[commonTerm.toLowerCase()] = validMappedTypes;
-              logger.info(`Cached mapping: "${commonTerm}" -> [${validMappedTypes.join(', ')}]`);
+              logger.info(`Cached LLM mapping: "${commonTerm}" -> [${validMappedTypes.join(', ')}]`);
             }
           }
         }

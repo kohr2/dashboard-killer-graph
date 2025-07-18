@@ -2,7 +2,7 @@ import { OntologySource, ParsedOntology, Entity, Relationship } from '../ontolog
 import { ExtractionRule } from '../config';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as jsonpath from 'jsonpath';
+import jsonpath from 'jsonpath';
 
 export class JsonSource implements OntologySource {
   name = 'JSON Source';

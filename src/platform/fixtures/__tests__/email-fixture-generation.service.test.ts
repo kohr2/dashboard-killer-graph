@@ -8,6 +8,7 @@ jest.mock('fs', () => ({
     readFile: jest.fn(),
     mkdir: jest.fn().mockResolvedValue(undefined),
     writeFile: jest.fn().mockResolvedValue(undefined),
+    readdir: jest.fn().mockResolvedValue([]), // Mock readdir to return empty array
   },
 }));
 

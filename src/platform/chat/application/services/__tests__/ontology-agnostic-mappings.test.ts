@@ -1,15 +1,15 @@
 #!/usr/bin/env ts-node
 
 import 'reflect-metadata';
-import { QueryTranslator } from '../../src/platform/chat/application/services/query-translator.service';
+import { QueryTranslator } from '../query-translator.service';
 import * as fs from 'fs';
 import * as path from 'path';
 
 // Load different ontology data for comparison
-const procurementOntologyPath = path.join(__dirname, '../../ontologies/procurement/ontology.json');
+const procurementOntologyPath = path.join(__dirname, '../../../../../../ontologies/procurement/ontology.json');
 const procurementOntologyData = JSON.parse(fs.readFileSync(procurementOntologyPath, 'utf8'));
 
-const fiboOntologyPath = path.join(__dirname, '../../ontologies/fibo/ontology.json');
+const fiboOntologyPath = path.join(__dirname, '../../../../../../ontologies/fibo/ontology.json');
 const fiboOntologyData = JSON.parse(fs.readFileSync(fiboOntologyPath, 'utf8'));
 
 // Create mock ontology services for different ontologies

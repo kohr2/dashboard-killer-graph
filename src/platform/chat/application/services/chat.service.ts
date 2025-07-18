@@ -144,6 +144,7 @@ export class ChatService {
   public async handleQuery(user: User, query: string): Promise<string> {
     logger.info(`[ChatService] Handling query: "${query}"`);
     
+    logger.info(`[ChatService] About to call query translator...`);
     const structuredQuery = await this.queryTranslator.translate(
       query,
       this.queryHistory,

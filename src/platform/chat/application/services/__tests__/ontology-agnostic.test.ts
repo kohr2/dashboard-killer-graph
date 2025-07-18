@@ -1,18 +1,18 @@
 #!/usr/bin/env ts-node
 
 import 'reflect-metadata';
-import { QueryTranslator } from '../../src/platform/chat/application/services/query-translator.service';
+import { QueryTranslator } from '../query-translator.service';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// Load different ontology data
-const procurementOntologyPath = path.join(__dirname, '../../ontologies/procurement/ontology.json');
-const fiboOntologyPath = path.join(__dirname, '../../ontologies/fibo/ontology.json');
-
+// Load different ontology data for comparison
+const procurementOntologyPath = path.join(__dirname, '../../../../../../ontologies/procurement/ontology.json');
 const procurementOntologyData = JSON.parse(fs.readFileSync(procurementOntologyPath, 'utf8'));
+
+const fiboOntologyPath = path.join(__dirname, '../../../../../../ontologies/fibo/ontology.json');
 const fiboOntologyData = JSON.parse(fs.readFileSync(fiboOntologyPath, 'utf8'));
 
-// Create mock ontology service for different ontologies
+// Create mock ontology services for different ontologies
 function createMockOntologyService(ontologyData: any) {
   const entityTypes = ontologyData.entities.map((entity: any) => entity.name);
   
@@ -44,25 +44,17 @@ function createMockOntologyService(ontologyData: any) {
   };
 }
 
-async function testOntologyAgnostic(pattern?: string) {
+async function testOntologyAgnostic() {
   console.log('=== Testing Ontology-Agnostic Query Translator ===\n');
 
-  // Use provided pattern or default test queries
-  const testQueries = pattern 
-    ? [pattern]
-    : [
-        'show all persons',
-        'show all people', 
-        'show all agents',
-        'show all companies',
-        'show all organizations',
-        'show all contracts'
-      ];
-
-  if (pattern) {
-    console.log(`🔍 TESTING PATTERN: "${pattern}"`);
-    console.log('=====================================\n');
-  }
+  const testQueries = [
+    'show all persons',
+    'show all people', 
+    'show all agents',
+    'show all companies',
+    'show all organizations',
+    'show all contracts'
+  ];
 
   // Test with Procurement Ontology
   console.log('🔍 TESTING WITH PROCUREMENT ONTOLOGY');
@@ -123,4 +115,4 @@ function parseArguments() {
 
 // Run the test with command line argument
 const pattern = parseArguments();
-testOntologyAgnostic(pattern).catch(console.error); 
+testOntologyAgnostic().catch(console.error); 

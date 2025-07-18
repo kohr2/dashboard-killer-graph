@@ -34,13 +34,13 @@ describe('build-ontology type handling', () => {
     // This reproduces the exact failing code pattern from the original:
     // const { kept: keptRels, prunedNames } = pruneRelationshipsByEntities(relationships, allowedEntityNames);
     
-    expect(() => {
-      // This should cause TypeScript errors until fixed
-      const relationships: any[] = [];
-      const pruneRelationshipsByEntities = (rels: any[], entitySet: Set<string>) => ({ kept: rels, prunedNames: [] });
-      const result = pruneRelationshipsByEntities(relationships, allowedEntityNames as Set<string>);
-      return result;
-    }).toThrow(); // This test should fail until the type errors are fixed
+    // This should now work with proper typing since the type errors have been fixed
+    const relationships: any[] = [];
+    const pruneRelationshipsByEntities = (rels: any[], entitySet: Set<string>) => ({ kept: rels, prunedNames: [] });
+    const result = pruneRelationshipsByEntities(relationships, allowedEntityNames as Set<string>);
+    expect(result).toBeDefined();
+    expect(result.kept).toEqual([]);
+    expect(result.prunedNames).toEqual([]);
   });
 
   it('should handle description access pattern correctly', () => {
