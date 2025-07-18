@@ -44,17 +44,25 @@ function createMockOntologyService(ontologyData: any) {
   };
 }
 
-async function testOntologyAgnostic() {
+async function testOntologyAgnostic(pattern?: string) {
   console.log('=== Testing Ontology-Agnostic Query Translator ===\n');
 
-  const testQueries = [
-    'show all persons',
-    'show all people', 
-    'show all agents',
-    'show all companies',
-    'show all organizations',
-    'show all contracts'
-  ];
+  // Use provided pattern or default test queries
+  const testQueries = pattern 
+    ? [pattern]
+    : [
+        'show all persons',
+        'show all people', 
+        'show all agents',
+        'show all companies',
+        'show all organizations',
+        'show all contracts'
+      ];
+
+  if (pattern) {
+    console.log(`🔍 TESTING PATTERN: "${pattern}"`);
+    console.log('=====================================\n');
+  }
 
   // Test with Procurement Ontology
   console.log('🔍 TESTING WITH PROCUREMENT ONTOLOGY');
@@ -99,5 +107,20 @@ async function testOntologyAgnostic() {
   console.log('✅ Works across different ontologies automatically');
 }
 
-// Run the test
-testOntologyAgnostic().catch(console.error); 
+// Parse command line arguments
+function parseArguments() {
+  const args = process.argv.slice(2);
+  const pattern = args[0];
+  
+  if (args.length > 0) {
+    console.log(`Using pattern from command line: "${pattern}"`);
+  } else {
+    console.log('No pattern provided, using default test queries');
+  }
+  
+  return pattern;
+}
+
+// Run the test with command line argument
+const pattern = parseArguments();
+testOntologyAgnostic(pattern).catch(console.error); 

@@ -63,7 +63,9 @@ describe('QueryTranslator with Procurement Ontology', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    queryTranslator = new QueryTranslator(mockOntologyService as any);
+    // Create a mocked OpenAI instance to pass to QueryTranslator
+    const mockOpenAI = new OpenAI() as any;
+    queryTranslator = new QueryTranslator(mockOntologyService as any, mockOpenAI);
   });
 
   describe('Christopher Garcia working on query', () => {
@@ -190,9 +192,10 @@ describe('QueryTranslator with Procurement Ontology', () => {
   });
 
   describe('Dynamic Entity Mappings', () => {
-    it('should generate appropriate mappings for procurement ontology', () => {
+    it('should generate appropriate mappings for procurement ontology', async () => {
       // Test that the dynamic mappings work with procurement entities
-      const queryTranslator = new QueryTranslator(mockOntologyService as any);
+      const mockOpenAI = new OpenAI() as any;
+      const queryTranslator = new QueryTranslator(mockOntologyService as any, mockOpenAI);
       
       // Test simple pattern matching with procurement entities
       const testQueries = [
@@ -204,8 +207,8 @@ describe('QueryTranslator with Procurement Ontology', () => {
         'list all organizations'
       ];
 
-      testQueries.forEach(query => {
-        const result = queryTranslator['trySimplePatternMatching'](query);
+      for (const query of testQueries) {
+        const result = await queryTranslator['trySimplePatternMatching'](query);
         if (result) {
           console.log(`Query: "${query}" -> Result:`, JSON.stringify(result, null, 2));
           
@@ -215,15 +218,16 @@ describe('QueryTranslator with Procurement Ontology', () => {
           expect(result.resourceTypes!.length).toBeGreaterThan(0);
           
           // Verify all resource types are valid procurement entities
-          result.resourceTypes!.forEach(resourceType => {
+          result.resourceTypes!.forEach((resourceType: string) => {
             expect(procurementEntityTypes).toContain(resourceType);
           });
         }
-      });
+      }
     });
 
-    it('should handle procurement-specific entity types', () => {
-      const queryTranslator = new QueryTranslator(mockOntologyService as any);
+    it('should handle procurement-specific entity types', async () => {
+      const mockOpenAI = new OpenAI() as any;
+      const queryTranslator = new QueryTranslator(mockOntologyService as any, mockOpenAI);
       
       // Test with procurement-specific terms
       const procurementQueries = [
@@ -235,8 +239,8 @@ describe('QueryTranslator with Procurement Ontology', () => {
         'list all suppliers'
       ];
 
-      procurementQueries.forEach(query => {
-        const result = queryTranslator['trySimplePatternMatching'](query);
+      for (const query of procurementQueries) {
+        const result = await queryTranslator['trySimplePatternMatching'](query);
         if (result) {
           console.log(`Procurement Query: "${query}" -> Result:`, JSON.stringify(result, null, 2));
           
@@ -245,16 +249,17 @@ describe('QueryTranslator with Procurement Ontology', () => {
           expect(result.resourceTypes).toBeDefined();
           
           // Check that it maps to actual procurement entities
-          const hasProcurementEntity = result.resourceTypes!.some(type => 
+          const hasProcurementEntity = result.resourceTypes!.some((type: string) => 
             procurementEntityTypes.includes(type)
           );
           expect(hasProcurementEntity).toBe(true);
         }
-      });
+      }
     });
 
-    it('should handle common language variations', () => {
-      const queryTranslator = new QueryTranslator(mockOntologyService as any);
+    it('should handle common language variations', async () => {
+      const mockOpenAI = new OpenAI() as any;
+      const queryTranslator = new QueryTranslator(mockOntologyService as any, mockOpenAI);
       
       // Test common language variations that should map to procurement entities
       const commonVariations = [
@@ -264,8 +269,8 @@ describe('QueryTranslator with Procurement Ontology', () => {
         'get all projects' // should map to project/work entities
       ];
 
-      commonVariations.forEach(query => {
-        const result = queryTranslator['trySimplePatternMatching'](query);
+      for (const query of commonVariations) {
+        const result = await queryTranslator['trySimplePatternMatching'](query);
         if (result) {
           console.log(`Common Variation: "${query}" -> Result:`, JSON.stringify(result, null, 2));
           
@@ -273,7 +278,7 @@ describe('QueryTranslator with Procurement Ontology', () => {
           expect(result.resourceTypes).toBeDefined();
           expect(result.resourceTypes!.length).toBeGreaterThan(0);
         }
-      });
+      }
     });
   });
 }); 

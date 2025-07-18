@@ -11,6 +11,7 @@ import { sortNamedArray, sortRecord, sortEntityProperties } from './sort-utils';
 import { pruneRelationshipsByEntities } from './relationship-utils';
 import { compactOntology } from './compact-ontology';
 import { Entity, Relationship } from './ontology-source';
+import * as Handlebars from 'handlebars';
 
 interface BuildOptions {
   configPath?: string;
@@ -395,9 +396,9 @@ function parseArgs(): BuildOptions {
 function generatePromptsFromOntology(ontology: any, config: any) {
   const ontologyName = config.name;
   const ontologyDescription = config.source.description;
-  
   // Analyze entity types for semantic groupings
   const entityTypes = ontology.entities.map((e: any) => e.name);
+  const relationshipTypes = ontology.relationships.map((r: any) => r.name);
   const personEntities = entityTypes.filter((name: string) => 
     name.toLowerCase().includes('person') || 
     name.toLowerCase().includes('agent') || 
@@ -472,134 +473,32 @@ function generatePromptsFromOntology(ontology: any, config: any) {
     semanticMappings['activities'] = projectEntities;
   }
   
-  // Generate query translation prompts
-  const queryTranslationPrompts = {
-    systemPrompt: `You are an expert at translating natural language queries into a structured JSON format for the ${ontologyName} domain.
-
-Your task is to identify the user's intent and the target resource, considering the conversational history and the graph schema.
-
-You have three commands:
-1. 'show': For listing all resources of a certain type.
-2. 'show_related': For listing resources related to the entities from the previous turn in the conversation, or for complex self-contained relational queries.
-3. 'unknown': For anything else (greetings, general questions, etc.).
-
-The supported resource types are: {validEntityTypes}
-Available labels (including alternative labels): {availableLabels}
-The user can write in any language.
-
-# Rules:
-- If the query is a stand-alone request (e.g., "show all deals"), use the 'show' command and populate 'resourceTypes'.
-- If the query requests resources with specific properties (e.g., "find the person named Rick"), use the 'show' command and populate 'resourceTypes' and 'filters'.
-- For a complex query that finds entities related to another entity described by properties (e.g., "find companies related to 'John Doe'"), use the 'show_related' command. You must populate 'resourceTypes' with the target entity type, 'relatedTo' with the source entity type, and 'filters' with the properties of the source entity.
-- If the query refers to a previous result (e.g., "show their contacts"), use the 'show_related' command. You MUST set 'resourceTypes' to the type(s) of entity the user is asking for now. The 'relatedTo' field will be inferred from the context.
-- For 'show_related', if you can't determine the new resourceTypes, classify the command as 'unknown'.
-- If the query refers to a *specific entity* from the history (e.g., "who is related to 'Project Alpha'"), you MUST also extract the 'sourceEntityName'.
-- When using 'show_related', only infer a 'relationshipType' if the user's language is very specific (e.g., "who works on", "invested in"). Otherwise, omit it.
-- If there's no history or the query doesn't relate to it, treat it as a new query.
-- IMPORTANT: When the user uses alternative labels (like "Person" instead of "Contact"), map them to the correct entity types. For example, if "Person" is an alternative label for "Contact", use "Contact" in the resourceTypes.
-
-# Graph Schema
-This is the structure of the knowledge graph you are querying:
-{schemaDescription}
-
-# Conversation History
-{previousContext}
-
-# Output Format
-Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "..."], "filters": {"key": "value"}, "relatedTo": ["..."], "sourceEntityName": "...", "relationshipType": "..."}.
-'filters', 'relatedTo', 'sourceEntityName' and 'relationshipType' are optional.`,
-    
-    semanticPrompt: `You are an expert at analyzing ontology entities and creating semantic mappings for natural language queries in the ${ontologyName} domain.
-
-Given these ontology entities:
-{entityDescriptions}
-
-Your task is to identify common natural language terms that users might use to refer to groups of these entities, and map them to the appropriate entity types.
-
-CRITICAL REQUIREMENTS:
-1. You MUST include mappings for these essential terms if relevant entities exist:
-   - "persons" and "people" → all person/agent related entities
-   - "agents" → agent-related entities  
-   - "companies" and "organizations" → business/organization entities
-   - "contracts" → contract/agreement entities
-   - "projects" → project/process related entities
-   - "documents" → document related entities
-
-2. Analyze the entity names and descriptions to identify semantic groupings
-3. Consider alternative labels and common synonyms
-4. Map plural forms (e.g., "persons", "people", "agents", "companies")
-5. Be comprehensive - include all relevant entity types for each semantic category
-
-Generate mappings in this JSON format:
-{
-  "common_term": ["entity_type1", "entity_type2"],
-  "another_term": ["entity_type3", "entity_type4"]
-}
-
-Be thorough and include all relevant mappings. Users should be able to query using natural language terms.
-
-Return only the JSON object, no other text.`,
-    
-    semanticMappings
+  // Load prompt template from file
+  const promptTemplatePath = path.join(__dirname, '../../codegen/ontology-templates/prompt.hbs');
+  const promptTemplateContent = fs.readFileSync(promptTemplatePath, 'utf-8');
+  const template = Handlebars.compile(promptTemplateContent);
+  // Prepare data for template
+  const entityInfo = entityTypes.join(', ');
+  const relationshipInfo = relationshipTypes.join(', ');
+  // Compose the data object for the template
+  const templateData = {
+    ontologyName,
+    ontologyDescription,
+    ontologyVersion: config.version || config.source.version,
+    entityInfo,
+    relationshipInfo,
+    validEntityTypes: entityTypes.join(', '),
+    availableLabels: entityTypes.join(', '),
+    schemaDescription: '', // Fill as needed
+    previousContext: '', // Fill as needed
+    outputFormat: '{"command": "...", "resourceTypes": ["...", "..."], "filters": {"key": "value"}, "relatedTo": ["..."], "sourceEntityName": "...", "relationshipType": "..."}',
+    entityDescriptions: ontology.entities.map((e: any) => `${e.name}: ${e.description || ''}`).join('\n'),
   };
-  
-  // Generate email generation prompts
-  const emailGenerationPrompts = {
-    systemPrompt: `You are a professional email writer specializing in ${ontologyName} communications. Always respond with SUBJECT: and BODY: sections. 
-
-CRITICAL INSTRUCTIONS:
-- You MUST use the provided ontology entities and relationships naturally in your email content
-- Reference specific entity names (like ${entityTypes.slice(0, 5).join(', ')}) in context
-- Reference specific relationship names naturally in context
-- Make the email content rich with domain-specific terminology
-- Ensure the email sounds professional and realistic for the ${ontologyName} domain
-- Use the exact entity and relationship names provided in the ontology context`,
-    
-    promptTemplate: `You are {senderName}, {senderTitle} at the {ontologyName} department. Generate a professional email for {emailType} regarding {category} with vendor {vendor}.
-
-Ontology Context:
-- Name: {ontologyName}
-- Source: {ontologyDescription}
-- Version: {ontologyVersion}
-
-Relevant Entities from this ontology (use these entity names naturally in your email):
-{entityInfo}
-
-Relevant Relationships from this ontology (use these relationship names naturally in your email):
-{relationshipInfo}
-
-Email Context:
-- Email Type: {emailType}
-- Vendor: {vendor}
-- Category: {category}
-- Reference Number: {referenceNumber}
-- Amount: {amount} {currency}
-- Date: {date}
-- Sender: {senderName} ({senderTitle})
-- Recipient: {recipientName} ({recipientTitle})
-
-Requirements:
-- Generate both a subject line and email body
-- Keep the email professional and concise (under 300 words)
-- Use appropriate tone for {ontologyName} operations
-- Include relevant details like reference numbers and amounts
-- CRITICAL: Reference between 8-12 specific entities from the ontology naturally in your email (use the exact entity names listed above)
-- CRITICAL: Reference at least 2-4 specific relationships from the ontology naturally in your email (use the exact relationship names listed above)
-- Make the email content rich with ${ontologyName}-specific terminology and concepts
-- Include specific ${ontologyName} processes, roles, documents, or procedures mentioned in the entities
-- End with appropriate signature including sender's name and title
-- Address the recipient by their name
-- Make the email realistic and contextually appropriate for ${ontologyName} operations
-
-Format your response as:
-SUBJECT: [subject line]
-BODY: [email body]`
-  };
-  
-  return {
-    queryTranslation: queryTranslationPrompts,
-    emailGeneration: emailGenerationPrompts
-  };
+  // Generate prompts using the template
+  const prompts = JSON.parse(template(templateData));
+  // Add semanticMappings as before
+  prompts.queryTranslation.semanticMappings = semanticMappings;
+  return prompts;
 }
 
 function showHelp() {
@@ -629,11 +528,3 @@ Examples:
   npx ts-node scripts/ontology/build-ontology.ts --ontology-name financial --output-dir ./output
 `);
 }
-
-// Run if called directly
-if (require.main === module) {
-  const options = parseArgs();
-  buildOntology(options);
-}
-
-export { buildOntology }; 
