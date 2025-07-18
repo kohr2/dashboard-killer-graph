@@ -7,6 +7,8 @@ import type { StructuredQuery, ConversationTurn } from './query-translator.types
 @injectable()
 export class QueryTranslator {
   private openai: OpenAI;
+  private semanticMappingsCache: { [key: string]: string[] } = {};
+  private semanticMappingsGenerated = false;
 
   constructor(
     private readonly ontologyService: OntologyService,
@@ -28,8 +30,12 @@ export class QueryTranslator {
     rawQuery: string,
     history: ConversationTurn[] = []
   ): Promise<StructuredQuery> {
+    // Ensure semantic mappings are generated if not already done
+    if (!this.semanticMappingsGenerated) {
+      await this.ensureSemanticMappingsGenerated();
+    }
     // First try simple pattern matching for basic queries
-    const simpleResult = this.trySimplePatternMatching(rawQuery);
+    const simpleResult = await this.trySimplePatternMatching(rawQuery);
     if (simpleResult) {
       logger.info('Using simple pattern matching for query:', rawQuery);
       return simpleResult;
@@ -38,6 +44,8 @@ export class QueryTranslator {
     // Fallback to OpenAI for complex queries
     const validEntityTypesArray = this.ontologyService.getAllEntityTypes();
     const validEntityTypes = validEntityTypesArray.join(', ');
+    const allAvailableLabels = this.ontologyService.getAllAvailableLabels();
+    const availableLabels = allAvailableLabels.join(', ');
     const lastTurn = history.length > 0 ? history[history.length - 1] : null;
 
     let previousContext = 'No previous context.';
@@ -49,7 +57,9 @@ export class QueryTranslator {
 
     const schemaDescription = this.ontologyService.getSchemaRepresentation();
 
-    const systemPrompt = `
+    // Get ontology-specific prompts if available
+    const ontologyPrompts = await this.getOntologyPrompts();
+    const systemPrompt = ontologyPrompts?.queryTranslation?.systemPrompt || `
 You are an expert at translating natural language queries into a structured JSON format.
 Your task is to identify the user's intent and the target resource, considering the conversational history and the graph schema.
 
@@ -59,6 +69,7 @@ You have three commands:
 3. 'unknown': For anything else (greetings, general questions, etc.).
 
 The supported resource types are: ${validEntityTypes}
+Available labels (including alternative labels): ${availableLabels}
 The user can write in any language.
 
 # Rules:
@@ -71,6 +82,7 @@ The user can write in any language.
 - If the query refers to a *specific entity* from the history (e.g., "who is related to 'Project Alpha'"), you MUST also extract the 'sourceEntityName'.
 - When using 'show_related', only infer a 'relationshipType' if the user's language is very specific (e.g., "who works on", "invested in"). Otherwise, omit it.
 - If there's no history or the query doesn't relate to it, treat it as a new query.
+- IMPORTANT: When the user uses alternative labels (like "Person" instead of "Contact"), map them to the correct entity types. For example, if "Person" is an alternative label for "Contact", use "Contact" in the resourceTypes.
 
 # Graph Schema
 This is the structure of the knowledge graph you are querying:
@@ -90,7 +102,11 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
 
 ## Stand-alone query with filter
 - User: "trouve la personne qui s'appelle Lisa"
-- Assistant: {"command": "show", "resourceTypes": ["Person"], "filters": {"name": "Lisa"}}
+- Assistant: {"command": "show", "resourceTypes": ["Contact"], "filters": {"name": "Lisa"}}
+
+## Query using alternative label
+- User: "show all persons"
+- Assistant: {"command": "show", "resourceTypes": ["Contact"]}
 
 ## Complex stand-alone relational query
 - User: "quelles organisations sont liées à la personne nommée Rick?"
@@ -110,11 +126,11 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
 
 ## Specific follow-up query with relationship
 - (After getting a list of Deals, one of which is 'Project Alpha') User: "who works on Project Alpha?"
-- Assistant: {"command": "show_related", "resourceTypes": ["Person", "Contact"], "relatedTo": ["Deal"], "sourceEntityName": "Project Alpha", "relationshipType": "WORKS_ON"}
+- Assistant: {"command": "show_related", "resourceTypes": ["Contact"], "relatedTo": ["Deal"], "sourceEntityName": "Project Alpha", "relationshipType": "WORKS_ON"}
 
 ## Vague follow-up query
 - (After getting a list of Deals) User: "what about the people?"
-- Assistant: {"command": "show_related", "resourceTypes": ["Person", "Contact"], "relatedTo": ["Deal"]}
+- Assistant: {"command": "show_related", "resourceTypes": ["Contact"], "relatedTo": ["Deal"]}
 
 ## Unrelated follow-up
 - (After getting a list of Deals) User: "show all organizations"
@@ -124,6 +140,13 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
 - (After getting a list of Deals) User: "and what else?"
 - Assistant: {"command": "unknown", "resourceTypes": []}
 `;
+
+    // Replace placeholders in the prompt
+    const finalSystemPrompt = systemPrompt
+      .replace(/{validEntityTypes}/g, validEntityTypes)
+      .replace(/{availableLabels}/g, availableLabels)
+      .replace(/{schemaDescription}/g, schemaDescription)
+      .replace(/{previousContext}/g, previousContext);
 
     try {
       logger.info('--- Sending to OpenAI ---');
@@ -136,7 +159,7 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
       const completion = await this.openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: systemPrompt },
+          { role: 'system', content: finalSystemPrompt },
           { role: 'user', content: rawQuery },
         ],
         response_format: { type: 'json_object' },
@@ -174,7 +197,7 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
       logger.info('Falling back to simple pattern matching...');
       
       // Enhanced fallback: try simple pattern matching again
-      const fallbackResult = this.trySimplePatternMatching(rawQuery);
+      const fallbackResult = await this.trySimplePatternMatching(rawQuery);
       if (fallbackResult) {
         logger.info('Using fallback pattern matching for query:', rawQuery);
         return fallbackResult;
@@ -186,54 +209,114 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
   }
 
   /**
+   * Get ontology-specific prompts from config files
+   */
+  private async getOntologyPrompts(): Promise<any> {
+    try {
+      // Get all loaded ontologies from the ontology service
+      const loadedOntologies = this.ontologyService.getAllOntologies();
+      
+      // For now, use the first loaded ontology's prompts
+      // In the future, this could be enhanced to support multiple ontologies
+      for (const ontologyName of loadedOntologies) {
+        const configPath = `ontologies/${ontologyName}/config.json`;
+        const fs = require('fs');
+        const path = require('path');
+        
+        if (fs.existsSync(configPath)) {
+          const configContent = fs.readFileSync(configPath, 'utf-8');
+          const config = JSON.parse(configContent);
+          
+          if (config.prompts) {
+            return config.prompts;
+          }
+        }
+      }
+      
+      return null;
+    } catch (error) {
+      logger.warn('Failed to load ontology prompts:', error);
+      return null;
+    }
+  }
+
+  /**
    * Simple pattern matching for basic queries when OpenAI is not available
    */
-  private trySimplePatternMatching(query: string): StructuredQuery | null {
+  private async trySimplePatternMatching(query: string): Promise<StructuredQuery | null> {
+    // Ensure semantic mappings are available before pattern matching
+    if (!this.semanticMappingsGenerated) {
+      logger.info('Generating semantic mappings for first time...');
+      await this.ensureSemanticMappingsGenerated();
+      logger.info('Semantic mappings generated, cache size:', Object.keys(this.semanticMappingsCache).length);
+    }
+
     const normalizedQuery = query.toLowerCase().trim();
     const validEntityTypes = this.ontologyService.getAllEntityTypes();
+    const allAvailableLabels = this.ontologyService.getAllAvailableLabels();
     
-    // Pattern 1: "show all [entity]" or "list all [entity]"
-    const showAllPattern = /^(show|list|get|find)\s+(all\s+)?(.*?)s?$/i;
+    logger.info('Pattern matching query:', normalizedQuery);
+    logger.info('Available labels count:', allAvailableLabels.length);
+    logger.info('Semantic mappings cache:', Object.keys(this.semanticMappingsCache));
+    
+    // Create a mapping from labels to entity types
+    const labelToEntityType = new Map<string, string>();
+    
+    // Add direct entity types
+    for (const entityType of validEntityTypes) {
+      labelToEntityType.set(entityType.toLowerCase(), entityType);
+    }
+    
+    // Add alternative labels
+    for (const entityType of validEntityTypes) {
+      const altLabels = this.ontologyService.getAlternativeLabels(entityType);
+      for (const altLabel of altLabels) {
+        // Ensure altLabel is a string
+        if (typeof altLabel === 'string') {
+          labelToEntityType.set(altLabel.toLowerCase(), entityType);
+        }
+      }
+    }
+    
+    // Pattern 1: "show all [entity]" or "list all [entity]" - more flexible
+    const showAllPattern = /^(show|list|get|find)\s+(all\s+)?(.+?)(?:\s*$)/i;
     const showMatch = normalizedQuery.match(showAllPattern);
     
     if (showMatch) {
-      const entityPart = showMatch[3];
+      const entityPart = showMatch[3].toLowerCase();
+      logger.info('Extracted entity part:', entityPart);
       
-      // Try to match common entity types
-      const entityMappings: { [key: string]: string[] } = {
-        'person': ['Person'],
-        'people': ['Person'],
-        'persons': ['Person'],
-        'organization': ['Organization'],
-        'organizations': ['Organization'],
-        'org': ['Organization'],
-        'orgs': ['Organization'],
-        'company': ['Organization'],
-        'companies': ['Organization'],
-        'deal': ['Deal'],
-        'deals': ['Deal'],
-        'contract': ['Contract'],
-        'contracts': ['Contract'],
-        'communication': ['Communication'],
-        'communications': ['Communication'],
-        'email': ['Email'],
-        'emails': ['Email'],
-        'ratingagency': ['RatingAgency'],
-        'rating agency': ['RatingAgency'],
-        'rating agencies': ['RatingAgency'],
-        'amountofmoney': ['AmountOfMoney'],
-        'amount of money': ['AmountOfMoney'],
-        'amounts of money': ['AmountOfMoney'],
-        'money': ['AmountOfMoney'],
-        'amount': ['AmountOfMoney'],
-        'amounts': ['AmountOfMoney']
-      };
+      // Check semantic mappings cache first (highest priority)
+      const semanticMatch = this.semanticMappingsCache[entityPart];
+      if (semanticMatch && semanticMatch.length > 0) {
+        logger.info('Semantic match found:', semanticMatch);
+        return {
+          command: 'show',
+          resourceTypes: semanticMatch
+        };
+      }
+
+
+
+      // Try to match against all available labels
+      const matchedEntityType = labelToEntityType.get(entityPart);
+      if (matchedEntityType && validEntityTypes.includes(matchedEntityType)) {
+        logger.info('Direct match found:', matchedEntityType);
+        return {
+          command: 'show',
+          resourceTypes: [matchedEntityType]
+        };
+      }
+      
+      // Generate dynamic entity mappings based on ontology
+      const entityMappings = this.generateEntityMappings(validEntityTypes);
       
       const matchedTypes = entityMappings[entityPart];
       if (matchedTypes) {
         // Verify the types exist in the ontology
         const validTypes = matchedTypes.filter(type => validEntityTypes.includes(type));
         if (validTypes.length > 0) {
+          logger.info('Entity mapping match found:', validTypes);
           return {
             command: 'show',
             resourceTypes: validTypes
@@ -242,6 +325,171 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
       }
     }
     
+    logger.info('No pattern match found for query:', query);
     return null;
+  }
+
+  /**
+   * Generate dynamic entity mappings based on the ontology entities
+   * This creates common language mappings for entity types found in the ontology
+   */
+  private generateEntityMappings(validEntityTypes: string[]): { [key: string]: string[] } {
+    const entityMappings: { [key: string]: string[] } = {};
+
+    // Only use actual ontology data - no hardcoded patterns
+    for (const entityType of validEntityTypes) {
+      const lowerEntityType = entityType.toLowerCase();
+
+      // Map the entity type itself (singular and plural)
+      entityMappings[lowerEntityType] = [entityType];
+      entityMappings[lowerEntityType + 's'] = [entityType];
+      
+      // Handle common pluralization patterns
+      if (lowerEntityType.endsWith('y')) {
+        const singular = lowerEntityType.slice(0, -1);
+        entityMappings[singular + 'ies'] = [entityType];
+      }
+
+      // Map all alternative labels from the ontology
+      const alternativeLabels = this.ontologyService.getAlternativeLabels(entityType);
+      for (const altLabel of alternativeLabels) {
+        // Ensure altLabel is a string
+        if (typeof altLabel === 'string') {
+          const lowerAltLabel = altLabel.toLowerCase();
+          entityMappings[lowerAltLabel] = [entityType];
+          entityMappings[lowerAltLabel + 's'] = [entityType];
+          
+          // Handle pluralization for alternative labels
+          if (lowerAltLabel.endsWith('y')) {
+            const singular = lowerAltLabel.slice(0, -1);
+            entityMappings[singular + 'ies'] = [entityType];
+          }
+        }
+      }
+    }
+
+        // Add cached semantic mappings if available
+    if (this.semanticMappingsGenerated) {
+      for (const [term, entityTypes] of Object.entries(this.semanticMappingsCache)) {
+        entityMappings[term] = entityTypes;
+      }
+    }
+    // Note: Semantic mappings are now generated in trySimplePatternMatching before this is called
+
+    // Remove duplicates from arrays
+    for (const key in entityMappings) {
+      entityMappings[key] = [...new Set(entityMappings[key])];
+    }
+
+    return entityMappings;
+  }
+
+  /**
+   * Ensure semantic mappings are generated for the current ontology
+   */
+  private async ensureSemanticMappingsGenerated(): Promise<void> {
+    if (this.semanticMappingsGenerated) {
+      return;
+    }
+
+    const validEntityTypes = this.ontologyService.getAllEntityTypes();
+    await this.generateSemanticMappingsWithLLM(validEntityTypes);
+  }
+
+    /**
+   * Use LLM to generate semantic mappings based on actual ontology entities
+   */
+  private async generateSemanticMappingsWithLLM(validEntityTypes: string[]): Promise<void> {
+    try {
+      logger.info('Starting LLM semantic mapping generation...');
+      
+      const entityDescriptions = validEntityTypes.map(entityType => {
+        const altLabels = this.ontologyService.getAlternativeLabels(entityType);
+        return `${entityType}${altLabels.length > 0 ? ` (also known as: ${altLabels.join(', ')})` : ''}`;
+      }).join('\n');
+
+      logger.info('Entity descriptions length:', entityDescriptions.length);
+      logger.info('Sample entities:', validEntityTypes.slice(0, 5));
+
+      // Get ontology-specific semantic prompt if available
+      const ontologyPrompts = await this.getOntologyPrompts();
+      const baseSemanticPrompt = ontologyPrompts?.queryTranslation?.semanticPrompt || `
+You are an expert at analyzing ontology entities and creating semantic mappings for natural language queries.
+
+Given these ontology entities:
+{entityDescriptions}
+
+Your task is to identify common natural language terms that users might use to refer to groups of these entities, and map them to the appropriate entity types.
+
+CRITICAL REQUIREMENTS:
+1. You MUST include mappings for these essential terms if relevant entities exist:
+   - "persons" and "people" → all person/agent related entities
+   - "agents" → agent-related entities  
+   - "companies" and "organizations" → business/organization entities
+   - "contracts" → contract/agreement entities
+   - "projects" → project/process related entities
+   - "documents" → document related entities
+
+2. Analyze the entity names and descriptions to identify semantic groupings
+3. Consider alternative labels and common synonyms
+4. Map plural forms (e.g., "persons", "people", "agents", "companies")
+5. Be comprehensive - include all relevant entity types for each semantic category
+
+For example:
+- If entities include "Buyer", "Contractor", "Tenderer", "AgentInRole", map them to "persons", "people", "agents"
+- If entities include "Organization", "Business", "Company", map them to "companies", "organizations"
+- If entities include "Contract", "Agreement", "Deal", map them to "contracts"
+
+Generate mappings in this JSON format:
+{
+  "common_term": ["entity_type1", "entity_type2"],
+  "another_term": ["entity_type3", "entity_type4"]
+}
+
+Be thorough and include all relevant mappings. Users should be able to query using natural language terms.
+
+Return only the JSON object, no other text.
+`;
+
+      const semanticPrompt = baseSemanticPrompt.replace(/{entityDescriptions}/g, entityDescriptions);
+
+      logger.info('Sending request to OpenAI...');
+      const completion = await this.openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: semanticPrompt },
+          { role: 'user', content: 'Generate semantic mappings for these entities.' }
+        ],
+        response_format: { type: 'json_object' },
+      });
+
+      const result = completion.choices[0]?.message?.content;
+      logger.info('Received response from OpenAI, length:', result?.length);
+      
+      if (result) {
+        const semanticMappings = JSON.parse(result);
+        logger.info('Parsed semantic mappings:', Object.keys(semanticMappings));
+        
+        // Cache the LLM-generated mappings for future use
+        for (const [commonTerm, entityTypes] of Object.entries(semanticMappings)) {
+          if (Array.isArray(entityTypes)) {
+            const validMappedTypes = entityTypes.filter((type: string) => 
+              validEntityTypes.includes(type)
+            );
+            if (validMappedTypes.length > 0) {
+              this.semanticMappingsCache[commonTerm.toLowerCase()] = validMappedTypes;
+              logger.info(`Cached mapping: "${commonTerm}" -> [${validMappedTypes.join(', ')}]`);
+            }
+          }
+        }
+        
+        // Mark as generated so we use cache in future calls
+        this.semanticMappingsGenerated = true;
+        logger.info('Semantic mappings generation completed successfully');
+      }
+    } catch (error) {
+      logger.warn('Failed to generate semantic mappings with LLM, continuing without them:', error);
+      // Continue without semantic mappings if LLM fails
+    }
   }
 } 

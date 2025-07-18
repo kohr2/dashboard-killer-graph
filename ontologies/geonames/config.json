@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "description": "Ontology for GeoNames locations, cities, countries, and features.",
   "enabled": true,
+  "source": {
+    "url": "https://www.geonames.org/",
+    "type": "official",
+    "version": "1.0.0",
+    "description": "Official GeoNames database for geographical locations"
+  },
   "datasets": [
     {
       "name": "geonames_cities1000",

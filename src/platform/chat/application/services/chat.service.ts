@@ -369,7 +369,7 @@ Summarize the results if they are numerous, but list key details. Format your an
 
     const session = this.neo4j.getSession();
     try {
-        const relationshipCypher = relationshipType ? `[:\`${relationshipType}\`]` : `[*1..2]`;
+        const relationshipCypher = relationshipType ? `[:\`${relationshipType}\`]--()--[*0..1]` : `[*1..2]`;
         
         const sourceLabelsCypher = sourceResourceTypes.map(l => `\`${l}\``).join('|');
         const targetLabelsCypher = targetResourceTypes.map(l => `\`${l}\``).join('|');
@@ -575,21 +575,51 @@ Summarize the results if they are numerous, but list key details. Format your an
     const lowerQuery = query.toLowerCase();
     const resourceTypes: PermissionResource[] = [];
     
-    // Map query terms to resource types
-    if (lowerQuery.includes('contact') || lowerQuery.includes('person')) {
-      resourceTypes.push('Contact'); // Person maps to Contact
+    // Get all available labels (entity types + alternative labels)
+    const allAvailableLabels = this.ontologyService.getAllAvailableLabels();
+    
+    // Create a mapping from alternative labels to actual entity types
+    const labelToEntityType = new Map<string, string>();
+    
+    // Add direct entity types
+    for (const entityType of this.ontologyService.getAllEntityTypes()) {
+      labelToEntityType.set(entityType.toLowerCase(), entityType);
     }
-    if (lowerQuery.includes('organization') || lowerQuery.includes('company')) {
-      resourceTypes.push('Organization');
+    
+    // Add alternative labels
+    for (const entityType of this.ontologyService.getAllEntityTypes()) {
+      const altLabels = this.ontologyService.getAlternativeLabels(entityType);
+      for (const altLabel of altLabels) {
+        labelToEntityType.set(altLabel.toLowerCase(), entityType);
+      }
     }
-    if (lowerQuery.includes('deal') || lowerQuery.includes('project')) {
-      resourceTypes.push('Deal');
+    
+    // Check for matches in the query
+    for (const [label, entityType] of labelToEntityType) {
+      if (lowerQuery.includes(label)) {
+        if (!resourceTypes.includes(entityType as PermissionResource)) {
+          resourceTypes.push(entityType as PermissionResource);
+        }
+      }
     }
-    if (lowerQuery.includes('email') || lowerQuery.includes('communication')) {
-      resourceTypes.push('Communication');
-    }
-    if (lowerQuery.includes('task')) {
-      resourceTypes.push('Task');
+    
+    // Fallback to common patterns if no specific matches found
+    if (resourceTypes.length === 0) {
+      if (lowerQuery.includes('contact') || lowerQuery.includes('person')) {
+        resourceTypes.push('Contact');
+      }
+      if (lowerQuery.includes('organization') || lowerQuery.includes('company')) {
+        resourceTypes.push('Organization');
+      }
+      if (lowerQuery.includes('deal') || lowerQuery.includes('project')) {
+        resourceTypes.push('Deal');
+      }
+      if (lowerQuery.includes('email') || lowerQuery.includes('communication')) {
+        resourceTypes.push('Communication');
+      }
+      if (lowerQuery.includes('task')) {
+        resourceTypes.push('Task');
+      }
     }
     
     // Default to common entities if none specified
@@ -598,6 +628,21 @@ Summarize the results if they are numerous, but list key details. Format your an
     }
     
     return resourceTypes;
+  }
+
+  /**
+   * Resolves a resource type from a label (entity type or alternative label)
+   * @param label The label to resolve
+   * @returns The resolved entity type, or null if not found
+   */
+  private resolveResourceTypeFromLabel(label: string): string | null {
+    // First check if it's a direct entity type
+    if (this.ontologyService.getAllEntityTypes().includes(label)) {
+      return label;
+    }
+    
+    // Then check alternative labels
+    return this.ontologyService.resolveEntityTypeFromAlternativeLabel(label);
   }
 
   private extractFilters(query: string): { [key: string]: string } {

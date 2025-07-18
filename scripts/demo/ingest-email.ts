@@ -136,6 +136,8 @@ function parseCliFlags(): CliFlags {
       default:
         console.warn(`⚠️  Unknown scope: ${scope}. Using default settings.`);
     }
+    // Force bulk mode and no limit if scope is set
+    mode = 'bulk';
   }
 
   // Set default folder if not specified by scope or explicit flag
@@ -144,6 +146,9 @@ function parseCliFlags(): CliFlags {
   // Set default database if not specified
   database = database || 'neo4j';
 
+  // If scope is set, always process all emails (no limit)
+  const limit = scope ? 0 : (parseInt(flag('limit', '0') as string) || 0);
+
   return {
     ontology,
     generate: hasFlag('generate'),
@@ -151,7 +156,7 @@ function parseCliFlags(): CliFlags {
     folder,
     file: flag('file'),
     database,
-    limit: parseInt(flag('limit', '0') as string) || 0,
+    limit,
     resetDb: hasFlag('reset-db'),
     mode,
     scope,

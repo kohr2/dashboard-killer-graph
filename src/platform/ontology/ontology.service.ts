@@ -22,6 +22,14 @@ const OntologyPropertySchema = z.object({
   description: z.string(),
 });
 
+const AlternativeLabelSchema = z.union([
+  z.string(),
+  z.object({
+    _: z.string(),
+    $: z.record(z.any()).optional()
+  })
+]);
+
 const OntologyEntitySchema = z.object({
   description: z.union([
     z.string(),
@@ -35,7 +43,11 @@ const OntologyEntitySchema = z.object({
   parentClass: z.string().optional(),
   isProperty: z.boolean().optional(),
   vectorIndex: z.boolean().optional(),
-  properties: z.record(z.union([z.string(), OntologyPropertySchema])).optional(),
+  properties: z.record(z.union([
+    z.string(), 
+    OntologyPropertySchema,
+    z.array(AlternativeLabelSchema) // Support alternativeLabels array
+  ])).optional(),
   keyProperties: z.array(z.string()).optional(),
   enrichment: z
     .object({
@@ -408,9 +420,91 @@ export class OntologyService {
   }
 
   public isValidLabel(label: string): boolean {
-    // Basic implementation: checks if the label exists as an entity type.
-    logger.warn(`[OntologyService] isValidLabel is a placeholder. Checking for direct existence of: ${label}`);
-    return !!this.schema.entities[label];
+    // Check if the label exists as an entity type or as an alternative label
+    if (this.schema.entities[label]) {
+      return true;
+    }
+    
+    // Check alternative labels
+    return this.resolveEntityTypeFromAlternativeLabel(label) !== null;
+  }
+
+  /**
+   * Resolves an entity type from an alternative label
+   * @param alternativeLabel The alternative label to resolve
+   * @returns The actual entity type name, or null if not found
+   */
+  public resolveEntityTypeFromAlternativeLabel(alternativeLabel: string): string | null {
+    for (const [entityType, entityDef] of Object.entries(this.schema.entities)) {
+      const altLabels = this.extractAlternativeLabels(entityDef);
+      if (altLabels.includes(alternativeLabel)) {
+        return entityType;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Gets all alternative labels for a given entity type
+   * @param entityType The entity type to get alternative labels for
+   * @returns Array of alternative labels, or empty array if none found
+   */
+  public getAlternativeLabels(entityType: string): string[] {
+    const entityDef = this.schema.entities[entityType];
+    if (!entityDef) {
+      return [];
+    }
+    return this.extractAlternativeLabels(entityDef);
+  }
+
+  /**
+   * Extracts alternative labels from an entity definition
+   * @param entityDef The entity definition object
+   * @returns Array of alternative labels
+   */
+  private extractAlternativeLabels(entityDef: any): string[] {
+    const altLabels: string[] = [];
+    
+    // Check if alternativeLabels exists in properties
+    if (entityDef.properties?.alternativeLabels) {
+      const altLabelsProp = entityDef.properties.alternativeLabels;
+      if (Array.isArray(altLabelsProp)) {
+        altLabels.push(...altLabelsProp.map((label: any) => {
+          // Handle both string and object formats
+          if (typeof label === 'string') {
+            return label;
+          } else if (label && typeof label === 'object' && label._) {
+            return label._;
+          }
+          return null;
+        }).filter(Boolean));
+      }
+    }
+    
+    return altLabels;
+  }
+
+  /**
+   * Gets all available labels (entity types + alternative labels) for query matching
+   * @returns Array of all available labels
+   */
+  public getAllAvailableLabels(): string[] {
+    const labels = new Set<string>();
+    
+    // Add all entity types
+    for (const entityType of Object.keys(this.schema.entities)) {
+      labels.add(entityType);
+    }
+    
+    // Add all alternative labels
+    for (const [entityType, entityDef] of Object.entries(this.schema.entities)) {
+      const altLabels = this.extractAlternativeLabels(entityDef);
+      for (const altLabel of altLabels) {
+        labels.add(altLabel);
+      }
+    }
+    
+    return Array.from(labels);
   }
 
   public registerEntityType(name: string, definition: any): void {

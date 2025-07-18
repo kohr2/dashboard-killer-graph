@@ -61,6 +61,17 @@ export interface OntologyConfig {
     promptTemplate?: string;
     systemPrompt?: string;
   };
+  prompts?: {
+    queryTranslation?: {
+      systemPrompt?: string;
+      semanticPrompt?: string;
+      semanticMappings?: { [key: string]: string[] };
+    };
+    emailGeneration?: {
+      systemPrompt?: string;
+      promptTemplate?: string;
+    };
+  };
 }
 
 export interface EmailGenerationOptions {
@@ -328,8 +339,9 @@ export class EmailFixtureGenerationService {
       
       // Get prompt template from config or use default
       const emailConfig = config.emailGeneration || {};
-      const promptTemplate = emailConfig.promptTemplate || this.getDefaultPromptTemplate();
-      const systemPrompt = emailConfig.systemPrompt || this.getDefaultSystemPrompt();
+      const prompts = config.prompts?.emailGeneration || {};
+      const promptTemplate = prompts.promptTemplate || emailConfig.promptTemplate || this.getDefaultPromptTemplate();
+      const systemPrompt = prompts.systemPrompt || emailConfig.systemPrompt || this.getDefaultSystemPrompt();
       
       // Replace placeholders in prompt template
       const prompt = promptTemplate

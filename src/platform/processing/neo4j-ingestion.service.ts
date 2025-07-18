@@ -204,13 +204,23 @@ export class Neo4jIngestionService {
 
       if (!foundExistingNode) {
         // Create new entity
-        const allLabels = [
+        // Collect all labels: primary, superclasses, and alternativeLabels
+        let allLabels = [
           primaryLabel,
           ...this.ontologyService.getSuperClasses(primaryLabel),
-        ].filter((l, idx, arr) => arr.indexOf(l) === idx);
-        const labelsCypher = allLabels.map(l => '\`' + l + '\`').join(':');
-
-        // Prepare properties
+        ];
+        // Add alternativeLabels as labels if present
+        if (entity.properties && Array.isArray(entity.properties.alternativeLabels)) {
+          allLabels = allLabels.concat(entity.properties.alternativeLabels);
+        }
+        // Clean and deduplicate labels
+        allLabels = allLabels
+          .map(l => String(l).replace(/[^a-zA-Z0-9_]/g, '')) // Remove special chars for Neo4j label safety
+          .filter(Boolean)
+          .filter((l, idx, arr) => arr.indexOf(l) === idx);
+        // Build Cypher label string
+        const labelsCypher = allLabels.map(l => '`' + l + '`').join(':');
+        // Prepare properties (do NOT include alternativeLabels as a property)
         const entityProperties = propertyRelationships.get(entity.id) || new Map();
         const additionalProperties: any = {};
         
@@ -286,6 +296,11 @@ export class Neo4jIngestionService {
             RETURN e
           `;
         
+        // Remove alternativeLabels from properties if present
+        let properties = entity.properties ? { ...entity.properties } : {};
+        if (properties.alternativeLabels) {
+          delete properties.alternativeLabels;
+        }
         const mergeResult = await this.session.run(
           mergeQuery,
           {
@@ -307,7 +322,7 @@ export class Neo4jIngestionService {
                 return new Date().toISOString();
               })(),
               embedding: entity.embedding,
-              ...(entity.properties ? flattenEntityProperties(entity.properties) : {}),
+              ...flattenEntityProperties(properties || {}),
               ...additionalProperties,
             }
           }

@@ -1037,3 +1037,183 @@ describe('OntologyService.getEnrichmentServiceName', () => {
     });
   });
 }); 
+
+describe('OntologyService - Alternative Labels', () => {
+  let ontologyService: OntologyService;
+
+  beforeEach(() => {
+    ontologyService = new OntologyService();
+  });
+
+  it('should extract alternative labels from entity definitions', () => {
+    // Arrange
+    const testOntology = {
+      name: 'TestOntology',
+      entities: {
+        Contact: {
+          description: 'A person entity',
+          properties: {
+            alternativeLabels: ['Person', 'Individual', 'Human']
+          }
+        },
+        Organization: {
+          description: 'An organization entity',
+          properties: {
+            alternativeLabels: ['Company', 'Corp', 'Business']
+          }
+        },
+        Deal: {
+          description: 'A deal entity'
+          // No alternative labels
+        }
+      }
+    } as any;
+
+    ontologyService.loadFromObjects([testOntology]);
+
+    // Act & Assert
+    expect(ontologyService.getAlternativeLabels('Contact')).toEqual(['Person', 'Individual', 'Human']);
+    expect(ontologyService.getAlternativeLabels('Organization')).toEqual(['Company', 'Corp', 'Business']);
+    expect(ontologyService.getAlternativeLabels('Deal')).toEqual([]);
+    expect(ontologyService.getAlternativeLabels('NonExistent')).toEqual([]);
+  });
+
+  it('should handle alternative labels in object format', () => {
+    // Arrange
+    const testOntology = {
+      name: 'TestOntology',
+      entities: {
+        Contact: {
+          description: 'A person entity',
+          properties: {
+            alternativeLabels: [
+              'Person',
+              { _: 'Individual', 'xml:lang': 'en' },
+              { _: 'Human', 'xml:lang': 'en-US' }
+            ]
+          }
+        }
+      }
+    } as any;
+
+    ontologyService.loadFromObjects([testOntology]);
+
+    // Act & Assert
+    expect(ontologyService.getAlternativeLabels('Contact')).toEqual(['Person', 'Individual', 'Human']);
+  });
+
+  it('should resolve entity types from alternative labels', () => {
+    // Arrange
+    const testOntology = {
+      name: 'TestOntology',
+      entities: {
+        Contact: {
+          description: 'A person entity',
+          properties: {
+            alternativeLabels: ['Person', 'Individual']
+          }
+        },
+        Organization: {
+          description: 'An organization entity',
+          properties: {
+            alternativeLabels: ['Company', 'Corp']
+          }
+        }
+      }
+    } as any;
+
+    ontologyService.loadFromObjects([testOntology]);
+
+    // Act & Assert
+    expect(ontologyService.resolveEntityTypeFromAlternativeLabel('Person')).toBe('Contact');
+    expect(ontologyService.resolveEntityTypeFromAlternativeLabel('Individual')).toBe('Contact');
+    expect(ontologyService.resolveEntityTypeFromAlternativeLabel('Company')).toBe('Organization');
+    expect(ontologyService.resolveEntityTypeFromAlternativeLabel('Corp')).toBe('Organization');
+    expect(ontologyService.resolveEntityTypeFromAlternativeLabel('NonExistent')).toBeNull();
+  });
+
+  it('should validate labels including alternative labels', () => {
+    // Arrange
+    const testOntology = {
+      name: 'TestOntology',
+      entities: {
+        Contact: {
+          description: 'A person entity',
+          properties: {
+            alternativeLabels: ['Person', 'Individual']
+          }
+        }
+      }
+    } as any;
+
+    ontologyService.loadFromObjects([testOntology]);
+
+    // Act & Assert
+    expect(ontologyService.isValidLabel('Contact')).toBe(true);
+    expect(ontologyService.isValidLabel('Person')).toBe(true);
+    expect(ontologyService.isValidLabel('Individual')).toBe(true);
+    expect(ontologyService.isValidLabel('NonExistent')).toBe(false);
+  });
+
+  it('should get all available labels including alternative labels', () => {
+    // Arrange
+    const testOntology = {
+      name: 'TestOntology',
+      entities: {
+        Contact: {
+          description: 'A person entity',
+          properties: {
+            alternativeLabels: ['Person', 'Individual']
+          }
+        },
+        Organization: {
+          description: 'An organization entity',
+          properties: {
+            alternativeLabels: ['Company']
+          }
+        }
+      }
+    } as any;
+
+    ontologyService.loadFromObjects([testOntology]);
+
+    // Act
+    const allLabels = ontologyService.getAllAvailableLabels();
+
+    // Assert
+    expect(allLabels).toContain('Contact');
+    expect(allLabels).toContain('Person');
+    expect(allLabels).toContain('Individual');
+    expect(allLabels).toContain('Organization');
+    expect(allLabels).toContain('Company');
+    expect(allLabels.length).toBe(5);
+  });
+
+  it('should handle entities without alternative labels', () => {
+    // Arrange
+    const testOntology = {
+      name: 'TestOntology',
+      entities: {
+        Contact: {
+          description: 'A person entity'
+          // No alternativeLabels property
+        },
+        Organization: {
+          description: 'An organization entity',
+          properties: {
+            // Empty alternativeLabels
+            alternativeLabels: []
+          }
+        }
+      }
+    } as any;
+
+    ontologyService.loadFromObjects([testOntology]);
+
+    // Act & Assert
+    expect(ontologyService.getAlternativeLabels('Contact')).toEqual([]);
+    expect(ontologyService.getAlternativeLabels('Organization')).toEqual([]);
+    expect(ontologyService.isValidLabel('Contact')).toBe(true);
+    expect(ontologyService.isValidLabel('Organization')).toBe(true);
+  });
+}); 
