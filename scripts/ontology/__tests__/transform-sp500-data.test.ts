@@ -19,7 +19,6 @@ describe('SP500DataTransformer', () => {
     jest.clearAllMocks();
     
     mockOutputDir = path.join(__dirname, '..', '..', '..', 'ontologies', 'companies', 'data');
-    transformer = new SP500DataTransformer();
     
     // Mock fs.existsSync to return false initially
     mockedFs.existsSync.mockReturnValue(false);
@@ -29,6 +28,8 @@ describe('SP500DataTransformer', () => {
     
     // Mock fs.writeFileSync
     mockedFs.writeFileSync.mockImplementation(() => undefined);
+    
+    transformer = new SP500DataTransformer();
   });
 
   describe('constructor', () => {
@@ -42,7 +43,12 @@ describe('SP500DataTransformer', () => {
     });
 
     it('should not create output directory if it already exists', () => {
+      // Clear previous calls
+      jest.clearAllMocks();
+      
+      // Set up mock to return true (directory exists)
       mockedFs.existsSync.mockReturnValue(true);
+      mockedFs.mkdirSync.mockImplementation(() => undefined);
       
       new SP500DataTransformer();
       

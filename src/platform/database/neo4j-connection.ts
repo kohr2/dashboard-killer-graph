@@ -15,7 +15,7 @@ export class Neo4jConnection {
   private readonly uri: string;
   private readonly user: string;
   private readonly pass: string;
-  private readonly database: string;
+  private database: string;
 
   constructor() {
     this.uri = process.env.NEO4J_URI!;
@@ -89,12 +89,38 @@ export class Neo4jConnection {
     return this.driver;
   }
 
-  public getSession(): Session {
-    return this.getDriver().session({ database: this.database });
+  public getSession(database?: string): Session {
+    const targetDatabase = database || this.database;
+    return this.getDriver().session({ database: targetDatabase });
   }
 
   public getDatabase(): string {
     return this.database;
+  }
+
+  public async switchDatabase(database: string): Promise<void> {
+    if (database === this.database) {
+      return; // Already using the requested database
+    }
+
+    // Verify the database exists
+    const session = this.getDriver().session({ database: 'system' });
+    try {
+      const result = await session.run(
+        'SHOW DATABASES YIELD name WHERE name = $name',
+        { name: database }
+      );
+
+      if (result.records.length === 0) {
+        throw new Error(`Database '${database}' does not exist`);
+      }
+    } finally {
+      await session.close();
+    }
+
+    // Update the current database
+    this.database = database;
+    logger.info(`🔄 Switched to database: ${this.database}`);
   }
 
   public async close(): Promise<void> {

@@ -190,12 +190,13 @@ export async function initializeNLPService(): Promise<NLPServiceClient | null> {
 }
 
 /**
- * Process knowledge graph query with automatic limit
+ * Process knowledge graph query with automatic limit and dynamic database switching
  */
 export async function processKnowledgeGraphQuery(
   chatService: ChatService, 
   query: string, 
-  user: any = mcpUser
+  user: any = mcpUser,
+  database?: string
 ): Promise<{ content: string; query: string }> {
   if (!query || typeof query !== 'string') {
     throw new Error('Query parameter is required and must be a string');
@@ -207,7 +208,7 @@ export async function processKnowledgeGraphQuery(
     limitedQuery = `${query} LIMIT 10`;
   }
   
-  const responseText = await chatService.handleQuery(user, limitedQuery);
+  const responseText = await chatService.handleQuery(user, limitedQuery, database);
   
   return {
     content: responseText,
@@ -283,6 +284,10 @@ export function getToolSchemas(ontologyService: OntologyService, neo4jConnection
           query: {
             type: 'string',
             description: 'The natural language query to execute against the knowledge graph.',
+          },
+          database: {
+            type: 'string',
+            description: 'Optional database name to switch to before executing the query. If not specified, uses the default database.',
           },
         },
         required: ['query'],

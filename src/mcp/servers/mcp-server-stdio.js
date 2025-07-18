@@ -100,9 +100,10 @@ async function main() {
     mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
       if (request.params.name === 'queryGraph') {
         const query = request.params.arguments?.query;
+        const database = request.params.arguments?.database;
         
         try {
-          const result = await processKnowledgeGraphQuery(chatService, query, mcpUser);
+          const result = await processKnowledgeGraphQuery(chatService, query, mcpUser, database);
           return {
             content: [{ type: 'text', text: result.content }],
           };

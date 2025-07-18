@@ -141,8 +141,13 @@ export class ChatService {
     return accessibleConversations;
   }
 
-  public async handleQuery(user: User, query: string): Promise<string> {
-    logger.info(`[ChatService] Handling query: "${query}"`);
+  public async handleQuery(user: User, query: string, database?: string): Promise<string> {
+    logger.info(`[ChatService] Handling query: "${query}"${database ? ` on database: ${database}` : ''}`);
+    
+    // Switch database if requested
+    if (database) {
+      await this.neo4j.switchDatabase(database);
+    }
     
     logger.info(`[ChatService] About to call query translator...`);
     const structuredQuery = await this.queryTranslator.translate(
