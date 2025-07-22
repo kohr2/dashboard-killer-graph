@@ -1,5 +1,3 @@
-#!/usr/bin/env ts-node
-
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -317,5 +315,8 @@ async function testLLMSemanticMappings() {
   console.log('   - Adapts to new entity types automatically');
 }
 
-// Run the test
-testLLMSemanticMappings().catch(console.error); 
+describe('LLM Semantic Mappings', () => {
+  it('should demonstrate LLM-powered semantic mappings', async () => {
+    await testLLMSemanticMappings();
+  });
+}); 

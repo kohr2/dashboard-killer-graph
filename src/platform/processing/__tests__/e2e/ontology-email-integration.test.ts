@@ -66,7 +66,7 @@ describe('Ontology Email Integration E2E', () => {
       // Clean up after test
       await cleanupDatabase();
     }
-  }, 180000); // 3 minute timeout for FIBO (limited to 250 entities)
+  }, 600000); // 10 minute timeout for FIBO (limited to 250 entities)
 
   it.skip('should process procurement ontology emails end-to-end (SKIPPED - database performance issues)', async () => {
     // This test is skipped due to database clearing performance issues

@@ -350,6 +350,9 @@ async function buildOntology(options: BuildOptions = {}) {
   }
 }
 
+// Export the buildOntology function for testing
+export { buildOntology };
+
 // Parse command line arguments
 function parseArgs(): BuildOptions {
   const args = process.argv.slice(2);

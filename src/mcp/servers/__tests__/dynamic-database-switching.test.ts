@@ -26,9 +26,14 @@ describe('MCP Server Dynamic Database Switching', () => {
     jest.clearAllMocks();
 
     // Create mock instances
+    const mockSession = {
+      run: jest.fn().mockResolvedValue({ records: [] }),
+      close: jest.fn().mockResolvedValue(undefined)
+    };
+    
     mockNeo4jConnection = {
-      switchDatabase: jest.fn().mockResolvedValue(undefined),
-      getSession: jest.fn(),
+      switchDatabase: jest.fn().mockResolvedValue(undefined as any),
+      getSession: jest.fn().mockReturnValue(mockSession),
       getDatabase: jest.fn().mockReturnValue('procurement'),
       connect: jest.fn(),
       close: jest.fn(),
@@ -55,7 +60,7 @@ describe('MCP Server Dynamic Database Switching', () => {
       translate: jest.fn().mockResolvedValue({
         command: 'show',
         resourceTypes: ['Person'],
-      }),
+      } as any),
     } as any;
 
     mockUser = {

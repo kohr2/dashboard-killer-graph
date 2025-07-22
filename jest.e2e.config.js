@@ -34,6 +34,11 @@ module.exports = {
       tsconfig: 'test/tsconfig.json'
     }]
   },
+  globals: {
+    'ts-jest': {
+      isolatedModules: true
+    }
+  },
   testTimeout: 30000,
   reporters: ['default'],
   collectCoverage: true,

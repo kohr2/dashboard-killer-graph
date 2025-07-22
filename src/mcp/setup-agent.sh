@@ -50,8 +50,8 @@ cat > "$AGENT_CONFIG" << EOF
       ],
       "cwd": "$PROJECT_ROOT",
       "env": {
-        "NEO4J_DATABASE": "dashboard-killer",
-        "MCP_ACTIVE_ONTOLOGIES": "core,fibo,procurement,geonames"
+        "NEO4J_DATABASE": "procurement",
+        "MCP_ACTIVE_ONTOLOGIES": "core,procurement"
       }
     }
   }
@@ -71,4 +71,6 @@ fi
 echo ""
 echo "🎉 Setup complete!"
 echo "📋 Next: Restart your agent"
-echo "🔧 Try: 'show all companies', 'find cities in United States'" 
+echo "🔧 Try: 'show all persons', 'show all contracts'"
+echo "🔄 Dynamic database switching enabled!"
+echo "💡 Use database parameter to switch between databases" 

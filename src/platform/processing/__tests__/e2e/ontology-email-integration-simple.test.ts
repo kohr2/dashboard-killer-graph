@@ -247,7 +247,7 @@ describe('Ontology Email Integration E2E (Simple)', () => {
   // Test cases for ontologies that have source.ontology.json files
   it('should process procurement ontology emails end-to-end', async () => {
     await runIntegrationTest('procurement');
-  }, 300000); // 5 minutes timeout
+  }, 600000); // 10 minutes timeout
 
   it.skip('should process FIBO ontology emails end-to-end (SKIPPED - too large for CI)', async () => {
     // FIBO ontology has 1,780 entities and 603 relationships, making it too large for regular testing

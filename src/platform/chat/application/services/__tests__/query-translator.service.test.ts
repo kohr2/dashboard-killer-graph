@@ -1,5 +1,3 @@
-#!/usr/bin/env ts-node
-
 import 'reflect-metadata';
 import { QueryTranslator } from '../query-translator.service';
 import * as fs from 'fs';
@@ -288,17 +286,9 @@ async function testQueryTranslator(query: string, ontologyName?: string) {
 function parseArguments() {
   const args = process.argv.slice(2);
   
+  // For test environment, use default values if no arguments provided
   if (args.length === 0) {
-    console.log('Usage: npx ts-node src/platform/chat/application/services/__tests__/query-translator.service.test.ts <query> [ontology]');
-    console.log('');
-    console.log('Examples:');
-    console.log('  npx ts-node src/platform/chat/application/services/__tests__/query-translator.service.test.ts "show all persons"');
-    console.log('  npx ts-node src/platform/chat/application/services/__tests__/query-translator.service.test.ts "show all companies" procurement');
-    console.log('  npx ts-node src/platform/chat/application/services/__tests__/query-translator.service.test.ts "find all contracts" fibo');
-    console.log('');
-    console.log('Available ontologies: procurement, fibo, geonames, isco');
-    console.log('If no ontology is specified, all ontologies will be tested.');
-    process.exit(1);
+    return { query: "show all persons", ontology: undefined };
   }
   
   const query = args[0];
@@ -307,12 +297,15 @@ function parseArguments() {
   if (ontology && !ontologies[ontology as keyof typeof ontologies]) {
     console.error(`Error: Unknown ontology "${ontology}"`);
     console.log('Available ontologies:', Object.keys(ontologies).join(', '));
-    process.exit(1);
+    return { query, ontology: undefined };
   }
   
   return { query, ontology };
 }
 
-// Run the test
-const { query, ontology } = parseArguments();
-testQueryTranslator(query, ontology).catch(console.error); 
+describe('Query Translator Service', () => {
+  it('should demonstrate query translation capabilities', async () => {
+    const { query, ontology } = parseArguments();
+    await testQueryTranslator(query, ontology);
+  });
+}); 

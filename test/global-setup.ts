@@ -4,7 +4,7 @@
 import net from 'net';
 import { waitForService } from '../src/shared/utils/wait-for-service';
 
-const NEO4J_PORT = 7688; // Port for the test database
+const NEO4J_PORT = 7687; // Port for the test database
 const NLP_SERVICE_URL = 'http://127.0.0.1:8000/health';
 const MAX_RETRIES = 5;
 const RETRY_INTERVAL_MS = 2000;

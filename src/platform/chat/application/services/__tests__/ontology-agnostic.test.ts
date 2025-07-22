@@ -1,9 +1,10 @@
-#!/usr/bin/env ts-node
-
 import 'reflect-metadata';
 import { QueryTranslator } from '../query-translator.service';
 import * as fs from 'fs';
 import * as path from 'path';
+
+// Mock environment variables for testing
+process.env.OPENAI_API_KEY = 'test-api-key';
 
 // Load different ontology data for comparison
 const procurementOntologyPath = path.join(__dirname, '../../../../../../ontologies/procurement/ontology.json');
@@ -115,4 +116,8 @@ function parseArguments() {
 
 // Run the test with command line argument
 const pattern = parseArguments();
-testOntologyAgnostic().catch(console.error); 
+describe('Ontology-Agnostic Query Translation', () => {
+  it('should demonstrate ontology-agnostic query translation', async () => {
+    await testOntologyAgnostic();
+  });
+}); 

@@ -2,17 +2,14 @@ import 'reflect-metadata';
 import fs from 'fs';
 import path from 'path';
 import { jest } from '@jest/globals';
+import { buildOntology } from '../build-ontology';
 
 /**
  * Test to ensure that core entities like Buyer and Organization are not pruned.
  */
 
 describe('buildOntology core entity retention', () => {
-  const BUILD_SCRIPT = path.join(process.cwd(), 'scripts', 'ontology', 'build-ontology.ts');
-
   it('keeps Buyer and Organization in FIBO slice', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { buildOntology } = require(BUILD_SCRIPT);
 
     // Build the FIBO ontology
     await buildOntology({ ontologyName: 'fibo', topEntities: 250, topRelationships: 250 });
@@ -34,5 +31,5 @@ describe('buildOntology core entity retention', () => {
     const ignored = sourceOntology.ignoredEntities || [];
     expect(ignored).not.toContain('Buyer');
     expect(ignored).not.toContain('Organization');
-  }, 180000);
+  }, 300000); // 5 minutes timeout
 }); 

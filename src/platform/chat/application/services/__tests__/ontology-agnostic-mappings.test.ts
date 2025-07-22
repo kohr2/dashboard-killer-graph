@@ -1,9 +1,10 @@
-#!/usr/bin/env ts-node
-
 import 'reflect-metadata';
 import { QueryTranslator } from '../query-translator.service';
 import * as fs from 'fs';
 import * as path from 'path';
+
+// Mock environment variables for testing
+process.env.OPENAI_API_KEY = 'test-api-key';
 
 // Load different ontology data for comparison
 const procurementOntologyPath = path.join(__dirname, '../../../../../../ontologies/procurement/ontology.json');
@@ -174,5 +175,8 @@ async function testOntologyAgnosticMappings() {
   console.log('   - Works with any ontology (procurement, FIBO, etc.)');
 }
 
-// Run the test
-testOntologyAgnosticMappings().catch(console.error); 
+describe('Ontology-Agnostic Mappings', () => {
+  it('should demonstrate ontology-agnostic entity mappings', async () => {
+    await testOntologyAgnosticMappings();
+  });
+}); 

@@ -217,8 +217,9 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
       const loadedOntologies = this.ontologyService.getAllOntologies();
       logger.info('Loaded ontologies:', loadedOntologies);
       
-      // For now, use the first loaded ontology's prompts
-      // In the future, this could be enhanced to support multiple ontologies
+      // Merge prompts from all active ontologies
+      const mergedPrompts: any = {};
+      
       for (const ontologyName of loadedOntologies) {
         const fs = require('fs');
         const path = require('path');
@@ -235,10 +236,56 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
           
           logger.info(`Config has prompts: ${!!config.prompts}`);
           if (config.prompts) {
-            logger.info('Found prompts in ontology config:', Object.keys(config.prompts));
-            return config.prompts;
+            logger.info(`Found prompts in ${ontologyName} config:`, Object.keys(config.prompts));
+            
+            // Merge prompts from this ontology
+            for (const [key, value] of Object.entries(config.prompts)) {
+              if (key === 'queryTranslation') {
+                if (!mergedPrompts.queryTranslation) {
+                  mergedPrompts.queryTranslation = {};
+                }
+                
+                // Merge queryTranslation properties
+                for (const [subKey, subValue] of Object.entries(value as any)) {
+                  if (subKey === 'semanticMappings') {
+                    // Merge semantic mappings (combine arrays)
+                    if (!mergedPrompts.queryTranslation.semanticMappings) {
+                      mergedPrompts.queryTranslation.semanticMappings = {};
+                    }
+                    
+                    for (const [term, entityTypes] of Object.entries(subValue as any)) {
+                      if (Array.isArray(entityTypes)) {
+                        if (!mergedPrompts.queryTranslation.semanticMappings[term]) {
+                          mergedPrompts.queryTranslation.semanticMappings[term] = [];
+                        }
+                        // Add new entity types without duplicates
+                        for (const entityType of entityTypes) {
+                          if (!mergedPrompts.queryTranslation.semanticMappings[term].includes(entityType)) {
+                            mergedPrompts.queryTranslation.semanticMappings[term].push(entityType);
+                          }
+                        }
+                      }
+                    }
+                  } else {
+                    // For other properties, use the last one found (could be enhanced to merge)
+                    mergedPrompts.queryTranslation[subKey] = subValue;
+                  }
+                }
+              } else {
+                // For other prompt types, use the last one found
+                mergedPrompts[key] = value;
+              }
+            }
           }
         }
+      }
+      
+      if (Object.keys(mergedPrompts).length > 0) {
+        logger.info('Merged prompts from all ontologies:', Object.keys(mergedPrompts));
+        if (mergedPrompts.queryTranslation?.semanticMappings) {
+          logger.info('Semantic mappings found:', Object.keys(mergedPrompts.queryTranslation.semanticMappings));
+        }
+        return mergedPrompts;
       }
       
       logger.warn('No ontology prompts found in any config files');
@@ -287,7 +334,24 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
       }
     }
     
-    // Pattern 1: "show all [entity]" or "list all [entity]" - more flexible
+    // Pattern 1: "relationships for [entity]" or "related to [entity]"
+    const relationshipsPattern = /^(relationships|related|connections)\s+(for|to)\s+(.+?)(?:\s*$)/i;
+    const relationshipsMatch = normalizedQuery.match(relationshipsPattern);
+    
+    if (relationshipsMatch) {
+      const entityPart = relationshipsMatch[3].toLowerCase();
+      logger.info('Extracted entity for relationships:', entityPart);
+      
+      // This should be a show_related command
+      return {
+        command: 'show_related',
+        resourceTypes: ['*'], // All related entities
+        relatedTo: ['*'], // Related to any entity type
+        filters: { name: entityPart } // Filter by the entity name
+      };
+    }
+    
+    // Pattern 2: "show all [entity]" or "list all [entity]" - more flexible
     const showAllPattern = /^(show|list|get|find)\s+(all\s+)?(.+?)(?:\s*$)/i;
     const showMatch = normalizedQuery.match(showAllPattern);
     
@@ -297,6 +361,9 @@ Provide the output in JSON format: {"command": "...", "resourceTypes": ["...", "
       
       // Check semantic mappings cache first (highest priority)
       const semanticMatch = this.semanticMappingsCache[entityPart];
+      logger.info('Checking semantic mappings cache for:', entityPart);
+      logger.info('Available semantic mappings:', Object.keys(this.semanticMappingsCache));
+      logger.info('Semantic match result:', semanticMatch);
       if (semanticMatch && semanticMatch.length > 0) {
         logger.info('Semantic match found:', semanticMatch);
         return {

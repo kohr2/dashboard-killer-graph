@@ -15,7 +15,12 @@ describe('Procurement ontology relationships analysis', () => {
 
   afterAll(() => {
     if (fs.existsSync(testOutputDir)) {
-      fs.rmSync(testOutputDir, { recursive: true, force: true });
+      try {
+        fs.rmSync(testOutputDir, { recursive: true, force: true });
+      } catch (error) {
+        // Ignore cleanup errors
+        console.log('Warning: Could not clean up test output directory:', error);
+      }
     }
   });
 
@@ -42,14 +47,22 @@ describe('Procurement ontology relationships analysis', () => {
 
     expect(result.success).toBe(true);
     expect(result.sourceOntology).toBeDefined();
-    expect(result.sourceOntology!.relationships).toHaveLength(0);
     expect(result.sourceOntology!.entities.length).toBeGreaterThan(0);
     
     console.log(`Entities kept: ${result.sourceOntology!.entities.length}`);
     console.log(`Relationships kept: ${result.sourceOntology!.relationships.length}`);
     
-    // This confirms that there are no relationships between procurement-native entities
-    expect(result.sourceOntology!.relationships).toEqual([]);
+    // Check that relationships between procurement-native entities are kept
+    // but relationships referencing external entities are filtered out
+    const availableEntityNames = new Set(result.sourceOntology!.entities.map(e => e.name));
+    
+    result.sourceOntology!.relationships.forEach(rel => {
+      expect(availableEntityNames.has(rel.source)).toBe(true);
+      expect(availableEntityNames.has(rel.target)).toBe(true);
+    });
+    
+    // Should have some relationships between procurement-native entities
+    expect(result.sourceOntology!.relationships.length).toBeGreaterThan(0);
   });
 
   it('should have relationships when built with external imports', async () => {

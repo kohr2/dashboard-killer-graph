@@ -20,11 +20,11 @@ jest.mock('@shared/utils/logger', () => ({
   }
 }));
 
-jest.mock('../../bootstrap', () => ({
+jest.mock('../../../bootstrap', () => ({
   bootstrap: jest.fn()
 }));
 
-jest.mock('../../../config/ontology/plugins.config', () => ({
+jest.mock('../../../../config/ontology/plugins.config', () => ({
   pluginRegistry: {
     disableAllPlugins: jest.fn(),
     setPluginEnabled: jest.fn(),
@@ -37,7 +37,9 @@ jest.mock('../../../config/ontology/plugins.config', () => ({
 jest.mock('tsyringe', () => ({
   container: {
     resolve: jest.fn()
-  }
+  },
+  singleton: jest.fn(() => (target: any) => target),
+  injectable: jest.fn(() => (target: any) => target)
 }));
 
 jest.mock('@platform/ontology/ontology.service');
@@ -186,7 +188,7 @@ describe('MCP Server Core', () => {
       const originalEnv = process.env.MCP_ACTIVE_ONTOLOGIES;
       process.env.MCP_ACTIVE_ONTOLOGIES = 'procurement,fibo';
       
-      const { pluginRegistry } = require('../../../config/ontology/plugins.config');
+      const { pluginRegistry } = require('../../../../config/ontology/plugins.config');
       
       configureActiveOntologies();
       
@@ -201,7 +203,7 @@ describe('MCP Server Core', () => {
       const originalEnv = process.env.MCP_ACTIVE_ONTOLOGIES;
       delete process.env.MCP_ACTIVE_ONTOLOGIES;
       
-      const { pluginRegistry } = require('../../../config/ontology/plugins.config');
+      const { pluginRegistry } = require('../../../../config/ontology/plugins.config');
       
       configureActiveOntologies();
       
@@ -220,7 +222,7 @@ describe('MCP Server Core', () => {
 
       const result = await processKnowledgeGraphQuery(mockChatService as any, 'show all contracts');
       
-      expect(mockChatService.handleQuery).toHaveBeenCalledWith(mcpUser, 'show all contracts LIMIT 10');
+      expect(mockChatService.handleQuery).toHaveBeenCalledWith(mcpUser, 'show all contracts LIMIT 10', undefined);
       expect(result).toEqual({
         content: 'Query result',
         query: 'show all contracts LIMIT 10'
@@ -234,7 +236,7 @@ describe('MCP Server Core', () => {
 
       const result = await processKnowledgeGraphQuery(mockChatService as any, 'show all contracts LIMIT 5');
       
-      expect(mockChatService.handleQuery).toHaveBeenCalledWith(mcpUser, 'show all contracts LIMIT 5');
+      expect(mockChatService.handleQuery).toHaveBeenCalledWith(mcpUser, 'show all contracts LIMIT 5', undefined);
       expect(result.query).toBe('show all contracts LIMIT 5');
     });
 
@@ -256,7 +258,7 @@ describe('MCP Server Core', () => {
 
       const result = await processNLPOperation(mockNlpClient as any, 'extract_entities', 'test text', undefined, 'procurement');
       
-      expect(mockNlpClient.extractEntities).toHaveBeenCalledWith('test text', 'procurement', undefined);
+      expect(mockNlpClient.extractEntities).toHaveBeenCalledWith('test text', 'procurement');
       expect(result).toEqual({ entities: [] });
     });
 
@@ -267,7 +269,7 @@ describe('MCP Server Core', () => {
 
       const result = await processNLPOperation(mockNlpClient as any, 'extract_graph', 'test text', undefined, 'procurement');
       
-      expect(mockNlpClient.extractGraph).toHaveBeenCalledWith('test text', 'procurement', undefined);
+      expect(mockNlpClient.extractGraph).toHaveBeenCalledWith('test text', 'procurement');
       expect(result).toEqual({ entities: [], relationships: [] });
     });
 
@@ -278,7 +280,7 @@ describe('MCP Server Core', () => {
 
       const result = await processNLPOperation(mockNlpClient as any, 'batch_extract_graph', undefined, ['text1', 'text2'], 'procurement');
       
-      expect(mockNlpClient.batchExtractGraph).toHaveBeenCalledWith(['text1', 'text2'], 'procurement', undefined);
+      expect(mockNlpClient.batchExtractGraph).toHaveBeenCalledWith(['text1', 'text2'], 'procurement');
       expect(result).toEqual({ results: [] });
     });
 

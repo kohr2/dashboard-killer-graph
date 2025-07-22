@@ -253,9 +253,49 @@
   ],
   "r": [
     [
-      "Organization",
+      "Contract",
+      "hasContractParty",
+      "ContractParty"
+    ],
+    [
+      "LegalPerson",
+      "hasInvestmentOwnership",
+      "EntityOwnership"
+    ],
+    [
+      "Party",
+      "hasMailingAddress",
+      "PhysicalAddress"
+    ],
+    [
+      "Membership",
       "hasMembership",
-      "Membership"
+      "MemberBearingOrganization"
+    ],
+    [
+      "Membership",
+      "hasOrganizationMember",
+      "OrganizationMember"
+    ],
+    [
+      "EntityOwnership",
+      "hasOwningEntity",
+      "LegalPerson"
+    ],
+    [
+      "FormalOrganization",
+      "hasResponsibleParty",
+      "ResponsibleParty"
+    ],
+    [
+      "Contract",
+      "hasThirdParty",
+      "ContractThirdParty"
+    ],
+    [
+      "GeneralPartner",
+      "isGeneralPartnerOf",
+      "Partnership"
     ]
   ]
 }

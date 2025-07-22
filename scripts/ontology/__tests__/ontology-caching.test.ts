@@ -62,32 +62,53 @@ describe('Ontology Caching', () => {
       'https://example.com/ontology.xml'
     ];
     
-    for (const testUrl of testUrls) {
-      try {
+    // Mock fetch to avoid actual network calls
+    const originalFetch = global.fetch;
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      return Promise.resolve({
+        ok: true,
+        text: () => Promise.resolve('<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:RDF>')
+      });
+    });
+    
+    try {
+      for (const testUrl of testUrls) {
         await owlSource.fetch(testUrl);
         
         // Check that cache file was created with correct name
         const fileName = testUrl.split('/').pop() || 'ontology.owl';
         const cachePath = path.join('cache', 'ontologies', fileName);
         
-        // The file might not exist if the URL is not accessible, but the path should be valid
+        // The file should exist since we mocked the fetch
         expect(cachePath).toContain('cache/ontologies/');
         expect(cachePath).toMatch(/\.(owl|rdf|xml)$/);
-        
-      } catch (error) {
-        // Expected for non-existent URLs
       }
+    } finally {
+      // Restore original fetch
+      global.fetch = originalFetch;
     }
   });
 
   it('should handle parsing errors gracefully', async () => {
     const invalidUrl = 'https://example.com/nonexistent.owl';
     
+    // Mock fetch to return an error
+    const originalFetch = global.fetch;
+    global.fetch = jest.fn().mockImplementation((url: string) => {
+      return Promise.resolve({
+        ok: false,
+        statusText: 'Not Found'
+      });
+    });
+    
     try {
       await owlSource.fetch(invalidUrl);
       fail('Should have thrown an error for invalid URL');
     } catch (error) {
       expect(error).toBeDefined();
+    } finally {
+      // Restore original fetch
+      global.fetch = originalFetch;
     }
   });
 }); 

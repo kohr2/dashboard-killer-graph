@@ -14,20 +14,25 @@ jest.mock('../query-translator.service');
 
 describe('Dynamic Database Switching', () => {
   let chatService: ChatService;
-  let mockNeo4jConnection: jest.Mocked<Neo4jConnection>;
-  let mockOntologyService: jest.Mocked<OntologyService>;
-  let mockAccessControlService: jest.Mocked<AccessControlService>;
-  let mockQueryTranslator: jest.Mocked<QueryTranslator>;
+  let mockNeo4jConnection: any;
+  let mockOntologyService: any;
+  let mockAccessControlService: any;
+  let mockQueryTranslator: any;
   let mockUser: User;
 
   beforeEach(() => {
     // Reset all mocks
     jest.clearAllMocks();
 
-    // Create mock instances
+    // Create mock instances with simple typing
+    const mockSession = {
+      run: jest.fn().mockResolvedValue({ records: [] }),
+      close: jest.fn().mockResolvedValue(undefined)
+    };
+    
     mockNeo4jConnection = {
       switchDatabase: jest.fn().mockResolvedValue(undefined),
-      getSession: jest.fn(),
+      getSession: jest.fn().mockReturnValue(mockSession),
       getDatabase: jest.fn().mockReturnValue('procurement'),
       connect: jest.fn(),
       close: jest.fn(),
@@ -36,7 +41,8 @@ describe('Dynamic Database Switching', () => {
       listDatabases: jest.fn(),
       dropDatabase: jest.fn(),
       findSimilarOrganizationEmbedding: jest.fn(),
-    } as any;
+      getDriver: jest.fn(),
+    };
 
     mockOntologyService = {
       getAllEntityTypes: jest.fn().mockReturnValue(['Person', 'Contract']),
@@ -44,18 +50,18 @@ describe('Dynamic Database Switching', () => {
       getAllRelationshipTypes: jest.fn().mockReturnValue(['WORKS_FOR']),
       getAlternativeLabels: jest.fn().mockReturnValue([]),
       getAllOntologies: jest.fn().mockReturnValue(['procurement']),
-    } as any;
+    };
 
     mockAccessControlService = {
       can: jest.fn().mockReturnValue(true),
-    } as any;
+    };
 
     mockQueryTranslator = {
       translate: jest.fn().mockResolvedValue({
         command: 'show',
         resourceTypes: ['Person'],
       }),
-    } as any;
+    };
 
     mockUser = {
       id: 'test-user',
@@ -165,9 +171,11 @@ describe('Dynamic Database Switching', () => {
         close: jest.fn().mockResolvedValue(undefined)
       };
       
-      mockNeo4jConnection.getDriver = jest.fn().mockReturnValue({
+      const mockDriver = {
         session: jest.fn().mockReturnValue(mockSession)
-      });
+      };
+      
+      mockNeo4jConnection.getDriver = jest.fn().mockReturnValue(mockDriver);
 
       // Act
       await mockNeo4jConnection.switchDatabase(database);
@@ -189,9 +197,11 @@ describe('Dynamic Database Switching', () => {
         close: jest.fn().mockResolvedValue(undefined)
       };
       
-      mockNeo4jConnection.getDriver = jest.fn().mockReturnValue({
+      const mockDriver = {
         session: jest.fn().mockReturnValue(mockSession)
-      });
+      };
+      
+      mockNeo4jConnection.getDriver = jest.fn().mockReturnValue(mockDriver);
 
       // Act & Assert
       await expect(mockNeo4jConnection.switchDatabase(database))

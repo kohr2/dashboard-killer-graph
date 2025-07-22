@@ -5452,15 +5452,99 @@
   ],
   "relationships": [
     {
+      "name": "hasContractParty",
+      "description": "indicates a party that has entered into a binding agreement, accepting and conceding obligations, responsibilities, and benefits as specified",
+      "source": "Contract",
+      "target": "ContractParty",
+      "documentation": "hasContractParty"
+    },
+    {
+      "name": "hasInvestmentOwnership",
+      "description": "relates a legal person to the context in which it owns a formal organization",
+      "source": "LegalPerson",
+      "target": "EntityOwnership",
+      "documentation": "hasInvestmentOwnership"
+    },
+    {
+      "name": "hasMailingAddress",
+      "description": "identifies a physical address where an independent party can receive communications, including letters and packages",
+      "source": "Party",
+      "target": "PhysicalAddress",
+      "documentation": "hasMailingAddress"
+    },
+    {
       "name": "hasMembership",
       "description": "identifies the organization acting in the role of having members in an organizational membership situation",
-      "source": "Organization",
-      "target": "Membership",
+      "source": "Membership",
+      "target": "MemberBearingOrganization",
       "documentation": "hasMembership"
+    },
+    {
+      "name": "hasOrganizationMember",
+      "description": "indicates the party acting in the role of the member in an organizational membership situation",
+      "source": "Membership",
+      "target": "OrganizationMember",
+      "documentation": "hasOrganizationMember"
+    },
+    {
+      "name": "hasOwningEntity",
+      "description": "indicates a party that owns a formal organization",
+      "source": "EntityOwnership",
+      "target": "LegalPerson",
+      "documentation": "hasOwningEntity"
+    },
+    {
+      "name": "hasParty",
+      "description": "identifies a party associated with an agreement, contract, policy, regulation, situation, or other arrangement",
+      "source": "Party",
+      "target": "Party",
+      "documentation": "hasParty"
+    },
+    {
+      "name": "hasRelatedPartyRole",
+      "description": "relates a party acting in a specific role directly to another party acting in the same or another role",
+      "source": "PartyRole",
+      "target": "PartyRole",
+      "documentation": "hasRelatedPartyRole"
+    },
+    {
+      "name": "hasResponsibleParty",
+      "description": "identifies a party that has some assignment, commitment or obligation with respect to the formal organization",
+      "source": "FormalOrganization",
+      "target": "ResponsibleParty",
+      "documentation": "hasResponsibleParty"
+    },
+    {
+      "name": "hasThirdParty",
+      "description": "identifies a party which is not signatory to the party but has some role in the overall context defined by the contract.",
+      "source": "Contract",
+      "target": "ContractThirdParty",
+      "documentation": "hasThirdParty"
+    },
+    {
+      "name": "isAffiliateOf",
+      "description": "relates a party which directly, or indirectly through one or more intermediaries, controls, or is controlled by, or is under common control by another party to that party",
+      "source": "Affiliate",
+      "target": "Affiliate",
+      "documentation": "isAffiliateOf"
+    },
+    {
+      "name": "isAPartyTo",
+      "description": "identifies an agreement, contract, policy, regulation, situation, or other arrangement that a party is associated with",
+      "source": "Party",
+      "target": "Party",
+      "documentation": "isAPartyTo"
+    },
+    {
+      "name": "isGeneralPartnerOf",
+      "description": "indicates the organization that the general partner manages",
+      "source": "GeneralPartner",
+      "target": "Partnership",
+      "documentation": "isGeneralPartnerOf"
     }
   ],
   "metadata": {
-    "lastExtraction": "2025-07-18T00:38:20.739Z",
+    "lastExtraction": "2025-07-19T23:43:19.076Z",
     "sourceVersion": "2024-01",
     "localVersion": "1.0.0"
   },
@@ -7286,7 +7370,6 @@
     "hasConstantNotionalAmount",
     "hasConstituent",
     "hasContractDuration",
-    "hasContractParty",
     "hasContractPrice",
     "hasContractualElement",
     "hasControllingAffiliate",
@@ -7442,7 +7525,6 @@
     "hasInterestRate",
     "hasInterestRateCap",
     "hasInvestmentEntity",
-    "hasInvestmentOwnership",
     "hasIssuedCapital",
     "hasJurisdiction",
     "hasLastCouponPaymentDate",
@@ -7463,7 +7545,6 @@
     "hasLockoutPeriod",
     "hasLookbackPeriod",
     "hasLowerBound",
-    "hasMailingAddress",
     "hasMajorityControllingParty",
     "hasManagingMember",
     "hasMarketCapitalization",
@@ -7505,7 +7586,6 @@
     "hasOptionHolder",
     "hasOptionTypeElectionDate",
     "hasOptionWriter",
-    "hasOrganizationMember",
     "hasOriginalIssueDiscountAmount",
     "hasOriginalNotionalValue",
     "hasOriginalPlaceOfListing",
@@ -7515,11 +7595,9 @@
     "hasOverallPeriod",
     "hasOwnedAsset",
     "hasOwnedEntity",
-    "hasOwningEntity",
     "hasOwningParty",
     "hasPart",
     "hasPartialRedemptionAllocationConvention",
-    "hasParty",
     "hasPartyInControl",
     "hasPartyRole",
     "hasPaymentAmount",
@@ -7585,7 +7663,6 @@
     "hasRegistrationAuthority",
     "hasRegistrationStatus",
     "hasRegistryEntry",
-    "hasRelatedPartyRole",
     "hasRelativeComparativeDate",
     "hasRelativeComparativePeriod",
     "hasRelativePriceAtIssue",
@@ -7602,7 +7679,6 @@
     "hasResetDateOffset",
     "hasResidence",
     "hasResponsibility",
-    "hasResponsibleParty",
     "hasReturnLeg",
     "hasRole",
     "hasSchedule",
@@ -7654,7 +7730,6 @@
     "hasTenor",
     "hasTerm",
     "hasTerminationDate",
-    "hasThirdParty",
     "hasTickSize",
     "hasTickValue",
     "hasTime",
@@ -7689,9 +7764,7 @@
     "isAbout",
     "isAdvisedBy",
     "isAffectedBy",
-    "isAffiliateOf",
     "isAmortizationOf",
-    "isAPartyTo",
     "isApplicableIn",
     "isApplicableInJurisdiction",
     "isAssetOf",
@@ -7744,7 +7817,6 @@
     "isExemplifiedBy",
     "isExperiencedBy",
     "isFacilitatedBy",
-    "isGeneralPartnerOf",
     "isGeneratedBy",
     "isGovernedBy",
     "isGuaranteedBy",

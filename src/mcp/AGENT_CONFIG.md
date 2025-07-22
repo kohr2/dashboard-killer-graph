@@ -9,7 +9,7 @@
 
 ## Configuration
 
-### Stdio (Default)
+### Stdio (Default) - with Dynamic Database Switching
 ```json
 {
   "mcpServers": {
@@ -18,15 +18,15 @@
       "args": ["./src/mcp/servers/mcp-server-stdio.js"],
       "cwd": ".",
       "env": {
-        "NEO4J_DATABASE": "dashboard-killer",
-        "MCP_ACTIVE_ONTOLOGIES": "core,fibo,procurement,geonames"
+        "NEO4J_DATABASE": "procurement",
+        "MCP_ACTIVE_ONTOLOGIES": "core,procurement"
       }
     }
   }
 }
 ```
 
-### HTTP (Alternative)
+### HTTP (Alternative) - with Dynamic Database Switching
 ```json
 {
   "mcpServers": {
@@ -35,8 +35,8 @@
       "args": ["./src/mcp/servers/mcp-server-http.js"],
       "cwd": ".",
       "env": {
-        "NEO4J_DATABASE": "dashboard-killer",
-        "MCP_ACTIVE_ONTOLOGIES": "core,fibo,procurement,geonames",
+        "NEO4J_DATABASE": "procurement",
+        "MCP_ACTIVE_ONTOLOGIES": "core,procurement",
         "MCP_HTTP_PORT": "3002"
       }
     }
@@ -53,21 +53,38 @@
 
 Tool: `query_knowledge_graph`
 
-**Examples:**
+**Basic Examples:**
 - `"show all companies"`
 - `"find cities in United States"`
 - `"count contracts"`
 - `"companies in technology sector"`
 
+**Dynamic Database Switching Examples:**
+- `"show all persons"` (uses default database)
+- `"show all persons"` with database: `"procurement"`
+- `"show all contracts"` with database: `"financial"`
+- `"show all customers"` with database: `"crm"`
+
+**Database Parameter:**
+The tool now accepts an optional `database` parameter to switch between different databases:
+```json
+{
+  "query": "show all persons",
+  "database": "procurement"
+}
+```
+
 ## Available Data
 
-| Database | Content |
-|----------|---------|
-| `dashboard-killer` | All ontologies |
-| `fibo` | Financial companies, bonds |
-| `procurement` | Contracts, tenders |
-| `geonames` | 159K cities, countries |
-| `crm` | Leads, opportunities |
+| Database | Content | Status |
+|----------|---------|--------|
+| `procurement` | Contracts, tenders, persons | ✅ Active |
+| `financial` | Financial companies, bonds | 🔄 Available |
+| `crm` | Leads, opportunities | 🔄 Available |
+| `geonames` | 159K cities, countries | 🔄 Available |
+| `neo4j` | Default database | 🔄 Available |
+
+**Dynamic Database Switching**: The MCP server can now switch between databases on-the-fly using the `database` parameter in tool calls.
 
 ## Troubleshooting
 

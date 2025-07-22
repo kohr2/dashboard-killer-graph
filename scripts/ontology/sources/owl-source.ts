@@ -419,19 +419,31 @@ export class OwlSource implements OntologySource {
       return isValid;
     });
 
-    // For FIBO, include all valid entities from imported modules
-    // The filtering by documentation was too restrictive for imported entities
-    if (config.path.includes('fibo')) {
-      return validEntities;
+    // Apply XPath-based filtering if the path contains filtering criteria
+    if (config.path.includes('contains(@rdf:about, "fibo")')) {
+      return validEntities.filter(entity => entity.documentation?.includes('fibo'));
     }
-    if (config.path.includes('o-cream')) {
+    if (config.path.includes('contains(@rdf:about, "o-cream")')) {
       return validEntities.filter(entity => entity.documentation?.includes('o-cream'));
     }
+    
     // Default: include all valid entities
     return validEntities;
   }
 
   async extractRelationships(config: ExtractionRule, parsed: ParsedOntology): Promise<Relationship[]> {
+    // Get available entity names for filtering
+    const availableEntityNames = new Set(parsed.entities.map(e => e.name));
+    
+    // Filter relationships based on available entities when external imports are disabled
+    if (!this.includeExternalImports) {
+      return parsed.relationships.filter(rel => {
+        const sourceAvailable = availableEntityNames.has(rel.source);
+        const targetAvailable = availableEntityNames.has(rel.target);
+        return sourceAvailable && targetAvailable;
+      });
+    }
+    
     // For FIBO, include all relationships from imported modules
     // The filtering by documentation was too restrictive for imported relationships
     if (config.path.includes('fibo')) {
@@ -472,15 +484,29 @@ export class OwlSource implements OntologySource {
   }
 
   private extractDomain(element: any): string | null {
-    if (element['rdfs:domain'] && element['rdfs:domain'].$ && element['rdfs:domain'].$['rdf:resource']) {
-      return this.extractNameFromUri(element['rdfs:domain'].$['rdf:resource']);
+    if (element['rdfs:domain']) {
+      // Handle case where rdfs:domain is a direct object with rdf:resource
+      if (element['rdfs:domain']['rdf:resource']) {
+        return this.extractNameFromUri(element['rdfs:domain']['rdf:resource']);
+      }
+      // Handle case where rdfs:domain has $ property with rdf:resource
+      if (element['rdfs:domain'].$ && element['rdfs:domain'].$['rdf:resource']) {
+        return this.extractNameFromUri(element['rdfs:domain'].$['rdf:resource']);
+      }
     }
     return null;
   }
 
   private extractRange(element: any): string | null {
-    if (element['rdfs:range'] && element['rdfs:range'].$ && element['rdfs:range'].$['rdf:resource']) {
-      return this.extractNameFromUri(element['rdfs:range'].$['rdf:resource']);
+    if (element['rdfs:range']) {
+      // Handle case where rdfs:range is a direct object with rdf:resource
+      if (element['rdfs:range']['rdf:resource']) {
+        return this.extractNameFromUri(element['rdfs:range']['rdf:resource']);
+      }
+      // Handle case where rdfs:range has $ property with rdf:resource
+      if (element['rdfs:range'].$ && element['rdfs:range'].$['rdf:resource']) {
+        return this.extractNameFromUri(element['rdfs:range'].$['rdf:resource']);
+      }
     }
     return null;
   }

@@ -167,7 +167,7 @@ describe('Real Ontology Sources', () => {
       expect(parsed.relationships).toHaveLength(1);
       expect(parsed.relationships[0].name).toBe('hasAddress');
       expect(parsed.relationships[0].description).toBe('Has an address');
-      expect(parsed.relationships[0].source).toBe('Entity');
+      expect(parsed.relationships[0].source).toBe('LegalEntity');
       expect(parsed.relationships[0].target).toBe('Address');
     });
 

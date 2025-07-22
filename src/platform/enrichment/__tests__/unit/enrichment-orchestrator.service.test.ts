@@ -3,12 +3,12 @@ import {
   EnrichmentOrchestratorService,
   IEnrichmentService,
 } from '@platform/enrichment';
-import { OrganizationDTO, createOrganizationDTO } from '@generated/crm';
+import { GenericEntity, createGenericEntity } from '@platform/enrichment/dto-aliases';
 
 // Mock Implementation of IEnrichmentService for testing
 class MockEdgarService implements IEnrichmentService {
   public readonly name = 'EDGAR';
-  async enrich(entity: OrganizationDTO): Promise<Record<string, any>> {
+  async enrich(entity: GenericEntity): Promise<Record<string, any>> {
     if (entity.name === 'TestCorp') {
       return {
         ...entity,
@@ -29,7 +29,7 @@ class MockEdgarService implements IEnrichmentService {
 
 class MockSalesforceService implements IEnrichmentService {
   public readonly name = 'Salesforce';
-  async enrich(entity: OrganizationDTO): Promise<Record<string, any>> {
+  async enrich(entity: GenericEntity): Promise<Record<string, any>> {
     return {
       ...entity,
       enrichedData: {
@@ -56,8 +56,12 @@ describe('EnrichmentOrchestratorService', () => {
       getEnrichmentServiceName: jest.fn(),
     } as unknown as jest.Mocked<OntologyService>;
 
-    // Directly instantiate without DI container
-    orchestrator = new EnrichmentOrchestratorService(mockOntologyService);
+    // Mock the container.resolve to return our mock service
+    const { container } = require('tsyringe');
+    jest.spyOn(container, 'resolve').mockReturnValue(mockOntologyService);
+    
+    // Directly instantiate
+    orchestrator = new EnrichmentOrchestratorService();
 
     edgarService = new MockEdgarService();
     salesforceService = new MockSalesforceService();
@@ -73,10 +77,9 @@ describe('EnrichmentOrchestratorService', () => {
   it('should enrich an entity by calling services in registration order', async () => {
     orchestrator.register(edgarService);
     orchestrator.register(salesforceService);
-    const initialEntity = createOrganizationDTO({ 
+    const initialEntity = createGenericEntity('Organization', { 
       id: 'org-1', 
       name: 'TestCorp', 
-      type: 'Organization',
       label: 'TestCorp'
     });
     
@@ -88,7 +91,7 @@ describe('EnrichmentOrchestratorService', () => {
     
     // Second enrichment with Salesforce service on the already enriched entity
     mockOntologyService.getEnrichmentServiceName.mockReturnValue('Salesforce');
-    const finalEntity = await orchestrator.enrich(edgarEnrichedEntity) as OrganizationDTO;
+    const finalEntity = await orchestrator.enrich(edgarEnrichedEntity) as GenericEntity;
     expect(finalEntity).not.toBeNull();
     expect((finalEntity as any).enrichedData?.EDGAR?.metadata?.cik).toBe('12345');
     expect((finalEntity as any).enrichedData?.Salesforce?.metadata?.salesforceId).toBe('SFDC-98765');
@@ -97,10 +100,9 @@ describe('EnrichmentOrchestratorService', () => {
   it('should return the original entity if no service can enrich it', async () => {
     orchestrator.register(edgarService);
 
-    const initialEntity = createOrganizationDTO({ 
+    const initialEntity = createGenericEntity('Organization', { 
       id: 'org-2', 
       name: 'UnknownCorp', 
-      type: 'Organization',
       label: 'UnknownCorp'
     });
 
@@ -112,10 +114,9 @@ describe('EnrichmentOrchestratorService', () => {
   it('should merge metadata without overwriting existing fields', async () => {
     orchestrator.register(edgarService);
 
-    const initialEntity = createOrganizationDTO({ 
+    const initialEntity = createGenericEntity('Organization', { 
       id: 'org-1', 
       name: 'TestCorp', 
-      type: 'Organization',
       label: 'TestCorp'
     });
     (initialEntity as any).enrichedData = { source: 'initial-source' };
@@ -123,7 +124,7 @@ describe('EnrichmentOrchestratorService', () => {
     // Setup the mock
     mockOntologyService.getEnrichmentServiceName.mockReturnValue('EDGAR');
 
-    const enrichedEntity = await orchestrator.enrich(initialEntity) as OrganizationDTO;
+    const enrichedEntity = await orchestrator.enrich(initialEntity) as GenericEntity;
 
     expect((enrichedEntity as any).enrichedData?.source).toBe('initial-source');
     expect((enrichedEntity as any).enrichedData?.EDGAR?.metadata?.cik).toBe('12345');
@@ -141,10 +142,9 @@ describe('EnrichmentOrchestratorService', () => {
     orchestrator.register(failingService);
     orchestrator.register(edgarService); // This one should still run
 
-    const initialEntity = createOrganizationDTO({ 
+    const initialEntity = createGenericEntity('Organization', { 
       id: 'org-1', 
       name: 'TestCorp', 
-      type: 'Organization',
       label: 'TestCorp'
     });
     
@@ -160,7 +160,7 @@ describe('EnrichmentOrchestratorService', () => {
 
     // 2. Now, enrich the unchanged entity with the working service
     mockOntologyService.getEnrichmentServiceName.mockReturnValue('EDGAR');
-    const successfulEnrichmentEntity = await orchestrator.enrich(failedEnrichmentEntity) as OrganizationDTO;
+    const successfulEnrichmentEntity = await orchestrator.enrich(failedEnrichmentEntity) as GenericEntity;
 
     // The second service should have enriched the entity
     expect((successfulEnrichmentEntity as any).enrichedData?.EDGAR?.metadata?.cik).toBe('12345');
