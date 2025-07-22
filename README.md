@@ -3,10 +3,23 @@
 [![CI/CD](https://github.com/your-org/dashboard-killer-graph/workflows/test/badge.svg)](https://github.com/your-org/dashboard-killer-graph/actions)
 [![Coverage](https://img.shields.io/badge/coverage-85%25-green.svg)](./docs/testing/coverage-report.md)
 [![Architecture](https://img.shields.io/badge/architecture-modular-brightgreen.svg)](./docs/architecture/overview.md)
+[![PRD](https://img.shields.io/badge/PRD-available-blue.svg)](./PRD.md)
 
 An **ontology-driven, extensible platform** that uses a knowledge graph and Large Language Models (LLMs) to replace traditional dashboards with intelligent, conversational insights.
 
 Instead of being a monolithic application, this project is a **core platform** that provides a framework for building and running independent, domain-specific **ontology extensions**.
+
+## 📋 Product Requirements Document
+
+For detailed product specifications, requirements, and roadmap, see our comprehensive [Product Requirements Document (PRD)](./PRD.md).
+
+The PRD covers:
+- **Product Vision & Mission**: Strategic direction and success metrics
+- **Functional Requirements**: Core features, extension system, and advanced capabilities
+- **Technical Requirements**: Architecture, technology stack, and performance specifications
+- **User Experience**: Chat interface, query experience, and multi-database support
+- **Implementation Phases**: Current status and future roadmap
+- **Success Criteria**: Technical, user, and business success metrics
 
 ## 🚀 Quick Start
 
@@ -96,10 +109,49 @@ The system is composed of a central **Platform** and multiple **Extensions**.
 +-------------------------+ +-------------------------+ +-------------------------+
 ```
 
--   **Platform Core**: Provides the essential services: extension loading, knowledge graph connection (Neo4j), conversational interface, and shared tools. It is domain-agnostic.
--   **Ontology Extensions**: Self-contained modules that define a specific business domain (e.g., CRM, Finance, Procurement, Geography). Each extension contributes its own data model (`ontology.json`), business logic, and services to the platform. Extensions are automatically discovered and loaded by the plugin registry.
+### Platform Core Components
+- **Extension Registry**: Dynamic discovery and loading of ontology extensions
+- **Chat Service**: Natural language processing and query translation
+- **Database Layer**: Neo4j connection management with multi-database support
+- **Security Service**: Role-based access control and permissions
+- **Reasoning Engine**: Multi-domain intelligence algorithms
+- **MCP Integration**: Claude Desktop connectivity and tool access
+
+### Ontology Extensions
+Each extension is a self-contained module that defines a specific business domain:
+- **Data Model**: `ontology.json` with entities, relationships, and properties
+- **Business Logic**: Domain-specific services and processing
+- **Validation**: Entity and relationship validation rules
+- **Documentation**: Domain-specific documentation and examples
+
+Extensions are automatically discovered and loaded by the plugin registry, making the platform truly ontology-agnostic.
 
 This modular design allows new capabilities to be added without modifying the core platform.
+
+## 🎯 Current Implementation Highlights
+
+### ✅ Core Platform Features
+- **Ontology-Agnostic Chat**: Works with any ontology without hardcoded domain logic
+- **Multi-Database Support**: Seamless switching between different Neo4j databases
+- **Dynamic Extension Loading**: New ontologies can be added without platform changes
+- **Compact Ontology Format**: 98% size reduction for efficient LLM interaction
+- **MCP Integration**: Full Claude Desktop integration with tool access
+- **Email Ingestion**: Unified processing with AI-powered entity extraction
+
+### 🔧 Technical Architecture
+- **Clean Architecture**: Separation of concerns with dependency injection
+- **Microservices**: Python NLP service, Node.js API, React UI
+- **Test-Driven Development**: 235+ passing tests with comprehensive coverage
+- **Performance Optimized**: Query optimization and database indexing
+- **Security**: Role-based access control and API security
+
+### 📊 Available Ontologies
+- **Procurement**: 227 entities, 595 relationships (European procurement data)
+- **FIBO**: Financial Industry Business Ontology (organizations, instruments)
+- **GeoNames**: 159,045 cities from 195+ countries (geographic data)
+- **ISCO**: International Standard Classification of Occupations
+- **S&P 500**: Market data and company information
+- **CRM**: Customer relationship management
 
 ## 💬 Chat System
 
@@ -179,48 +231,77 @@ curl -X POST http://localhost:3001/api/chat \
 
 ## 📚 Documentation
 
+### 📋 Product & Planning
+-   [**Product Requirements Document (PRD)**](./PRD.md) - Comprehensive product specifications and requirements
+-   [**Development Roadmap**](./docs/development/roadmap.md) - Detailed development planning and milestones
+-   [**TODO & Future Plans**](./TODO.md) - Current priorities and upcoming features
+
+### 🏗️ Architecture & Design
 -   [**Complete Documentation Hub**](./docs/README.md) - Start here for all documentation
 -   [**Architecture Overview**](./docs/architecture/overview.md) - High-level system design
--   [**Chat Interface Guide**](./docs/features/chat-interface.md) - How to use the conversational interface
 -   [**Extension & Ontology Architecture**](./docs/architecture/ontologies.md) - Guide to create and manage extensions
--   [**API Reference**](./docs/development/api-reference.md) - Available API endpoints
+
+### 🚀 User Guides
+-   [**Chat Interface Guide**](./docs/features/chat-interface.md) - How to use the conversational interface
 -   [**Entity Extraction Guide**](./docs/architecture/entity-extraction-guide.md) - How the NLP pipeline works
+
+### 👨‍💻 Developer Resources
+-   [**API Reference**](./docs/development/api-reference.md) - Available API endpoints
 -   [**Logger Guidelines**](./docs/development/logger-guidelines.md) - Using the common logger and console patch
--   [**Development Roadmap**](./docs/development/roadmap.md) - What's next
 -   [**TDD Approach**](./docs/development/tdd-approach.md) - Test-driven development guidelines
 
 ## 🎯 Project Status
 
-### ✅ Completed
--   [x] **Platform Core**: Modular framework for extension loading and orchestration.
--   [x] **Ontology-Driven Design**: Extensions are built around a central `ontology.json` file.
--   [x] **Plugin Architecture**: Dynamic plugin discovery and registration system.
--   [x] **Chat Interface**: Fully functional conversational UI with natural language processing.
--   [x] **Query Translation**: OpenAI-powered translation from natural language to structured queries.
--   [x] **Knowledge Graph Integration**: Real-time queries to Neo4j database.
--   [x] **Multi-language Support**: Works in English, French, and other languages.
--   [x] **Database Configuration**: Support for multiple Neo4j databases with proper session management.
--   [x] **Dependency Injection**: Proper service initialization with tsyringe container.
--   [x] **MCP Server**: Integration with Claude Desktop for AI-powered assistance.
--   [x] **CRM & Financial Extensions**: Foundational extensions for CRM and Finance domains.
--   [x] **Procurement Extension**: Public procurement ontology with 227 entities and 595 relationships.
--   [x] **GeoNames Extension**: Geographic ontology with 159,045 cities from 195+ countries.
--   [x] **Compact Ontology & Prompt Partitioning**: New compact ontology format (≈ 98 % size reduction) and partitioned prompt generation for efficient LLM interaction. Entity (`e`) and relationship (`r`) lists are now alphabetically sorted for deterministic diffing.
--   [x] **Automated Code Generation**: Ontology-to-code generation with plugin templates.
--   [x] **TDD Foundation**: Comprehensive test structure with Jest.
--   [x] **Unified Email Ingestion**: Comprehensive email processing system with ontology-specific and bulk processing modes, configurable build options, and rich CLI interface.
+### ✅ Completed (Phase 1)
+-   [x] **Platform Core**: Modular framework for extension loading and orchestration
+-   [x] **Ontology-Driven Design**: Extensions built around central `ontology.json` files
+-   [x] **Plugin Architecture**: Dynamic plugin discovery and registration system
+-   [x] **Chat Interface**: Fully functional conversational UI with natural language processing
+-   [x] **Query Translation**: OpenAI-powered translation from natural language to structured queries
+-   [x] **Knowledge Graph Integration**: Real-time queries to Neo4j database
+-   [x] **Multi-language Support**: Works in English, French, and other languages
+-   [x] **Database Configuration**: Support for multiple Neo4j databases with proper session management
+-   [x] **Dependency Injection**: Proper service initialization with tsyringe container
+-   [x] **MCP Server**: Integration with Claude Desktop for AI-powered assistance
+-   [x] **Multiple Ontology Extensions**: 
+    - Procurement (227 entities, 595 relationships)
+    - FIBO (Financial Industry Business Ontology)
+    - GeoNames (159,045 cities from 195+ countries)
+    - ISCO (Occupational classifications)
+    - S&P 500 (Market data and companies)
+    - CRM (Customer relationship management)
+-   [x] **Compact Ontology Format**: 98% size reduction for efficient LLM interaction
+-   [x] **Automated Code Generation**: Ontology-to-code generation with plugin templates
+-   [x] **TDD Foundation**: Comprehensive test structure with Jest (235+ passing tests)
+-   [x] **Unified Email Ingestion**: Comprehensive email processing system with ontology-specific and bulk processing modes
 
-### 🔧 Recent Fixes
--   [x] **Chat Service Database Selection**: Fixed ChatService to use configured database instead of default
+### 🔧 Recent Fixes & Improvements
+-   [x] **Chat Service Database Selection**: Fixed to use configured database instead of default
 -   [x] **Query Translator Validation**: Fixed entity type validation bug in QueryTranslator
 -   [x] **Service Initialization**: Proper dependency injection setup for chat services
 -   [x] **Session Management**: Correct Neo4j session handling with database specification
+-   [x] **Performance Optimization**: Query optimization and database indexing improvements
+-   [x] **Error Handling**: Enhanced error messages and recovery mechanisms
 
-### 📋 Next Steps
--   **Advanced Query Types**: Support for complex aggregations and analytics.
--   **User Authentication**: Multi-user support with role-based access control.
--   **Agentic Workflows**: Develop AI agents that can reason across different ontologies.
--   **Enhanced Email Processing**: Advanced entity extraction and relationship inference from email content.
+### 🔄 In Progress (Phase 2)
+-   [ ] **Advanced Email Processing**: Enhanced entity extraction and relationship inference
+-   [ ] **Reasoning Engine**: Multi-domain reasoning algorithms and pattern detection
+-   [ ] **MCP Integration Refinements**: Enhanced Claude Desktop integration
+-   [ ] **Performance Monitoring**: Advanced observability and performance tuning
+
+### 📋 Planned (Phase 3)
+-   [ ] **Advanced Query Types**: Support for complex aggregations and analytics
+-   [ ] **User Authentication**: Multi-user support with role-based access control
+-   [ ] **Agentic Workflows**: AI agents that can reason across different ontologies
+-   [ ] **Advanced Analytics**: Business intelligence and reporting features
+
+### 🚀 Future (Phase 4)
+-   [ ] **Enterprise Features**: Multi-user support with advanced permissions
+-   [ ] **Advanced Analytics**: Business intelligence and reporting features
+-   [ ] **Performance Optimization**: Advanced scaling and optimization
+-   [ ] **Enterprise Integrations**: Additional API integrations and connectors
+
+See the [Development Roadmap](./docs/development/roadmap.md) for detailed planning and the [PRD](./PRD.md) for comprehensive requirements.
 
 See the [Development Roadmap](./docs/development/roadmap.md) for more details.
 
@@ -338,6 +419,25 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Documentation**: [docs/](docs/)
 - **Issues**: [GitHub Issues](https://github.com/your-org/dashboard-killer-graph/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/your-org/dashboard-killer-graph/discussions)
+
+## 🎯 Summary
+
+The Conversational Knowledge Platform represents a paradigm shift from traditional dashboards to intelligent, conversational interfaces for knowledge graph exploration. With its ontology-driven, extensible architecture, the platform provides:
+
+- **🚀 Immediate Value**: Replace complex dashboards with natural language queries
+- **🔧 True Extensibility**: Add new business domains without platform changes
+- **🧠 AI-Powered Intelligence**: LLM-driven insights and natural language processing
+- **📊 Multi-Domain Support**: Query across procurement, finance, geography, and more
+- **🔒 Enterprise Ready**: Security, performance, and scalability built-in
+
+### Getting Started
+1. **Quick Start**: Follow the [Quick Start](#-quick-start) guide above
+2. **Product Details**: Review the [Product Requirements Document](./PRD.md)
+3. **Architecture**: Explore the [Architecture Overview](./docs/architecture/overview.md)
+4. **Development**: Check the [Development Roadmap](./docs/development/roadmap.md)
+
+### Contributing
+This project follows Test-Driven Development (TDD) principles. See our [TDD Guide](./docs/development/tdd-approach.md) and [Contributing Guidelines](./CONTRIBUTING.md) for details.
 
 ---
 
