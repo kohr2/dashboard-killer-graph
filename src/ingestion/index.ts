@@ -19,6 +19,9 @@ export type { EntityExtractor as IEntityExtractor, EntityExtraction } from './en
 // Fixtures
 export * from './fixtures/email-fixture-generation.service';
 
+// Email parsing
+export * from './email-parsing.service';
+
 // Ontology-specific ingestion services
 export * from './ontology-dataset-ingestion.service';
 export * from './ontology-email-ingestion.service';

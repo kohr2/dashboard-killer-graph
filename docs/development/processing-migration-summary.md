@@ -21,7 +21,7 @@ This document summarizes the migration of processing services to the centralized
 
 ### 2. Email Parsing Service
 - **From**: Logic embedded in `EmailProcessor`
-- **To**: `src/platform/processing/email-parsing.service.ts`
+- **To**: `src/ingestion/email-parsing.service.ts`
 - **New Service**: `EmailParsingService`
 
 **Features**:
@@ -113,7 +113,7 @@ interface ParsedEmailData {
 
 ```
 src/platform/processing/
-├── email-parsing.service.ts          # ✅ New service
+├── email-parsing.service.ts          # ✅ New service (moved to src/ingestion/)
 ├── attachment-processing.service.ts   # ✅ New service
 ├── neo4j-ingestion.service.ts        # ✅ Existing (updated)
 ├── content-processing.service.ts      # ✅ Existing
@@ -126,7 +126,7 @@ src/platform/processing/
 ### Email Processing with Attachments
 ```typescript
 import { EmailProcessor } from '@ingestion/sources/email/processors/email-processor';
-import { EmailParsingService } from '@platform/processing/email-parsing.service';
+import { EmailParsingService } from '@ingestion/email-parsing.service';
 import { AttachmentProcessingService } from '@platform/processing/attachment-processing.service';
 
 const emailProcessor = new EmailProcessor(

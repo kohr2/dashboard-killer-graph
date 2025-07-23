@@ -1,7 +1,7 @@
 import { logger } from '@shared/utils/logger';
 import xlsx from 'node-xlsx';
 import * as officeParser from 'officeparser';
-import { EmailAttachment } from './email-parsing.service';
+import { EmailAttachment } from '../../ingestion/email-parsing.service';
 import { EnhancedEntityExtractionService, ExtractedEntity } from './enhanced-entity-extraction.service';
 
 export interface ProcessedAttachment {

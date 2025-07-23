@@ -5,13 +5,13 @@
 
 import { EmailProcessor, EmailProcessingResult } from '../email-processor';
 import { AttachmentProcessingService } from '@platform/processing/attachment-processing.service';
-import { EmailParsingService } from '@platform/processing/email-parsing.service';
-import { EmailAttachment } from '@platform/processing/email-parsing.service';
+import { EmailParsingService } from '@ingestion/email-parsing.service';
+import { EmailAttachment } from '@ingestion/email-parsing.service';
 import { logger } from '@shared/utils/logger';
 import * as fs from 'fs';
 
 // Mock the platform services
-jest.mock('@platform/processing/email-parsing.service');
+jest.mock('@ingestion/email-parsing.service');
 jest.mock('@platform/processing/attachment-processing.service');
 jest.mock('@shared/utils/logger', () => ({
   logger: {

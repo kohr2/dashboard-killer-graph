@@ -4,7 +4,7 @@
  */
 
 import { AttachmentProcessingService, AttachmentProcessingResult } from '@platform/processing/attachment-processing.service';
-import { EmailAttachment } from '@platform/processing/email-parsing.service';
+import { EmailAttachment } from '@ingestion/email-parsing.service';
 import { logger } from '@shared/utils/logger';
 
 // Mock external dependencies
