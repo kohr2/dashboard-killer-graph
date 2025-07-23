@@ -18,7 +18,12 @@ describe('PathAliasRegistry', () => {
     jest.spyOn(process, 'cwd').mockReturnValue(mockCwd);
     
     // Mock fs.existsSync to return true for all paths by default
-    mockFs.existsSync.mockReturnValue(true);
+    mockFs.existsSync.mockImplementation((filePath: any) => {
+      const pathString = filePath.toString();
+      console.log('existsSync called with:', pathString);
+      // Return true for all paths except those that should not exist
+      return true;
+    });
     
     // Get fresh instance
     registry = PathAliasRegistry.getInstance();
@@ -58,7 +63,7 @@ describe('PathAliasRegistry', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
       
       // Mock fs.existsSync to return false for some paths
-      mockFs.existsSync.mockImplementation((filePath) => {
+      mockFs.existsSync.mockImplementation((filePath: any) => {
         const pathString = filePath.toString();
         return !pathString.includes('nonexistent');
       });

@@ -20,8 +20,17 @@ describe('OntologyDrivenAdvancedGraphService', () => {
   let mockAdvancedGraphService: jest.Mocked<AdvancedGraphService>;
 
   beforeEach(() => {
+    const mockSession = {
+      run: jest.fn().mockResolvedValue({ records: [] as any[] }),
+      close: jest.fn(),
+    };
+
+    const mockDriver = {
+      session: jest.fn().mockReturnValue(mockSession),
+    };
+
     mockNeo4jConnection = {
-      getSession: jest.fn(),
+      getSession: jest.fn().mockReturnValue(mockSession),
       getDatabase: jest.fn(),
       switchDatabase: jest.fn(),
       connect: jest.fn(),
@@ -31,10 +40,11 @@ describe('OntologyDrivenAdvancedGraphService', () => {
       listDatabases: jest.fn(),
       dropDatabase: jest.fn(),
       findSimilarOrganizationEmbedding: jest.fn(),
-      getDriver: jest.fn(),
+      getDriver: jest.fn().mockReturnValue(mockDriver),
     } as any;
 
     mockAdvancedGraphService = {
+      initialize: jest.fn(),
       createTemporalRelationships: jest.fn(),
       createHierarchicalRelationships: jest.fn(),
       createSimilarityRelationships: jest.fn(),
@@ -44,6 +54,10 @@ describe('OntologyDrivenAdvancedGraphService', () => {
       buildHierarchicalStructure: jest.fn(),
       calculateEntitySimilarity: jest.fn(),
       queryAdvancedPatterns: jest.fn(),
+      queryTemporalPatterns: jest.fn(),
+      queryHierarchicalPatterns: jest.fn(),
+      querySimilarityPatterns: jest.fn(),
+      queryComplexPatterns: jest.fn(),
       close: jest.fn(),
     } as any;
 
@@ -104,7 +118,7 @@ describe('OntologyDrivenAdvancedGraphService', () => {
 
       await service.loadOntology('/path/to/ontology.json');
 
-      expect(mockedFs.readFileSync).toHaveBeenCalledWith('/path/to/ontology.json', 'utf-8');
+      expect(mockedFs.readFileSync).toHaveBeenCalledWith('/path/to/ontology.json', 'utf8');
       expect(service.getLoadedOntologies()).toContain('test-ontology');
     });
 
@@ -149,6 +163,7 @@ describe('OntologyDrivenAdvancedGraphService', () => {
       await service.loadOntologiesFromDirectory('/path/to/ontologies');
 
       expect(mockedFs.readdirSync).toHaveBeenCalledWith('/path/to/ontologies');
+      expect(mockedFs.readFileSync).toHaveBeenCalledTimes(2); // Only .ontology.json files
       expect(mockedFs.readFileSync).toHaveBeenCalledTimes(2); // Only .json files
     });
 
@@ -195,7 +210,7 @@ describe('OntologyDrivenAdvancedGraphService', () => {
 
       await (service as any).applyOntologyConfiguration(ontologyConfig);
 
-      expect(mockAdvancedGraphService.createTemporalRelationship).toHaveBeenCalled();
+      expect(mockAdvancedGraphService.createTemporalRelationships).toHaveBeenCalled();
     });
 
     it('should apply hierarchical configuration', async () => {
@@ -233,7 +248,7 @@ describe('OntologyDrivenAdvancedGraphService', () => {
 
       await (service as any).applyOntologyConfiguration(ontologyConfig);
 
-      expect(mockAdvancedGraphService.createHierarchicalRelationship).toHaveBeenCalled();
+      expect(mockAdvancedGraphService.createHierarchicalRelationships).toHaveBeenCalled();
     });
 
     it('should apply similarity configuration', async () => {
@@ -273,7 +288,7 @@ describe('OntologyDrivenAdvancedGraphService', () => {
 
       await (service as any).applyOntologyConfiguration(ontologyConfig);
 
-      expect(mockAdvancedGraphService.createSimilarityRelationship).toHaveBeenCalled();
+      expect(mockAdvancedGraphService.createSimilarityRelationships).toHaveBeenCalled();
     });
 
     it('should apply complex configuration', async () => {
@@ -310,7 +325,7 @@ describe('OntologyDrivenAdvancedGraphService', () => {
 
       await (service as any).applyOntologyConfiguration(ontologyConfig);
 
-      expect(mockAdvancedGraphService.executeComplexPattern).toHaveBeenCalled();
+      expect(mockAdvancedGraphService.createComplexPatterns).toHaveBeenCalled();
     });
   });
 

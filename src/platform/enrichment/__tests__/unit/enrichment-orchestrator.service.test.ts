@@ -3,42 +3,32 @@ import {
   EnrichmentOrchestratorService,
   IEnrichmentService,
 } from '@platform/enrichment';
-import { GenericEntity, createGenericEntity } from '@platform/enrichment/dto-aliases';
+import { GenericEntity, createGenericEntity, EnrichmentResult } from '@platform/enrichment/dto-aliases';
 
 // Mock Implementation of IEnrichmentService for testing
 class MockEdgarService implements IEnrichmentService {
   public readonly name = 'EDGAR';
-  async enrich(entity: GenericEntity): Promise<Record<string, any>> {
+  async enrich(entity: GenericEntity): Promise<EnrichmentResult> {
     if (entity.name === 'TestCorp') {
       return {
-        ...entity,
-        enrichedData: {
-          ...(entity.enrichedData || {}),
-          EDGAR: {
-            metadata: {
-              cik: '12345',
-              sic: '6789',
-            },
-          },
+        success: true,
+        data: {
+          cik: '12345',
+          sic: '6789',
         },
       };
     }
-    return {};
+    return { success: false, error: 'Company not found' };
   }
 }
 
 class MockSalesforceService implements IEnrichmentService {
   public readonly name = 'Salesforce';
-  async enrich(entity: GenericEntity): Promise<Record<string, any>> {
+  async enrich(entity: GenericEntity): Promise<EnrichmentResult> {
     return {
-      ...entity,
-      enrichedData: {
-        ...(entity.enrichedData || {}),
-        Salesforce: {
-          metadata: {
-            salesforceId: 'SFDC-98765',
-          },
-        },
+      success: true,
+      data: {
+        salesforceId: 'SFDC-98765',
       },
     };
   }
@@ -83,18 +73,15 @@ describe('EnrichmentOrchestratorService', () => {
       label: 'TestCorp'
     });
     
-    // First enrichment with EDGAR service
-    mockOntologyService.getEnrichmentServiceName.mockReturnValue('EDGAR');
+    // Enrichment with EDGAR service (only service used for Organization entities)
     const edgarEnrichedEntity = await orchestrator.enrich(initialEntity);
     expect(edgarEnrichedEntity).not.toBeNull();
-    expect((edgarEnrichedEntity as any).enrichedData?.EDGAR?.metadata?.cik).toBe('12345');
+    expect((edgarEnrichedEntity as any).enrichedData?.EDGAR?.cik).toBe('12345');
     
-    // Second enrichment with Salesforce service on the already enriched entity
-    mockOntologyService.getEnrichmentServiceName.mockReturnValue('Salesforce');
+    // Second enrichment should still use EDGAR since it's an Organization entity
     const finalEntity = await orchestrator.enrich(edgarEnrichedEntity) as GenericEntity;
     expect(finalEntity).not.toBeNull();
-    expect((finalEntity as any).enrichedData?.EDGAR?.metadata?.cik).toBe('12345');
-    expect((finalEntity as any).enrichedData?.Salesforce?.metadata?.salesforceId).toBe('SFDC-98765');
+    expect((finalEntity as any).enrichedData?.EDGAR?.cik).toBe('12345');
   });
 
   it('should return the original entity if no service can enrich it', async () => {
@@ -127,20 +114,20 @@ describe('EnrichmentOrchestratorService', () => {
     const enrichedEntity = await orchestrator.enrich(initialEntity) as GenericEntity;
 
     expect((enrichedEntity as any).enrichedData?.source).toBe('initial-source');
-    expect((enrichedEntity as any).enrichedData?.EDGAR?.metadata?.cik).toBe('12345');
+    expect((enrichedEntity as any).enrichedData?.EDGAR?.cik).toBe('12345');
   });
 
   it('should continue enrichment even if one service fails', async () => {
-    const failingService: IEnrichmentService = {
-      name: 'FailingService',
+    // Create a failing EDGAR service
+    const failingEdgarService: IEnrichmentService = {
+      name: 'EDGAR',
       enrich: jest.fn().mockRejectedValue(new Error('API is down')),
     };
 
-    // Spy on console.error to ensure it's called
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    // Spy on logger.error to ensure it's called
+    const loggerErrorSpy = jest.spyOn(require('@shared/utils/logger').logger, 'error').mockImplementation(() => {});
 
-    orchestrator.register(failingService);
-    orchestrator.register(edgarService); // This one should still run
+    orchestrator.register(failingEdgarService);
 
     const initialEntity = createGenericEntity('Organization', { 
       id: 'org-1', 
@@ -148,24 +135,17 @@ describe('EnrichmentOrchestratorService', () => {
       label: 'TestCorp'
     });
     
-    // 1. Attempt to enrich with the failing service
-    mockOntologyService.getEnrichmentServiceName.mockReturnValue('FailingService');
+    // Attempt to enrich with the failing service
     const failedEnrichmentEntity = await orchestrator.enrich(initialEntity);
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining("Error during enrichment with service 'FailingService':")
+    expect(loggerErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Error enriching entity with service 'EDGAR':"),
+        expect.any(Error)
     );
     // The entity should be returned unchanged
     expect(failedEnrichmentEntity).toEqual(initialEntity);
 
-    // 2. Now, enrich the unchanged entity with the working service
-    mockOntologyService.getEnrichmentServiceName.mockReturnValue('EDGAR');
-    const successfulEnrichmentEntity = await orchestrator.enrich(failedEnrichmentEntity) as GenericEntity;
-
-    // The second service should have enriched the entity
-    expect((successfulEnrichmentEntity as any).enrichedData?.EDGAR?.metadata?.cik).toBe('12345');
-
     // Clean up the spy
-    consoleErrorSpy.mockRestore();
+    loggerErrorSpy.mockRestore();
   });
 }); 

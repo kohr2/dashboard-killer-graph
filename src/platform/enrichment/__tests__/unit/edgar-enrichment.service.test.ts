@@ -2,7 +2,20 @@ import axios from 'axios';
 import { promises as fs } from 'fs';
 import { EdgarEnrichmentService } from '@platform/enrichment';
 import { IEnrichmentService, EnrichableEntity } from '@platform/enrichment';
-import { OrganizationDTO, createOrganizationDTO } from '@generated/crm';
+// Mock the DTOs for testing
+interface OrganizationDTO {
+  id: string;
+  name: string;
+  type: string;
+  label: string;
+}
+
+const createOrganizationDTO = (data: Partial<OrganizationDTO>): OrganizationDTO => ({
+  id: data.id || 'test-id',
+  name: data.name || 'Test Organization',
+  type: data.type || 'Organization',
+  label: data.label || 'Organization',
+});
 
 jest.mock('axios');
 jest.mock('fs', () => ({
@@ -57,8 +70,9 @@ describe('EdgarEnrichmentService', () => {
       const result = await service.enrich(baseEntity);
 
       expect(result).not.toBeNull();
-      expect((result as any).cik).toBe('12345');
-      expect((result as any).legalName).toBe('Enrichment Corp');
+      expect((result as any).success).toBe(true);
+      expect((result as any).data?.cik).toBe('12345');
+      expect((result as any).data?.legalName).toBe('Enrichment Corp');
     });
 
     it('should return an error object for an unknown organization', async () => {
@@ -120,7 +134,7 @@ describe('EdgarEnrichmentService', () => {
     it('should not enrich entities that are not Organizations', async () => {
         const notOrg: any = { id: 'x', name: 'NotOrg', type: 'NotOrg' };
         const result = await service.enrich(notOrg as OrganizationDTO);
-        expect(result).toEqual({});
+        expect(result).toEqual({ success: false, error: 'Entity type not supported' });
     });
   });
 }); 

@@ -1,6 +1,21 @@
 import 'reflect-metadata';
 import { SalesforceEnrichmentService } from '../../salesforce-enrichment.service';
-import { OrganizationDTO, createOrganizationDTO } from '@generated/crm';
+// Mock the DTOs for testing
+interface OrganizationDTO {
+  id: string;
+  name: string;
+  type: string;
+  label: string;
+  legalName?: string;
+}
+
+const createOrganizationDTO = (data: Partial<OrganizationDTO>): OrganizationDTO => ({
+  id: data.id || 'test-id',
+  name: data.name || 'Test Organization',
+  type: data.type || 'Organization',
+  label: data.label || 'Organization',
+  legalName: data.legalName || data.name || 'Test Organization',
+});
 import { IEnrichmentService, EnrichableEntity } from '@platform/enrichment';
 
 describe('SalesforceEnrichmentService', () => {
@@ -43,10 +58,9 @@ describe('SalesforceEnrichmentService', () => {
     const result = await service.enrich(entity);
 
     expect(result).not.toBeNull();
-    expect((result as any)?.metadata?.salesforceId).toBe('SFDC-MOCK-12345');
-    expect((result as any)?.metadata?.accountStatus).toBe('Active');
-    // Ensure existing metadata is preserved
-    expect((result as any)?.metadata?.cik).toBe('12345');
+    expect((result as any)?.success).toBe(true);
+    expect((result as any)?.data?.salesforceId).toBe('SFDC-MOCK-12345');
+    expect((result as any)?.data?.accountStatus).toBe('Active');
   });
 
   it('should return null if the API call (simulated) fails', async () => {

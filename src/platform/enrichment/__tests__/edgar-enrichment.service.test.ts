@@ -84,9 +84,9 @@ describe('EdgarEnrichmentService', () => {
     expect(typeof result).toBe('object');
     
     // If it finds data, it should have the expected structure
-    if (Object.keys(result).length > 0) {
-      expect((result as any).cik).toBeDefined();
-      expect((result as any).legalName).toBeDefined();
+    if ((result as any).success) {
+      expect((result as any).data?.cik).toBeDefined();
+      expect((result as any).data?.legalName).toBeDefined();
     }
   });
 
@@ -96,7 +96,7 @@ describe('EdgarEnrichmentService', () => {
     
     const result = await service.enrich(baseEntity);
     
-    expect(result).toEqual({});
+    expect(result).toEqual({ success: false, error: 'Company not found in SEC database' });
   });
 
   it('should return empty object for non-Organization entities', async () => {
@@ -110,6 +110,6 @@ describe('EdgarEnrichmentService', () => {
     
     const result = await service.enrich(personEntity);
     
-    expect(result).toEqual({});
+    expect(result).toEqual({ success: false, error: 'Entity type not supported' });
   });
 }); 
