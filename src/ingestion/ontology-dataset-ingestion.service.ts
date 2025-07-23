@@ -6,7 +6,7 @@ import * as path from 'path';
 import { GenericIngestionPipeline } from './pipeline/generic-ingestion-pipeline';
 import { ContentProcessingService } from '../platform/processing/content-processing.service';
 import { Neo4jIngestionService } from '../platform/processing/neo4j-ingestion.service';
-import { logger } from '../common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import { container } from 'tsyringe';
 import { OntologyService } from '../platform/ontology/ontology.service';
 

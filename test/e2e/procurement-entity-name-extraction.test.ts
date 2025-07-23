@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import axios from 'axios';
-import { logger } from '../../src/common/utils/logger';
+import { bootstrap } from '../../src/bootstrap';
+import { logger } from '@shared/utils/logger';
 
 describe('Procurement Entity Name Extraction', () => {
   const nlpServiceUrl = process.env.NLP_SERVICE_URL || 'http://127.0.0.1:8000';

@@ -1,36 +1,54 @@
 {
   "compilerOptions": {
-    "target": "es2020",
-    "module": "NodeNext",
-    "lib": ["es2020", "dom"],
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "outDir": "./dist",
+    "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
-    "isolatedModules": false,
-    "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-    "composite": true,
-    "emitDecoratorMetadata": true,
+    "sourceMap": true,
     "experimentalDecorators": true,
-    "baseUrl": "../",
+    "emitDecoratorMetadata": true,
+    "baseUrl": ".",
     "paths": {
       "@src/*": ["src/*"],
       "@platform/*": ["src/platform/*"],
-      "@crm/*": ["ontologies/crm/*"],
-      "@financial/*": ["ontologies/financial/*"],
-      "@procurement/*": ["ontologies/procurement/*"],
-      "@shared/utils/logger": ["src/shared/utils/logger.ts"],
-      "@common/*": ["src/common/*"],
+      "@ingestion/*": ["src/ingestion/*"],
       "@shared/*": ["src/shared/*"],
       "@mcp/*": ["src/mcp/*"],
+      "@ontologies/*": ["ontologies/*"],
+      "@procurement/*": ["ontologies/procurement/*"],
+      "@fibo/*": ["ontologies/fibo/*"],
+      "@geonames/*": ["ontologies/geonames/*"],
+      "@isco/*": ["ontologies/isco/*"],
+      "@sp500/*": ["ontologies/sp500/*"],
+      "@testont/*": ["ontologies/testont/*"],
+      "@crm/*": ["ontologies/crm/*"],
+      "@financial/*": ["ontologies/financial/*"],
       "@generated/*": ["codegen/generated/*"],
-      "@codegen/generated/*": ["codegen/generated/*"],
-      "@ingestion/*": ["src/ingestion/*"]
+      "@config/*": ["config/*"],
+      "@scripts/*": ["scripts/*"],
+      "@test/*": ["test/*"]
     }
   },
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*",
+    "ontologies/**/*",
+    "scripts/**/*",
+    "test/**/*",
+    "config/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "tmp",
+    "cache"
+  ]
 }

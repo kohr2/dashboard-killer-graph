@@ -7,7 +7,7 @@ import { OntologyBuildService, BuildOptions } from '../platform/ontology/ontolog
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { simpleParser } from 'mailparser';
-import { logger } from '../common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import { GenericIngestionPipeline, IngestionInput } from './pipeline/generic-ingestion-pipeline';
 
 /**

@@ -10,7 +10,7 @@
       "@ingestion/*": ["src/ingestion/*"],
       "@shared/*": ["src/shared/*"],
       "@platform/*": ["src/platform/*"],
-      "@common/*": ["src/common/*"],
+      "@shared/*": ["src/shared/*"],
       "@src/*": ["src/*"]
     }
   },

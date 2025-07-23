@@ -13,7 +13,7 @@
       "@platform/*": ["src/platform/*"],
       "@shared/*": ["src/shared/*"],
       "@ingestion/*": ["src/ingestion/*"],
-      "@common/*": ["src/common/*"]
+      "@shared/*": ["src/shared/*"]
     }
   },
   "include": ["**/*.ts"],

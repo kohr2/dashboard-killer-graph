@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { logger } from '../../common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import { EnrichmentOrchestratorService } from '@platform/enrichment';
 import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';

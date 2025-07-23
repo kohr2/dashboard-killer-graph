@@ -41,7 +41,7 @@ import { Neo4jIngestionService } from '../../src/platform/processing/neo4j-inges
 import { registerAllOntologies } from '../../src/register-ontologies';
 import { OntologyService } from '../../src/platform/ontology/ontology.service';
 import { resetDatabase } from '../database/reset-neo4j';
-import { logger } from '../../src/common/utils/logger';
+import { logger } from '@shared/utils/logger';
 import { ReasoningOrchestratorService } from '../../src/platform/reasoning/reasoning-orchestrator.service';
 
 interface ParsedEmailWithSource extends ParsedMail { sourceFile: string; }

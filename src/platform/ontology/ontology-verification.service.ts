@@ -2,7 +2,10 @@
 
 import "reflect-metadata";
 import * as neo4j from 'neo4j-driver';
-import { logger } from '../../common/utils/logger';
+import { container } from 'tsyringe';
+import { OntologyService } from './ontology.service';
+import { Neo4jConnection } from '../database/neo4j-connection';
+import { logger } from '@shared/utils/logger';
 
 interface VerificationResult {
   ontologyName: string;

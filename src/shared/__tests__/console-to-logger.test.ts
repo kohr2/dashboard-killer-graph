@@ -6,7 +6,7 @@ describe('console-to-logger redirect', () => {
   
   beforeAll(() => {
     // Import the console-to-logger patch after capturing original
-    require('@common/utils/console-to-logger');
+    require('@shared/utils/console-to-logger');
   });
 
   afterAll(() => {

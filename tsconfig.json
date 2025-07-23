@@ -14,7 +14,7 @@
       "@financial/*": ["ontologies/financial/*"],
       "@procurement/*": ["ontologies/procurement/*"],
       "@shared/*": ["src/shared/*"],
-      "@common/*": ["src/common/*"],
+      "@shared/*": ["src/shared/*"],
       "@ingestion/*": ["src/ingestion/*"],
       "@src/*": ["src/*"],
       "@generated/*": ["codegen/generated/*"]

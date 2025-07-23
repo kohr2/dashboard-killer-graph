@@ -1,48 +1,45 @@
-# Logging Guidelines
+# Logger Guidelines
 
-The project uses a single, minimal yet powerful logger implementation based on **Pino** that lives in:
+This document outlines the logging standards and best practices for the dashboard-killer-graph project.
 
-```
-src/common/utils/logger.ts
-```
-
-Import it **always** via the path alias:
+## Basic Usage
 
 ```ts
-import { logger } from '@common/utils/logger';
+import { logger } from '@shared/utils/logger';
+
+logger.info('Application started');
+logger.warn('Deprecated feature used');
+logger.error('Failed to connect to database', { error: 'Connection timeout' });
 ```
 
-## Levels
-
-| Method | Env var level | Description                        |
-| ------ | ------------- | ---------------------------------- |
-| error  | ERROR         | Critical failures, will exit soon  |
-| warn   | WARN          | Non-fatal issues that need review  |
-| info   | INFO          | Normal operational messages        |
-| debug  | DEBUG         | Verbose diagnostics (disabled in production) |
-
-`LOG_LEVEL` can override the default level (`INFO` in development, `silent` in test).
-
-## Service-scoped loggers
+## Creating Service-Specific Loggers
 
 ```ts
-import { createLogger } from '@common/utils/logger';
-const serviceLogger = createLogger('neo4j-ingestion');
-serviceLogger.info('vector index skipped');
+import { createLogger } from '@shared/utils/logger';
+
+const serviceLogger = createLogger('email-service');
+serviceLogger.info('Processing email batch', { count: 10 });
 ```
 
-## Redirecting `console.*`
+## Console Redirection
 
-For legacy code or third-party libraries that still use the global console, we patch the methods early in bootstrap:
+To capture legacy console.log calls and redirect them to our logger:
 
 ```ts
-import '@common/utils/console-to-logger';
+import '@shared/utils/console-to-logger';
 ```
 
-This module forwards all `console.*` calls to the appropriate logger level while tagging them with `{ legacy: true }`.
+This should be imported early in your application bootstrap to capture all console output.
 
-## Do NOT
+## Log Levels
 
-* Add new imports from `src/shared/logger.ts` – that file was removed.
-* Log sensitive data (passwords, API keys, PII).
-* Scatter `console.log` calls – rely on the typed logger instead. 
+- **ERROR**: Critical errors that prevent normal operation
+- **WARN**: Issues that don't stop execution but should be addressed
+- **INFO**: General information about application flow
+- **DEBUG**: Detailed information for debugging
+
+## Environment Variables
+
+- `LOG_LEVEL`: Set the minimum log level (ERROR, WARN, INFO, DEBUG)
+- `LOG_SILENT`: Set to 'true' to disable all logging
+- `NODE_ENV`: Affects log format (JSON in production, readable in development) 

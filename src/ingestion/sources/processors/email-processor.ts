@@ -7,8 +7,8 @@
  */
 
 import { logger } from '@shared/utils/logger';
-import type { IEmailParsingService, ParsedEmailDataMinimal as ParsedEmailData } from '@common/interfaces/email-parsing.interface';
-import type { IAttachmentProcessingService, AttachmentProcessingResultMinimal as AttachmentProcessingResult } from '@common/interfaces/attachment-processing.interface';
+import type { IEmailParsingService, ParsedEmailDataMinimal as ParsedEmailData } from '@shared/interfaces/email-parsing.interface';
+import type { IAttachmentProcessingService, AttachmentProcessingResultMinimal as AttachmentProcessingResult } from '@shared/interfaces/attachment-processing.interface';
 import { EmailAttachment, ExtractedEntity } from '../types/email.interface';
 
 // Imports will be updated during architecture refactoring
