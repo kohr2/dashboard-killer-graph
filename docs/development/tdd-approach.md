@@ -103,13 +103,12 @@ src/
     │   │   └── email-source.test.ts
     │   └── email-source.ts
     ├── services/
-    │   ├── __tests__/
-    │   │   └── email-ingestion.service.test.ts
-    │   └── email-ingestion.service.ts
+    │   └── __tests__/
+    │       └── (services removed - direct content processing used)
     └── tests/
         ├── application/
         │   └── services/
-        │       └── email-ingestion.service.test.ts
+        │       └── (services removed - direct content processing used)
         ├── email-ingestion-script.test.ts
         └── email-pipeline.test.ts
 
