@@ -566,7 +566,7 @@ ${body}`;
     logger.info(`Loaded ${ontology.entities.length} entities from ${ontology.name} ontology`);
     
     // Determine output directory
-    const fixtureRoot = outputDir || join(process.cwd(), 'test', 'fixtures', ontologyName, 'emails');
+    const fixtureRoot = outputDir || join(process.cwd(), 'ontologies', ontologyName, 'fixtures', 'emails');
     await fs.mkdir(fixtureRoot, { recursive: true });
 
     // --- APPEND MODE: Find the next available index ---

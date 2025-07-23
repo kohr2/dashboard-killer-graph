@@ -1,51 +1,69 @@
-const { pathsToModuleNameMapper } = require('ts-jest');
-const { compilerOptions } = require('./tsconfig.json');
+const baseConfig = require('./jest.config.base');
 
+/**
+ * Unit Test Configuration
+ * Extends base configuration with unit-specific settings
+ * 
+ * Unit tests:
+ * - Test individual functions and classes in isolation
+ * - Mock external dependencies (databases, APIs, etc.)
+ * - Fast execution (< 1 second per test)
+ * - No external service dependencies
+ */
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  clearMocks: true,
-  coverageDirectory: 'coverage',
-  roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/scripts', '<rootDir>/ontologies'],
+  ...baseConfig,
   
-  moduleNameMapper: {
-    '^@src/(.*)$': '<rootDir>/src/$1',
-    '^@platform/(.*)$': '<rootDir>/src/platform/$1',
-    '^@crm/(.*)$': '<rootDir>/ontologies/crm/$1',
-    '^@financial/(.*)$': '<rootDir>/ontologies/financial/$1',
-    '^@shared/(.*)$': '<rootDir>/src/shared/$1',
-    '^@mcp/(.*)$': '<rootDir>/src/mcp/$1',
-    '^@shared/(.*)$': '<rootDir>/src/shared/$1',
-    '^@procurement/(.*)$': '<rootDir>/ontologies/procurement/$1',
-    '^@generated/(.*)$': '<rootDir>/codegen/generated/$1',
-    '^@ingestion/(.*)$': '<rootDir>/src/ingestion/$1',
-    '^@codegen/generated/(.*)$': '<rootDir>/codegen/generated/$1',
-    '^ontologies/(.*)$': '<rootDir>/ontologies/$1',
-  },
-
-  moduleDirectories: ["node_modules", "src", "scripts", "scripts/database"],
-
-  // No global setup for unit tests - they don't need external services
-  setupFilesAfterEnv: ['jest-extended/all', './test/setup.ts'],
-  testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/scripts/**/*.test.ts', '<rootDir>/test/**/*.test.ts', '<rootDir>/ontologies/**/*.test.ts'],
-  transform: {
-    '^.+\\.ts$': ['ts-jest', {
-      tsconfig: 'test/tsconfig.json'
-    }]
-  },
-  globals: {
-    'ts-jest': {
-      isolatedModules: true
+  // Override display name for better test reporting
+  displayName: 'unit',
+  
+  // Unit tests should be fast - shorter timeout
+  testTimeout: 5000,
+  
+  // Unit tests don't need global setup/teardown
+  globalSetup: undefined,
+  globalTeardown: undefined,
+  
+  // Unit test patterns - focus on isolated tests
+  testMatch: [
+    '<rootDir>/src/**/__tests__/**/*.test.ts',
+    '<rootDir>/src/**/*.test.ts',
+    '<rootDir>/scripts/**/__tests__/**/*.test.ts',
+    '<rootDir>/scripts/**/*.test.ts',
+    '<rootDir>/ontologies/**/__tests__/**/*.test.ts',
+    '<rootDir>/ontologies/**/*.test.ts',
+    '<rootDir>/test/unit/**/*.test.ts'
+  ],
+  
+  // Exclude e2e tests from unit test runs
+  testPathIgnorePatterns: [
+    '<rootDir>/test/e2e/',
+    '<rootDir>/node_modules/',
+    '<rootDir>/dist/'
+  ],
+  
+  // Coverage thresholds for unit tests (higher standards)
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80
     }
   },
-  testTimeout: 30000,
-  reporters: ['default'],
-  collectCoverage: true,
-  coverageReporters: ['json', 'lcov', 'text', 'clover'],
+  
+  // Unit tests should be deterministic
+  randomize: false,
+  
+  // Faster execution for unit tests
+  maxWorkers: '50%',
+  
+  // Verbose output for debugging unit tests
+  verbose: true,
+  
+  // Collect coverage from unit test files
   collectCoverageFrom: [
-    'src/**/*.ts',
-    '!src/**/*.d.ts',
-    '!src/index.ts',
-  ],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+    ...baseConfig.collectCoverageFrom,
+    '!**/e2e/**',
+    '!**/integration/**'
+  ]
 }; 

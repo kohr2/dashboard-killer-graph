@@ -24,7 +24,7 @@ describe('SalesforceEnrichmentService', () => {
       legalName: 'No ID Corp Inc.',
     });
     const result = await service.enrich(entity);
-    expect(result).toBeNull();
+    expect(result).toEqual({ success: false, error: 'No CIK available for Salesforce lookup' });
   });
 
   it('should enrich an entity that has a CIK in its metadata', async () => {
@@ -65,6 +65,6 @@ describe('SalesforceEnrichmentService', () => {
     };
 
     const result = await service.enrich(entity);
-    expect(result).toBeNull();
+    expect(result).toEqual({ success: false, error: 'Test failure triggered' });
   });
 }); 

@@ -33,7 +33,7 @@ Scripts should **never introduce new business logic**; they must only call the e
 |---|-------------|-----------|
 | 1 | **Generate realistic RFC-2822 emails** that mention ontology entities. | `src/ingestion/fixtures/email-fixture-generation.service.ts` |
 | 2 | (Optional) Uses OpenAI if `OPENAI_API_KEY` is present, otherwise falls back to templated text. | same service – `generateEmailWithLLM()` |
-| 3 | **Persist `.eml` files** under `test/fixtures/<ontology>/emails/`. | same service – `generateEmailFixtures()` |
+| 3 | **Persist `.eml` files** under `ontologies/<ontology>/fixtures/emails/`. | same service – `generateEmailFixtures()` |
 
 ---
 

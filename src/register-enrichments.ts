@@ -129,19 +129,20 @@ function createEnrichmentServices(config: EnrichmentConfig): IEnrichmentService[
  * enrichment services are determined by entity type and configuration,
  * not ontology definitions, and services are created dynamically from config.
  */
-export function registerAllEnrichments(): EnrichmentOrchestratorService {
+export function registerAllEnrichments(): any {
   logger.debug('Registering enrichment services...');
 
   // Load configuration and create services
   const enrichmentConfig = loadEnrichmentConfig();
   const enrichmentServices = createEnrichmentServices(enrichmentConfig);
   
-  // Create enrichment orchestrator with configured services
-  const orchestrator = new EnrichmentOrchestratorService();
+  // Create ontology agnostic enrichment service with configured services
+  const { OntologyAgnosticEnrichmentService } = require('@platform/enrichment/ontology-agnostic-enrichment.service');
+  const agnosticService = new OntologyAgnosticEnrichmentService();
   
-  // Register all services with the orchestrator
+  // Register all services with the agnostic service
   for (const service of enrichmentServices) {
-    orchestrator.register(service);
+    agnosticService.registerService(service);
   }
   
   const enabledServiceNames = enrichmentConfig.services
@@ -149,7 +150,7 @@ export function registerAllEnrichments(): EnrichmentOrchestratorService {
     .map(service => service.name);
   logger.info(`Enrichment services registered: ${enabledServiceNames.join(', ')}`);
 
-  return orchestrator;
+  return agnosticService;
 }
 
 /**

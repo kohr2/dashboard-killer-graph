@@ -45,4 +45,17 @@ export interface OntologyPlugin {
    * Contains patterns and rules for extracting entities from text.
    */
   entityExtraction?: Record<string, unknown>;
+
+  /**
+   * Optional path alias configuration for this ontology.
+   * Allows plugins to register their own path aliases for TypeScript imports.
+   * Format: { "alias": "path" } where path is relative to the plugin directory.
+   */
+  pathAliases?: Record<string, string>;
+
+  /**
+   * Optional registration hook that gets called when the plugin is loaded.
+   * Can be used for any plugin-specific initialization, including path alias registration.
+   */
+  onRegister?: () => void | Promise<void>;
 } 

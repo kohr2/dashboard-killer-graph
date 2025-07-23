@@ -26,9 +26,11 @@ This index provides a comprehensive overview of all documentation for the Dashbo
 - **[Development Guide](./development/README.md)** - Complete development setup
 - **[Testing Guide](./development/testing/README.md)** - Test strategies and TDD
 - **[Logger Guidelines](./development/logger-guidelines.md)** - Logging standards
+- **[TODO](./development/todo.md)** - Development tasks and roadmap
 
 ### **Scripts & Tools**
 - **[Unified Scripts](./scripts/README.md)** - Script system documentation
+- **[Package Scripts](./development/package-scripts.md)** - npm scripts and development tools
 - **[Database Scripts](./scripts/database/README.md)** - Database management
 - **[Ontology Scripts](./scripts/ontology/README.md)** - Ontology management
 
@@ -79,6 +81,7 @@ This index provides a comprehensive overview of all documentation for the Dashbo
 - **[Unit Testing](./development/testing/unit-testing.md)** - Unit test guidelines
 - **[Integration Testing](./development/testing/integration-testing.md)** - Integration tests
 - **[E2E Testing](./development/testing/e2e-testing.md)** - End-to-end testing
+- **[Jest Configuration](./development/jest-configuration.md)** - Jest test framework setup and configuration
 
 ### **Quality Assurance**
 - **[Code Standards](./development/code-standards.md)** - Coding guidelines

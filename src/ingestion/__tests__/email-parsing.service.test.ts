@@ -276,7 +276,7 @@ describe('EmailParsingService', () => {
     it('should handle undefined address object', () => {
       const result = (emailParsingService as any).convertAddressObject(undefined);
 
-      expect(result).toEqual([]);
+      expect(result).toEqual(['']);
     });
 
     it('should handle address object with no value', () => {
@@ -284,7 +284,7 @@ describe('EmailParsingService', () => {
 
       const result = (emailParsingService as any).convertAddressObject(address);
 
-      expect(result).toEqual([]);
+      expect(result).toEqual(['']);
     });
 
     it('should handle address object with empty value array', () => {
@@ -292,7 +292,7 @@ describe('EmailParsingService', () => {
 
       const result = (emailParsingService as any).convertAddressObject(address);
 
-      expect(result).toEqual([]);
+      expect(result).toEqual(['']);
     });
 
     it('should handle address with no address property', () => {

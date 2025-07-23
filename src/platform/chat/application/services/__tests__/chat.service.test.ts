@@ -44,16 +44,32 @@ describe('ChatService', () => {
       getAllOntologies: jest.fn(),
       validateEntity: jest.fn(),
       validateRelationship: jest.fn(),
+      getAllAvailableLabels: jest.fn().mockReturnValue(['Deal', 'Contact', 'Organization', 'Company', 'Person']),
+      getAllEntityTypes: jest.fn().mockReturnValue(['Deal', 'Contact', 'Organization', 'Company', 'Person']),
+      getKeyProperties: jest.fn().mockImplementation((entityType: any) => {
+        const keyProps: Record<string, string[]> = {
+          'Deal': ['name', 'value', 'status'],
+          'Contact': ['name', 'email'],
+          'Organization': ['name', 'industry'],
+          'Company': ['name', 'industry'],
+          'Person': ['name', 'email']
+        };
+        return keyProps[entityType] || [];
+      }),
+      getAlternativeLabels: jest.fn().mockReturnValue([]),
+      resolveEntityTypeFromAlternativeLabel: jest.fn(),
     } as any;
 
     mockAccessControlService = {
       checkPermission: jest.fn(),
       getUserPermissions: jest.fn(),
       hasPermission: jest.fn(),
+      can: jest.fn().mockReturnValue(true),
     } as any;
 
     mockQueryTranslator = {
       translateQuery: jest.fn(),
+      translate: jest.fn(),
       getQueryHistory: jest.fn(),
       clearHistory: jest.fn(),
     } as any;
@@ -69,8 +85,10 @@ describe('ChatService', () => {
     mockUser = {
       id: 'user-1',
       username: 'testuser',
-      email: 'test@example.com',
-      roles: ['analyst'],
+      roles: [{
+        name: 'analyst',
+        permissions: [{ action: 'read', resource: '*' }]
+      }],
     };
 
     // Mock environment variable
@@ -159,7 +177,7 @@ describe('ChatService', () => {
 
       expect(message).toBeDefined();
       expect(message.text).toBe('Hello world');
-      expect(message.sender).toBe('testuser');
+      expect(message.userId).toBe('user-1');
     });
 
     it('should throw error when conversation not found', async () => {
@@ -201,6 +219,16 @@ describe('ChatService', () => {
       mockNeo4jConnection.getSession.mockReturnValue(mockSession as any);
       mockNeo4jConnection.getDatabase.mockReturnValue('procurement');
 
+      // Mock the query translator to return a valid structured query
+      mockQueryTranslator.translate.mockResolvedValue({
+        command: 'show',
+        resourceTypes: ['Deal'],
+        filters: {},
+        relatedTo: [],
+        sourceEntityName: undefined,
+        relationshipType: undefined
+      });
+
       const result = await chatService.handleQuery(mockUser, 'Find all deals', 'financial');
 
       expect(mockNeo4jConnection.switchDatabase).toHaveBeenCalledWith('financial');
@@ -213,6 +241,16 @@ describe('ChatService', () => {
         close: jest.fn(),
       };
       mockNeo4jConnection.getSession.mockReturnValue(mockSession as any);
+
+      // Mock the query translator to return a valid structured query
+      mockQueryTranslator.translate.mockResolvedValue({
+        command: 'show',
+        resourceTypes: ['Deal'],
+        filters: {},
+        relatedTo: [],
+        sourceEntityName: undefined,
+        relationshipType: undefined
+      });
 
       const result = await chatService.handleQuery(mockUser, 'Find all deals');
 

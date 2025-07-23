@@ -6,6 +6,7 @@ import { singleton } from 'tsyringe';
 import { z } from 'zod';
 import { logger } from '@shared/utils/logger';
 import { OntologyPlugin } from './ontology.plugin';
+import { PathAliasRegistry } from './path-alias-registry';
 
 // Local interface for testing - matches the generated DTO structure
 interface OrganizationDTO {
@@ -254,7 +255,25 @@ export class OntologyService {
 
   public loadFromPlugins(plugins: OntologyPlugin[]): void {
     logger.debug(`Loading ontology from ${plugins.length} plugins...`);
+    
+    // Get the path alias registry instance
+    const pathAliasRegistry = PathAliasRegistry.getInstance();
+    
     const allOntologies: Ontology[] = plugins.map(p => {
+        // Register path aliases if the plugin defines them
+        if (p.pathAliases) {
+          pathAliasRegistry.registerPluginAliases(p.name, p.pathAliases);
+        }
+        
+        // Call the plugin's onRegister hook if it exists
+        if (p.onRegister) {
+          try {
+            p.onRegister();
+          } catch (error) {
+            logger.error(`Error in plugin ${p.name} onRegister hook:`, error);
+          }
+        }
+        
         return {
             name: p.name,
             entities: p.entitySchemas as Ontology['entities'],
@@ -262,6 +281,7 @@ export class OntologyService {
             reasoning: p.reasoning
         };
     });
+    
     this.loadFromObjects(allOntologies);
     logger.info(`✅ All plugin ontologies loaded and validated.`);
   }

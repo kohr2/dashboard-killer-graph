@@ -4,7 +4,7 @@
  * ----------------------------------
  * CLI wrapper around EmailFixtureGenerationService.
  * Generates `.eml` files for the requested ontology and writes them under
- * `test/fixtures/<ontology>/emails` (same location expected by the ingestion
+ * `ontologies/<ontology>/fixtures/emails` (same location expected by the ingestion
  * pipeline). All heavy lifting lives in
  * `src/ingestion/fixtures/email-fixture-generation.service.ts`.
  *

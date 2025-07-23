@@ -21,6 +21,20 @@ export const procurementPlugin: OntologyPlugin = {
   relationshipSchemas: ontologyData.relationships,
   reasoning: ontologyData.reasoning,
   entityExtraction: ontologyData.entityExtraction,
+  
+  // Define path aliases for this plugin
+  pathAliases: {
+    '@procurement/*': '*',           // @procurement/entities -> ontologies/procurement/entities
+    '@procurement/entities': 'entities',  // @procurement/entities -> ontologies/procurement/entities
+    '@procurement/services': 'services',  // @procurement/services -> ontologies/procurement/services
+    '@procurement/types': 'types',        // @procurement/types -> ontologies/procurement/types
+  },
+  
+  // Optional registration hook
+  onRegister: () => {
+    console.log('🔧 Procurement plugin registered with path aliases');
+  },
+  
   ...(registerProcurement && {
     serviceProviders: {
       register: registerProcurement,

@@ -1,10 +1,10 @@
 import 'reflect-metadata';
 
-// Test configuration
-const testDatabaseName = 'test-ontology-integration';
+// Use unified test database from shared constants
+import { UNIFIED_TEST_DATABASE } from '@shared/constants/test-database';
 
-// Set test database environment variable BEFORE importing any services
-process.env.NEO4J_DATABASE = testDatabaseName;
+// Test configuration - use unified database
+const testDatabaseName = UNIFIED_TEST_DATABASE;
 
 import { container } from 'tsyringe';
 import { OntologyEmailIngestionService } from '@ingestion/ontology-email-ingestion.service';
@@ -16,23 +16,18 @@ describe('Ontology Email Integration E2E', () => {
   let neo4jConnection: Neo4jConnection;
 
   beforeAll(async () => {
-    // Drop and recreate the test database to ensure completely clean state
+    // Use unified test database set by global setup
     neo4jConnection = container.resolve(Neo4jConnection);
     await neo4jConnection.connect();
     
+    // Clear the unified test database instead of dropping
     try {
-      // Drop the database if it exists (this removes all constraints and indexes)
-      await neo4jConnection.dropDatabase(testDatabaseName);
-      logger.info(`Database ${testDatabaseName} dropped successfully`);
+      await neo4jConnection.clearDatabase();
+      logger.info(`Test database ${testDatabaseName} cleared successfully`);
     } catch (error) {
-      // Database might not exist, which is fine - try to clear instead
-      logger.info(`Database ${testDatabaseName} did not exist or could not be dropped, trying to clear instead`);
-      try {
-        await neo4jConnection.clearDatabase();
-      } catch (clearError) {
-        logger.info(`Could not clear database either, will be created fresh`);
-      }
+      logger.info(`Test database ${testDatabaseName} could not be cleared, continuing...`);
     }
+    
     await neo4jConnection.close();
     
     // Initialize services
@@ -40,8 +35,16 @@ describe('Ontology Email Integration E2E', () => {
   });
 
   afterAll(async () => {
-    // Clean up test database
-    await cleanupDatabase();
+    // Clean up the unified test database
+    try {
+      await neo4jConnection.connect();
+      await neo4jConnection.clearDatabase();
+      logger.info(`Test database ${testDatabaseName} cleared successfully`);
+    } catch (error) {
+      logger.warn(`⚠️ Database ${testDatabaseName} not found during verification. This may be expected if the test was skipped or database was cleared.`);
+    } finally {
+      await neo4jConnection.close();
+    }
   });
 
   it('should process FIBO ontology emails end-to-end (limited to 250 entities)', async () => {

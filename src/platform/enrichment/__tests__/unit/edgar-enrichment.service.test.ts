@@ -61,7 +61,7 @@ describe('EdgarEnrichmentService', () => {
       expect((result as any).legalName).toBe('Enrichment Corp');
     });
 
-    it('should return an empty object for an unknown organization', async () => {
+    it('should return an error object for an unknown organization', async () => {
       mockedFs.readFile.mockResolvedValue(JSON.stringify(mockCikData));
       const unknownEntity = createOrganizationDTO({
         id: 'org-2',
@@ -70,7 +70,7 @@ describe('EdgarEnrichmentService', () => {
         label: 'Organization',
       });
       const result = await service.enrich(unknownEntity);
-      expect(result).toEqual({});
+      expect(result).toEqual({ success: false, error: 'Company not found in SEC database' });
     });
 
     it('should return an empty object for generic company names', async () => {
@@ -104,7 +104,7 @@ describe('EdgarEnrichmentService', () => {
 
       for (const entity of genericEntities) {
         const result = await service.enrich(entity);
-        expect(result).toEqual({});
+        expect(result).toEqual({ success: false, error: 'Generic company name' });
       }
     });
     
@@ -113,7 +113,7 @@ describe('EdgarEnrichmentService', () => {
         mockedAxios.get.mockRejectedValue(new Error('Failed to fetch from SEC'));
 
         const result = await service.enrich(baseEntity);
-        expect(result).toEqual({});
+        expect(result).toEqual({ success: false, error: 'Enrichment failed' });
         expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('Failed to initialize'));
     });
 

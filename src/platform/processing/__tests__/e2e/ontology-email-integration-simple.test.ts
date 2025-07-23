@@ -1,3 +1,11 @@
+import 'reflect-metadata';
+
+// Use unified test database from shared constants
+import { UNIFIED_TEST_DATABASE } from '@shared/constants/test-database';
+
+// Test configuration - use unified database
+const testDatabaseName = UNIFIED_TEST_DATABASE;
+
 import { promises as fsPromises } from 'fs';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -11,14 +19,13 @@ import { Neo4jIngestionService } from '@platform/processing/neo4j-ingestion.serv
 import { GenericIngestionPipeline } from '@ingestion/pipeline/generic-ingestion-pipeline';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { registerSelectedOntologies } from '@src/register-ontologies';
+import { OntologyEmailIngestionService } from '@ingestion/ontology-email-ingestion.service';
 
 // Simple ontology registration using the proper plugin system
 function registerSimpleOntologies() {
   // Use the proper plugin-based registration system
   registerSelectedOntologies(['procurement', 'fibo']);
 }
-
-const testDatabaseName = 'test-ontology-integration-simple';
 
 /**
  * Step 1: Build ontology using existing service

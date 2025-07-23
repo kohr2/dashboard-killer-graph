@@ -21,6 +21,20 @@ export const {{name}}Plugin: OntologyPlugin = {
   relationshipSchemas: ontologyData.relationships,
   reasoning: ontologyData.reasoning,
   entityExtraction: ontologyData.entityExtraction,
+  
+  // Define path aliases for this plugin
+  pathAliases: {
+    '@{{name}}/*': '*',                    // @{{name}}/entities -> ontologies/{{name}}/entities
+    '@{{name}}/entities': 'entities',      // @{{name}}/entities -> ontologies/{{name}}/entities
+    '@{{name}}/services': 'services',      // @{{name}}/services -> ontologies/{{name}}/services
+    '@{{name}}/types': 'types',            // @{{name}}/types -> ontologies/{{name}}/types
+  },
+  
+  // Optional registration hook
+  onRegister: () => {
+    console.log('🔧 {{pascalCase name}} plugin registered with path aliases');
+  },
+  
   ...(register{{pascalCase name}} && {
     serviceProviders: {
       register: register{{pascalCase name}},

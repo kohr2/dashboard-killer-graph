@@ -1,46 +1,52 @@
-const { pathsToModuleNameMapper } = require('ts-jest');
-const { compilerOptions } = require('./tsconfig.json');
+const baseConfig = require('./jest.config.base');
 
+/**
+ * Main Jest Configuration
+ * Default configuration that runs all tests
+ * 
+ * This configuration:
+ * - Runs both unit and e2e tests
+ * - Uses balanced settings for mixed test types
+ * - Provides a single entry point for test execution
+ * - Can be overridden by specific configs when needed
+ */
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  clearMocks: true,
-  coverageDirectory: 'coverage',
-  roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/scripts', '<rootDir>/ontologies'],
+  ...baseConfig,
   
-  moduleNameMapper: {
-    '^@src/(.*)$': '<rootDir>/src/$1',
-    '^@platform/(.*)$': '<rootDir>/src/platform/$1',
-    '^@crm/(.*)$': '<rootDir>/ontologies/crm/$1',
-    '^@financial/(.*)$': '<rootDir>/ontologies/financial/$1',
-    '^@shared/(.*)$': '<rootDir>/src/shared/$1',
-    '^@mcp/(.*)$': '<rootDir>/src/mcp/$1',
-    '^@shared/(.*)$': '<rootDir>/src/shared/$1',
-    '^@procurement/(.*)$': '<rootDir>/ontologies/procurement/$1',
-    '^@generated/(.*)$': '<rootDir>/codegen/generated/$1',
-    '^@ingestion/(.*)$': '<rootDir>/src/ingestion/$1',
-    '^@codegen/generated/(.*)$': '<rootDir>/codegen/generated/$1',
-    '^ontologies/(.*)$': '<rootDir>/ontologies/$1',
-  },
-
-  moduleDirectories: ["node_modules", "src", "scripts", "scripts/database"],
-
-  globalSetup: '<rootDir>/test/global-setup.ts',
-  setupFilesAfterEnv: ['jest-extended/all', './test/setup.ts'],
-  testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/scripts/**/*.test.ts', '<rootDir>/test/**/*.test.ts', '<rootDir>/ontologies/**/*.test.ts'],
-  transform: {
-    '^.+\\.ts$': ['ts-jest', {
-      tsconfig: 'test/tsconfig.json'
-    }]
-  },
+  // Display name for main test suite
+  displayName: 'all',
+  
+  // Balanced timeout for mixed test types
   testTimeout: 30000,
-  reporters: ['default'],
-  collectCoverage: true,
-  coverageReporters: ['json', 'lcov', 'text', 'clover'],
-  collectCoverageFrom: [
-    'src/**/*.ts',
-    '!src/**/*.d.ts',
-    '!src/index.ts',
+  
+  // Run all test types
+  testMatch: [
+    '<rootDir>/src/**/*.test.ts',
+    '<rootDir>/scripts/**/*.test.ts',
+    '<rootDir>/ontologies/**/*.test.ts',
+    '<rootDir>/test/**/*.test.ts'
   ],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  
+  // Balanced coverage thresholds
+  coverageThreshold: {
+    global: {
+      branches: 70,
+      functions: 70,
+      lines: 70,
+      statements: 70
+    }
+  },
+  
+  // Balanced worker configuration
+  maxWorkers: '50%',
+  
+  // Include global setup/teardown for e2e tests
+  globalSetup: '<rootDir>/test/global-setup.ts',
+  globalTeardown: '<rootDir>/test/global-teardown.ts',
+  
+  // Additional setup for all tests
+  setupFilesAfterEnv: [
+    ...baseConfig.setupFilesAfterEnv,
+    '<rootDir>/test/e2e-setup.ts'
+  ]
 };

@@ -35,14 +35,16 @@ describe('OntologyDrivenAdvancedGraphService', () => {
     } as any;
 
     mockAdvancedGraphService = {
-      createTemporalRelationship: jest.fn(),
-      createHierarchicalRelationship: jest.fn(),
-      createSimilarityRelationship: jest.fn(),
-      executeComplexPattern: jest.fn(),
-      queryTemporalPatterns: jest.fn(),
-      queryHierarchicalPatterns: jest.fn(),
-      querySimilarityPatterns: jest.fn(),
-      queryComplexPatterns: jest.fn(),
+      createTemporalRelationships: jest.fn(),
+      createHierarchicalRelationships: jest.fn(),
+      createSimilarityRelationships: jest.fn(),
+      createComplexRelationships: jest.fn(),
+      createComplexPatterns: jest.fn(),
+      analyzeTimelinePatterns: jest.fn(),
+      buildHierarchicalStructure: jest.fn(),
+      calculateEntitySimilarity: jest.fn(),
+      queryAdvancedPatterns: jest.fn(),
+      close: jest.fn(),
     } as any;
 
     (AdvancedGraphService as jest.MockedClass<typeof AdvancedGraphService>).mockImplementation(() => mockAdvancedGraphService);

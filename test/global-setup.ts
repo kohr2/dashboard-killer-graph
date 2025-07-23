@@ -3,6 +3,7 @@
 
 import net from 'net';
 import { waitForService } from '../src/shared/utils/wait-for-service';
+import { UNIFIED_TEST_DATABASE } from '../src/shared/constants/test-database';
 
 const NEO4J_PORT = 7687; // Port for the test database
 const NLP_SERVICE_URL = 'http://127.0.0.1:8000/health';
@@ -53,6 +54,11 @@ export default async () => {
     if (neo4jStatus.status === 'rejected') {
       throw neo4jStatus.reason;
     }
+    
+    // Set unified test database for all E2E tests
+    process.env.NEO4J_DATABASE = UNIFIED_TEST_DATABASE;
+    console.log(`✅ Set unified test database: ${UNIFIED_TEST_DATABASE}`);
+    
     console.log('All critical services are up. Starting tests...');
   } catch (error) {
     console.error('\n❌ A required service is not available.');

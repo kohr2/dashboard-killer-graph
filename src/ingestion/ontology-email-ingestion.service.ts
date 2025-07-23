@@ -127,7 +127,7 @@ export class OntologyEmailIngestionService {
       return emailContent;
     } else {
       // Use the first existing fixture email for the ontology
-      const fixtureDir = path.join(__dirname, '../../../test/fixtures', ontologyName, 'emails');
+      const fixtureDir = path.join(__dirname, '../../../ontologies', ontologyName, 'fixtures', 'emails');
       const files = await fs.readdir(fixtureDir);
       const emlFiles = files.filter(f => f.endsWith('.eml'));
       if (emlFiles.length === 0) {

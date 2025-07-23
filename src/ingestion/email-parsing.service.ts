@@ -136,14 +136,16 @@ export class EmailParsingService {
    * Convert AddressObject to string array
    */
   private convertAddressObject(address: AddressObject | AddressObject[] | undefined): string[] {
-    if (!address) return [];
+    if (!address) return [''];
     
     const addresses = Array.isArray(address) ? address : [address];
-    return addresses.flatMap(addr => {
+    const result = addresses.flatMap(addr => {
       if (addr.value) {
         return addr.value.map(v => v.address || '');
       }
-      return [];
+      return [''];
     }).filter(Boolean);
+    
+    return result.length > 0 ? result : [''];
   }
 } 

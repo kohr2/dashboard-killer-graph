@@ -131,7 +131,7 @@ describe('EmailIngestionPipeline (script logic)', () => {
     const inputs = [];
     
     for (const file of files) {
-      const raw = await mockedFsPromises.readFile(`test/fixtures/emails/${file}`, 'utf-8');
+      const raw = await mockedFsPromises.readFile(`ontologies/procurement/fixtures/emails/${file}`, 'utf-8');
       const parsed = await mockedSimpleParser(raw);
       const body = typeof parsed.text === 'string' ? parsed.text : (parsed.html || '').replace(/<[^>]*>/g, '');
       inputs.push({ id: file, content: body, meta: { sourceFile: file } });

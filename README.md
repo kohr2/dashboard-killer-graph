@@ -1,58 +1,319 @@
-# 🧠 Conversational Knowledge Platform (The Dashboard Killer)
+# Dashboard Killer Graph
 
-[![CI/CD](https://github.com/your-org/dashboard-killer-graph/workflows/test/badge.svg)](https://github.com/your-org/dashboard-killer-graph/actions)
-[![Coverage](https://img.shields.io/badge/coverage-85%25-green.svg)](./docs/testing/coverage-report.md)
-[![Architecture](https://img.shields.io/badge/architecture-modular-brightgreen.svg)](./docs/architecture/overview.md)
-[![PRD](https://img.shields.io/badge/PRD-available-blue.svg)](./PRD.md)
-
-An **ontology-driven, extensible platform** that uses a knowledge graph and Large Language Models (LLMs) to replace traditional dashboards with intelligent, conversational insights.
-
-Instead of being a monolithic application, this project is a **core platform** that provides a framework for building and running independent, domain-specific **ontology extensions**.
-
-## 📋 Product Requirements Document
-
-For detailed product specifications, requirements, and roadmap, see our comprehensive [Product Requirements Document (PRD)](./PRD.md).
+A conversational knowledge platform that uses a graph database and LLMs to replace traditional dashboards. This platform is ontology-agnostic and supports multiple data sources and formats.
 
 ## 🚀 Quick Start
 
+### Prerequisites
+- Node.js 18+
+- Python 3.8+
+- Neo4j Desktop or Docker
+- OpenAI API key (optional, for LLM features)
+
+### Installation
 ```bash
-# 1. Clone and install
-git clone https://github.com/your-org/dashboard-killer-graph.git
+# Clone the repository
+git clone <repository-url>
 cd dashboard-killer-graph
+
+# Install dependencies
 npm install
 
-# 2. Set up environment variables
-cp .env.example .env
-# Edit .env and configure:
-# - OPENAI_API_KEY (required for chat functionality)
-# - NEO4J_DATABASE (set to your target database, e.g., 'fibo')
+# Setup NLP service
+npm run setup:nlp
 
-# 3. Start Neo4j Database
-docker-compose -f docker-compose.neo4j.yml up -d
-
-# 4. Launch the system
-./scripts/launch.sh
-
-# 5. Open your browser to http://localhost:5173
+# Generate ontology code
+npm run ontologies:generate
 ```
 
-## 🎯 **Unified Scripts (Recommended)**
-
-The project now uses unified, factorized scripts for all operations:
-
-### **Launch System**
+### Start Development
 ```bash
-# Launch with default configuration (procurement)
-./scripts/launch.sh
+# Start Neo4j database
+npm run neo4j:start
 
-# Launch specific ontology
-./scripts/launch.sh fibo
+# Start development server
+npm run dev
 
-# Launch with custom ports
-./scripts/launch.sh procurement 8002 3002 5174 3003
+# In another terminal, start NLP service
+npm run dev:nlp
 ```
 
-### **Deploy Services**
+### Launch Chat System
+```bash
+# Launch with default configuration
+npm run chat:launch
+
+# Launch with specific ontology
+npm run chat:launch procurement
+npm run chat:launch fibo
+npm run chat:launch geonames
+```
+
+## 📚 Documentation
+
+### **Core Documentation**
+- [Architecture Overview](docs/architecture/) - System architecture and design patterns
+- [Development Guide](docs/development/) - Development setup and workflows
+- [Features Guide](docs/features/) - Platform features and capabilities
+- [API Reference](docs/features/nlp-service/api-reference.md) - NLP service API documentation
+
+### **Configuration & Scripts**
+- [Package Scripts](PACKAGE_SCRIPTS.md) - Complete npm scripts documentation
+- [Jest Configuration](JEST_CONFIGURATION.md) - Testing setup and configuration
+- [Scripts Organization](scripts/README.md) - Unified scripts documentation
+
+### **Ontology Management**
+- [Ontology Guide](docs/development/ontology-development-guide.md) - Creating and managing ontologies
+- [Email Ingestion](docs/architecture/email-ingestion-ontology.md) - Email processing pipeline
+- [Entity Extraction](docs/architecture/entity-extraction-guide.md) - Entity recognition and extraction
+
+## 🏗️ Project Structure
+
+```
+dashboard-killer-graph/
+├── src/                          # Main source code
+│   ├── platform/                 # Core platform services
+│   ├── ingestion/                # Data ingestion pipeline
+│   ├── mcp/                      # Model Context Protocol
+│   └── shared/                   # Shared utilities
+├── ontologies/                   # Ontology plugins
+│   ├── procurement/              # Procurement ontology
+│   ├── fibo/                     # Financial ontology
+│   ├── geonames/                 # Geographic ontology
+│   └── ...                       # Other ontologies
+├── scripts/                      # Unified scripts
+│   ├── database/                 # Database management
+│   ├── ontology/                 # Ontology processing
+│   ├── launch.sh                 # Unified launcher
+│   ├── deploy.sh                 # Unified deployment
+│   ├── test.sh                   # Unified testing
+│   └── ontologies.sh             # Ontology management
+├── python-services/              # Python microservices
+│   └── nlp-service/              # NLP processing service
+├── chat-ui/                      # React chat interface
+├── test/                         # Test files
+│   ├── e2e/                      # End-to-end tests
+│   ├── fixtures/                 # Test fixtures
+│   └── setup.ts                  # Test setup
+└── docs/                         # Documentation
+```
+
+## 🧪 Testing
+
+### Test Configuration
+The project uses a refactored Jest configuration with three main test types:
+
+- **Unit Tests**: Fast, isolated tests with mocked dependencies
+- **E2E Tests**: Integration tests with real external services
+- **All Tests**: Combined test suite for comprehensive coverage
+
+### Running Tests
+```bash
+# Run all tests
+npm test
+
+# Run unit tests only
+npm run test:unit
+
+# Run e2e tests only
+npm run test:e2e
+
+# Run with coverage
+npm run test:coverage
+
+# Run in watch mode
+npm run test:watch
+```
+
+### Test Organization
+- **Unit Tests**: Located in `src/**/__tests__/` directories
+- **E2E Tests**: Located in `test/e2e/` directory
+- **Test Fixtures**: Organized by ontology in `ontologies/*/fixtures/`
+
+## 🔧 Development
+
+### Available Scripts
+
+#### **Development**
+```bash
+npm run dev              # Start development server
+npm run dev:nlp          # Start NLP service
+npm run dev:all          # Start all services
+npm run dev:mcp          # Start MCP server
+npm run dev:mcp:http     # Start MCP HTTP server
+```
+
+#### **Testing**
+```bash
+npm test                 # Run all tests
+npm run test:unit        # Run unit tests
+npm run test:e2e         # Run e2e tests
+npm run test:coverage    # Run with coverage
+npm run test:watch       # Run in watch mode
+npm run test:ci          # Run in CI mode
+```
+
+#### **Code Quality**
+```bash
+npm run type-check       # TypeScript checking
+npm run lint             # ESLint
+npm run lint:fix         # Fix linting issues
+npm run format           # Prettier formatting
+npm run format:check     # Check formatting
+npm run validate         # Full validation
+```
+
+#### **Docker & Database**
+```bash
+npm run docker:up        # Start all services
+npm run docker:down      # Stop all services
+npm run neo4j:start      # Start Neo4j
+npm run neo4j:stop       # Stop Neo4j
+npm run neo4j:logs       # View Neo4j logs
+```
+
+#### **Chat System**
+```bash
+npm run chat:launch      # Launch chat system
+npm run chat:list        # List ontologies
+npm run chat:ui          # Start UI only
+npm run chat:backend     # Start backend only
+npm run chat:all         # Start all components
+```
+
+#### **Maintenance**
+```bash
+npm run ontologies:generate  # Generate ontology code
+npm run setup:nlp            # Setup NLP environment
+npm run security:audit       # Security audit
+npm run deps:update          # Update dependencies
+npm run deps:check           # Check dependencies
+```
+
+### Unified Scripts
+The project uses unified scripts for common operations:
+
+```bash
+# Database management
+npx ts-node scripts/database/manage.ts --help
+
+# Ontology management
+./scripts/ontologies.sh --help
+
+# Testing
+./scripts/test.sh --help
+
+# Deployment
+./scripts/deploy.sh --help
+```
+
+## 🗄️ Database Management
+
+### Neo4j Setup
+The platform uses Neo4j as the primary graph database. You can run it using:
+
+```bash
+# Using Docker (recommended)
+npm run neo4j:start
+
+# Using Neo4j Desktop
+# 1. Open Neo4j Desktop
+# 2. Create a new database
+# 3. Set password to "dashboard-killer"
+# 4. Start the database
+```
+
+### Database Operations
+```bash
+# List databases
+npx ts-node scripts/database/manage.ts list
+
+# Create database
+npx ts-node scripts/database/manage.ts create procurement_db
+
+# Reset database
+npx ts-node scripts/database/manage.ts reset procurement_db
+
+# Query database
+npx ts-node scripts/database/manage.ts query procurement_db "MATCH (n) RETURN count(n)"
+```
+
+## 🏛️ Ontology System
+
+### Available Ontologies
+- **procurement**: Public procurement data
+- **fibo**: Financial industry business ontology
+- **geonames**: Geographic names and locations
+- **isco**: International Standard Classification of Occupations
+- **sp500**: S&P 500 companies and relationships
+- **testont**: Test ontology for development
+
+### Ontology Management
+```bash
+# List all ontologies
+./scripts/ontologies.sh list
+
+# Show ontology details
+./scripts/ontologies.sh info procurement
+
+# Validate ontology
+./scripts/ontologies.sh validate fibo
+
+# Show ontology status
+./scripts/ontologies.sh status
+```
+
+### Creating New Ontologies
+1. Create a new directory in `ontologies/`
+2. Add `config.json` with ontology configuration
+3. Add `ontology.json` with entity and relationship definitions
+4. Create plugin file (optional)
+5. Register in the system
+
+## 🔄 Data Ingestion
+
+### Email Ingestion
+The platform supports email ingestion with entity extraction:
+
+```bash
+# Ingest emails for specific ontology
+npx ts-node scripts/database/manage.ts ingest-emails procurement --folder /path/to/emails
+
+# Bulk ingestion with LLM processing
+npx ts-node scripts/database/manage.ts ingest-emails procurement --scope procurement --limit 100
+```
+
+### Dataset Ingestion
+```bash
+# Ingest dataset directly
+npx ts-node scripts/database/manage.ts ingest-dataset procurement --file /path/to/data.json
+```
+
+## 🤖 MCP Integration
+
+The platform supports Model Context Protocol (MCP) for AI agent integration:
+
+### MCP Server
+```bash
+# Start MCP server (stdio mode)
+npm run dev:mcp
+
+# Start MCP server (HTTP mode)
+npm run dev:mcp:http
+
+# Test MCP transport
+npm run mcp:test
+```
+
+### External Agent Server
+```bash
+# Start external agent server
+./scripts/start-external-agent-server.sh
+```
+
+## 🚀 Deployment
+
+### Development Deployment
 ```bash
 # Deploy NLP service
 ./scripts/deploy.sh nlp
@@ -64,125 +325,98 @@ The project now uses unified, factorized scripts for all operations:
 ./scripts/deploy.sh all
 ```
 
-### **Test Components**
+### Production Deployment
 ```bash
-# Test all components
-./scripts/test.sh all
-
-# Test specific component
-./scripts/test.sh neo4j
+# Using Docker Compose
+docker-compose -f docker-compose.production.yml up -d
 ```
 
-### **Manage Ontologies**
+## 🔍 Troubleshooting
+
+### Common Issues
+
+#### **Neo4j Connection Issues**
 ```bash
-# List all ontologies
-./scripts/ontologies.sh list
+# Check if Neo4j is running
+curl http://localhost:7474
 
-# Validate ontology
-./scripts/ontologies.sh validate procurement
+# Start Neo4j if not running
+npm run neo4j:start
+
+# Check Neo4j logs
+npm run neo4j:logs
 ```
 
-**All scripts provide comprehensive help:**
+#### **NLP Service Issues**
 ```bash
-./scripts/launch.sh --help
-./scripts/deploy.sh --help
-./scripts/test.sh --help
-./scripts/ontologies.sh --help
+# Check NLP service status
+curl http://localhost:8000/health
+
+# Restart NLP service
+npm run dev:nlp
 ```
 
-## 🏗️ **Project Structure**
-
-```
-src/
-├── shared/                    # ✅ Unified shared utilities
-│   ├── interfaces/           # Service interfaces
-│   ├── utils/               # Common utilities (logger, etc.)
-│   ├── types/               # Shared types
-│   └── index.ts             # Comprehensive exports
-├── ingestion/               # Data ingestion pipeline
-├── platform/                # Core platform services
-├── mcp/                     # Model Context Protocol
-└── api.ts                   # Main API entry point
-
-scripts/
-├── lib/common.sh            # ✅ Shared script functions
-├── launch.sh               # ✅ Unified launcher
-├── deploy.sh               # ✅ Unified deployment
-├── test.sh                 # ✅ Unified testing
-├── ontologies.sh           # ✅ Unified ontology management
-└── [legacy scripts]        # ❌ Deprecated
-
-ontologies/
-├── procurement/            # Procurement domain
-├── fibo/                  # Financial domain
-├── geonames/              # Geographic domain
-├── isco/                  # Occupational domain
-├── sp500/                 # Market domain
-└── testont/               # Test domain
-```
-
-## 🔧 **Key Features**
-
-### **Ontology-Driven Architecture**
-- **Extensible**: Add new domains via ontology plugins
-- **Agnostic**: Core platform independent of specific domains
-- **Configurable**: Rich configuration system for each ontology
-
-### **Unified Script System**
-- **Consistent**: Single interface for similar operations
-- **Maintainable**: Shared functions reduce duplication
-- **Flexible**: Configurable ports and settings
-
-### **Multi-Service Architecture**
-- **NLP Service**: Python/FastAPI for entity extraction
-- **Backend API**: Node.js/TypeScript for business logic
-- **Chat UI**: React for conversational interface
-- **MCP Server**: Model Context Protocol for AI integration
-
-## 📚 **Documentation**
-
-- **[Architecture Overview](./docs/architecture/overview.md)** - System design and components
-- **[Development Guide](./docs/development/README.md)** - Setup and development workflow
-- **[Ontology Guide](./docs/architecture/ontologies.md)** - Creating and managing ontologies
-- **[API Reference](./docs/features/api-reference.md)** - Service APIs and endpoints
-- **[Scripts Guide](./scripts/README.md)** - Unified script system documentation
-
-## 🚀 **Quick Examples**
-
-### **Launch Different Ontologies**
+#### **Test Failures**
 ```bash
-# Procurement domain
-./scripts/launch.sh procurement
+# Run tests with verbose output
+npm run test:unit -- --verbose
 
-# Financial domain
-./scripts/launch.sh fibo
-
-# Geographic domain
-./scripts/launch.sh geonames
+# Run specific test file
+npm run test:unit -- src/platform/chat/__tests__/chat.service.test.ts
 ```
 
-### **Deploy for Production**
+### Logs and Debugging
 ```bash
-# Deploy all services
-./scripts/deploy.sh all
+# View application logs
+npm run docker:logs
 
-# Deploy specific service
-./scripts/deploy.sh nlp 8000
+# View Neo4j logs
+npm run neo4j:logs
+
+# Enable debug logging
+LOG_LEVEL=DEBUG npm run dev
 ```
 
-### **Test System Components**
+## 🤝 Contributing
+
+### Development Workflow
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Run the test suite
+6. Submit a pull request
+
+### Code Quality
 ```bash
-# Test everything
-./scripts/test.sh all
+# Run full validation
+npm run validate
 
-# Test specific component
-./scripts/test.sh mcp
+# Check code formatting
+npm run format:check
+
+# Fix formatting issues
+npm run format
 ```
 
-## 🤝 **Contributing**
+### Testing Guidelines
+- Write unit tests for new functionality
+- Add integration tests for complex workflows
+- Ensure test coverage meets thresholds
+- Use descriptive test names and organization
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines, including our Test-Driven Development approach.
+## 📄 License
 
-## 📄 **License**
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
+## 🆘 Support
+
+For support and questions:
+- Check the [documentation](docs/)
+- Review [troubleshooting guide](#troubleshooting)
+- Open an issue on GitHub
+- Contact the development team
+
+---
+
+**Dashboard Killer Graph** - Transforming data into conversational insights through ontology-driven knowledge graphs. 

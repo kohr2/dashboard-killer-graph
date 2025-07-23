@@ -619,7 +619,7 @@ npm run dev:mcp
 npm run pipeline:email
 
 # Check email file format
-file test/fixtures/emails/your-email.eml
+file ontologies/procurement/fixtures/emails/your-email.eml
 
 # Run email ingestion tests
 npm test -- --testPathPattern=email-ingestion

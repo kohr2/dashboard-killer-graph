@@ -21,6 +21,20 @@ export const testontPlugin: OntologyPlugin = {
   relationshipSchemas: ontologyData.relationships,
   reasoning: ontologyData.reasoning,
   entityExtraction: ontologyData.entityExtraction,
+  
+  // Define path aliases for this plugin
+  pathAliases: {
+    '@testont/*': '*',                    // @testont/entities -> ontologies/testont/entities
+    '@testont/entities': 'entities',      // @testont/entities -> ontologies/testont/entities
+    '@testont/services': 'services',      // @testont/services -> ontologies/testont/services
+    '@testont/types': 'types',            // @testont/types -> ontologies/testont/types
+  },
+  
+  // Optional registration hook
+  onRegister: () => {
+    console.log('🔧 Testont plugin registered with path aliases');
+  },
+  
   ...(registerTestont && {
     serviceProviders: {
       register: registerTestont,
