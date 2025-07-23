@@ -2,114 +2,227 @@
 
 This directory contains various utility scripts organized by category for better maintainability.
 
-## Directory Structure
+## 🚀 **Unified Scripts (Recommended)**
 
-### 📺 `demo/`
-Scripts for demonstrating system capabilities and testing features:
-- `ingest-email.ts` - **Unified email ingestion tool** for ontology-specific and bulk processing
-- `test-chat.ts` - Chat interface testing script
-- `test-llm-orchestrator.ts` - LLM orchestration testing
+The following unified scripts replace multiple individual scripts with a single, configurable solution:
 
-### 🗄️ `database/`
-Scripts for database operations and Neo4j management:
-- `build-neo4j-graph.ts` - Build knowledge graph from extraction reports
-- `cleanup-db-labels.ts` - Clean up database labels and constraints
-- `initialize-schema.ts` - Initialize database schema
-- `optimize-database.ts` - Database optimization and performance tuning
-- `reset-neo4j.ts` - Reset Neo4j database
-- `run-full-ingestion.ts` - Run complete data ingestion pipeline
-- `run-neo4j-ingestion.ts` - Neo4j-specific ingestion operations
-
-### 🧹 `maintenance/`
-Scripts for code maintenance, cleanup, and technical debt management:
-- `cleanup-configs.ts` - Clean up duplicate and obsolete configuration files
-- `cleanup-dead-code.ts` - Remove unused code and dependencies
-- `quick-debt-fixes.ts` - Apply quick fixes for technical debt
-- `reduce-technical-debt.ts` - Comprehensive technical debt reduction
-
-### 🏛️ `ontology/`
-Scripts for ontology management and synchronization:
-- `sync-ontology.ts` - Synchronize ontology definitions with code generation
-- `templates/` - Handlebars templates for code generation:
-  - `entity.hbs` - Template for generating entity interfaces
-  - `repository.interface.hbs` - Template for generating repository interfaces
-
-## Usage
-
-All scripts can be run using `ts-node` or `npm run` commands. For example:
+### **`launch.sh`** - Unified Launcher
+Replaces: `launch-chat.sh`, `launch-chat-simple.sh`, `launch-chat-with-ontology.sh`, `launch-procurement-chat.sh`
 
 ```bash
-# Run unified email ingestion (ontology mode)
-npx ts-node scripts/demo/ingest-email.ts fibo --generate
+# Launch with default configuration (procurement)
+./scripts/launch.sh
 
-# Run unified email ingestion (bulk mode)
-npx ts-node scripts/demo/ingest-email.ts --folder=procurement/emails --ontology=procurement
+# Launch specific ontology
+./scripts/launch.sh fibo
 
-# Clean up configurations
-npx ts-node scripts/maintenance/cleanup-configs.ts
+# Launch with custom ports
+./scripts/launch.sh procurement 8002 3002 5174 3003
 
-# Build Neo4j graph
-npx ts-node scripts/database/build-neo4j-graph.ts
-
-# Sync ontology
-npx ts-node scripts/ontology/sync-ontology.ts
+# Show help
+./scripts/launch.sh --help
 ```
 
-## 📧 Unified Email Ingestion Script
+### **`deploy.sh`** - Unified Deployment
+Replaces: `deploy-nlp-service.sh`
 
-The `ingest-email.ts` script is a powerful unified tool that combines ontology-specific and bulk email processing capabilities.
-
-### Features
-
-- **Dual Mode Operation**: Supports both ontology-specific and bulk processing modes
-- **Build Options**: Configurable ontology building with entity/relationship limits
-- **Flexible Input**: Generate emails, use existing fixtures, or specify custom email files
-- **Database Management**: Optional database reset and configuration
-- **Rich CLI**: Comprehensive command-line interface with help system
-
-### Usage Examples
-
-#### Ontology-Specific Mode
 ```bash
-# Process single ontology with generated email
-npx ts-node scripts/demo/ingest-email.ts fibo --generate
+# Deploy NLP service
+./scripts/deploy.sh nlp
 
-# Process with custom email and build options
-npx ts-node scripts/demo/ingest-email.ts procurement --email=./custom-email.eml --top-entities=20
+# Deploy MCP server
+./scripts/deploy.sh mcp 3002
 
-# Process with custom build configuration
-npx ts-node scripts/demo/ingest-email.ts fibo --generate --top-entities=50 --include-external
+# Deploy all services
+./scripts/deploy.sh all
+
+# Show help
+./scripts/deploy.sh --help
 ```
 
-#### Bulk Processing Mode
+### **`test.sh`** - Unified Testing
+Replaces: `test-mcp-protocol.js`, `test-mcp-transport.sh`, `test-neo4j-connection.js`
+
 ```bash
-# Process all emails from ontology folder
-npx ts-node scripts/demo/ingest-email.ts --folder=procurement/emails --ontology=procurement
+# Test MCP protocol
+./scripts/test.sh mcp
 
-# Process specific file with database reset
-npx ts-node scripts/demo/ingest-email.ts --file=email1.eml --folder=financial/emails --reset-db
+# Test Neo4j connection
+./scripts/test.sh neo4j
 
-# Process with limit
-npx ts-node scripts/demo/ingest-email.ts --folder=emails --limit=10 --ontology=procurement
+# Test MCP transport options
+./scripts/test.sh transport
+
+# Run all tests
+./scripts/test.sh all
+
+# Show help
+./scripts/test.sh --help
 ```
 
-### CLI Options
+### **`ontologies.sh`** - Unified Ontology Management
+Replaces: `list-ontologies.sh`
 
-| Option | Description | Mode |
-|--------|-------------|------|
-| `--generate` | Generate new fixture email | Ontology |
-| `--email=<path>` | Use specific email file | Ontology |
-| `--folder=<path>` | Folder under test/fixtures | Bulk |
-| `--file=<filename>` | Specific email file to process | Bulk |
-| `--limit=<number>` | Limit number of emails | Bulk |
-| `--top-entities=<number>` | Limit top entities for build | Ontology |
-| `--top-relationships=<number>` | Limit top relationships for build | Ontology |
-| `--include-external` | Include external entities/relationships | Ontology |
-| `--ontology=<name>` | Ontology name | Both |
-| `--database=<name>` | Neo4j database name | Both |
-| `--reset-db` | Clear database before ingesting | Both |
-| `--help, -h` | Show help message | Both |
+```bash
+# List all ontologies
+./scripts/ontologies.sh list
 
-## Configuration
+# Show ontology details
+./scripts/ontologies.sh info procurement
 
-Most scripts use the project's TypeScript configuration (`tsconfig.json`) and can access shared utilities and services through the configured path aliases. 
+# Validate ontology
+./scripts/ontologies.sh validate fibo
+
+# Show ontology status
+./scripts/ontologies.sh status
+
+# Show help
+./scripts/ontologies.sh --help
+```
+
+## 📚 **Common Library**
+
+### **`lib/common.sh`** - Shared Functions
+Contains all common functions used across the unified scripts:
+
+- **Logging**: `print_status()`, `print_success()`, `print_warning()`, `print_error()`
+- **Prerequisites**: `check_node()`, `check_docker()`, `check_neo4j()`, `check_port()`
+- **Service Management**: `start_service()`, `wait_for_service()`, `check_service()`
+- **Configuration**: `get_config()`, `get_ontology_info()`, `validate_config()`
+- **Utilities**: `setup_cleanup_trap()`, `show_help()`, `get_arg_value()`
+
+## 📁 **Legacy Scripts (Deprecated)**
+
+The following scripts are now deprecated in favor of the unified scripts above:
+
+### **Chat Launchers (Deprecated)**
+- `launch-chat.sh` → Use `launch.sh`
+- `launch-chat-simple.sh` → Use `launch.sh`
+- `launch-chat-with-ontology.sh` → Use `launch.sh`
+- `launch-procurement-chat.sh` → Use `launch.sh procurement`
+
+### **Deployment Scripts (Deprecated)**
+- `deploy-nlp-service.sh` → Use `deploy.sh nlp`
+
+### **Test Scripts (Deprecated)**
+- `test-mcp-protocol.js` → Use `test.sh mcp`
+- `test-mcp-transport.sh` → Use `test.sh transport`
+- `test-neo4j-connection.js` → Use `test.sh neo4j`
+
+### **Ontology Scripts (Deprecated)**
+- `list-ontologies.sh` → Use `ontologies.sh list`
+
+## 🏗️ **Directory Structure**
+
+```
+scripts/
+├── lib/
+│   └── common.sh              # ✅ Shared functions library
+├── launch.sh                  # ✅ Unified launcher
+├── deploy.sh                  # ✅ Unified deployment
+├── test.sh                    # ✅ Unified testing
+├── ontologies.sh              # ✅ Unified ontology management
+├── README.md                  # ✅ This documentation
+├── chat-config.json           # ✅ Chat configuration
+├── demo/                      # ✅ Demo scripts
+├── database/                  # ✅ Database scripts
+├── ontology/                  # ✅ Ontology scripts
+├── maintenance/               # ✅ Maintenance scripts
+└── [deprecated scripts]       # ❌ Legacy scripts
+```
+
+## 🎯 **Benefits of Unified Scripts**
+
+### **1. Consistency**
+- Single interface for similar operations
+- Consistent error handling and logging
+- Uniform help and documentation
+
+### **2. Maintainability**
+- Shared functions reduce code duplication
+- Centralized configuration management
+- Easier to update and extend
+
+### **3. Usability**
+- Intuitive command-line interface
+- Comprehensive help system
+- Better error messages and validation
+
+### **4. Flexibility**
+- Configurable ports and settings
+- Support for multiple ontologies
+- Easy to customize for different environments
+
+## 🚀 **Quick Start Examples**
+
+```bash
+# 1. Launch the system with default settings
+./scripts/launch.sh
+
+# 2. Deploy NLP service for production
+./scripts/deploy.sh nlp 8000
+
+# 3. Test all components
+./scripts/test.sh all
+
+# 4. List available ontologies
+./scripts/ontologies.sh list
+
+# 5. Validate a specific ontology
+./scripts/ontologies.sh validate procurement
+```
+
+## 🔧 **Configuration**
+
+All scripts use the shared configuration file `scripts/chat-config.json` for ontology settings and service configurations.
+
+## 📝 **Migration Guide**
+
+To migrate from legacy scripts to unified scripts:
+
+1. **Replace launch commands:**
+   ```bash
+   # Old
+   ./scripts/launch-procurement-chat.sh
+   
+   # New
+   ./scripts/launch.sh procurement
+   ```
+
+2. **Replace deployment commands:**
+   ```bash
+   # Old
+   ./scripts/deploy-nlp-service.sh
+   
+   # New
+   ./scripts/deploy.sh nlp
+   ```
+
+3. **Replace test commands:**
+   ```bash
+   # Old
+   node scripts/test-mcp-protocol.js
+   
+   # New
+   ./scripts/test.sh mcp
+   ```
+
+4. **Replace ontology commands:**
+   ```bash
+   # Old
+   ./scripts/list-ontologies.sh
+   
+   # New
+   ./scripts/ontologies.sh list
+   ```
+
+## 🆘 **Getting Help**
+
+All unified scripts provide comprehensive help:
+
+```bash
+./scripts/launch.sh --help
+./scripts/deploy.sh --help
+./scripts/test.sh --help
+./scripts/ontologies.sh --help
+``` 
