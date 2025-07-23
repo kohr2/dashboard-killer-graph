@@ -3,7 +3,7 @@
 import "reflect-metadata";
 import * as fs from 'fs';
 import * as path from 'path';
-import { OntologyDatasetIngestionService } from '../../src/platform/processing/ontology-dataset-ingestion.service';
+import { OntologyDatasetIngestionService } from '../../src/ingestion/ontology-dataset-ingestion.service';
 
 /**
  * Generic Ontology Dataset Ingestion CLI

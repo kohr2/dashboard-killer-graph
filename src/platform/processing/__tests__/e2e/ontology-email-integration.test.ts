@@ -7,7 +7,7 @@ const testDatabaseName = 'test-ontology-integration';
 process.env.NEO4J_DATABASE = testDatabaseName;
 
 import { container } from 'tsyringe';
-import { OntologyEmailIngestionService } from '@platform/ontology/ontology-email-ingestion.service';
+import { OntologyEmailIngestionService } from '@ingestion/ontology-email-ingestion.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { logger } from '@shared/utils/logger';
 

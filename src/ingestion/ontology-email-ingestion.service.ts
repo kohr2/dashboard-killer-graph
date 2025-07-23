@@ -1,14 +1,14 @@
 import { container } from 'tsyringe';
-import { OntologyService } from './ontology.service';
-import { ContentProcessingService } from '../processing/content-processing.service';
-import { Neo4jIngestionService } from '../processing/neo4j-ingestion.service';
-import { EmailFixtureGenerationService } from '../../ingestion/fixtures/email-fixture-generation.service';
-import { OntologyBuildService, BuildOptions } from './ontology-build.service';
+import { OntologyService } from '../platform/ontology/ontology.service';
+import { ContentProcessingService } from '../platform/processing/content-processing.service';
+import { Neo4jIngestionService } from '../platform/processing/neo4j-ingestion.service';
+import { EmailFixtureGenerationService } from './fixtures/email-fixture-generation.service';
+import { OntologyBuildService, BuildOptions } from '../platform/ontology/ontology-build.service';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { simpleParser } from 'mailparser';
-import { logger } from '../../common/utils/logger';
-import { GenericIngestionPipeline, IngestionInput } from '../../ingestion/pipeline/generic-ingestion-pipeline';
+import { logger } from '../common/utils/logger';
+import { GenericIngestionPipeline, IngestionInput } from './pipeline/generic-ingestion-pipeline';
 
 /**
  * Service for ingesting ontology-specific fixture emails into the database
@@ -80,10 +80,10 @@ export class OntologyEmailIngestionService {
     try {
       // Register only the selected ontology (plus core) if ontologyName is provided, otherwise register all
       if (ontologyName) {
-        const { registerSelectedOntologies } = require('../../register-ontologies');
+        const { registerSelectedOntologies } = require('../register-ontologies');
         registerSelectedOntologies([ontologyName]);
       } else {
-        const { registerAllOntologies } = require('../../register-ontologies');
+        const { registerAllOntologies } = require('../register-ontologies');
         registerAllOntologies();
       }
       

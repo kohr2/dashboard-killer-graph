@@ -4,9 +4,7 @@ export * from './ontology-build.service';
 export * from './core.plugin';
 export * from './ontology.plugin';
 
-// Ontology-specific ingestion services
-export * from './ontology-dataset-ingestion.service';
-export * from './ontology-email-ingestion.service';
+// Ontology-specific verification services
 export * from './ontology-verification.service';
 
 // Advanced graph services

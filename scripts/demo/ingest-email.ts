@@ -34,7 +34,7 @@ import { simpleParser, ParsedMail } from 'mailparser';
 import { container } from 'tsyringe';
 import { bootstrap } from '../../src/bootstrap';
 
-import { OntologyEmailIngestionService } from '../../src/platform/processing/ontology-email-ingestion.service';
+import { OntologyEmailIngestionService } from '../../src/ingestion/ontology-email-ingestion.service';
 import { GenericIngestionPipeline, IngestionInput } from '../../src/ingestion/pipeline/generic-ingestion-pipeline';
 import { ContentProcessingService } from '../../src/platform/processing/content-processing.service';
 import { Neo4jIngestionService } from '../../src/platform/processing/neo4j-ingestion.service';

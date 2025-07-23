@@ -40,7 +40,7 @@ Scripts should **never introduce new business logic**; they must only call the e
 ## Ingestion Workflow
 | # | Description | Main Code |
 |---|-------------|-----------|
-| 1 | **Read fixture email** and push through a light wrapper pipeline. | `src/platform/processing/ontology-email-ingestion.service.ts` |
+| 1 | **Read fixture email** and push through a light wrapper pipeline. | `src/ingestion/ontology-email-ingestion.service.ts` |
 | 2 | **Parse content & extract entities/relationships** via the local NLP service. | `src/platform/processing/content-processing.service.ts`  → `POST /batch-extract-graph` |
 | 3 | **Auto-enrich Organisations** (e.g. company look-ups) when enabled. | same service – enrichment block |
 | 4 | **Generate embeddings** for each entity text. | same service – `/embed` call |

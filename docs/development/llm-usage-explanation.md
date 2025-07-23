@@ -93,7 +93,7 @@ npx ts-node scripts/ontology/ingest-ontology-dataset.ts --ontology isco --databa
 ### Direct Ingestion Implementation
 
 ```typescript
-// src/platform/processing/ontology-dataset-ingestion.service.ts
+// src/ingestion/ontology-dataset-ingestion.service.ts
 export class OntologyDatasetIngestionService {
   
   // Direct ingestion - bypasses LLM

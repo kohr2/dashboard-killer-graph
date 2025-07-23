@@ -36,7 +36,7 @@ scripts/ontology/
     └── owl-source.ts             # OWL/RDF support
 
 src/platform/processing/
-├── ontology-dataset-ingestion.service.ts  # Ingestion service
+├── ontology-dataset-ingestion.service.ts  # Ingestion service (moved to src/ingestion/)
 └── ontology-verification.service.ts       # Verification service
 ```
 
