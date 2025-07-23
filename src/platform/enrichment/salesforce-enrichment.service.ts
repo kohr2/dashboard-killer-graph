@@ -1,6 +1,6 @@
 import type { AxiosInstance } from 'axios';
 import { IEnrichmentService } from './i-enrichment-service.interface';
-import { GenericEntity } from './dto-aliases';
+import { GenericEntity, EnrichmentResult } from './dto-aliases';
 import { logger } from '@shared/utils/logger';
 
 /**
@@ -9,42 +9,38 @@ import { logger } from '@shared/utils/logger';
  */
 export class SalesforceEnrichmentService implements IEnrichmentService {
   public readonly name = 'Salesforce';
-  private readonly axiosInstance?: AxiosInstance;
 
-  constructor(axiosInstance?: any) {
-    this.axiosInstance = axiosInstance;
+  constructor() {
+    // No dependencies needed for this simplified version
   }
 
   /**
    * Enrich any entity with Salesforce data
    */
-  public async enrich(entity: GenericEntity): Promise<GenericEntity | null> {
+  public async enrich(entity: GenericEntity): Promise<EnrichmentResult> {
     try {
       // Check if entity has metadata with CIK for Salesforce lookup
       const metadata = (entity as any).metadata;
       if (!metadata || !metadata.cik) {
-        return null; // No enrichment possible
+        return { success: false, error: 'No CIK available for Salesforce lookup' };
       }
 
       // Special case for testing failures
       if (metadata.cik === 'FAIL-TRIGGER') {
-        return null;
+        return { success: false, error: 'Test failure triggered' };
       }
 
       // Mock Salesforce enrichment
-      const enrichedEntity = {
-        ...entity,
-        metadata: {
-          ...metadata,
+      return {
+        success: true,
+        data: {
           salesforceId: `SFDC-MOCK-${metadata.cik}`,
           accountStatus: 'Active'
         }
       };
-
-      return enrichedEntity;
     } catch (error) {
       logger.error(`Salesforce enrichment failed for entity ${entity.id}:`, error);
-      return null;
+      return { success: false, error: 'Enrichment failed' };
     }
   }
 }

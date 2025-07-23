@@ -1,7 +1,7 @@
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
 import { IEnrichmentService } from './i-enrichment-service.interface';
-import { GenericEntity } from './dto-aliases';
+import { GenericEntity, EnrichmentResult } from './dto-aliases';
 import { logger } from '@shared/utils/logger';
 import { promises as fs } from 'fs';
 import { join } from 'path';
@@ -46,19 +46,19 @@ export class EdgarEnrichmentService implements IEnrichmentService {
   /**
    * Enrich any entity with EDGAR data
    */
-  public async enrich(entity: GenericEntity): Promise<GenericEntity | {}> {
+  public async enrich(entity: GenericEntity): Promise<EnrichmentResult> {
     try {
       // Only enrich Organization and Business entities
       if (entity.type !== 'Organization' && entity.type !== 'Business') {
         logger.debug(`Skipping EDGAR enrichment for non-Organization/Business entity: ${entity.type}`);
-        return {};
+        return { success: false, error: 'Entity type not supported' };
       }
 
       // Skip generic or placeholder company names
       const companyName = entity.name || '';
       if (this.isGenericCompanyName(companyName)) {
         logger.debug(`Skipping EDGAR enrichment for generic company name: "${companyName}"`);
-        return {};
+        return { success: false, error: 'Generic company name' };
       }
 
       // Initialize if needed
@@ -68,7 +68,7 @@ export class EdgarEnrichmentService implements IEnrichmentService {
 
       if (!this.cikData) {
         logger.warn('EDGAR service not initialized - no CIK data available');
-        return {};
+        return { success: false, error: 'Service not initialized' };
       }
 
       // Find matching company by name
@@ -79,7 +79,7 @@ export class EdgarEnrichmentService implements IEnrichmentService {
 
       if (!matchingEntry) {
         logger.debug(`No SEC filing found for company: "${companyName}" (normalized: "${normalizedName}")`);
-        return {};
+        return { success: false, error: 'Company not found in SEC database' };
       }
 
       logger.info(`Found SEC filing for "${companyName}" with CIK: ${matchingEntry.cik_str}`);
@@ -95,19 +95,21 @@ export class EdgarEnrichmentService implements IEnrichmentService {
         timeout: 15000
       });
 
-      // Return enriched entity
+      // Return enriched data
       return {
-        ...entity,
-        cik: matchingEntry.cik_str.toString(),
-        legalName: companyResponse.data.name,
-        sic: companyResponse.data.sic,
-        sicDescription: companyResponse.data.sicDescription,
-        address: companyResponse.data.addresses?.business
+        success: true,
+        data: {
+          cik: matchingEntry.cik_str.toString(),
+          legalName: companyResponse.data.name,
+          sic: companyResponse.data.sic,
+          sicDescription: companyResponse.data.sicDescription,
+          address: companyResponse.data.addresses?.business
+        }
       };
 
     } catch (error) {
       logger.error(`EDGAR enrichment failed for entity "${entity.name}":`, error);
-      return {};
+      return { success: false, error: 'Enrichment failed' };
     }
   }
 

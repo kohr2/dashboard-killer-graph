@@ -1,6 +1,6 @@
 import { logger } from '@shared/utils/logger';
 import { IEnrichmentService } from './platform/enrichment/i-enrichment-service.interface';
-import { OntologyAgnosticEnrichmentService } from './platform/enrichment/ontology-agnostic-enrichment.service';
+import { EnrichmentOrchestratorService } from './platform/enrichment/enrichment-orchestrator.service';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -15,15 +15,10 @@ interface EnrichmentServiceConfig {
 
 interface EnrichmentConfig {
   services: EnrichmentServiceConfig[];
-  rules: any[];
   global: {
     defaultTimeout: number;
     defaultRetries: number;
     enableLogging: boolean;
-    defaults: {
-      enabled: boolean;
-      priority: number;
-    };
   };
 }
 
@@ -91,15 +86,10 @@ function loadEnrichmentConfig(): EnrichmentConfig {
           retries: 3,
         }
       ],
-      rules: [],
       global: {
         defaultTimeout: 10000,
         defaultRetries: 3,
-        enableLogging: true,
-        defaults: {
-          enabled: false,
-          priority: 10
-        }
+        enableLogging: true
       }
     };
   }
@@ -133,28 +123,33 @@ function createEnrichmentServices(config: EnrichmentConfig): IEnrichmentService[
  * Registers all enrichment services based on configuration.
  * This function should be called at the application's entry point.
  * 
- * Enrichment services and rules are configured in config/enrichment.config.json
+ * Enrichment services are configured in config/enrichment.config.json
  * 
  * This approach is truly ontology-agnostic and enrichment-agnostic - 
- * enrichment services are determined by entity type and configuration rules,
+ * enrichment services are determined by entity type and configuration,
  * not ontology definitions, and services are created dynamically from config.
  */
-export function registerAllEnrichments(): OntologyAgnosticEnrichmentService {
-  logger.debug('Registering ontology-agnostic enrichment services...');
+export function registerAllEnrichments(): EnrichmentOrchestratorService {
+  logger.debug('Registering enrichment services...');
 
   // Load configuration and create services
   const enrichmentConfig = loadEnrichmentConfig();
   const enrichmentServices = createEnrichmentServices(enrichmentConfig);
   
-  // Create ontology-agnostic enrichment service with configured services
-  const ontologyAgnosticEnrichment = new OntologyAgnosticEnrichmentService(enrichmentServices);
+  // Create enrichment orchestrator with configured services
+  const orchestrator = new EnrichmentOrchestratorService();
+  
+  // Register all services with the orchestrator
+  for (const service of enrichmentServices) {
+    orchestrator.register(service);
+  }
   
   const enabledServiceNames = enrichmentConfig.services
     .filter(service => service.enabled)
     .map(service => service.name);
   logger.info(`Enrichment services registered: ${enabledServiceNames.join(', ')}`);
 
-  return ontologyAgnosticEnrichment;
+  return orchestrator;
 }
 
 /**

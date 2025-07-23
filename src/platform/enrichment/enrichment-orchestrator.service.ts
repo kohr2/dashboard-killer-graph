@@ -1,96 +1,99 @@
 import { IEnrichmentService } from './i-enrichment-service.interface';
 import { GenericEntity, EnrichmentResult } from './dto-aliases';
 import { logger } from '@shared/utils/logger';
-import { container } from 'tsyringe';
-import { OntologyService } from '@platform/ontology/ontology.service';
 import { injectable } from 'tsyringe';
 
 /**
- * Enrichment Orchestrator Service (back-compat)
- * -------------------------------------------------
- * 1. Legacy tests expect:
- *    • register(service)
- *    • enrich(entity) → merged *entity* (not array)
- * 2. Newer code relies on:
- *    • addService / getService helpers
+ * Simplified Enrichment Orchestrator Service
+ * 
+ * This service manages enrichment services and applies them to entities
+ * based on simple entity type matching.
  */
 @injectable()
 export class EnrichmentOrchestratorService {
-  private readonly services: IEnrichmentService[] = [];
-  private readonly ontologyService: OntologyService;
+  private readonly services: Map<string, IEnrichmentService> = new Map();
 
-  constructor() {
-    this.ontologyService = container.resolve(OntologyService);
-  }
-
-  // Legacy alias
+  /**
+   * Register an enrichment service
+   */
   public register(service: IEnrichmentService): void {
-    this.services.push(service);
-  }
-
-  // New name (preferred)
-  public addService(service: IEnrichmentService): void {
-    this.services.push(service);
-  }
-
-  public getServices(): IEnrichmentService[] {
-    return [...this.services];
-  }
-
-  public getService(name: string): IEnrichmentService | undefined {
-    return this.services.find((s) => s.name === name);
+    this.services.set(service.name, service);
+    logger.info(`Registered enrichment service: ${service.name}`);
   }
 
   /**
-   * Enrich the given entity using the service determined by OntologyService.
-   * If no service matches, the entity is returned unchanged.
+   * Get all registered services
    */
-  public async enrich<T extends GenericEntity>(entity: T): Promise<T> {
-    const serviceName = this.ontologyService.getEnrichmentServiceName(entity as any);
-    if (!serviceName) return entity;
+  public getServices(): IEnrichmentService[] {
+    return Array.from(this.services.values());
+  }
 
-    const service = this.getService(serviceName);
+  /**
+   * Get a specific service by name
+   */
+  public getService(name: string): IEnrichmentService | undefined {
+    return this.services.get(name);
+  }
+
+  /**
+   * Determine which enrichment service to use for an entity
+   */
+  private getEnrichmentServiceForEntity(entity: GenericEntity): IEnrichmentService | null {
+    // Simple mapping based on entity type
+    switch (entity.type) {
+      case 'Organization':
+      case 'Business':
+        return this.services.get('EDGAR') || null;
+      case 'Person':
+        // Could add LinkedIn enrichment here
+        return null;
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Enrich an entity using the appropriate service
+   */
+  public async enrich(entity: GenericEntity): Promise<GenericEntity> {
+    const service = this.getEnrichmentServiceForEntity(entity);
     if (!service) {
-      logger.warn(`No enrichment service registered for '${serviceName}'.`);
-      return entity;
+      return entity; // No enrichment service available
     }
 
     try {
       const result = await service.enrich(entity);
       
-      // Handle mixed return types from enrichment services
-      if (!result || (typeof result === 'object' && Object.keys(result).length === 0)) {
-        return entity;
+      if (!result.success || !result.data) {
+        return entity; // Enrichment failed or no data
       }
 
-      // Check if it's an EnrichmentResult format
-      if (typeof result === 'object' && 'success' in result && result.success && 'data' in result) {
-        // Merge data under enrichedData.<ServiceName>
-        const enrichedDataSection = {
-          [service.name]: {
-            metadata: result.data,
-          },
-        };
+      // Merge enrichment data into entity
+      return {
+        ...entity,
+        enrichedData: {
+          ...(entity.enrichedData || {}),
+          [service.name]: result.data
+        }
+      };
 
-        return {
-          ...entity,
-          enrichedData: {
-            ...(entity.enrichedData || {}),
-            ...enrichedDataSection,
-          },
-        } as T;
-      } else if (typeof result === 'object' && ('id' in result || 'name' in result || 'type' in result)) {
-        // It's an enriched entity (legacy format)
-        return {
-          ...entity,
-          ...result,
-        } as T;
-      }
-
-      return entity;
-    } catch (err: any) {
-      logger.error(`Error during enrichment with service '${service.name}':`, err.message || err);
+    } catch (error) {
+      logger.error(`Error enriching entity with service '${service.name}':`, error);
       return entity;
     }
+  }
+
+  /**
+   * Enrich multiple entities
+   */
+  public async enrichBatch(entities: GenericEntity[]): Promise<GenericEntity[]> {
+    const enrichedEntities: GenericEntity[] = [];
+    
+    for (const entity of entities) {
+      const enriched = await this.enrich(entity);
+      enrichedEntities.push(enriched);
+    }
+    
+    return enrichedEntities;
   }
 }

@@ -16,11 +16,7 @@ export interface IEnrichmentService {
    * Performs the enrichment on the entity.
    *
    * @param entity The entity to enrich.
-   * @returns A promise that resolves to:
-   *   - EnrichmentResult (new format)
-   *   - GenericEntity (enriched entity, legacy format)
-   *   - null (no enrichment possible, legacy format)
-   *   - {} (empty object for failed enrichment, legacy format)
+   * @returns A promise that resolves to an EnrichmentResult
    */
-  enrich(entity: GenericEntity): Promise<EnrichmentResult | GenericEntity | null | {}>;
+  enrich(entity: GenericEntity): Promise<EnrichmentResult>;
 } 
