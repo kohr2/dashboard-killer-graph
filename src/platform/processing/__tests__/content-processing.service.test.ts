@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ContentProcessingService } from '../../content-processing.service';
+import { ContentProcessingService } from '../content-processing.service';
 import axios from 'axios';
 
 // Mock axios pour contrôler les appels réseau
