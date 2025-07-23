@@ -185,12 +185,17 @@ export class IngestionPipeline implements IPipeline {
     const content = normalizedData.content.body?.toString().toLowerCase() || '';
     const detectedOntologies = new Set<string>();
 
-    // Define keyword patterns for each ontology
-    const ontologyKeywords: Record<string, string[]> = {
-      'financial': ['deal', 'investment', 'funding', 'series', 'round', 'investor', 'capital', 'valuation', 'revenue', 'profit'],
-      'crm': ['contact', 'customer', 'client', 'lead', 'prospect', 'email', 'phone', 'address', 'company', 'organization'],
-      'procurement': ['tender', 'bid', 'lot', 'contract', 'supplier', 'vendor', 'rfp', 'rfi', 'procurement', 'purchase']
-    };
+    // Get ontology keywords from registered ontologies
+    const ontologyKeywords: Record<string, string[]> = {};
+    if (this.ontologyService) {
+      const registeredOntologies = this.ontologyService.getAllOntologies();
+      for (const ontology of registeredOntologies) {
+        const config = ontology.config;
+        if (config?.detectionKeywords) {
+          ontologyKeywords[ontology.name] = config.detectionKeywords;
+        }
+      }
+    }
 
     // Check content against ontology keywords
     for (const [ontologyName, keywords] of Object.entries(ontologyKeywords)) {
@@ -200,17 +205,19 @@ export class IngestionPipeline implements IPipeline {
       }
     }
 
-    // Check source metadata for hints
-    if (normalizedData.metadata?.source) {
+    // Check source metadata for hints using registered ontologies
+    if (normalizedData.metadata?.source && this.ontologyService) {
       const source = normalizedData.metadata.source.toString().toLowerCase();
-      if (source.includes('financial') || source.includes('investment')) {
-        detectedOntologies.add('financial');
-      }
-      if (source.includes('crm') || source.includes('contact')) {
-        detectedOntologies.add('crm');
-      }
-      if (source.includes('procurement') || source.includes('tender')) {
-        detectedOntologies.add('procurement');
+      const registeredOntologies = this.ontologyService.getAllOntologies();
+      
+      for (const ontology of registeredOntologies) {
+        const config = ontology.config;
+        if (config?.sourcePatterns) {
+          const patterns = config.sourcePatterns;
+          if (patterns.some((pattern: string) => source.includes(pattern))) {
+            detectedOntologies.add(ontology.name);
+          }
+        }
       }
     }
 

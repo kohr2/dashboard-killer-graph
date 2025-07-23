@@ -210,15 +210,17 @@ export class OntologyDatasetIngestionService {
         for (const rel of record.relationships) {
           // Find target entity in the dataset
           const targetRecord = dataset.records.find(r => r.id === rel.target);
-          // Suppress warnings for ANY ISCOUnitGroup code
-          const ignoreMissingTargetPattern = /^ISCOUnitGroup_\d+$/;
+          
+          // Check if this is an ignorable pattern based on ontology config
+          const shouldIgnore = this.shouldIgnoreMissingTarget(rel.target, ontologyName);
+          
           if (targetRecord) {
             relationships.push({
               source: record.id,
               target: rel.target,
               type: rel.type
             });
-          } else if (!ignoreMissingTargetPattern.test(rel.target)) {
+          } else if (!shouldIgnore) {
             logger.warn(`Relationship target not found: ${rel.target} for entity ${record.id}`);
           }
         }
@@ -226,6 +228,29 @@ export class OntologyDatasetIngestionService {
     }
 
     return { entities, relationships };
+  }
+
+  /**
+   * Check if a missing target should be ignored based on ontology configuration
+   */
+  private shouldIgnoreMissingTarget(targetId: string, ontologyName: string): boolean {
+    // Load ontology config to check for ignore patterns
+    try {
+      const configPath = path.join(process.cwd(), 'ontologies', ontologyName, 'config.json');
+      if (fs.existsSync(configPath)) {
+        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        if (config.ignoreMissingTargetPatterns) {
+          return config.ignoreMissingTargetPatterns.some((pattern: string) => {
+            const regex = new RegExp(pattern);
+            return regex.test(targetId);
+          });
+        }
+      }
+    } catch (error) {
+      logger.warn(`Failed to load ignore patterns for ontology ${ontologyName}:`, error);
+    }
+    
+    return false;
   }
 
   /**

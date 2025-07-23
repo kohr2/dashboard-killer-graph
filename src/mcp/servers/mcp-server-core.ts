@@ -110,6 +110,15 @@ export function generateToolDescription(ontologyService: OntologyService, neo4jC
  * Generate NLP tool description
  */
 export function generateNLPToolDescription(): string {
+  const ontologyService = container.resolve(OntologyService);
+  const allOntologies = ontologyService.getAllOntologies();
+  
+  const ontologyDescriptions = allOntologies.map(ontology => {
+    const entityCount = ontology.entities?.length || 0;
+    const relationshipCount = ontology.relationships?.length || 0;
+    return `- ${ontology.name}: ${entityCount} entities, ${relationshipCount} relationships`;
+  }).join('\n');
+
   return `Process text using Natural Language Processing (NLP) services.\n\n` +
          `**Available Operations**:\n` +
          `- Entity extraction (raw spaCy)\n` +
@@ -118,10 +127,7 @@ export function generateNLPToolDescription(): string {
          `- Batch processing\n` +
          `- Embedding generation\n\n` +
          `**Available Ontologies**:\n` +
-         `- financial: Companies, people, monetary amounts\n` +
-         `- procurement: Contracts, suppliers, amounts\n` +
-         `- crm: People, companies, opportunities\n` +
-         `- default: General purpose extraction\n\n` +
+         `${ontologyDescriptions}\n\n` +
          `**Example Operations**:\n` +
          `- "extract entities from [text]" - Extract named entities\n` +
          `- "extract graph from [text] using [ontology]" - Generate knowledge graph\n` +
@@ -139,7 +145,7 @@ export function configureActiveOntologies(): void {
     const requestedOntologies = activeOntologiesEnv.split(',').map(s => s.trim());
     logger.info(`Configuring active ontologies: ${requestedOntologies.join(', ')}`);
     
-    // Disable all plugins first (including core and sp500)
+    // Disable all plugins first
     pluginRegistry.disableAllPlugins();
     
     // Enable only requested ontologies
@@ -315,8 +321,7 @@ export function getToolSchemas(ontologyService: OntologyService, neo4jConnection
           },
           ontology_name: {
             type: 'string',
-            description: 'Optional ontology name to scope the extraction (financial, procurement, crm, default)',
-            enum: ['financial', 'procurement', 'crm', 'default']
+            description: 'Optional ontology name to scope the extraction',
           },
         },
         required: ['operation'],

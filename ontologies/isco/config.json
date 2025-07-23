@@ -80,5 +80,8 @@
     "lastExtraction": "2024-01-15T10:30:00Z",
     "sourceVersion": "1.0.0",
     "localVersion": "1.0.0"
-  }
+  },
+  "ignoreMissingTargetPatterns": [
+    "^ISCOUnitGroup_\\d+$"
+  ]
 } 

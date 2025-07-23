@@ -434,11 +434,11 @@ Requirements:
 - Include relevant details like reference numbers and amounts
 - CRITICAL: Reference between 8-12 specific entities from the ontology naturally in your email (use the exact entity names listed above)
 - CRITICAL: Reference at least 2-4 specific relationships from the ontology naturally in your email (use the exact relationship names listed above)
-- Make the email content rich with procurement-specific terminology and concepts
-- Include specific procurement processes, roles, documents, or procedures mentioned in the entities
+- Make the email content rich with {ontologyName}-specific terminology and concepts
+- Include specific {ontologyName} processes, roles, documents, or procedures mentioned in the entities
 - End with appropriate signature including sender's name and title
 - Address the recipient by their name
-- Make the email realistic and contextually appropriate for procurement operations
+- Make the email realistic and contextually appropriate for {ontologyName} operations
 
 Format your response as:
 SUBJECT: [subject line]
@@ -453,10 +453,10 @@ BODY: [email body]`;
 
 CRITICAL INSTRUCTIONS:
 - You MUST use the provided ontology entities and relationships naturally in your email content
-- Reference specific entity names (like "Buyer", "Tenderer", "AwardDecision", etc.) in context
-- Reference specific relationship names (like "definesBuyer", "definesTenderer", etc.) in context
-- Make the email content rich with domain-specific terminology
-- Ensure the email sounds professional and realistic for the procurement domain
+- Reference specific entity names from the ontology in context
+- Reference specific relationship names from the ontology in context
+- Make the email content rich with {ontologyName}-specific terminology
+- Ensure the email sounds professional and realistic for the {ontologyName} domain
 - Use the exact entity and relationship names provided in the ontology context`;
   }
 
