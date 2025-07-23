@@ -10,12 +10,9 @@ import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { OntologyDrivenAdvancedGraphService } from '@platform/processing/ontology-driven-advanced-graph.service';
-import { EntityExtractor } from '../../entity-extractor';
-
 // Mock dependencies
 jest.mock('@platform/ontology/ontology.service');
 jest.mock('@platform/processing/ontology-driven-advanced-graph.service');
-jest.mock('../../entity-extractor');
 
 const mockOntologyService = {
   getAllOntologies: jest.fn(),

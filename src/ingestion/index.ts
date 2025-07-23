@@ -14,5 +14,4 @@ export { IngestionPipeline } from './pipeline/ingestion-pipeline';
 export * from './sources/email-source';
 
 // Intelligence
-export * from './entity-extractor';
 export type { EntityExtractor as IEntityExtractor, EntityExtraction } from './entity-extractor.interface';
