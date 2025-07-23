@@ -6,7 +6,7 @@
  * Generates `.eml` files for the requested ontology and writes them under
  * `test/fixtures/<ontology>/emails` (same location expected by the ingestion
  * pipeline). All heavy lifting lives in
- * `src/platform/fixtures/email-fixture-generation.service.ts`.
+ * `src/ingestion/fixtures/email-fixture-generation.service.ts`.
  *
  * Usage:
  *   npx ts-node scripts/fixtures/generate-email-fixtures.ts --ontology=procurement --count=100
@@ -15,7 +15,7 @@
 import 'reflect-metadata'; // make sure tsyringe & class-decorators work
 import { config } from 'dotenv'; // Load environment variables from .env file
 import { container } from 'tsyringe';
-import { EmailFixtureGenerationService } from '../../src/platform/fixtures/email-fixture-generation.service';
+import { EmailFixtureGenerationService } from '../../src/ingestion/fixtures/email-fixture-generation.service';
 import { logger } from '@shared/utils/logger';
 
 // Load environment variables

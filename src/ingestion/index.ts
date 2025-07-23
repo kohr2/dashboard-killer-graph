@@ -15,3 +15,6 @@ export * from './sources/email-source';
 
 // Intelligence
 export type { EntityExtractor as IEntityExtractor, EntityExtraction } from './entity-extractor.interface';
+
+// Fixtures
+export * from './fixtures/email-fixture-generation.service';

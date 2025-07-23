@@ -5,7 +5,7 @@ import { simpleParser } from 'mailparser';
 import { container } from 'tsyringe';
 import { logger } from '@shared/utils/logger';
 import { OntologyBuildService } from '@platform/ontology/ontology-build.service';
-import { EmailFixtureGenerationService } from '@platform/fixtures/email-fixture-generation.service';
+import { EmailFixtureGenerationService } from '@ingestion/fixtures/email-fixture-generation.service';
 import { ContentProcessingService } from '@platform/processing/content-processing.service';
 import { Neo4jIngestionService } from '@platform/processing/neo4j-ingestion.service';
 import { GenericIngestionPipeline } from '@ingestion/pipeline/generic-ingestion-pipeline';
