@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach, jest, afterEach } from '@jest/globals';
 import { OntologyDrivenAdvancedGraphService, OntologyAdvancedConfig, AdvancedRelationshipsConfig } from '../ontology-driven-advanced-graph.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
-import { AdvancedGraphService } from '../advanced-graph.service';
+import { AdvancedGraphService } from '../../processing/advanced-graph.service';
 import * as fs from 'fs';
 import * as path from 'path';
 
 // Mock dependencies
 jest.mock('@platform/database/neo4j-connection');
-jest.mock('../advanced-graph.service');
+jest.mock('../../processing/advanced-graph.service');
 jest.mock('fs');
 jest.mock('path');
 

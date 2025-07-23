@@ -3,7 +3,7 @@ import { singleton } from 'tsyringe';
 import { container } from 'tsyringe';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { logger } from '@shared/utils/logger';
-import { AdvancedGraphService, TemporalRelationship, HierarchicalRelationship, SimilarityRelationship, ComplexRelationship, GraphPattern } from './advanced-graph.service';
+import { AdvancedGraphService, TemporalRelationship, HierarchicalRelationship, SimilarityRelationship, ComplexRelationship, GraphPattern } from '../processing/advanced-graph.service';
 import * as fs from 'fs';
 import * as path from 'path';
 

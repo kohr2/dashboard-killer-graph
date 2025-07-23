@@ -4,11 +4,11 @@ import "reflect-metadata";
 import * as fs from 'fs';
 import * as path from 'path';
 import { GenericIngestionPipeline } from '../../ingestion/pipeline/generic-ingestion-pipeline';
-import { ContentProcessingService } from './content-processing.service';
-import { Neo4jIngestionService } from './neo4j-ingestion.service';
+import { ContentProcessingService } from '../processing/content-processing.service';
+import { Neo4jIngestionService } from '../processing/neo4j-ingestion.service';
 import { logger } from '../../common/utils/logger';
 import { container } from 'tsyringe';
-import { OntologyService } from '../ontology/ontology.service';
+import { OntologyService } from './ontology.service';
 
 interface OntologyDataset {
   metadata: {

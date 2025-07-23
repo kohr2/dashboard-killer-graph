@@ -9,10 +9,10 @@ import { ProcessingResult } from '../../types/pipeline.interface';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
-import { OntologyDrivenAdvancedGraphService } from '@platform/processing/ontology-driven-advanced-graph.service';
+import { OntologyDrivenAdvancedGraphService } from '@platform/ontology/ontology-driven-advanced-graph.service';
 // Mock dependencies
 jest.mock('@platform/ontology/ontology.service');
-jest.mock('@platform/processing/ontology-driven-advanced-graph.service');
+jest.mock('@platform/ontology/ontology-driven-advanced-graph.service');
 
 const mockOntologyService = {
   getAllOntologies: jest.fn(),

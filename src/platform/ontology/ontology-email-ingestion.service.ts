@@ -1,9 +1,9 @@
 import { container } from 'tsyringe';
-import { OntologyService } from '../ontology/ontology.service';
-import { ContentProcessingService } from './content-processing.service';
-import { Neo4jIngestionService } from './neo4j-ingestion.service';
-import { EmailFixtureGenerationService } from '../fixtures/email-fixture-generation.service';
-import { OntologyBuildService, BuildOptions } from '../ontology/ontology-build.service';
+import { OntologyService } from './ontology.service';
+import { ContentProcessingService } from '../processing/content-processing.service';
+import { Neo4jIngestionService } from '../processing/neo4j-ingestion.service';
+import { EmailFixtureGenerationService } from '../../ingestion/fixtures/email-fixture-generation.service';
+import { OntologyBuildService, BuildOptions } from './ontology-build.service';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { simpleParser } from 'mailparser';

@@ -7,7 +7,7 @@
 
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { OntologyDrivenAdvancedGraphService } from '@platform/processing/ontology-driven-advanced-graph.service';
+import { OntologyDrivenAdvancedGraphService } from '@platform/ontology/ontology-driven-advanced-graph.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { logger } from '@shared/utils/logger';
 import * as path from 'path';

@@ -179,7 +179,7 @@ Custom queries provide ontology-specific analysis capabilities:
 ### Loading Ontologies with Advanced Relationships
 
 ```typescript
-import { OntologyDrivenAdvancedGraphService } from '@platform/processing/ontology-driven-advanced-graph.service';
+import { OntologyDrivenAdvancedGraphService } from '@platform/ontology/ontology-driven-advanced-graph.service';
 
 const service = container.resolve(OntologyDrivenAdvancedGraphService);
 await service.initialize();
@@ -654,7 +654,7 @@ Override default queries with domain-specific ones:
 ### Loading Ontology Configuration
 
 ```typescript
-import { OntologyDrivenAdvancedGraphService } from '@platform/processing/ontology-driven-advanced-graph.service';
+import { OntologyDrivenAdvancedGraphService } from '@platform/ontology/ontology-driven-advanced-graph.service';
 
 const ontologyService = container.resolve(OntologyDrivenAdvancedGraphService);
 await ontologyService.initialize();
@@ -729,7 +729,7 @@ for (const [ontologyName, ontologyStats] of Object.entries(stats)) {
 
 ```typescript
 // In email-ingestion.service.ts
-import { OntologyDrivenAdvancedGraphService } from '@platform/processing/ontology-driven-advanced-graph.service';
+import { OntologyDrivenAdvancedGraphService } from '@platform/ontology/ontology-driven-advanced-graph.service';
 
 export class EmailIngestionService {
   constructor(
