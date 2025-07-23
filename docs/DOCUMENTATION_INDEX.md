@@ -1,191 +1,163 @@
 # Documentation Index
 
-This index provides navigation to all documentation files in the Knowledge Graph Dashboard project.
+This index provides a comprehensive overview of all documentation for the Dashboard Killer Graph platform.
 
-## 📚 Quick Start
+## 🚀 **Quick Start**
 
-- **[Main README](../README.md)** - Complete project overview and quick start guide
-- **[System Status](development/system-status.md)** - Current system health and status
+- **[README.md](../README.md)** - Main project overview and quick start
+- **[Development Guide](./development/README.md)** - Development setup and workflow
+- **[Unified Scripts Guide](../scripts/README.md)** - Script system documentation
 
-## 🏗️ Architecture Documentation
+## 🏗️ **Architecture & Design**
 
-### Core Architecture
-- **[Advanced Graph Architecture](architecture/advanced-graph.md)** - Advanced graph processing and reasoning
-- **[Ontology Plugin Architecture](architecture/ontology-plugin-architecture.md)** - Plugin-based ontology system
-- **[MCP Server Architecture](architecture/mcp-server-architecture.md)** - Claude Desktop integration
-- **[Unified Data Ingestion Architecture](architecture/unified-data-ingestion-architecture.md)** - Data ingestion pipeline design
-- **[Enrichment Config-Driven Architecture](development/enrichment-agnostic-architecture.md)** - Config-driven enrichment system
-- **[Enrichment Quick Reference](development/enrichment-quick-reference.md)** - Quick start guide for enrichment system
+### **Core Architecture**
+- **[Architecture Overview](./architecture/overview.md)** - System design and components
+- **[Ontology System](./architecture/ontologies.md)** - Domain extension framework
+- **[Advanced Graph Features](./architecture/advanced-graph.md)** - Advanced graph capabilities
 
-### Entity Processing
-- **[Entity Extraction Guide](architecture/entity-extraction-guide.md)** - AI-powered entity recognition
-- **[Entity Recognition Integration](architecture/entity-recognition-integration.md)** - NLP integration details
-- **[Email Ingestion Ontology](architecture/email-ingestion-ontology.md)** - Email processing with ontologies
-- **[Spacy vs Regex Comparison](architecture/spacy-vs-regex-comparison.md)** - NLP approach comparison
+### **Service Architecture**
+- **[Email Ingestion](./architecture/email-ingestion-ontology.md)** - Email processing pipeline
+- **[Entity Extraction](./architecture/entity-extraction-guide.md)** - Entity recognition system
+- **[Enrichment Architecture](./development/enrichment-agnostic-architecture.md)** - Data enrichment system
 
-### Advanced Features
-- **[Ontology Advanced Relationships](architecture/ontology-advanced-relationships.md)** - Complex relationship modeling
-- **[Ontology Integration Summary](architecture/ontology-integration-summary.md)** - Ontology system overview
+## 🛠️ **Development**
 
-### Domain-Specific
-- **[Procurement Ontology](architecture/ontologies/procurement.md)** - Procurement domain documentation
-- **[GeoNames Ontology](architecture/ontologies/geonames.md)** - Geographic places, cities, and countries
+### **Setup & Workflow**
+- **[Development Guide](./development/README.md)** - Complete development setup
+- **[Testing Guide](./development/testing/README.md)** - Test strategies and TDD
+- **[Logger Guidelines](./development/logger-guidelines.md)** - Logging standards
 
-## 🛠️ Development Documentation
+### **Scripts & Tools**
+- **[Unified Scripts](./scripts/README.md)** - Script system documentation
+- **[Database Scripts](./scripts/database/README.md)** - Database management
+- **[Ontology Scripts](./scripts/ontology/README.md)** - Ontology management
 
-### Development Practices
-- **[TDD Approach](development/tdd-approach.md)** - Test-driven development methodology
-- **[TDD MCP Implementation](development/tdd-mcp-implementation.md)** - MCP server development with TDD
-- **[Processing Migration Summary](development/processing-migration-summary.md)** - Pipeline refactoring details
-- **[Ontology System](development/ontology-system.md)** - Complete ontology management guide
-- **[Enrichment Config-Driven Architecture](development/enrichment-agnostic-architecture.md)** - Config-driven enrichment system
+### **Code Quality**
+- **[Definition Parsing](./development/definition-parsing-feature.md)** - Feature implementation
+- **[Dataset Ingestion](./development/dataset-ingestion-guide.md)** - Data ingestion guide
 
-### System Status
-- **[System Status Report](development/system-status.md)** - Current system health and metrics
+## 📚 **Features & APIs**
 
-## 🔧 Fixes and Improvements
+### **Core Features**
+- **[Chat System](./features/chat-system-guide.md)** - Conversational interface
+- **[Chat Configuration](./features/chat-configuration.md)** - Chat setup and configuration
+- **[Dynamic Database Switching](./features/dynamic-database-switching.md)** - Multi-database support
 
-### Recent Fixes
-- **[Date/Time Entity Removal](fixes/date-time-entity-removal.md)** - Resolution of Date/Time conflicts
-- **[Email Entities as Properties](fixes/email-entities-as-properties.md)** - Email entity handling improvements
+### **NLP Service**
+- **[NLP Service API](./features/nlp-service/api-reference.md)** - API documentation
+- **[Ontology Scoping](./features/nlp-service/ontology-scoping.md)** - Ontology integration
+- **[Python Client](./features/nlp-service/python-client.md)** - Client library
 
-## 📊 Features Documentation
+### **MCP Integration**
+- **[MCP System](./mcp/README.md)** - Model Context Protocol
+- **[Agent Configuration](./mcp/AGENT_CONFIG.md)** - AI agent setup
 
-### Enhanced Features
-- **[Enhanced Entity Extraction](features/enhanced-entity-extraction.md)** - Advanced entity extraction capabilities
-- **[NLP Service Ontology Scoping](features/nlp-service-ontology-scoping.md)** - Multi-ontology support for improved extraction accuracy
+## 🔧 **Configuration & Deployment**
 
-### Chat System
-- **[Chat System Guide](features/chat-system-guide.md)** - Complete guide to the ontology-agnostic chat system
-- **[Chat Configuration](features/chat-configuration.md)** - Chat system configuration and customization
+### **Environment Setup**
+- **[Environment Configuration](./development/environment-setup.md)** - Environment variables
+- **[Database Configuration](./development/database-setup.md)** - Neo4j setup
 
-## 📋 Documentation by Category
+### **Deployment**
+- **[Production Deployment](./deployment/production.md)** - Production setup
+- **[Docker Configuration](./deployment/docker.md)** - Container deployment
 
-### For New Users
-1. **[Main README](../README.md)** - Start here for project overview
-2. **[System Status](development/system-status.md)** - Check current system health
-3. **[Quick Start Guide](../README.md#quick-start)** - Get up and running
+## 📖 **Domain-Specific Guides**
 
-### For Developers
-1. **[TDD Approach](development/tdd-approach.md)** - Development methodology
-2. **[Architecture Overview](architecture/ontology-plugin-architecture.md)** - System architecture
-3. **[Entity Extraction Guide](architecture/entity-extraction-guide.md)** - Entity processing
-4. **[Processing Migration Summary](development/processing-migration-summary.md)** - Recent changes
-5. **[Enrichment Config-Driven Architecture](development/enrichment-agnostic-architecture.md)** - Enrichment system
+### **Ontology Domains**
+- **[Procurement Ontology](./architecture/ontologies/procurement.md)** - Procurement domain
+- **[Geonames Ontology](./architecture/ontologies/geonames.md)** - Geographic domain
 
-### For System Administrators
-1. **[System Status Report](development/system-status.md)** - System health monitoring
-2. **[Advanced Graph Architecture](architecture/advanced-graph.md)** - System architecture
-3. **[MCP Server Architecture](architecture/mcp-server-architecture.md)** - Claude Desktop integration
+### **Use Cases**
+- **[Email Processing](./use-cases/email-processing.md)** - Email analysis workflows
+- **[Knowledge Discovery](./use-cases/knowledge-discovery.md)** - Graph exploration
 
-### For Ontology Developers
-1. **[Ontology System](development/ontology-system.md)** - Complete ontology management guide
-2. **[Ontology Plugin Architecture](architecture/ontology-plugin-architecture.md)** - Plugin system
-3. **[Ontology Advanced Relationships](architecture/ontology-advanced-relationships.md)** - Complex modeling
+## 🧪 **Testing & Quality**
 
-## 🔍 Troubleshooting
+### **Testing Strategy**
+- **[Testing Overview](./development/testing/README.md)** - Test philosophy and structure
+- **[Unit Testing](./development/testing/unit-testing.md)** - Unit test guidelines
+- **[Integration Testing](./development/testing/integration-testing.md)** - Integration tests
+- **[E2E Testing](./development/testing/e2e-testing.md)** - End-to-end testing
 
-### Common Issues
-- **[Date/Time Entity Removal](fixes/date-time-entity-removal.md)** - TypeScript conflicts resolution
-- **[Email Entities as Properties](fixes/email-entities-as-properties.md)** - Email processing fixes
-- **[Main README Troubleshooting](../README.md#troubleshooting)** - General troubleshooting
+### **Quality Assurance**
+- **[Code Standards](./development/code-standards.md)** - Coding guidelines
+- **[Performance Testing](./development/testing/performance.md)** - Performance benchmarks
 
-### Test Issues
-- **[Test Documentation Summary](development/test-documentation-summary.md)** - Overview and navigation guide for all test documentation
-- **[TDD Approach](development/tdd-approach.md)** - Testing methodology and debugging
-- **[Test Strategy](development/test-strategy.md)** - Comprehensive testing strategy and standards
-- **[Test Suite Documentation](development/test-suite-documentation.md)** - Comprehensive test documentation
-- **[Test Troubleshooting Guide](development/test-troubleshooting-guide.md)** - Common test issues and solutions
-- **[System Status](development/system-status.md)** - Current test results and known issues
+## 🔍 **Troubleshooting & Maintenance**
 
-## 📈 Performance and Monitoring
+### **Common Issues**
+- **[Troubleshooting Guide](./troubleshooting/README.md)** - Common problems and solutions
+- **[Debugging Guide](./troubleshooting/debugging.md)** - Debugging techniques
 
-### System Metrics
-- **[System Status Report](development/system-status.md)** - Performance metrics and monitoring
-- **[Advanced Graph Architecture](architecture/advanced-graph.md)** - Performance considerations
+### **Maintenance**
+- **[Database Maintenance](./maintenance/database.md)** - Neo4j maintenance
+- **[Performance Optimization](./maintenance/performance.md)** - System optimization
 
-### Test Coverage
-- **[TDD Approach](development/tdd-approach.md)** - Test coverage and quality metrics
-- **[System Status](development/system-status.md)** - Current test results
+## 📋 **Reference**
 
-## 🚀 Getting Started by Role
+### **API Reference**
+- **[Backend API](./reference/backend-api.md)** - Node.js API endpoints
+- **[NLP Service API](./reference/nlp-api.md)** - Python service endpoints
+- **[MCP Protocol](./reference/mcp-protocol.md)** - MCP specification
 
-### 👨‍💻 Developer
-1. Read **[Main README](../README.md)**
-2. Follow **[TDD Approach](development/tdd-approach.md)**
-3. Understand **[Architecture Overview](architecture/ontology-plugin-architecture.md)**
-4. Check **[System Status](development/system-status.md)**
+### **Configuration Reference**
+- **[Environment Variables](./reference/environment.md)** - All environment variables
+- **[Ontology Configuration](./reference/ontology-config.md)** - Ontology config format
+- **[Script Configuration](./reference/script-config.md)** - Script configuration options
 
-### 🔧 System Administrator
-1. Review **[System Status](development/system-status.md)**
-2. Understand **[Advanced Graph Architecture](architecture/advanced-graph.md)**
-3. Configure **[MCP Server](architecture/mcp-server-architecture.md)**
-4. Monitor **[Performance Metrics](development/system-status.md#performance-metrics)**
+## 🚀 **Migration Guides**
 
-### 🎯 Business User
-1. Start with **[Main README](../README.md)**
-2. Check **[System Status](development/system-status.md)**
-3. Review **[Features Overview](features/enhanced-entity-extraction.md)**
-4. Understand **[Architecture Benefits](architecture/ontology-integration-summary.md)**
+### **Recent Changes**
+- **[Shared Directory Migration](./migration/shared-directory.md)** - Unified shared utilities
+- **[Script System Migration](./migration/script-system.md)** - Unified script system
+- **[Import Path Updates](./migration/import-paths.md)** - Updated import paths
 
-### 🔬 Data Scientist
-1. Study **[Entity Extraction Guide](architecture/entity-extraction-guide.md)**
-2. Review **[Spacy vs Regex Comparison](architecture/spacy-vs-regex-comparison.md)**
-3. Understand **[Advanced Graph Architecture](architecture/advanced-graph.md)**
-4. Explore **[Enhanced Entity Extraction](features/enhanced-entity-extraction.md)**
+## 📊 **Performance & Monitoring**
 
-## 📝 Documentation Standards
+### **Performance**
+- **[Performance Benchmarks](./performance/benchmarks.md)** - System performance metrics
+- **[Optimization Guide](./performance/optimization.md)** - Performance tuning
 
-### Writing Guidelines
-- Use clear, concise language
-- Include code examples where appropriate
-- Provide step-by-step instructions
-- Include troubleshooting sections
-- Keep documentation up to date
+### **Monitoring**
+- **[Health Checks](./monitoring/health-checks.md)** - Service health monitoring
+- **[Logging Strategy](./monitoring/logging.md)** - Log aggregation and analysis
 
-### Maintenance
-- Update documentation with code changes
-- Review and update system status regularly
-- Add new documentation for new features
-- Remove obsolete documentation
+## 🤝 **Contributing**
 
-## 🔗 External Resources
+- **[Contributing Guide](../CONTRIBUTING.md)** - How to contribute
+- **[Development Workflow](./development/workflow.md)** - Development process
+- **[Code Review Guidelines](./development/code-review.md)** - Review standards
 
-### Related Projects
-- **[Neo4j Documentation](https://neo4j.com/docs/)** - Graph database documentation
-- **[TypeScript Documentation](https://www.typescriptlang.org/docs/)** - TypeScript language reference
-- **[Jest Testing Framework](https://jestjs.io/docs/getting-started)** - Testing framework documentation
-- **[Claude Desktop MCP](https://docs.anthropic.com/claude/docs/model-context-protocol-mcp)** - MCP protocol documentation
+## 📚 **Additional Resources**
 
-### Standards and Best Practices
-- **[TDD Best Practices](https://www.agilealliance.org/glossary/tdd/)** - Test-driven development
-- **[Domain-Driven Design](https://martinfowler.com/bliki/DomainDrivenDesign.html)** - DDD principles
-- **[Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)** - Architecture patterns
+### **External Documentation**
+- **[Neo4j Documentation](https://neo4j.com/docs/)** - Graph database docs
+- **[OpenAI API](https://platform.openai.com/docs)** - LLM integration
+- **[MCP Protocol](https://modelcontextprotocol.io/)** - Model Context Protocol
+
+### **Community**
+- **[GitHub Issues](https://github.com/your-org/dashboard-killer-graph/issues)** - Bug reports and feature requests
+- **[Discussions](https://github.com/your-org/dashboard-killer-graph/discussions)** - Community discussions
 
 ---
 
-**Last Updated**: July 3, 2025  
-**Documentation Version**: v1.0.0  
-**Maintained By**: Development Team
+## 📝 **Documentation Standards**
 
-## Recent Changes
+### **Writing Guidelines**
+- Use clear, concise language
+- Include practical examples
+- Provide code snippets where relevant
+- Keep documentation up-to-date with code changes
 
-### Latest Release (Current)
-- **Added NLP Service Ontology Scoping** - Support for multiple ontologies (financial, procurement, CRM) to improve extraction accuracy
-- **Enhanced NLP Service Deployment** - Production-ready Docker containers with Nginx reverse proxy and SSL support
-- **Python Client SDK** - Easy integration for external applications with ontology scoping support
-- **Improved Entity Extraction** - Domain-specific extraction with reduced noise and better performance
-- **Fixed chat system database selection** - ChatService now correctly uses configured database instead of default
-- **Resolved dependency injection issues** - Added proper @injectable decorators to ChatService and QueryTranslator
-- **Fixed QueryTranslator validation bug** - Corrected entity type validation logic that was causing false positives
-- **Enhanced multi-database support** - System now properly switches between Neo4j databases (fibo, procurement, crm)
-- **Improved chat troubleshooting** - Added comprehensive debugging tools and documentation
-- **Enhanced ontology generation** with importance-based filtering and LLM-powered analysis
-- **Added FIBO ontology support** with comprehensive processing from EDM Council repository
-- **Implemented ignored items tracking** for transparency in ontology filtering
-- **Extended ontology interfaces** to support ignored entities and relationships throughout pipeline
-- **Added fallback heuristics** when LLM endpoints unavailable for ontology analysis
-- **Processed FIBO with 100 entity/relationship limits** for comprehensive financial domain coverage
-- **Enhanced documentation** with detailed ontology processing guides and troubleshooting
-- **Improved test coverage** with comprehensive mock objects and TDD approach
-- **Updated build configuration** for better TypeScript support and error handling
+### **Structure**
+- Use consistent headings and formatting
+- Include table of contents for long documents
+- Cross-reference related documentation
+- Provide navigation breadcrumbs
+
+### **Maintenance**
+- Update documentation with code changes
+- Review and update quarterly
+- Validate all code examples
+- Ensure all links are working
