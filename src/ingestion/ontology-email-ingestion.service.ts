@@ -6,7 +6,6 @@ import { EmailFixtureGenerationService } from './fixtures/email-fixture-generati
 import { OntologyBuildService, BuildOptions } from '../platform/ontology/ontology-build.service';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { simpleParser } from 'mailparser';
 import { logger } from '@shared/utils/logger';
 import { GenericIngestionPipeline, IngestionInput } from './pipeline/generic-ingestion-pipeline';
 
@@ -63,10 +62,15 @@ export class OntologyEmailIngestionService {
       logger.info(`✅ [DEBUG] Neo4j service closed successfully`);
 
       logger.info(`✅ Successfully ingested ontology email for: ${ontologyName}`);
-    } catch (error: any) {
-      logger.error(`❌ Failed to ingest ontology email for ${ontologyName}: ${error && (error.stack || error.message || error)}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      logger.error(`❌ Failed to ingest ontology email for ${ontologyName}: ${errorMessage}`);
       logger.error(`❌ [DEBUG] Error JSON: ${JSON.stringify(error)}`);
       logger.error(`❌ [DEBUG] Error type: ${typeof error}`);
+      if (errorStack) {
+        logger.error(`❌ [DEBUG] Error stack: ${errorStack}`);
+      }
       throw error;
     }
   }
@@ -80,10 +84,10 @@ export class OntologyEmailIngestionService {
     try {
       // Register only the selected ontology (plus core) if ontologyName is provided, otherwise register all
       if (ontologyName) {
-        const { registerSelectedOntologies } = require('../register-ontologies');
+        const { registerSelectedOntologies } = await import('../register-ontologies');
         registerSelectedOntologies([ontologyName]);
       } else {
-        const { registerAllOntologies } = require('../register-ontologies');
+        const { registerAllOntologies } = await import('../register-ontologies');
         registerAllOntologies();
       }
       
@@ -95,15 +99,16 @@ export class OntologyEmailIngestionService {
       
       // Verify the ontology exists
       const ontologies = this.ontologyService.getAllOntologies();
-      const ontology = ontologies.find((o: any) => o.name.toLowerCase() === ontologyName.toLowerCase());
+      const ontology = ontologies.find((o: { name: string }) => o.name.toLowerCase() === ontologyName.toLowerCase());
       
       if (!ontology) {
-        throw new Error(`Ontology '${ontologyName}' not found. Available ontologies: ${ontologies.map((o: any) => o.name).join(', ')}`);
+        throw new Error(`Ontology '${ontologyName}' not found. Available ontologies: ${ontologies.map((o: { name: string }) => o.name).join(', ')}`);
       }
       
       logger.info(`✅ Ontology service built successfully for ${ontologyName}`);
-    } catch (error: any) {
-      logger.error(`❌ Failed to build ontology service for ${ontologyName}: ${error && (error.stack || error.message || error)}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error(`❌ Failed to build ontology service for ${ontologyName}: ${errorMessage}`);
       throw error;
     }
   }
@@ -175,8 +180,9 @@ export class OntologyEmailIngestionService {
       await pipeline.run([emailInput]);
       
       logger.info(`✅ Successfully processed and ingested email for ${ontologyName}`);
-    } catch (error: any) {
-      logger.error(`❌ Failed to process and ingest email for ${ontologyName}: ${error && (error.stack || error.message || error)}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error(`❌ Failed to process and ingest email for ${ontologyName}: ${errorMessage}`);
       throw error;
     }
   }
