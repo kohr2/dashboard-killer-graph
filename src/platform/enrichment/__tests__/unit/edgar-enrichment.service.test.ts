@@ -79,7 +79,7 @@ describe('EdgarEnrichmentService', () => {
       mockedFs.readFile.mockResolvedValue(JSON.stringify(mockCikData));
       const unknownEntity = createOrganizationDTO({
         id: 'org-2',
-        name: 'Unknown LLC',
+        name: 'NonExistentCorp',
         type: 'Organization',
         label: 'Organization',
       });
