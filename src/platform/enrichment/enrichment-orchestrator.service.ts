@@ -47,9 +47,40 @@ export class EnrichmentOrchestratorService {
       case 'Person':
         // Could add LinkedIn enrichment here
         return null;
+      case 'Error':
+      case 'Exception':
+      case 'Bug':
+      case 'LogEntry':
+        return this.services.get('BugBot') || null;
       default:
+        // Check if entity has error-related properties
+        if (this.hasErrorProperties(entity)) {
+          return this.services.get('BugBot') || null;
+        }
         return null;
     }
+  }
+
+  /**
+   * Check if entity has error-related properties
+   */
+  private hasErrorProperties(entity: GenericEntity): boolean {
+    const properties = entity.properties || {};
+    const errorKeywords = ['error', 'exception', 'bug', 'fail', 'timeout', 'null', 'memory'];
+    
+    // Check entity name/label
+    const entityText = `${entity.name || ''} ${entity.label || ''}`.toLowerCase();
+    if (errorKeywords.some(keyword => entityText.includes(keyword))) {
+      return true;
+    }
+    
+    // Check properties
+    const propertyValues = Object.values(properties).join(' ').toLowerCase();
+    if (errorKeywords.some(keyword => propertyValues.includes(keyword))) {
+      return true;
+    }
+    
+    return false;
   }
 
   /**

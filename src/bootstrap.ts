@@ -49,6 +49,10 @@ export function bootstrap(): void {
   const { registerAvailableEnrichmentServices } = require('./register-enrichment-services');
   registerAvailableEnrichmentServices(orchestrator);
   
+  // Register BugBot enrichment service
+  const { registerBugBotService } = require('./platform/enrichment/register-bugbot.service');
+  registerBugBotService(orchestrator);
+  
   // Register available enrichment services from config
   logger.info('Registering enrichment services from config...');
   // registerAvailableEnrichmentServices(); // This line is now redundant as it's handled by the orchestrator
