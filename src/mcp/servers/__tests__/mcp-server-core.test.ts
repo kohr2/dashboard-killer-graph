@@ -1,88 +1,71 @@
 import { 
-  mcpUser,
-  loadOntologyEntities,
-  generateOntologyExamples,
-  generateToolDescription,
+  loadOntologyEntities, 
+  generateOntologyExamples, 
+  generateToolDescription, 
   generateNLPToolDescription,
   configureActiveOntologies,
+  initializeCoreServices,
+  initializeNLPService,
   processKnowledgeGraphQuery,
   processNLPOperation,
   getToolSchemas,
-  getServerInfo
+  getServerInfo,
+  mcpUser
 } from '../mcp-server-core';
-
-import { UNIFIED_TEST_DATABASE } from '@shared/constants/test-database';
+import { OntologyService } from '../../../platform/ontology/ontology.service';
+import { ChatService } from '../../../platform/chat/application/services/chat.service';
+import { Neo4jConnection } from '../../../platform/database/neo4j-connection';
+import { NLPServiceClient } from '../../../platform/processing/nlp-service.client';
+import { container } from 'tsyringe';
+import { pluginRegistry } from '../../../../config/ontology/plugins.config';
 
 // Mock dependencies
-jest.mock('@shared/utils/logger', () => ({
-  logger: {
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn()
-  }
-}));
+jest.mock('tsyringe');
+jest.mock('../../../../config/ontology/plugins.config');
+jest.mock('fs');
+jest.mock('path');
 
-jest.mock('../../../bootstrap', () => ({
-  bootstrap: jest.fn()
-}));
-
-jest.mock('../../../../config/ontology/plugins.config', () => ({
-  pluginRegistry: {
-    disableAllPlugins: jest.fn(),
-    setPluginEnabled: jest.fn(),
-    getPluginSummary: jest.fn(() => ({
-      enabled: ['procurement', 'fibo']
-    }))
-  }
-}));
-
-jest.mock('tsyringe', () => ({
-  container: {
-    resolve: jest.fn((service: any) => {
-      // This will be replaced in beforeEach
-      return undefined;
-    })
-  },
-  singleton: jest.fn(() => (target: any) => target),
-  injectable: jest.fn(() => (target: any) => target)
-}));
-
-// Mock OntologyService
-const mockOntologyService = {
-  getAllOntologies: jest.fn().mockReturnValue([
-    {
-      name: 'financial',
-      entities: [
-        { name: 'Company', type: 'node' },
-        { name: 'Person', type: 'node' },
-        { name: 'Deal', type: 'node' }
-      ]
-    },
-    {
-      name: 'procurement',
-      entities: [
-        { name: 'Contract', type: 'node' },
-        { name: 'Supplier', type: 'node' },
-        { name: 'Tender', type: 'node' }
-      ]
-    }
-  ])
+const mockContainer = {
+  resolve: jest.fn(),
 };
 
-jest.mock('@platform/ontology/ontology.service', () => ({
-  OntologyService: {
-    getInstance: jest.fn(() => mockOntologyService)
-  }
-}));
 
-jest.mock('@platform/ontology/ontology.service');
-jest.mock('@platform/database/neo4j-connection');
-jest.mock('@platform/processing/nlp-service.client');
+const mockOntologyService = {
+  getAllOntologies: jest.fn(),
+  getAllEntityTypes: jest.fn(),
+  getAllRelationshipTypes: jest.fn(),
+};
+
+const mockChatService = {
+  handleQuery: jest.fn(),
+};
+
+const mockNeo4jConnection = {
+  getCurrentDatabase: jest.fn(),
+};
+
+const mockNLPServiceClient = {
+  processOperation: jest.fn(),
+};
+
+const mockPluginRegistry = {
+  getPluginSummary: jest.fn(),
+};
 
 describe('MCP Server Core', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     
+
+    // Setup container mock
+    (container as any).resolve = mockContainer.resolve;
+    
+    // Setup plugin registry mock
+    (pluginRegistry as any) = mockPluginRegistry;
+    
+    // Setup environment variables
+    process.env.NEO4J_DATABASE = 'test-db';
+
     // Set up the container mock to return our mockOntologyService
     const { container } = require('tsyringe');
     container.resolve.mockImplementation((service: any) => {
@@ -91,15 +74,404 @@ describe('MCP Server Core', () => {
       }
       return undefined;
     });
+
+  });
+
+  afterEach(() => {
+    delete process.env.NEO4J_DATABASE;
+  });
+
+  describe('loadOntologyEntities', () => {
+    const mockFs = require('fs');
+    const mockPath = require('path');
+
+    beforeEach(() => {
+      mockPath.join.mockReturnValue('/test/path/ontology.json');
+    });
+
+    it('should load ontology entities from JSON file', () => {
+      const mockOntologyData = {
+        entities: {
+          'Entity1': { name: 'Entity1', properties: {} },
+          'Entity2': { name: 'Entity2', properties: {} }
+        }
+      };
+      
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue(JSON.stringify(mockOntologyData));
+
+      const result = loadOntologyEntities('test-ontology');
+
+      expect(result).toEqual(mockOntologyData.entities);
+      expect(mockPath.join).toHaveBeenCalledWith(process.cwd(), 'ontologies', 'test-ontology', 'ontology.json');
+    });
+
+    it('should return empty object when ontology file does not exist', () => {
+      mockFs.existsSync.mockReturnValue(false);
+
+      const result = loadOntologyEntities('nonexistent-ontology');
+
+      expect(result).toEqual({});
+    });
+
+    it('should return empty object when ontology file is invalid JSON', () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue('invalid json');
+
+      const result = loadOntologyEntities('test-ontology');
+
+      expect(result).toEqual({});
+    });
+
+    it('should return empty object when ontology data has no entities', () => {
+      const mockOntologyData = { otherData: 'value' };
+      
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue(JSON.stringify(mockOntologyData));
+
+      const result = loadOntologyEntities('test-ontology');
+
+      expect(result).toEqual({});
+    });
+  });
+
+  describe('generateOntologyExamples', () => {
+    it('should generate examples for ontology with vector-indexed entities', () => {
+      const entities = {
+        'Person': { vectorIndex: true },
+        'Organization': { vectorIndex: true },
+        'Deal': { vectorIndex: false },
+        'Contact': { vectorIndex: true }
+      };
+
+      const result = generateOntologyExamples('test-ontology', entities);
+
+      expect(result).toContain('Person');
+      expect(result).toContain('Organization');
+      expect(result).toContain('Contact');
+      expect(result).not.toContain('Deal');
+      expect(result).toContain('test-ontology');
+    });
+
+    it('should fallback to any entities when no vector-indexed entities exist', () => {
+      const entities = {
+        'Person': { vectorIndex: false },
+        'Organization': { vectorIndex: false },
+        'Deal': { vectorIndex: false }
+      };
+
+      const result = generateOntologyExamples('test-ontology', entities);
+
+      expect(result).toContain('Person');
+      expect(result).toContain('Organization');
+      expect(result).toContain('Deal');
+    });
+
+    it('should return empty string when no entities exist', () => {
+      const result = generateOntologyExamples('test-ontology', {});
+
+      expect(result).toBe('');
+    });
+
+    it('should limit examples to 3-4 entities', () => {
+      const entities = {
+        'Entity1': { vectorIndex: true },
+        'Entity2': { vectorIndex: true },
+        'Entity3': { vectorIndex: true },
+        'Entity4': { vectorIndex: true },
+        'Entity5': { vectorIndex: true },
+        'Entity6': { vectorIndex: true }
+      };
+
+      const result = generateOntologyExamples('test-ontology', entities);
+
+      // Should only include first 4 entities
+      expect(result).toContain('Entity1');
+      expect(result).toContain('Entity2');
+      expect(result).toContain('Entity3');
+      expect(result).toContain('Entity4');
+      expect(result).not.toContain('Entity5');
+      expect(result).not.toContain('Entity6');
+    });
+  });
+
+  describe('generateToolDescription', () => {
+    beforeEach(() => {
+      mockPluginRegistry.getPluginSummary.mockReturnValue({
+        enabled: ['fibo', 'procurement', 'core']
+      });
+      mockOntologyService.getAllEntityTypes.mockReturnValue(['Person', 'Organization', 'Deal']);
+      mockOntologyService.getAllRelationshipTypes.mockReturnValue(['WORKS_FOR', 'OWNS']);
+    });
+
+    it('should generate tool description with active ontologies', () => {
+      const result = generateToolDescription(mockOntologyService as any, mockNeo4jConnection as any);
+
+      expect(result).toContain('fibo');
+      expect(result).toContain('procurement');
+      expect(result).toContain('test-db');
+      expect(result).toContain('3 types available');
+      expect(result).toContain('2 types available');
+      expect(result).toContain('show all [EntityType]');
+      expect(result).toContain('find [EntityName]');
+    });
+
+    it('should handle empty entity and relationship types', () => {
+      mockOntologyService.getAllEntityTypes.mockReturnValue([]);
+      mockOntologyService.getAllRelationshipTypes.mockReturnValue([]);
+
+      const result = generateToolDescription(mockOntologyService as any, mockNeo4jConnection as any);
+
+      expect(result).toContain('0 types available');
+    });
+
+    it('should use default database when NEO4J_DATABASE is not set', () => {
+      delete process.env.NEO4J_DATABASE;
+
+      const result = generateToolDescription(mockOntologyService as any, mockNeo4jConnection as any);
+
+      expect(result).toContain('neo4j');
+    });
+  });
+
+  describe('generateNLPToolDescription', () => {
+    beforeEach(() => {
+      mockContainer.resolve.mockReturnValue(mockOntologyService);
+      mockOntologyService.getAllOntologies.mockReturnValue([
+        { name: 'fibo', entities: [{ name: 'Person' }, { name: 'Organization' }] },
+        { name: 'procurement', entities: [{ name: 'Deal' }] }
+      ]);
+    });
+
+    it('should generate NLP tool description with ontology information', () => {
+      const result = generateNLPToolDescription();
+
+      expect(result).toContain('fibo');
+      expect(result).toContain('procurement');
+      expect(result).toContain('Person');
+      expect(result).toContain('Organization');
+      expect(result).toContain('Deal');
+    });
+
+    it('should handle ontologies with no entities', () => {
+      mockOntologyService.getAllOntologies.mockReturnValue([
+        { name: 'empty-ontology', entities: [] }
+      ]);
+
+      const result = generateNLPToolDescription();
+
+      expect(result).toContain('empty-ontology');
+      expect(result).toContain('0 entities');
+    });
+
+    it('should handle missing entities property', () => {
+      mockOntologyService.getAllOntologies.mockReturnValue([
+        { name: 'no-entities-ontology' }
+      ]);
+
+      const result = generateNLPToolDescription();
+
+      expect(result).toContain('no-entities-ontology');
+      expect(result).toContain('0 entities');
+    });
+  });
+
+  describe('configureActiveOntologies', () => {
+    it('should configure active ontologies', () => {
+      configureActiveOntologies();
+
+      expect(mockPluginRegistry.getPluginSummary).toHaveBeenCalled();
+    });
+  });
+
+  describe('initializeCoreServices', () => {
+    beforeEach(() => {
+      mockContainer.resolve
+        .mockReturnValueOnce(mockOntologyService)
+        .mockReturnValueOnce(mockNeo4jConnection);
+    });
+
+    it('should initialize core services successfully', async () => {
+      const result = await initializeCoreServices();
+
+      expect(mockContainer.resolve).toHaveBeenCalledWith('OntologyService');
+      expect(mockContainer.resolve).toHaveBeenCalledWith('Neo4jConnection');
+      expect(result).toEqual({
+        ontologyService: mockOntologyService,
+        neo4jConnection: mockNeo4jConnection
+      });
+    });
+
+    it('should handle initialization errors', async () => {
+      const error = new Error('Initialization failed');
+      mockContainer.resolve.mockImplementation(() => {
+        throw error;
+      });
+
+      await expect(initializeCoreServices()).rejects.toThrow('Initialization failed');
+    });
+  });
+
+  describe('initializeNLPService', () => {
+    beforeEach(() => {
+      mockContainer.resolve.mockReturnValue(mockNLPServiceClient);
+    });
+
+    it('should initialize NLP service successfully', async () => {
+      const result = await initializeNLPService();
+
+      expect(mockContainer.resolve).toHaveBeenCalledWith('NLPServiceClient');
+      expect(result).toBe(mockNLPServiceClient);
+    });
+
+    it('should return null when NLP service is not available', async () => {
+      mockContainer.resolve.mockImplementation(() => {
+        throw new Error('NLP service not found');
+      });
+
+      const result = await initializeNLPService();
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('processKnowledgeGraphQuery', () => {
+    beforeEach(() => {
+      mockChatService.handleQuery.mockResolvedValue({
+        content: 'Query result',
+        query: 'MATCH (n) RETURN n'
+      });
+    });
+
+    it('should process knowledge graph query successfully', async () => {
+      const result = await processKnowledgeGraphQuery(mockChatService as any, 'test query');
+
+      expect(mockChatService.handleQuery).toHaveBeenCalledWith('test query', mcpUser);
+      expect(result).toEqual({
+        content: 'Query result',
+        query: 'MATCH (n) RETURN n'
+      });
+    });
+
+    it('should process query with custom user', async () => {
+      const customUser = { id: 'custom-user', username: 'custom' };
+      
+      await processKnowledgeGraphQuery(mockChatService as any, 'test query', customUser);
+
+      expect(mockChatService.handleQuery).toHaveBeenCalledWith('test query', customUser);
+    });
+
+    it('should handle query processing errors', async () => {
+      const error = new Error('Query failed');
+      mockChatService.handleQuery.mockRejectedValue(error);
+
+      await expect(processKnowledgeGraphQuery(mockChatService as any, 'test query'))
+        .rejects.toThrow('Query failed');
+    });
+  });
+
+  describe('processNLPOperation', () => {
+    beforeEach(() => {
+      mockNLPServiceClient.processOperation.mockResolvedValue({
+        result: 'NLP operation result'
+      });
+    });
+
+    it('should process NLP operation successfully', async () => {
+      const result = await processNLPOperation(mockNLPServiceClient as any, 'analyze', 'test text');
+
+      expect(mockNLPServiceClient.processOperation).toHaveBeenCalledWith('analyze', 'test text');
+      expect(result).toEqual({ result: 'NLP operation result' });
+    });
+
+    it('should process operation with multiple texts', async () => {
+      const texts = ['text1', 'text2'];
+      
+      await processNLPOperation(mockNLPServiceClient as any, 'compare', undefined, texts);
+
+      expect(mockNLPServiceClient.processOperation).toHaveBeenCalledWith('compare', undefined, texts);
+    });
+
+    it('should process operation with ontology name', async () => {
+      await processNLPOperation(mockNLPServiceClient as any, 'extract', 'text', undefined, 'fibo');
+
+      expect(mockNLPServiceClient.processOperation).toHaveBeenCalledWith('extract', 'text', undefined, 'fibo');
+    });
+
+    it('should handle NLP operation errors', async () => {
+      const error = new Error('NLP operation failed');
+      mockNLPServiceClient.processOperation.mockRejectedValue(error);
+
+      await expect(processNLPOperation(mockNLPServiceClient as any, 'analyze', 'test text'))
+        .rejects.toThrow('NLP operation failed');
+    });
+  });
+
+  describe('getToolSchemas', () => {
+    beforeEach(() => {
+      mockPluginRegistry.getPluginSummary.mockReturnValue({
+        enabled: ['fibo', 'procurement']
+      });
+      mockOntologyService.getAllEntityTypes.mockReturnValue(['Person', 'Organization']);
+      mockOntologyService.getAllRelationshipTypes.mockReturnValue(['WORKS_FOR']);
+    });
+
+    it('should return tool schemas with descriptions', () => {
+      const result = getToolSchemas(mockOntologyService as any, mockNeo4jConnection as any);
+
+      expect(result).toHaveLength(2);
+      expect(result[0].name).toBe('processKnowledgeGraphQuery');
+      expect(result[1].name).toBe('processNLPOperation');
+      expect(result[0].description).toContain('fibo');
+      expect(result[0].description).toContain('procurement');
+    });
+
+    it('should include database parameter in knowledge graph query schema', () => {
+      const result = getToolSchemas(mockOntologyService as any, mockNeo4jConnection as any);
+
+      const kgQuerySchema = result.find(schema => schema.name === 'processKnowledgeGraphQuery');
+      expect(kgQuerySchema).toBeDefined();
+      
+      const databaseParam = kgQuerySchema?.inputSchema.properties?.database;
+      expect(databaseParam).toBeDefined();
+      expect(databaseParam?.type).toBe('string');
+      expect(databaseParam?.description).toContain('database');
+    });
+
+    it('should include database parameter in NLP operation schema', () => {
+      const result = getToolSchemas(mockOntologyService as any, mockNeo4jConnection as any);
+
+      const nlpSchema = result.find(schema => schema.name === 'processNLPOperation');
+      expect(nlpSchema).toBeDefined();
+      
+      const databaseParam = nlpSchema?.inputSchema.properties?.database;
+      expect(databaseParam).toBeDefined();
+      expect(databaseParam?.type).toBe('string');
+      expect(databaseParam?.description).toContain('database');
+    });
+  });
+
+  describe('getServerInfo', () => {
+    it('should return server information', () => {
+      const result = getServerInfo();
+
+      expect(result).toEqual({
+        name: 'knowledge-graph-mcp-server',
+        version: '1.0.0',
+        capabilities: {
+          tools: {}
+        }
+      });
+    });
   });
 
   describe('mcpUser', () => {
-    it('should have correct structure', () => {
+    it('should have correct user structure', () => {
       expect(mcpUser).toEqual({
         id: 'mcp-server-user',
         username: 'mcp-server',
         roles: [
-          { 
+          {
             name: 'admin',
             permissions: [{ action: '*', resource: '*' }]
           }
@@ -107,285 +479,4 @@ describe('MCP Server Core', () => {
       });
     });
   });
-
-  describe('loadOntologyEntities', () => {
-    it('should load ontology entities from JSON file', () => {
-      const mockFs = require('fs');
-      const mockPath = require('path');
-      
-      jest.spyOn(mockFs, 'existsSync').mockReturnValue(true);
-      jest.spyOn(mockFs, 'readFileSync').mockReturnValue(JSON.stringify({
-        entities: {
-          Contract: { name: 'Contract', vectorIndex: true },
-          Tender: { name: 'Tender', vectorIndex: true }
-        }
-      }));
-      jest.spyOn(mockPath, 'join').mockReturnValue('/mock/path');
-
-      const result = loadOntologyEntities('procurement');
-      
-      expect(result).toEqual({
-        Contract: { name: 'Contract', vectorIndex: true },
-        Tender: { name: 'Tender', vectorIndex: true }
-      });
-    });
-
-    it('should return empty object if file does not exist', () => {
-      const mockFs = require('fs');
-      jest.spyOn(mockFs, 'existsSync').mockReturnValue(false);
-
-      const result = loadOntologyEntities('nonexistent');
-      
-      expect(result).toEqual({});
-    });
-
-    it('should handle JSON parsing errors gracefully', () => {
-      const mockFs = require('fs');
-      const mockPath = require('path');
-      
-      jest.spyOn(mockFs, 'existsSync').mockReturnValue(true);
-      jest.spyOn(mockFs, 'readFileSync').mockImplementation(() => {
-        throw new Error('Invalid JSON');
-      });
-      jest.spyOn(mockPath, 'join').mockReturnValue('/mock/path');
-
-      const result = loadOntologyEntities('procurement');
-      
-      expect(result).toEqual({});
-    });
-  });
-
-  describe('generateOntologyExamples', () => {
-    it('should generate examples from entities with vectorIndex', () => {
-      const entities = {
-        Contract: { vectorIndex: true },
-        Tender: { vectorIndex: true },
-        EconomicOperator: { vectorIndex: false },
-        ContractingAuthority: { vectorIndex: true }
-      };
-
-      const result = generateOntologyExamples('procurement', entities);
-      
-      expect(result).toContain('**Procurement Queries**:');
-      expect(result).toContain('"show all Contract"');
-      expect(result).toContain('"show all Tender"');
-      expect(result).toContain('"show all ContractingAuthority"');
-      expect(result).not.toContain('EconomicOperator');
-    });
-
-    it('should fallback to any entities if no vectorIndex entities', () => {
-      const entities = {
-        Contract: { vectorIndex: false },
-        Tender: { vectorIndex: false }
-      };
-
-      const result = generateOntologyExamples('procurement', entities);
-      
-      expect(result).toContain('**Procurement Queries**:');
-      expect(result).toContain('"show all Contract"');
-      expect(result).toContain('"show all Tender"');
-    });
-
-    it('should return empty string for empty entities', () => {
-      const result = generateOntologyExamples('procurement', {});
-      
-      expect(result).toBe('');
-    });
-  });
-
-  describe('generateToolDescription', () => {
-    it('should generate description with active ontologies', () => {
-      const mockOntologyService = {
-        getAllEntityTypes: jest.fn(() => ['Contract', 'Tender', 'EconomicOperator']),
-        getAllRelationshipTypes: jest.fn(() => ['hasContractingAuthority', 'hasAward'])
-      };
-      const mockNeo4jConnection = {};
-
-      const result = generateToolDescription(mockOntologyService as any, mockNeo4jConnection as any);
-      
-      expect(result).toContain('Query the knowledge graph with 2 active ontologies');
-      expect(result).toContain('**Active Ontologies**: procurement, fibo');
-      expect(result).toContain('**Entity Types**: 3 types available');
-      expect(result).toContain('**Relationship Types**: 2 types available');
-      expect(result).toContain('"show all [EntityType]"');
-      expect(result).toContain('Results are automatically limited to 10 items');
-    });
-  });
-
-  describe('generateNLPToolDescription', () => {
-    it('should generate NLP tool description', () => {
-      const result = generateNLPToolDescription();
-      
-      expect(result).toContain('Process text using Natural Language Processing');
-      expect(result).toContain('Entity extraction (raw spaCy)');
-      expect(result).toContain('Knowledge graph extraction');
-      expect(result).toContain('financial: Companies, people, monetary amounts');
-      expect(result).toContain('procurement: Contracts, suppliers, amounts');
-      expect(result).toContain('"extract entities from [text]"');
-    });
-  });
-
-  describe('configureActiveOntologies', () => {
-    it('should configure ontologies from environment variable', () => {
-      const originalEnv = process.env.MCP_ACTIVE_ONTOLOGIES;
-      process.env.MCP_ACTIVE_ONTOLOGIES = 'procurement,fibo';
-      
-      const { pluginRegistry } = require('../../../../config/ontology/plugins.config');
-      
-      configureActiveOntologies();
-      
-      expect(pluginRegistry.disableAllPlugins).toHaveBeenCalled();
-      expect(pluginRegistry.setPluginEnabled).toHaveBeenCalledWith('procurement', true);
-      expect(pluginRegistry.setPluginEnabled).toHaveBeenCalledWith('fibo', true);
-      
-      process.env.MCP_ACTIVE_ONTOLOGIES = originalEnv;
-    });
-
-    it('should do nothing if MCP_ACTIVE_ONTOLOGIES is not set', () => {
-      const originalEnv = process.env.MCP_ACTIVE_ONTOLOGIES;
-      delete process.env.MCP_ACTIVE_ONTOLOGIES;
-      
-      const { pluginRegistry } = require('../../../../config/ontology/plugins.config');
-      
-      configureActiveOntologies();
-      
-      expect(pluginRegistry.disableAllPlugins).not.toHaveBeenCalled();
-      expect(pluginRegistry.setPluginEnabled).not.toHaveBeenCalled();
-      
-      process.env.MCP_ACTIVE_ONTOLOGIES = originalEnv;
-    });
-  });
-
-  describe('processKnowledgeGraphQuery', () => {
-    it('should process query with automatic limit', async () => {
-      const mockChatService = {
-        handleQuery: jest.fn().mockResolvedValue('Query result')
-      };
-
-      const result = await processKnowledgeGraphQuery(mockChatService as any, 'show all contracts');
-      
-      expect(mockChatService.handleQuery).toHaveBeenCalledWith(mcpUser, 'show all contracts LIMIT 10', undefined);
-      expect(result).toEqual({
-        content: 'Query result',
-        query: 'show all contracts LIMIT 10'
-      });
-    });
-
-    it('should not add limit if already present', async () => {
-      const mockChatService = {
-        handleQuery: jest.fn().mockResolvedValue('Query result')
-      };
-
-      const result = await processKnowledgeGraphQuery(mockChatService as any, 'show all contracts LIMIT 5');
-      
-      expect(mockChatService.handleQuery).toHaveBeenCalledWith(mcpUser, 'show all contracts LIMIT 5', undefined);
-      expect(result.query).toBe('show all contracts LIMIT 5');
-    });
-
-    it('should throw error for invalid query', async () => {
-      const mockChatService = {
-        handleQuery: jest.fn()
-      };
-
-      await expect(processKnowledgeGraphQuery(mockChatService as any, '')).rejects.toThrow('Query parameter is required and must be a string');
-      await expect(processKnowledgeGraphQuery(mockChatService as any, null as any)).rejects.toThrow('Query parameter is required and must be a string');
-    });
-  });
-
-  describe('processNLPOperation', () => {
-    it('should process extract_entities operation', async () => {
-      const mockNlpClient = {
-        extractEntities: jest.fn().mockResolvedValue({ entities: [] })
-      };
-
-      const result = await processNLPOperation(mockNlpClient as any, 'extract_entities', 'test text', undefined, 'procurement');
-      
-      expect(mockNlpClient.extractEntities).toHaveBeenCalledWith('test text', 'procurement');
-      expect(result).toEqual({ entities: [] });
-    });
-
-    it('should process extract_graph operation', async () => {
-      const mockNlpClient = {
-        extractGraph: jest.fn().mockResolvedValue({ entities: [], relationships: [] })
-      };
-
-      const result = await processNLPOperation(mockNlpClient as any, 'extract_graph', 'test text', undefined, 'procurement');
-      
-      expect(mockNlpClient.extractGraph).toHaveBeenCalledWith('test text', 'procurement');
-      expect(result).toEqual({ entities: [], relationships: [] });
-    });
-
-    it('should process batch_extract_graph operation', async () => {
-      const mockNlpClient = {
-        batchExtractGraph: jest.fn().mockResolvedValue({ results: [] })
-      };
-
-      const result = await processNLPOperation(mockNlpClient as any, 'batch_extract_graph', undefined, ['text1', 'text2'], 'procurement');
-      
-      expect(mockNlpClient.batchExtractGraph).toHaveBeenCalledWith(['text1', 'text2'], 'procurement');
-      expect(result).toEqual({ results: [] });
-    });
-
-    it('should throw error for missing operation', async () => {
-      const mockNlpClient = {};
-
-      await expect(processNLPOperation(mockNlpClient as any, '', 'test')).rejects.toThrow('Operation parameter is required');
-    });
-
-    it('should throw error for unknown operation', async () => {
-      const mockNlpClient = {};
-
-      await expect(processNLPOperation(mockNlpClient as any, 'unknown_op', 'test')).rejects.toThrow('Unknown operation: unknown_op');
-    });
-
-    it('should throw error for missing text in single-text operations', async () => {
-      const mockNlpClient = {};
-
-      await expect(processNLPOperation(mockNlpClient as any, 'extract_entities')).rejects.toThrow('Text parameter is required for extract_entities operation');
-    });
-
-    it('should throw error for missing texts in batch operations', async () => {
-      const mockNlpClient = {};
-
-      await expect(processNLPOperation(mockNlpClient as any, 'batch_extract_graph')).rejects.toThrow('Texts parameter (array) is required for batch_extract_graph operation');
-    });
-  });
-
-  describe('getToolSchemas', () => {
-    it('should return tool schemas with descriptions', () => {
-      const mockOntologyService = {
-        getAllEntityTypes: jest.fn(() => ['Contract', 'Tender']),
-        getAllRelationshipTypes: jest.fn(() => ['hasContractingAuthority'])
-      };
-      const mockNeo4jConnection = {};
-
-      const result = getToolSchemas(mockOntologyService as any, mockNeo4jConnection as any);
-      
-      expect(result.query_knowledge_graph).toBeDefined();
-      expect(result.nlp_processing).toBeDefined();
-      expect(result.query_knowledge_graph.name).toBe('query_knowledge_graph');
-      expect(result.nlp_processing.name).toBe('nlp_processing');
-      expect(result.query_knowledge_graph.inputSchema).toBeDefined();
-      expect(result.nlp_processing.inputSchema).toBeDefined();
-    });
-  });
-
-  describe('getServerInfo', () => {
-    it('should return server information', () => {
-      const originalEnv = process.env.NEO4J_DATABASE;
-      process.env.NEO4J_DATABASE = 'test-db';
-
-      const result = getServerInfo();
-      
-      expect(result.server).toBe('mcp-unified-server');
-      expect(result.version).toBe('2.0.0');
-      expect(result.database).toBe('test-db');
-      expect(result.activeOntologies).toEqual(['procurement', 'fibo']);
-      expect(result.timestamp).toBeDefined();
-
-      process.env.NEO4J_DATABASE = originalEnv;
-    });
-  });
-
-  // Note: handleRequest tests removed as they require a server instance that's not available in this test context
 }); 

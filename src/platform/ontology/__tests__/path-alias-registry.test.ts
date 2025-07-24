@@ -4,11 +4,11 @@ import * as fs from 'fs';
 
 // Mock fs module
 jest.mock('fs', () => ({
-  existsSync: jest.fn(),
-  readFileSync: jest.fn(),
-  writeFileSync: jest.fn(),
-}));
 
+  existsSync: jest.fn(() => true),
+  readFileSync: jest.fn(),
+  writeFileSync: jest.fn()
+}));
 const mockFs = fs as jest.Mocked<typeof fs>;
 
 describe('PathAliasRegistry', () => {
@@ -24,6 +24,11 @@ describe('PathAliasRegistry', () => {
     
     // Mock fs.existsSync to return true for all paths by default
     mockFs.existsSync.mockReturnValue(true);
+    
+    // Mock fs.readFileSync and fs.writeFileSync
+    mockFs.readFileSync.mockReturnValue('{"compilerOptions": {}}');
+    mockFs.writeFileSync.mockImplementation(() => {});
+
     
     // Get fresh instance
     registry = PathAliasRegistry.getInstance();
@@ -62,7 +67,7 @@ describe('PathAliasRegistry', () => {
     it('should warn when alias target does not exist', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
       
-      // Mock fs.existsSync to return false for paths containing 'nonexistent'
+      // Mock fs.existsSync to return false for nonexistent paths
       mockFs.existsSync.mockImplementation((filePath: any) => {
         const pathString = filePath.toString();
         return !pathString.includes('nonexistent');
@@ -85,6 +90,9 @@ describe('PathAliasRegistry', () => {
       expect(registeredAliases.get('@test/nonexistent')).toBeUndefined();
 
       consoleSpy.mockRestore();
+      
+      // Reset the mock for other tests
+      mockFs.existsSync.mockReturnValue(true);
     });
   });
 
