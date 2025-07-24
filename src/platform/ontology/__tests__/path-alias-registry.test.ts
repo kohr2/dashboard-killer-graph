@@ -4,6 +4,7 @@ import * as fs from 'fs';
 
 // Mock fs module
 jest.mock('fs', () => ({
+
   existsSync: jest.fn(() => true),
   readFileSync: jest.fn(),
   writeFileSync: jest.fn()
@@ -27,6 +28,7 @@ describe('PathAliasRegistry', () => {
     // Mock fs.readFileSync and fs.writeFileSync
     mockFs.readFileSync.mockReturnValue('{"compilerOptions": {}}');
     mockFs.writeFileSync.mockImplementation(() => {});
+
     
     // Get fresh instance
     registry = PathAliasRegistry.getInstance();

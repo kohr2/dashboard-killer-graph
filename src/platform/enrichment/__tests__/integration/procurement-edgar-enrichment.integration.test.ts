@@ -45,10 +45,11 @@ if (!SEC_API_USER_AGENT) {
 
       expect(enriched).not.toBeNull();
       expect(enriched).toBeDefined();
-      expect(enriched).not.toEqual({});
-      expect((enriched as any)?.cik).toBeDefined();
-      expect((enriched as any)?.legalName).toContain('MORGAN STANLEY');
-      expect((enriched as any)?.address).toBeDefined();
+      expect(enriched.success).toBe(true);
+      expect(enriched.data).toBeDefined();
+      expect(enriched.data?.cik).toBeDefined();
+      expect(enriched.data?.legalName).toContain('MORGAN STANLEY');
+      expect(enriched.data?.address).toBeDefined();
     }, 30000);
   });
 } 

@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import { join } from 'path';
 import { promises as fs } from 'fs';
 import { EdgarEnrichmentService } from '../../edgar-enrichment.service';
-import { OrganizationDTO } from '@generated/crm/Organization.dto';
+import { GenericEntity } from '../../dto-aliases';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -36,12 +36,11 @@ describe('EdgarEnrichmentService - Integration Test', () => {
 
   it('should successfully enrich "MORGAN STANLEY" by fetching live data from the SEC', async () => {
     // Arrange: Create the entity to be enriched
-    const morganStanley: OrganizationDTO = {
+    const morganStanley: GenericEntity = {
       id: 'org-ms',
       name: 'MORGAN STANLEY',
       type: 'Organization',
       label: 'Organization',
-      enrichedData: '',
     };
 
     // Act: Enrich the entity
@@ -51,31 +50,32 @@ describe('EdgarEnrichmentService - Integration Test', () => {
     expect(enrichedData).not.toBeNull();
     expect(enrichedData).toBeDefined();
 
-    if (enrichedData) {
+    if (enrichedData && enrichedData.success && enrichedData.data) {
       // eslint-disable-next-line no-console
       console.log('--- Enriched Properties ---');
       // eslint-disable-next-line no-console
-      console.log('Legal Name:', (enrichedData as any).legalName);
+      console.log('Legal Name:', enrichedData.data.legalName);
       // eslint-disable-next-line no-console
-      console.log('CIK:', (enrichedData as any).cik);
+      console.log('CIK:', enrichedData.data.cik);
       // eslint-disable-next-line no-console
-      console.log('SIC:', (enrichedData as any).sic);
+      console.log('SIC:', enrichedData.data.sic);
       // eslint-disable-next-line no-console
-      console.log('SIC Description:', (enrichedData as any).sicDescription);
-      if ((enrichedData as any).address) {
+      console.log('SIC Description:', enrichedData.data.sicDescription);
+      if (enrichedData.data.address) {
         // eslint-disable-next-line no-console
-        console.log('Address:', `${(enrichedData as any).address.street1}, ${(enrichedData as any).address.city}, ${(enrichedData as any).address.stateOrCountry} ${(enrichedData as any).address.zipCode}`);
+        console.log('Address:', `${enrichedData.data.address.street1}, ${enrichedData.data.address.city}, ${enrichedData.data.address.stateOrCountry} ${enrichedData.data.address.zipCode}`);
       }
       // eslint-disable-next-line no-console
       console.log('-------------------------');
     }
     
     // Assertions
-    expect(enrichedData).not.toEqual({});
-    expect((enrichedData as any)?.cik).toBeDefined();
-    expect((enrichedData as any)?.legalName).toContain('MORGAN STANLEY');
-    expect((enrichedData as any)?.sic).toBeDefined();
-    expect((enrichedData as any)?.address).toBeDefined();
+    expect(enrichedData.success).toBe(true);
+    expect(enrichedData.data).toBeDefined();
+    expect(enrichedData.data?.cik).toBeDefined();
+    expect(enrichedData.data?.legalName).toContain('MORGAN STANLEY');
+    expect(enrichedData.data?.sic).toBeDefined();
+    expect(enrichedData.data?.address).toBeDefined();
 
     // Note: Cache file creation is optional and depends on filesystem permissions
     // The service works correctly even without caching

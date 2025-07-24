@@ -9,6 +9,13 @@ import { Neo4jIngestionService } from '../platform/processing/neo4j-ingestion.se
 import { logger } from '@shared/utils/logger';
 import { container } from 'tsyringe';
 import { OntologyService } from '../platform/ontology/ontology.service';
+import { OntologyPlugin } from '../platform/ontology/ontology.plugin';
+import axios from 'axios';
+
+interface OntologySchema {
+  entities: Record<string, unknown>;
+  relationships: Record<string, unknown>;
+}
 
 interface OntologyDataset {
   metadata: {
@@ -22,7 +29,7 @@ interface OntologyDataset {
     id: string;
     type: string;
     content: string;
-    properties: Record<string, any>;
+    properties: Record<string, unknown>;
     relationships?: Array<{
       type: string;
       target: string;
@@ -40,15 +47,18 @@ interface OntologyDataset {
  * and relationships are already defined in the dataset.
  */
 export class OntologyDatasetIngestionService {
-  private ontologySchema: any = null;
+  private ontologySchema: OntologySchema | null = null;
 
   /**
    * Load ontology schema from a plugin
    */
-  private loadOntologySchema(ontologyPlugin: any): void {
-    if (ontologyPlugin.ontology) {
-      this.ontologySchema = ontologyPlugin.ontology;
-      logger.info(`Loaded ontology schema with ${Object.keys(this.ontologySchema?.entities || {}).length} entity types`);
+  private loadOntologySchema(ontologyPlugin: OntologyPlugin): void {
+    if (ontologyPlugin.entitySchemas) {
+      this.ontologySchema = {
+        entities: ontologyPlugin.entitySchemas,
+        relationships: ontologyPlugin.relationshipSchemas || {}
+      };
+      logger.info(`Loaded ontology schema with ${Object.keys(this.ontologySchema.entities).length} entity types`);
     } else {
       logger.warn('No ontology schema found in plugin');
     }
@@ -57,7 +67,7 @@ export class OntologyDatasetIngestionService {
   /**
    * Register ontology plugin
    */
-  private registerOntology(ontologyPlugin: any): void {
+  private registerOntology(ontologyPlugin: OntologyPlugin): void {
     logger.info(`🔄 Registering ${ontologyPlugin.name || 'ontology'} plugin...`);
     
     // Register the ontology service
@@ -128,7 +138,7 @@ export class OntologyDatasetIngestionService {
       name: string;
       type: string;
       label: string;
-      properties: Record<string, any>;
+      properties: Record<string, unknown>;
       embedding?: number[];
       uuid?: string; // Add uuid at top level for Neo4jIngestionService
     }>;
@@ -136,7 +146,7 @@ export class OntologyDatasetIngestionService {
       source: string;
       target: string;
       type: string;
-      properties?: Record<string, any>;
+      properties?: Record<string, unknown>;
     }>;
   } {
     const entities: Array<{
@@ -144,7 +154,7 @@ export class OntologyDatasetIngestionService {
       name: string;
       type: string;
       label: string;
-      properties: Record<string, any>;
+      properties: Record<string, unknown>;
       embedding?: number[];
       uuid?: string;
     }> = [];
@@ -153,17 +163,17 @@ export class OntologyDatasetIngestionService {
       source: string;
       target: string;
       type: string;
-      properties?: Record<string, any>;
+      properties?: Record<string, unknown>;
     }> = [];
 
     // Create entity map for relationship resolution
-    const entityMap = new Map<string, any>();
+    const entityMap = new Map<string, unknown>();
 
     // First, create all entities with their unique dataset IDs
     for (const record of dataset.records) {
       const entity = {
         id: record.id, // Use the exact ID from dataset (e.g., JobTitle_10)
-        name: record.properties.name || record.properties.code || record.id,
+        name: String(record.properties.name || record.properties.code || record.id),
         type: record.type,
         label: record.type,
         uuid: record.id, // Set uuid at top level for Neo4jIngestionService
@@ -261,7 +271,6 @@ export class OntologyDatasetIngestionService {
     logger.info(`Generating embeddings for ${entityNames.length} entities...`);
     
     try {
-      const axios = require('axios');
       const response = await axios.post(
         'http://127.0.0.1:8000/embed',
         { texts: entityNames },
@@ -280,7 +289,7 @@ export class OntologyDatasetIngestionService {
       
       // Create dummy embeddings to ensure entities are not skipped
       // This is a fallback when the NLP service is unavailable
-      entities.forEach((entity, index) => {
+      entities.forEach((entity) => {
         // Create a simple hash-based embedding (not for similarity search, just to satisfy the requirement)
         const hash = entity.name.split('').reduce((a, b) => {
           a = ((a << 5) - a) + b.charCodeAt(0);
@@ -304,7 +313,7 @@ export class OntologyDatasetIngestionService {
    */
   async ingestOntologyDataset(
     datasetPath: string,
-    ontologyPlugin: any,
+    ontologyPlugin: OntologyPlugin,
     limit?: number
   ): Promise<void> {
     logger.info('🔍 [AUDIT] ingestOntologyDataset called - DIRECT INGESTION MODE (NO LLM)');
@@ -343,7 +352,7 @@ export class OntologyDatasetIngestionService {
       // Skip embedding generation in direct mode to avoid NLP service calls
       logger.info('🔄 Direct ingestion mode: skipping embedding generation to avoid LLM processing');
       // Create dummy embeddings to ensure entities are not skipped
-      entities.forEach((entity, index) => {
+      entities.forEach((entity) => {
         const hash = entity.name.split('').reduce((a, b) => {
           a = ((a << 5) - a) + b.charCodeAt(0);
           return a & a;
@@ -391,7 +400,7 @@ export class OntologyDatasetIngestionService {
    */
   async ingestOntologyDatasetWithLLM(
     datasetPath: string,
-    ontologyPlugin: any,
+    ontologyPlugin: OntologyPlugin,
     limit?: number
   ): Promise<void> {
     logger.info('🔍 [AUDIT] ingestOntologyDatasetWithLLM called - LLM PROCESSING MODE');
@@ -434,7 +443,7 @@ export class OntologyDatasetIngestionService {
         contentProcessingService,
         neo4jIngestionService,
         undefined,
-        (input: any) => input.content,
+        (input: { content: string }) => input.content,
         ontologyName
       );
 

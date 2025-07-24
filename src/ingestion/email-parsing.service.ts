@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { simpleParser, ParsedMail, AddressObject } from 'mailparser';
+import { simpleParser, AddressObject } from 'mailparser';
 import { logger } from '../shared/utils/logger';
 
 export interface ParsedEmailData {

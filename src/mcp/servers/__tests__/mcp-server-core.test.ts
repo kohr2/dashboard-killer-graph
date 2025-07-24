@@ -29,6 +29,7 @@ const mockContainer = {
   resolve: jest.fn(),
 };
 
+
 const mockOntologyService = {
   getAllOntologies: jest.fn(),
   getAllEntityTypes: jest.fn(),
@@ -55,6 +56,7 @@ describe('MCP Server Core', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     
+
     // Setup container mock
     (container as any).resolve = mockContainer.resolve;
     
@@ -63,6 +65,16 @@ describe('MCP Server Core', () => {
     
     // Setup environment variables
     process.env.NEO4J_DATABASE = 'test-db';
+
+    // Set up the container mock to return our mockOntologyService
+    const { container } = require('tsyringe');
+    container.resolve.mockImplementation((service: any) => {
+      if (service && (service.name === 'OntologyService' || service.toString().includes('OntologyService'))) {
+        return mockOntologyService;
+      }
+      return undefined;
+    });
+
   });
 
   afterEach(() => {
