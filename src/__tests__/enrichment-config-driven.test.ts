@@ -1,7 +1,6 @@
 import { registerAllEnrichments } from '../register-enrichments';
 import { OntologyAgnosticEnrichmentService } from '../platform/enrichment/ontology-agnostic-enrichment.service';
 import * as fs from 'fs';
-import * as path from 'path';
 
 // Mock fs.readFileSync to return a test config
 jest.mock('fs', () => ({

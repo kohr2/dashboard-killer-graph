@@ -32,6 +32,7 @@
     "chat:all": "concurrently -n \"UI,Backend,NLP\" -c \"green,blue,magenta\" \"npm:chat:ui\" \"npm:chat:backend\" \"npm:dev:nlp\"",
     "mcp:test": "./scripts/test.sh transport",
     "ontologies:generate": "ts-node -r tsconfig-paths/register scripts/codegen/generate-ontologies.ts",
+    "lint": "eslint src/**/*.ts --ext .ts",
     "validate": "npm run type-check && npm run lint && npm run test:ci",
     "setup:nlp": "cd python-services/nlp-service && rm -rf venv && python3 -m venv venv && source venv/bin/activate && python -m pip install -r requirements.txt",
     "security:audit": "npm audit --audit-level moderate",
