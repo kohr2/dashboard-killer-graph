@@ -33,7 +33,7 @@ describe('OntologyDrivenAdvancedGraphService', () => {
       getSession: jest.fn().mockReturnValue(mockSession),
       getDatabase: jest.fn(),
       switchDatabase: jest.fn(),
-      connect: jest.fn(),
+      connect: jest.fn().mockResolvedValue(undefined),
       close: jest.fn(),
       initializeSchema: jest.fn(),
       clearDatabase: jest.fn(),
@@ -82,6 +82,7 @@ describe('OntologyDrivenAdvancedGraphService', () => {
       await service.initialize();
 
       expect(mockNeo4jConnection.connect).toHaveBeenCalled();
+      expect(mockAdvancedGraphService.initialize).toHaveBeenCalled();
     });
 
     it('should handle initialization errors', async () => {

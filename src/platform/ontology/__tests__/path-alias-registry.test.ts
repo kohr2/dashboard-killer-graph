@@ -6,6 +6,10 @@ import * as fs from 'fs';
 jest.mock('fs');
 const mockFs = fs as jest.Mocked<typeof fs>;
 
+// Mock fs.existsSync
+const mockExistsSync = jest.fn();
+jest.spyOn(fs, 'existsSync').mockImplementation(mockExistsSync);
+
 describe('PathAliasRegistry', () => {
   let registry: PathAliasRegistry;
   const mockCwd = '/mock/project/root';
@@ -18,7 +22,7 @@ describe('PathAliasRegistry', () => {
     jest.spyOn(process, 'cwd').mockReturnValue(mockCwd);
     
     // Mock fs.existsSync to return true for all paths by default
-    mockFs.existsSync.mockImplementation((filePath: any) => {
+    mockExistsSync.mockImplementation((filePath: any) => {
       const pathString = filePath.toString();
       console.log('existsSync called with:', pathString);
       // Return true for all paths except those that should not exist
@@ -63,7 +67,7 @@ describe('PathAliasRegistry', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
       
       // Mock fs.existsSync to return false for some paths
-      mockFs.existsSync.mockImplementation((filePath: any) => {
+      mockExistsSync.mockImplementation((filePath: any) => {
         const pathString = filePath.toString();
         return !pathString.includes('nonexistent');
       });
