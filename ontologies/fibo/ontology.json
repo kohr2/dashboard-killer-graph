@@ -287,27 +287,17 @@
     },
     {
       "name": "BeneficialOwner",
-      "description": "party that enjoys the benefits of ownership (such as receipt of income) of something even though its ownership (title) may be in the name of another party (called a nominee or registered owner)",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        }
-      },
+      "description": "BeneficialOwner as defined in OWL ontology",
+      "properties": {},
       "keyProperties": [
         "name"
       ],
       "vectorIndex": true,
-      "documentation": "BeneficialOwner",
-      "parent": "Beneficiary"
+      "documentation": "BeneficialOwner"
     },
     {
       "name": "BeneficialOwnership",
-      "description": "control situation linking something at least one beneficial owner",
+      "description": "situation linking party that enjoys the benefits of ownership (such as receipt of income) of something even though its ownership (title) may be in the name of another party (called a nominee or registered owner) to the asset that they own",
       "properties": {
         "label": {
           "type": "string",
@@ -323,7 +313,7 @@
       ],
       "vectorIndex": true,
       "documentation": "BeneficialOwnership",
-      "parent": "Control"
+      "parent": "Ownership"
     },
     {
       "name": "BilateralAgreement",
@@ -1298,29 +1288,6 @@
       "parent": "AgentRole"
     },
     {
-      "name": "ContractualProduct",
-      "description": "product that takes the form of an agreement",
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "Preferred label for this entity"
-        },
-        "definition": {
-          "type": "string",
-          "description": "Detailed definition of this entity"
-        },
-        "alternativeLabels": [
-          "Product"
-        ]
-      },
-      "keyProperties": [
-        "name"
-      ],
-      "vectorIndex": true,
-      "documentation": "ContractualProduct",
-      "parent": "Product"
-    },
-    {
       "name": "ContractualRight",
       "description": "power, privilege, demand, or claim possessed by some party that is conferred by contract",
       "properties": {
@@ -1382,6 +1349,29 @@
       "vectorIndex": true,
       "documentation": "ControllingEquity",
       "parent": "ShareholdersEquity"
+    },
+    {
+      "name": "ControllingNominee",
+      "description": "party that holds legal title to an asset (e.g., stocks, bonds, or property) on behalf of the beneficial owner",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        },
+        "alternativeLabels": [
+          "LegallyDelegatedAuthority"
+        ]
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "ControllingNominee",
+      "parent": "LegallyDelegatedAuthority"
     },
     {
       "name": "CooperativeSociety",
@@ -5544,7 +5534,7 @@
     }
   ],
   "metadata": {
-    "lastExtraction": "2025-07-23T22:46:02.442Z",
+    "lastExtraction": "2025-07-24T10:48:51.520Z",
     "sourceVersion": "2024-01",
     "localVersion": "1.0.0"
   },
@@ -5893,6 +5883,7 @@
     "ContractualDefinition",
     "ContractualObligation",
     "ContractualOption",
+    "ContractualProduct",
     "ContractualSavingsInstitution",
     "ContractualTemplateProduct",
     "ContributionDebtBasket",

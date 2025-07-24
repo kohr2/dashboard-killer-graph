@@ -3,12 +3,12 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 // Mock fs module
-jest.mock('fs');
+jest.mock('fs', () => ({
+  existsSync: jest.fn(() => true),
+  readFileSync: jest.fn(),
+  writeFileSync: jest.fn()
+}));
 const mockFs = fs as jest.Mocked<typeof fs>;
-
-// Mock fs.existsSync
-const mockExistsSync = jest.fn();
-jest.spyOn(fs, 'existsSync').mockImplementation(mockExistsSync);
 
 describe('PathAliasRegistry', () => {
   let registry: PathAliasRegistry;
@@ -22,12 +22,11 @@ describe('PathAliasRegistry', () => {
     jest.spyOn(process, 'cwd').mockReturnValue(mockCwd);
     
     // Mock fs.existsSync to return true for all paths by default
-    mockExistsSync.mockImplementation((filePath: any) => {
-      const pathString = filePath.toString();
-      console.log('existsSync called with:', pathString);
-      // Return true for all paths except those that should not exist
-      return true;
-    });
+    mockFs.existsSync.mockReturnValue(true);
+    
+    // Mock fs.readFileSync and fs.writeFileSync
+    mockFs.readFileSync.mockReturnValue('{"compilerOptions": {}}');
+    mockFs.writeFileSync.mockImplementation(() => {});
     
     // Get fresh instance
     registry = PathAliasRegistry.getInstance();
@@ -66,8 +65,8 @@ describe('PathAliasRegistry', () => {
     it('should warn when alias target does not exist', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
       
-      // Mock fs.existsSync to return false for some paths
-      mockExistsSync.mockImplementation((filePath: any) => {
+      // Mock fs.existsSync to return false for nonexistent paths
+      mockFs.existsSync.mockImplementation((filePath: any) => {
         const pathString = filePath.toString();
         return !pathString.includes('nonexistent');
       });
@@ -89,6 +88,9 @@ describe('PathAliasRegistry', () => {
       expect(registeredAliases.get('@test/nonexistent')).toBeUndefined();
 
       consoleSpy.mockRestore();
+      
+      // Reset the mock for other tests
+      mockFs.existsSync.mockReturnValue(true);
     });
   });
 
