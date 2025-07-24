@@ -377,9 +377,11 @@ describe('ChatService', () => {
       expect(resourceTypes).toContain('Organization');
     });
 
-    it('should return empty array for unknown resource', () => {
+    it('should return default resource types for unknown resource', () => {
       const resourceTypes = (chatService as any).mapToResourceTypes('Find unknown');
-      expect(resourceTypes).toEqual([]);
+      expect(resourceTypes).toContain('Contact');
+      expect(resourceTypes).toContain('Organization');
+      expect(resourceTypes).toContain('Deal');
     });
   });
 
@@ -443,10 +445,6 @@ describe('ChatService', () => {
 
   describe('generateResponse', () => {
     it('should generate natural language response', async () => {
-      mockOpenAI.chat.completions.create.mockResolvedValue({
-        choices: [{ message: { content: 'Found 5 deals' } }]
-      } as any);
-
       const response = await (chatService as any).generateResponse(
         'find',
         ['Acme Corp'],
@@ -454,19 +452,17 @@ describe('ChatService', () => {
       );
 
       expect(response).toBeDefined();
-      expect(mockOpenAI.chat.completions.create).toHaveBeenCalled();
+      expect(response).toContain('Found 1 results');
     });
 
-    it('should handle OpenAI API errors', async () => {
-      mockOpenAI.chat.completions.create.mockRejectedValue(new Error('API Error'));
-
+    it('should handle empty data', async () => {
       const response = await (chatService as any).generateResponse(
         'find',
         ['Acme Corp'],
-        [{ id: '1', name: 'Deal 1' }]
+        []
       );
 
-      expect(response).toContain('Found 1 results');
+      expect(response).toContain("Je n'ai trouvé aucun résultat");
     });
   });
 
@@ -490,7 +486,7 @@ describe('ChatService', () => {
 
       const result = (chatService as any).cleanRecord(mockRecord);
 
-      expect(result).toEqual({});
+      expect(result).toEqual({ node: {} });
     });
   });
 

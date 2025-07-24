@@ -3,12 +3,13 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 // Mock fs module
-jest.mock('fs');
-const mockFs = fs as jest.Mocked<typeof fs>;
+jest.mock('fs', () => ({
+  existsSync: jest.fn(),
+  readFileSync: jest.fn(),
+  writeFileSync: jest.fn(),
+}));
 
-// Mock fs.existsSync
-const mockExistsSync = jest.fn();
-jest.spyOn(fs, 'existsSync').mockImplementation(mockExistsSync);
+const mockFs = fs as jest.Mocked<typeof fs>;
 
 describe('PathAliasRegistry', () => {
   let registry: PathAliasRegistry;
@@ -22,7 +23,7 @@ describe('PathAliasRegistry', () => {
     jest.spyOn(process, 'cwd').mockReturnValue(mockCwd);
     
     // Mock fs.existsSync to return true for all paths by default
-    mockExistsSync.mockImplementation((filePath: any) => {
+    mockFs.existsSync.mockImplementation((filePath: any) => {
       const pathString = filePath.toString();
       console.log('existsSync called with:', pathString);
       // Return true for all paths except those that should not exist
@@ -67,7 +68,7 @@ describe('PathAliasRegistry', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
       
       // Mock fs.existsSync to return false for some paths
-      mockExistsSync.mockImplementation((filePath: any) => {
+      mockFs.existsSync.mockImplementation((filePath: any) => {
         const pathString = filePath.toString();
         return !pathString.includes('nonexistent');
       });

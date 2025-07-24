@@ -39,9 +39,7 @@ jest.mock('../../../../config/ontology/plugins.config', () => ({
 jest.mock('tsyringe', () => ({
   container: {
     resolve: jest.fn((service: any) => {
-      if (service && service.name === 'OntologyService') {
-        return mockOntologyService;
-      }
+      // This will be replaced in beforeEach
       return undefined;
     })
   },
@@ -84,6 +82,15 @@ jest.mock('@platform/processing/nlp-service.client');
 describe('MCP Server Core', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    
+    // Set up the container mock to return our mockOntologyService
+    const { container } = require('tsyringe');
+    container.resolve.mockImplementation((service: any) => {
+      if (service && (service.name === 'OntologyService' || service.toString().includes('OntologyService'))) {
+        return mockOntologyService;
+      }
+      return undefined;
+    });
   });
 
   describe('mcpUser', () => {
