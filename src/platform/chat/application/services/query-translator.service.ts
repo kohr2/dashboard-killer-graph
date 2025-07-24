@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { injectable, inject } from 'tsyringe';
 import OpenAI from 'openai';
 import { OntologyService } from '@platform/ontology/ontology.service';

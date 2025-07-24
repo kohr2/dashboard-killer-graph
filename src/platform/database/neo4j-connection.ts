@@ -1,6 +1,7 @@
 // Neo4j Knowledge Graph Connection Manager
 // Manages connections to the Neo4j graph database
 
+import 'reflect-metadata';
 import neo4j, { Driver, Session } from 'neo4j-driver';
 import { config } from 'dotenv';
 import { logger } from '@shared/utils/logger';

@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { injectable, inject } from 'tsyringe';
 import { v4 as uuidv4 } from 'uuid';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';

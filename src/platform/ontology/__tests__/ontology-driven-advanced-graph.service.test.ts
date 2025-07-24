@@ -1,7 +1,9 @@
+import 'reflect-metadata';
 import { describe, it, expect, beforeEach, jest, afterEach } from '@jest/globals';
 import { OntologyDrivenAdvancedGraphService, OntologyAdvancedConfig, AdvancedRelationshipsConfig } from '../ontology-driven-advanced-graph.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { AdvancedGraphService } from '../../processing/advanced-graph.service';
+import { container } from 'tsyringe';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -10,6 +12,7 @@ jest.mock('@platform/database/neo4j-connection');
 jest.mock('../../processing/advanced-graph.service');
 jest.mock('fs');
 jest.mock('path');
+jest.mock('tsyringe');
 
 const mockedFs = fs as jest.Mocked<typeof fs>;
 const mockedPath = path as jest.Mocked<typeof path>;
@@ -62,6 +65,17 @@ describe('OntologyDrivenAdvancedGraphService', () => {
     } as any;
 
     (AdvancedGraphService as jest.MockedClass<typeof AdvancedGraphService>).mockImplementation(() => mockAdvancedGraphService);
+
+    // Mock the container to return our mocked services
+    (container.resolve as jest.Mock).mockImplementation((serviceClass: any) => {
+      if (serviceClass === AdvancedGraphService) {
+        return mockAdvancedGraphService;
+      }
+      if (serviceClass === Neo4jConnection) {
+        return mockNeo4jConnection;
+      }
+      return undefined;
+    });
 
     service = new OntologyDrivenAdvancedGraphService();
   });

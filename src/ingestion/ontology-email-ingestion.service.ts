@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { OntologyService } from '../platform/ontology/ontology.service';
 import { ContentProcessingService } from '../platform/processing/content-processing.service';

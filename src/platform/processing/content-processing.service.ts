@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import axios from 'axios';
 import { logger } from '@shared/utils/logger';
 import { EnrichmentOrchestratorService } from '@platform/enrichment';

@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 export * from './i-enrichment-service.interface';
 export * from './enrichment-orchestrator.service';
 export * from './salesforce-enrichment.service';
