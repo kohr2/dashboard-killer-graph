@@ -1,5 +1,5 @@
 const { pathsToModuleNameMapper } = require('ts-jest');
-const { compilerOptions } = require('./tsconfig.json');
+const { compilerOptions } = require('./tsconfig.test.json');
 
 /**
  * Base Jest configuration shared between unit and e2e tests
@@ -50,7 +50,7 @@ module.exports = {
   // TypeScript transformation configuration
   transform: {
     '^.+\\.ts$': ['ts-jest', {
-      tsconfig: 'test/tsconfig.json',
+      tsconfig: 'tsconfig.test.json',
       isolatedModules: false
     }]
   },

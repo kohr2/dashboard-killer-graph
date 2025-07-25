@@ -24,6 +24,7 @@ describe('OntologyDrivenAdvancedGraphService', () => {
   let mockAdvancedGraphService: jest.Mocked<AdvancedGraphService>;
 
   beforeEach(() => {
+    // @ts-ignore - Jest mock typing issues
     const mockSession = {
       run: jest.fn().mockResolvedValue({ records: [] }) as any,
       close: jest.fn(),
@@ -33,10 +34,12 @@ describe('OntologyDrivenAdvancedGraphService', () => {
       session: jest.fn().mockReturnValue(mockSession),
     };
 
+    // @ts-ignore - Jest mock typing issues
     mockNeo4jConnection = {
       getSession: jest.fn().mockReturnValue(mockSession),
       getDatabase: jest.fn(),
       switchDatabase: jest.fn(),
+      // @ts-ignore - Jest mock typing issues
       connect: jest.fn().mockResolvedValue(undefined),
       close: jest.fn(),
       initializeSchema: jest.fn(),
@@ -47,6 +50,7 @@ describe('OntologyDrivenAdvancedGraphService', () => {
       getDriver: jest.fn().mockReturnValue(mockDriver),
     } as unknown as jest.Mocked<Neo4jConnection>;
 
+    // @ts-ignore - Jest mock typing issues
     mockAdvancedGraphService = {
       initialize: jest.fn(),
       createTemporalRelationships: jest.fn(),
@@ -126,6 +130,7 @@ describe('OntologyDrivenAdvancedGraphService', () => {
 
   describe('queryOntologyPatterns', () => {
     it('should query temporal patterns', async () => {
+      // @ts-ignore - Jest mock typing issues
       const mockSession = {
         run: jest.fn().mockResolvedValue({ records: [] }),
         close: jest.fn(),

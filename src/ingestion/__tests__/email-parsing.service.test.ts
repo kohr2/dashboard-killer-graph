@@ -280,8 +280,16 @@ describe('EmailParsingService', () => {
 
     it('should convert array of address objects', () => {
       const addresses: AddressObject[] = [
-        { value: [{ address: 'user1@example.com', name: 'User 1' }] },
-        { value: [{ address: 'user2@example.com', name: 'User 2' }] }
+        { 
+          value: [{ address: 'user1@example.com', name: 'User 1' }],
+          html: 'User 1 &lt;user1@example.com&gt;',
+          text: 'User 1 <user1@example.com>'
+        } as any,
+        { 
+          value: [{ address: 'user2@example.com', name: 'User 2' }],
+          html: 'User 2 &lt;user2@example.com&gt;',
+          text: 'User 2 <user2@example.com>'
+        } as any
       ];
 
       const result = (emailParsingService as any).convertAddressObject(addresses);
@@ -296,7 +304,11 @@ describe('EmailParsingService', () => {
     });
 
     it('should handle address object with no value', () => {
-      const address: AddressObject = { value: undefined };
+      const address: AddressObject = { 
+        value: undefined,
+        html: '',
+        text: ''
+      } as any;
 
       const result = (emailParsingService as any).convertAddressObject(address);
 
@@ -304,7 +316,11 @@ describe('EmailParsingService', () => {
     });
 
     it('should handle address object with empty value array', () => {
-      const address: AddressObject = { value: [] };
+      const address: AddressObject = { 
+        value: [],
+        html: '',
+        text: ''
+      } as any;
 
       const result = (emailParsingService as any).convertAddressObject(address);
 

@@ -21,6 +21,20 @@ export const fiboPlugin: OntologyPlugin = {
   relationshipSchemas: ontologyData.relationships,
   reasoning: ontologyData.reasoning,
   entityExtraction: ontologyData.entityExtraction,
+  
+  // Define path aliases for this plugin
+  pathAliases: {
+    '@fibo/*': '*',                    // @fibo/entities -> ontologies/fibo/entities
+    '@fibo/entities': 'entities',      // @fibo/entities -> ontologies/fibo/entities
+    '@fibo/services': 'services',      // @fibo/services -> ontologies/fibo/services
+    '@fibo/types': 'types',            // @fibo/types -> ontologies/fibo/types
+  },
+  
+  // Optional registration hook
+  onRegister: () => {
+    console.log('🔧 Fibo plugin registered with path aliases');
+  },
+  
   ...(registerFibo && {
     serviceProviders: {
       register: registerFibo,

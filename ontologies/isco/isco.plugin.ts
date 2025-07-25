@@ -20,7 +20,21 @@ export const iscoPlugin: OntologyPlugin = {
   entitySchemas: ontologyData.entities,
   relationshipSchemas: ontologyData.relationships,
   reasoning: ontologyData.reasoning,
-  entityExtraction: ontologyData.entityExtractionPatterns,
+  entityExtraction: ontologyData.entityExtraction,
+  
+  // Define path aliases for this plugin
+  pathAliases: {
+    '@isco/*': '*',                    // @isco/entities -> ontologies/isco/entities
+    '@isco/entities': 'entities',      // @isco/entities -> ontologies/isco/entities
+    '@isco/services': 'services',      // @isco/services -> ontologies/isco/services
+    '@isco/types': 'types',            // @isco/types -> ontologies/isco/types
+  },
+  
+  // Optional registration hook
+  onRegister: () => {
+    console.log('🔧 Isco plugin registered with path aliases');
+  },
+  
   ...(registerIsco && {
     serviceProviders: {
       register: registerIsco,

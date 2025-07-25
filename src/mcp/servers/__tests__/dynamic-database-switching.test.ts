@@ -27,8 +27,8 @@ describe('MCP Server Dynamic Database Switching', () => {
 
     // Create mock instances
     const mockSession = {
-      run: jest.fn().mockResolvedValue({ records: [] }),
-      close: jest.fn().mockResolvedValue(undefined)
+      run: jest.fn().mockResolvedValue({ records: [] } as any),
+      close: jest.fn().mockResolvedValue(undefined as any)
     } as any;
     
     mockNeo4jConnection = {
