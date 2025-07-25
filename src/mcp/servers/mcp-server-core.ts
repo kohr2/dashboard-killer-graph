@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { bootstrap } from '../../bootstrap';
@@ -9,6 +7,14 @@ import { Neo4jConnection } from '@platform/database/neo4j-connection';
 import { pluginRegistry } from '../../../config/ontology/plugins.config';
 import { NLPServiceClient } from '@platform/processing/nlp-service.client';
 import { logger } from '@shared/utils/logger';
+import { ReasoningOrchestratorService } from '@platform/reasoning/reasoning-orchestrator.service';
+import { startApiServer } from './mcp-server-api';
+import { startSocketServer } from './mcp-server-socket';
+import { Express, Request, Response, NextFunction } from 'express';
+import { http } from 'http';
+import { Logger } from '@shared/utils/logger';
+
+console.log('Top level container in mcp-server-core.ts:', container);
 
 // Shared MCP user for all server types
 export const mcpUser = {
@@ -173,6 +179,9 @@ export async function initializeCoreServices() {
   const chatService = container.resolve(ChatService);
   const neo4jConnection = container.resolve(Neo4jConnection);
   await neo4jConnection.connect();
+  
+  console.log('container in initializeCoreServices:', container);
+  console.log('container.resolve in initializeCoreServices:', container.resolve);
   
   return { ontologyService, chatService, neo4jConnection };
 }
@@ -341,4 +350,84 @@ export function getServerInfo() {
     activeOntologies: pluginRegistry.getPluginSummary().enabled,
     timestamp: new Date().toISOString()
   };
+} 
+
+/**
+ * Starts the main MCP server, including API and socket servers.
+ */
+export function startServer(): void {
+  const ontologyService = container.resolve(OntologyService);
+  const chatService = container.resolve(ChatService);
+  const app = Express();
+  const httpServer = http.createServer(app);
+
+  // Configure middleware
+  app.use(Express.json());
+  app.use(Express.urlencoded({ extended: true }));
+
+  // Configure CORS
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    next();
+  });
+
+  // Configure routes
+  app.get('/', (req: Request, res: Response) => {
+    res.json(getServerInfo());
+  });
+
+  app.get('/info', (req: Request, res: Response) => {
+    res.json(getServerInfo());
+  });
+
+  app.get('/tool-schemas', (req: Request, res: Response) => {
+    const neo4jConnection = container.resolve(Neo4jConnection);
+    res.json(getToolSchemas(ontologyService, neo4jConnection));
+  });
+
+  app.post('/query', async (req: Request, res: Response) => {
+    const user = mcpUser;
+    const query = req.body.query;
+    const database = req.body.database;
+
+    try {
+      const result = await processKnowledgeGraphQuery(chatService, query, user, database);
+      res.json(result);
+    } catch (error: any) {
+      logger.error(`Error processing query: ${error.message}`);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post('/nlp-operation', async (req: Request, res: Response) => {
+    const nlpClient = await initializeNLPService();
+    if (!nlpClient) {
+      res.status(503).json({ error: 'NLP Service not available' });
+      return;
+    }
+
+    const operation = req.body.operation;
+    const text = req.body.text;
+    const texts = req.body.texts;
+    const ontology_name = req.body.ontology_name;
+    const database = req.body.database;
+
+    try {
+      const result = await processNLPOperation(nlpClient, operation, text, texts, ontology_name, database);
+      res.json(result);
+    } catch (error: any) {
+      logger.error(`Error processing NLP operation: ${error.message}`);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Start servers
+  const port = process.env.PORT || 3000;
+  httpServer.listen(port, () => {
+    logger.info(`MCP Server listening on port ${port}`);
+    startApiServer(app);
+    startSocketServer(httpServer);
+  });
 } 
