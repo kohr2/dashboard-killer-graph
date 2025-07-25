@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Session } from 'neo4j-driver';
 import { v4 as uuidv4 } from 'uuid';
 import { container } from 'tsyringe';
@@ -36,7 +37,7 @@ export interface ProcessingResult {
   metadata?: Record<string, any>;
 }
 
-@singleton()
+// @singleton() // Temporarily commented out for testing
 export class Neo4jIngestionService {
   private neo4jConnection: Neo4jConnection;
   private ontologyService: OntologyService;

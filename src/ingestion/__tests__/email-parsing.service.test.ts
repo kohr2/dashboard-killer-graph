@@ -21,19 +21,27 @@ describe('EmailParsingService', () => {
     mockParsedMail = {
       messageId: 'test-message-id',
       from: {
-        value: [{ address: 'sender@example.com', name: 'Sender Name' }]
+        value: [{ address: 'sender@example.com', name: 'Sender Name' }],
+        html: 'Sender Name &lt;sender@example.com&gt;',
+        text: 'Sender Name <sender@example.com>'
       } as AddressObject,
       to: {
         value: [
           { address: 'recipient1@example.com', name: 'Recipient 1' },
           { address: 'recipient2@example.com', name: 'Recipient 2' }
-        ]
+        ],
+        html: 'Recipient 1 &lt;recipient1@example.com&gt;, Recipient 2 &lt;recipient2@example.com&gt;',
+        text: 'Recipient 1 <recipient1@example.com>, Recipient 2 <recipient2@example.com>'
       } as AddressObject,
       cc: {
-        value: [{ address: 'cc@example.com', name: 'CC Recipient' }]
+        value: [{ address: 'cc@example.com', name: 'CC Recipient' }],
+        html: 'CC Recipient &lt;cc@example.com&gt;',
+        text: 'CC Recipient <cc@example.com>'
       } as AddressObject,
       bcc: {
-        value: [{ address: 'bcc@example.com', name: 'BCC Recipient' }]
+        value: [{ address: 'bcc@example.com', name: 'BCC Recipient' }],
+        html: 'BCC Recipient &lt;bcc@example.com&gt;',
+        text: 'BCC Recipient <bcc@example.com>'
       } as AddressObject,
       subject: 'Test Email Subject',
       text: 'This is the plain text body of the email.',
@@ -44,13 +52,19 @@ describe('EmailParsingService', () => {
         ['to', 'recipient1@example.com, recipient2@example.com'],
         ['subject', 'Test Email Subject'],
         ['date', 'Sun, 01 Jan 2023 12:00:00 +0000']
-      ]),
+      ] as [string, string][]),
       attachments: [
         {
           filename: 'test.pdf',
           contentType: 'application/pdf',
           size: 1024,
           content: Buffer.from('test content'),
+          related: false,
+          type: 'attachment',
+          contentDisposition: 'attachment',
+          headers: new Map(),
+          checksum: 'test-checksum',
+          headerLines: []
         }
       ]
     };
@@ -139,10 +153,10 @@ describe('EmailParsingService', () => {
       mockParsedMail.attachments = [
         {
           filename: undefined,
-          contentType: undefined,
-          size: undefined,
+          contentType: 'application/octet-stream',
+          size: 0,
           content: Buffer.from('test content'),
-        }
+        } as any
       ];
       mockedSimpleParser.mockResolvedValue(mockParsedMail as ParsedMail);
 
@@ -165,9 +179,9 @@ describe('EmailParsingService', () => {
 
     it('should handle array headers', async () => {
       mockParsedMail.headers = new Map([
-        ['from', ['sender1@example.com', 'sender2@example.com']],
+        ['from', 'sender1@example.com, sender2@example.com'],
         ['to', 'single@example.com']
-      ]);
+      ] as any);
       mockedSimpleParser.mockResolvedValue(mockParsedMail as ParsedMail);
 
       const result = await emailParsingService.parseEmlFile('/path/to/test.eml');
@@ -254,8 +268,10 @@ describe('EmailParsingService', () => {
   describe('convertAddressObject', () => {
     it('should convert single address object', () => {
       const address: AddressObject = {
-        value: [{ address: 'test@example.com', name: 'Test User' }]
-      };
+        value: [{ address: 'test@example.com', name: 'Test User' }],
+        html: 'Test User &lt;test@example.com&gt;',
+        text: 'Test User <test@example.com>'
+      } as any;
 
       const result = (emailParsingService as any).convertAddressObject(address);
 

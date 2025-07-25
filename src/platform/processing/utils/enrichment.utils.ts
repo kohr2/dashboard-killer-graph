@@ -179,7 +179,7 @@ function isLocationLikeObject(key: string, value: any): boolean {
  * Flatten an address object into a string
  */
 function flattenAddressObject(addr: Record<string, any>): string {
-  const parts = [];
+  const parts: string[] = [];
   
   // Street address
   const street = addr.street1 || addr.street || addr.streetAddress || addr.addressLine1 || '';
@@ -210,7 +210,7 @@ function flattenAddressObject(addr: Record<string, any>): string {
  * Flatten a location object into a string, formatting lat/lng to 4 decimal places
  */
 function flattenLocationObject(loc: Record<string, any>): string {
-  const parts = [];
+  const parts: string[] = [];
   // Coordinates
   let lat = loc.latitude || loc.lat || '';
   let lng = loc.longitude || loc.lng || '';
@@ -260,7 +260,7 @@ function isContactLikeObject(key: string, value: any): boolean {
  * Flatten a contact object into a string
  */
 function flattenContactObject(contact: Record<string, any>): string {
-  const parts = [];
+  const parts: string[] = [];
   
   // Phone
   const phone = contact.phone || contact.telephone || contact.mobile || '';

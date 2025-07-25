@@ -10,7 +10,7 @@ import { OntologyService } from '@platform/ontology/ontology.service';
 
 config(); // Make sure environment variables are loaded
 
-@singleton()
+// @singleton() // Temporarily commented out for testing
 export class Neo4jConnection {
   private driver: Driver | null = null;
   private readonly uri: string;

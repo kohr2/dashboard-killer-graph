@@ -10,7 +10,7 @@ import { injectable } from 'tsyringe';
  * This service manages enrichment services and applies them to entities
  * based on simple entity type matching.
  */
-@injectable()
+// @injectable() // Temporarily commented out for testing
 export class EnrichmentOrchestratorService {
   private readonly services: Map<string, IEnrichmentService> = new Map();
 

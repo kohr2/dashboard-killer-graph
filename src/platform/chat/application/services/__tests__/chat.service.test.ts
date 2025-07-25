@@ -168,10 +168,10 @@ describe('ChatService', () => {
       const mockSession = {
         run: jest.fn().mockResolvedValue({ records: [] }),
         close: jest.fn(),
-      };
+      } as any;
       mockNeo4jConnection.getSession.mockReturnValue(mockSession as any);
 
-      mockAccessControlService.checkPermission.mockResolvedValue(true);
+      mockAccessControlService.can.mockReturnValue(true);
 
       const message = await chatService.sendMessage(mockUser, 'conv-1', 'Hello world');
 

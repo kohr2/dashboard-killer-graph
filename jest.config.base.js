@@ -51,14 +51,14 @@ module.exports = {
   transform: {
     '^.+\\.ts$': ['ts-jest', {
       tsconfig: 'test/tsconfig.json',
-      isolatedModules: true
+      isolatedModules: false
     }]
   },
 
   // Global Jest configuration
   globals: {
     'ts-jest': {
-      isolatedModules: true
+      isolatedModules: false
     }
   },
 

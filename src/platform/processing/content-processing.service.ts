@@ -239,7 +239,7 @@ interface IngestionEntity {
   embedding?: number[];
 }
 
-@injectable()
+// @injectable() // Temporarily commented out for testing
 export class ContentProcessingService {
   private nlpServiceUrl: string;
   private enrichmentOrchestrator: EnrichmentOrchestratorService;

@@ -56,13 +56,6 @@ describe('MCP Server Core', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     
-
-    // Setup container mock
-    (container as any).resolve = mockContainer.resolve;
-    
-    // Setup plugin registry mock
-    (pluginRegistry as any) = mockPluginRegistry;
-    
     // Setup environment variables
     process.env.NEO4J_DATABASE = 'test-db';
 
@@ -74,6 +67,12 @@ describe('MCP Server Core', () => {
       }
       return undefined;
     });
+
+    // Setup container mock
+    (container as any).resolve = mockContainer.resolve;
+    
+    // Setup plugin registry mock
+    (pluginRegistry as any) = mockPluginRegistry;
 
   });
 
@@ -419,17 +418,18 @@ describe('MCP Server Core', () => {
     it('should return tool schemas with descriptions', () => {
       const result = getToolSchemas(mockOntologyService as any, mockNeo4jConnection as any);
 
-      expect(result).toHaveLength(2);
-      expect(result[0].name).toBe('processKnowledgeGraphQuery');
-      expect(result[1].name).toBe('processNLPOperation');
-      expect(result[0].description).toContain('fibo');
-      expect(result[0].description).toContain('procurement');
+      expect(result).toHaveProperty('query_knowledge_graph');
+      expect(result).toHaveProperty('nlp_processing');
+      expect(result.query_knowledge_graph.name).toBe('query_knowledge_graph');
+      expect(result.nlp_processing.name).toBe('nlp_processing');
+      expect(result.query_knowledge_graph.description).toContain('fibo');
+      expect(result.query_knowledge_graph.description).toContain('procurement');
     });
 
     it('should include database parameter in knowledge graph query schema', () => {
       const result = getToolSchemas(mockOntologyService as any, mockNeo4jConnection as any);
 
-      const kgQuerySchema = result.find(schema => schema.name === 'processKnowledgeGraphQuery');
+      const kgQuerySchema = result.query_knowledge_graph;
       expect(kgQuerySchema).toBeDefined();
       
       const databaseParam = kgQuerySchema?.inputSchema.properties?.database;
@@ -438,16 +438,16 @@ describe('MCP Server Core', () => {
       expect(databaseParam?.description).toContain('database');
     });
 
-    it('should include database parameter in NLP operation schema', () => {
+    it('should include required parameters in NLP operation schema', () => {
       const result = getToolSchemas(mockOntologyService as any, mockNeo4jConnection as any);
 
-      const nlpSchema = result.find(schema => schema.name === 'processNLPOperation');
+      const nlpSchema = result.nlp_processing;
       expect(nlpSchema).toBeDefined();
       
-      const databaseParam = nlpSchema?.inputSchema.properties?.database;
-      expect(databaseParam).toBeDefined();
-      expect(databaseParam?.type).toBe('string');
-      expect(databaseParam?.description).toContain('database');
+      const operationParam = nlpSchema?.inputSchema.properties?.operation;
+      expect(operationParam).toBeDefined();
+      expect(operationParam?.type).toBe('string');
+      expect(operationParam?.enum).toContain('extract_entities');
     });
   });
 

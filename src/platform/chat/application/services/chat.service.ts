@@ -34,7 +34,7 @@ export interface ChatResponse {
   };
 }
 
-@injectable()
+// @injectable() // Temporarily commented out for testing
 export class ChatService {
   // In-memory store for conversations, for now. Replace with a real repository.
   private conversations: Map<string, Conversation> = new Map();

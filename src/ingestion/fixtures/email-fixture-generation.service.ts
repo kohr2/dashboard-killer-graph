@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { singleton } from 'tsyringe';
 import { logger } from '@shared/utils/logger';
 import { promises as fs } from 'fs';

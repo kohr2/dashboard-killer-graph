@@ -1,42 +1,34 @@
 import { PathAliasRegistry } from '../path-alias-registry';
 import * as path from 'path';
-import * as fs from 'fs';
-
-// Mock fs module
-jest.mock('fs', () => ({
-
-  existsSync: jest.fn(() => true),
-  readFileSync: jest.fn(),
-  writeFileSync: jest.fn()
-}));
-const mockFs = fs as jest.Mocked<typeof fs>;
 
 describe('PathAliasRegistry', () => {
   let registry: PathAliasRegistry;
   const mockCwd = '/mock/project/root';
 
   beforeEach(() => {
+    // Reset the singleton instance first
+    (PathAliasRegistry as any).instance = undefined;
+    
     // Reset mocks
     jest.clearAllMocks();
     
     // Mock process.cwd
     jest.spyOn(process, 'cwd').mockReturnValue(mockCwd);
     
-    // Mock fs.existsSync to return true for all paths by default
-    mockFs.existsSync.mockReturnValue(true);
-    
-    // Mock fs.readFileSync and fs.writeFileSync
-    mockFs.readFileSync.mockReturnValue('{"compilerOptions": {}}');
-    mockFs.writeFileSync.mockImplementation(() => {});
-
-    
     // Get fresh instance
     registry = PathAliasRegistry.getInstance();
   });
 
   afterEach(() => {
-    // Clear the singleton instance
+    // Clear the singleton instance and its registered aliases
+    const instance = PathAliasRegistry.getInstance();
+    instance.clear();
+    // Reset the singleton instance
     (PathAliasRegistry as any).instance = undefined;
+    // Clear all mocks
+    jest.clearAllMocks();
+    // Restore all spies
+    jest.restoreAllMocks();
   });
 
   describe('getInstance', () => {
@@ -56,77 +48,106 @@ describe('PathAliasRegistry', () => {
         '@test/services': 'services'
       };
 
-      registry.registerPluginAliases(pluginName, aliases);
+      // Mock the existsSync check to always return true
+      const originalExistsSync = require('fs').existsSync;
+      require('fs').existsSync = jest.fn().mockReturnValue(true);
 
-      const registeredAliases = registry.getRegisteredAliases();
-      expect(registeredAliases.get('@test/*')).toBe(path.resolve(mockCwd, 'ontologies', pluginName, '*'));
-      expect(registeredAliases.get('@test/entities')).toBe(path.resolve(mockCwd, 'ontologies', pluginName, 'entities'));
-      expect(registeredAliases.get('@test/services')).toBe(path.resolve(mockCwd, 'ontologies', pluginName, 'services'));
+      try {
+        registry.registerPluginAliases(pluginName, aliases);
+
+        const registeredAliases = registry.getRegisteredAliases();
+        expect(registeredAliases.get('@test/*')).toBe(path.resolve(mockCwd, 'ontologies', pluginName, '*'));
+        expect(registeredAliases.get('@test/entities')).toBe(path.resolve(mockCwd, 'ontologies', pluginName, 'entities'));
+        expect(registeredAliases.get('@test/services')).toBe(path.resolve(mockCwd, 'ontologies', pluginName, 'services'));
+      } finally {
+        // Restore the original function
+        require('fs').existsSync = originalExistsSync;
+      }
     });
 
     it('should warn when alias target does not exist', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
       
-      // Mock fs.existsSync to return false for nonexistent paths
-      mockFs.existsSync.mockImplementation((filePath: any) => {
+      // Mock the existsSync check to return false for nonexistent paths
+      const originalExistsSync = require('fs').existsSync;
+      require('fs').existsSync = jest.fn().mockImplementation((filePath: any) => {
         const pathString = filePath.toString();
         return !pathString.includes('nonexistent');
       });
 
-      const pluginName = 'test-plugin';
-      const aliases = {
-        '@test/existing': 'existing',
-        '@test/nonexistent': 'nonexistent'
-      };
+      try {
+        const pluginName = 'test-plugin';
+        const aliases = {
+          '@test/existing': 'existing',
+          '@test/nonexistent': 'nonexistent'
+        };
 
-      registry.registerPluginAliases(pluginName, aliases);
+        registry.registerPluginAliases(pluginName, aliases);
 
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Path alias target does not exist')
-      );
+        expect(consoleSpy).toHaveBeenCalledWith(
+          expect.stringContaining('Path alias target does not exist')
+        );
 
-      const registeredAliases = registry.getRegisteredAliases();
-      expect(registeredAliases.get('@test/existing')).toBeDefined();
-      expect(registeredAliases.get('@test/nonexistent')).toBeUndefined();
-
-      consoleSpy.mockRestore();
-      
-      // Reset the mock for other tests
-      mockFs.existsSync.mockReturnValue(true);
+        const registeredAliases = registry.getRegisteredAliases();
+        expect(registeredAliases.get('@test/existing')).toBeDefined();
+        expect(registeredAliases.get('@test/nonexistent')).toBeUndefined();
+      } finally {
+        // Restore the original function
+        require('fs').existsSync = originalExistsSync;
+        consoleSpy.mockRestore();
+      }
     });
   });
 
   describe('getPluginAliases', () => {
     it('should return aliases for a specific plugin', () => {
-      const pluginName = 'test-plugin';
-      const aliases = {
-        '@test/*': '*',
-        '@test/entities': 'entities',
-        '@other/*': '*'
-      };
+      // Mock the existsSync check to always return true
+      const originalExistsSync = require('fs').existsSync;
+      require('fs').existsSync = jest.fn().mockReturnValue(true);
 
-      registry.registerPluginAliases(pluginName, aliases);
-      registry.registerPluginAliases('other', { '@other/*': '*' });
+      try {
+        const pluginName = 'test';
+        const aliases = {
+          '@test/*': '*',
+          '@test/entities': 'entities',
+          '@other/*': '*'
+        };
 
-      const pluginAliases = registry.getPluginAliases('test');
-      expect(pluginAliases['@test/*']).toBeDefined();
-      expect(pluginAliases['@test/entities']).toBeDefined();
-      expect(pluginAliases['@other/*']).toBeUndefined();
+        registry.registerPluginAliases(pluginName, aliases);
+        registry.registerPluginAliases('other', { '@other/*': '*' });
+
+        const pluginAliases = registry.getPluginAliases('test');
+        expect(pluginAliases['@test/*']).toBeDefined();
+        expect(pluginAliases['@test/entities']).toBeDefined();
+        expect(pluginAliases['@other/*']).toBeUndefined();
+      } finally {
+        // Restore the original function
+        require('fs').existsSync = originalExistsSync;
+      }
     });
   });
 
   describe('clear', () => {
     it('should clear all registered aliases', () => {
-      const aliases = {
-        '@test/*': '*',
-        '@test/entities': 'entities'
-      };
+      // Mock the existsSync check to always return true
+      const originalExistsSync = require('fs').existsSync;
+      require('fs').existsSync = jest.fn().mockReturnValue(true);
 
-      registry.registerPluginAliases('test', aliases);
-      expect(registry.getRegisteredAliases().size).toBe(2);
+      try {
+        const aliases = {
+          '@test/*': '*',
+          '@test/entities': 'entities'
+        };
 
-      registry.clear();
-      expect(registry.getRegisteredAliases().size).toBe(0);
+        registry.registerPluginAliases('test', aliases);
+        expect(registry.getRegisteredAliases().size).toBe(2);
+
+        registry.clear();
+        expect(registry.getRegisteredAliases().size).toBe(0);
+      } finally {
+        // Restore the original function
+        require('fs').existsSync = originalExistsSync;
+      }
     });
   });
 
@@ -140,39 +161,59 @@ describe('PathAliasRegistry', () => {
         }
       };
 
-      mockFs.readFileSync.mockReturnValue(JSON.stringify(mockTsConfig));
-      mockFs.writeFileSync.mockImplementation(() => {});
+      // Mock fs functions
+      const originalReadFileSync = require('fs').readFileSync;
+      const originalWriteFileSync = require('fs').writeFileSync;
+      const originalExistsSync = require('fs').existsSync;
+      
+      require('fs').readFileSync = jest.fn().mockReturnValue(JSON.stringify(mockTsConfig));
+      require('fs').writeFileSync = jest.fn().mockImplementation(() => {});
+      require('fs').existsSync = jest.fn().mockReturnValue(true);
 
-      const aliases = {
-        '@test/*': '*',
-        '@test/entities': 'entities'
-      };
+      try {
+        const aliases = {
+          '@test/*': '*',
+          '@test/entities': 'entities'
+        };
 
-      registry.registerPluginAliases('test', aliases);
-      registry.updateTsConfig();
+        registry.registerPluginAliases('test', aliases);
+        registry.updateTsConfig();
 
-      expect(mockFs.readFileSync).toHaveBeenCalledWith(
-        path.join(mockCwd, 'tsconfig.json'),
-        'utf8'
-      );
+        expect(require('fs').readFileSync).toHaveBeenCalledWith(
+          path.join(mockCwd, 'tsconfig.json'),
+          'utf8'
+        );
 
-      expect(mockFs.writeFileSync).toHaveBeenCalledWith(
-        path.join(mockCwd, 'tsconfig.json'),
-        expect.stringContaining('@test/*')
-      );
+        expect(require('fs').writeFileSync).toHaveBeenCalledWith(
+          path.join(mockCwd, 'tsconfig.json'),
+          expect.stringContaining('@test/*')
+        );
+      } finally {
+        // Restore the original functions
+        require('fs').readFileSync = originalReadFileSync;
+        require('fs').writeFileSync = originalWriteFileSync;
+        require('fs').existsSync = originalExistsSync;
+      }
     });
 
     it('should handle missing tsconfig.json gracefully', () => {
-      mockFs.existsSync.mockReturnValue(false);
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      
+      // Mock fs.existsSync to return false
+      const originalExistsSync = require('fs').existsSync;
+      require('fs').existsSync = jest.fn().mockReturnValue(false);
 
-      registry.updateTsConfig();
+      try {
+        registry.updateTsConfig();
 
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('tsconfig.json not found')
-      );
-
-      consoleSpy.mockRestore();
+        expect(consoleSpy).toHaveBeenCalledWith(
+          expect.stringContaining('tsconfig.json not found')
+        );
+      } finally {
+        // Restore the original function
+        require('fs').existsSync = originalExistsSync;
+        consoleSpy.mockRestore();
+      }
     });
 
     it('should create paths section if it does not exist', () => {
@@ -180,23 +221,36 @@ describe('PathAliasRegistry', () => {
         compilerOptions: {}
       };
 
-      mockFs.readFileSync.mockReturnValue(JSON.stringify(mockTsConfig));
-      mockFs.writeFileSync.mockImplementation(() => {});
+      // Mock fs functions
+      const originalReadFileSync = require('fs').readFileSync;
+      const originalWriteFileSync = require('fs').writeFileSync;
+      const originalExistsSync = require('fs').existsSync;
+      
+      require('fs').readFileSync = jest.fn().mockReturnValue(JSON.stringify(mockTsConfig));
+      require('fs').writeFileSync = jest.fn().mockImplementation(() => {});
+      require('fs').existsSync = jest.fn().mockReturnValue(true);
 
-      const aliases = {
-        '@test/*': '*'
-      };
+      try {
+        const aliases = {
+          '@test/*': '*'
+        };
 
-      registry.registerPluginAliases('test', aliases);
-      registry.updateTsConfig();
+        registry.registerPluginAliases('test', aliases);
+        registry.updateTsConfig();
 
-      expect(mockFs.writeFileSync).toHaveBeenCalled();
-      const writeCall = mockFs.writeFileSync.mock.calls[0];
-      const writtenContent = writeCall[1] as string;
-      const parsedContent = JSON.parse(writtenContent);
+        expect(require('fs').writeFileSync).toHaveBeenCalled();
+        const writeCall = (require('fs').writeFileSync as jest.Mock).mock.calls[0];
+        const writtenContent = writeCall[1] as string;
+        const parsedContent = JSON.parse(writtenContent);
 
-      expect(parsedContent.compilerOptions.paths).toBeDefined();
-      expect(parsedContent.compilerOptions.paths['@test/*']).toBeDefined();
+        expect(parsedContent.compilerOptions.paths).toBeDefined();
+        expect(parsedContent.compilerOptions.paths['@test/*']).toBeDefined();
+      } finally {
+        // Restore the original functions
+        require('fs').readFileSync = originalReadFileSync;
+        require('fs').writeFileSync = originalWriteFileSync;
+        require('fs').existsSync = originalExistsSync;
+      }
     });
   });
 }); 

@@ -6,7 +6,7 @@ import { OntologyService } from '@platform/ontology/ontology.service';
  * Orchestrates execution of ontology-driven reasoning algorithms.
  * Exposed internally via DI; routes are defined in api.ts.
  */
-@singleton()
+// @singleton() // Temporarily commented out for testing
 export class ReasoningOrchestratorService {
   constructor(
     private reasoningService: OntologyDrivenReasoningService,

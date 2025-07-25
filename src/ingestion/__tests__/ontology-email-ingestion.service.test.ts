@@ -76,7 +76,10 @@ describe('OntologyEmailIngestionService', () => {
     
     // Mock fs.readFile to return test email content
     mockFs.readFile.mockResolvedValue('test email content');
-    mockFs.readdir.mockResolvedValue(['test1.eml', 'test2.eml']);
+    mockFs.readdir.mockResolvedValue([
+      { name: 'test1.eml', isFile: () => true } as any,
+      { name: 'test2.eml', isFile: () => true } as any
+    ]);
 
     // Setup ontology service mock
     mockOntologyService.getAllOntologies.mockReturnValue([
@@ -116,7 +119,7 @@ describe('OntologyEmailIngestionService', () => {
     });
 
     it('should successfully ingest ontology email with build options', async () => {
-      const buildOptions = { maxEntities: 100, maxRelationships: 50 };
+      const buildOptions = { topEntities: 100, topRelationships: 50 };
       mockGenericIngestionPipeline.run.mockResolvedValue(undefined);
 
       await service.ingestOntologyEmail(ontologyName, buildOptions);
@@ -167,7 +170,7 @@ describe('OntologyEmailIngestionService', () => {
       const buildError = new Error('Build failed');
       mockOntologyBuildService.buildOntologyByName.mockRejectedValue(buildError);
 
-      await expect(service.ingestOntologyEmail(ontologyName, { maxEntities: 100 }))
+      await expect(service.ingestOntologyEmail(ontologyName, { topEntities: 100 }))
         .rejects.toThrow('Build failed');
     });
 
