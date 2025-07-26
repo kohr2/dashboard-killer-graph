@@ -33,40 +33,50 @@ describe('Procurement Entity Name Extraction', () => {
       Procurement Department
     `;
 
-    const response = await axios.post(`${nlpServiceUrl}/batch-extract-graph`, {
-      texts: [testText],
-      ontology_name: 'default'
-    });
+    try {
+      const response = await axios.post(`${nlpServiceUrl}/batch-extract-graph`, {
+        texts: [testText],
+        ontology_name: 'default'
+      }, {
+        timeout: 60000 // Increase timeout to 60 seconds
+      });
 
-    const graph = response.data[0];
-    const entities = graph.entities || [];
+      const graph = response.data[0];
+      const entities = graph.entities || [];
 
-    // Find any entities that could be procurement-related
-    const procurementRelatedEntities = entities.filter((e: any) => 
-      e.value && (
-        e.value.toLowerCase().includes('raw materials') ||
-        e.value.toLowerCase().includes('steel') ||
-        e.value.toLowerCase().includes('aluminum') ||
-        e.value.toLowerCase().includes('copper') ||
-        e.value.toLowerCase().includes('abc corp') ||
-        e.value.toLowerCase().includes('procurement') ||
-        e.value.toLowerCase().includes('contract')
-      )
-    );
-    
-    logger.info('Extracted entities:', entities.map((e: any) => ({ type: e.type, value: e.value })));
-    logger.info('Procurement-related entities:', procurementRelatedEntities);
+      // Find any entities that could be procurement-related
+      const procurementRelatedEntities = entities.filter((e: any) => 
+        e.value && (
+          e.value.toLowerCase().includes('raw materials') ||
+          e.value.toLowerCase().includes('steel') ||
+          e.value.toLowerCase().includes('aluminum') ||
+          e.value.toLowerCase().includes('copper') ||
+          e.value.toLowerCase().includes('abc corp') ||
+          e.value.toLowerCase().includes('procurement') ||
+          e.value.toLowerCase().includes('contract')
+        )
+      );
+      
+      logger.info('Extracted entities:', entities.map((e: any) => ({ type: e.type, value: e.value })));
+      logger.info('Procurement-related entities:', procurementRelatedEntities);
 
-    // Check that entities have actual names, not just the type label
-    for (const entity of entities) {
-      expect(entity.value).not.toBe(entity.type);
-      expect(entity.value).not.toBe(entity.type.toLowerCase());
-      expect(entity.value).not.toBe(entity.type.toUpperCase());
+      // Check that entities have actual names, not just the type label
+      for (const entity of entities) {
+        expect(entity.value).not.toBe(entity.type);
+        expect(entity.value).not.toBe(entity.type.toLowerCase());
+        expect(entity.value).not.toBe(entity.type.toUpperCase());
+      }
+
+      // Check that we have at least some entities extracted
+      expect(entities.length).toBeGreaterThan(0);
+    } catch (error: any) {
+      logger.error('Error calling NLP service:', error);
+      if (error.code === 'ECONNRESET' || error.code === 'ETIMEDOUT') {
+        logger.error('Connection timeout or reset. This might be due to the NLP service being overloaded.');
+      }
+      throw error;
     }
-
-    // Check that we have at least some entities extracted
-    expect(entities.length).toBeGreaterThan(0);
-  }, 30000);
+  }, 90000); // Increase test timeout to 90 seconds
 
   it('should not create entities with generic type names as values', async () => {
     const testText = `
@@ -79,35 +89,45 @@ describe('Procurement Entity Name Extraction', () => {
       Vendor: Vertex Construction
     `;
 
-    const response = await axios.post(`${nlpServiceUrl}/batch-extract-graph`, {
-      texts: [testText],
-      ontology_name: 'default'
-    });
+    try {
+      const response = await axios.post(`${nlpServiceUrl}/batch-extract-graph`, {
+        texts: [testText],
+        ontology_name: 'default'
+      }, {
+        timeout: 60000 // Increase timeout to 60 seconds
+      });
 
-    const graph = response.data[0];
-    const entities = graph.entities || [];
+      const graph = response.data[0];
+      const entities = graph.entities || [];
 
-    logger.info('All extracted entities:', entities.map((e: any) => ({ type: e.type, value: e.value })));
+      logger.info('All extracted entities:', entities.map((e: any) => ({ type: e.type, value: e.value })));
 
-    // Check that no entity has a value that's just the type name
-    for (const entity of entities) {
-      // Entity value should not be the same as the type (case-insensitive)
-      expect(entity.value.toLowerCase()).not.toBe(entity.type.toLowerCase());
-      
-      // Entity value should not be a generic version of the type
-      const genericTypeNames = [
-        'procurementobject',
-        'procurement object',
-        'buyer',
-        'awarder',
-        'tenderer',
-        'contract',
-        'procedure',
-        'entity',
-        'object'
-      ];
-      
-      expect(genericTypeNames).not.toContain(entity.value.toLowerCase());
+      // Check that no entity has a value that's just the type name
+      for (const entity of entities) {
+        // Entity value should not be the same as the type (case-insensitive)
+        expect(entity.value.toLowerCase()).not.toBe(entity.type.toLowerCase());
+        
+        // Entity value should not be a generic version of the type
+        const genericTypeNames = [
+          'procurementobject',
+          'procurement object',
+          'buyer',
+          'awarder',
+          'tenderer',
+          'contract',
+          'procedure',
+          'entity',
+          'object'
+        ];
+        
+        expect(genericTypeNames).not.toContain(entity.value.toLowerCase());
+      }
+    } catch (error: any) {
+      logger.error('Error calling NLP service:', error);
+      if (error.code === 'ECONNRESET' || error.code === 'ETIMEDOUT') {
+        logger.error('Connection timeout or reset. This might be due to the NLP service being overloaded.');
+      }
+      throw error;
     }
-  }, 30000);
+  }, 90000); // Increase test timeout to 90 seconds
 }); 

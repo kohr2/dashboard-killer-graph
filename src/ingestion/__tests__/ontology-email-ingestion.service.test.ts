@@ -36,11 +36,19 @@ const mockOntologyService = {
 
 const mockContentProcessingService = {
   processContent: jest.fn(),
+  processContentBatch: jest.fn().mockResolvedValue([
+    {
+      content: 'test email content',
+      entities: [],
+      relationships: []
+    }
+  ]),
 };
 
 const mockNeo4jIngestionService = {
-  initialize: jest.fn(),
-  close: jest.fn(),
+  initialize: jest.fn().mockResolvedValue(undefined),
+  close: jest.fn().mockResolvedValue(undefined),
+  ingestEntitiesAndRelationships: jest.fn().mockResolvedValue(undefined),
 };
 
 const mockEmailFixtureGenerationService = {
@@ -330,6 +338,21 @@ describe('OntologyEmailIngestionService', () => {
 
   describe('run', () => {
     it('should call ingest with correct arguments', async () => {
+      // Reset specific mocks (not container.resolve since it was called in constructor)
+      mockOntologyService.getAllOntologies.mockClear();
+      mockOntologyService.getOntology.mockClear();
+      mockOntologyBuildService.buildOntologyByName.mockClear();
+      mockNeo4jIngestionService.initialize.mockClear();
+      mockNeo4jIngestionService.close.mockClear();
+      
+      // Set up fresh mocks for this test
+      mockOntologyService.getAllOntologies.mockReturnValue([{ name: 'test-ontology' }]);
+      mockOntologyService.getOntology.mockReturnValue({ name: 'test-ontology' });
+      mockFs.readFile.mockResolvedValue('test email content');
+      mockFs.readdir.mockResolvedValue(['test1.eml'] as any);
+      mockPath.join.mockReturnValue('/path/to/emails');
+      mockGenericIngestionPipeline.run.mockResolvedValue(undefined);
+
       const argv = {
         scope: 'test-ontology',
         folder: '/path/to/emails',
@@ -339,16 +362,36 @@ describe('OntologyEmailIngestionService', () => {
         delete: 'false',
         generate: 'true',
       };
-      await service.ingestOntologyEmail(argv.scope, undefined, argv.generate === 'true', argv.folder);
-      expect((container.resolve as jest.Mock)).toHaveBeenCalledWith(OntologyService);
-      expect((container.resolve as jest.Mock)).toHaveBeenCalledWith(
-        ContentProcessingService,
+      
+      // Provide buildOptions so that buildOntologyByName gets called
+      const buildOptions = { topEntities: 100 };
+      await service.ingestOntologyEmail(argv.scope, buildOptions, argv.generate === 'true', argv.folder);
+      
+      // Verify the correct methods were called during execution
+      // Build service should be called with the ontology name and build options
+      expect(mockOntologyBuildService.buildOntologyByName).toHaveBeenCalledWith('test-ontology', buildOptions);
+      
+      // Verify ontology lookup
+      expect(mockOntologyService.getAllOntologies).toHaveBeenCalled();
+      // Note: The service uses getAllOntologies() and find() instead of getOntology()
+      
+      // Verify pipeline was run with correct input
+      expect(mockGenericIngestionPipeline.run).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            content: 'test email content',
+            meta: expect.objectContaining({
+              source: 'fixture',
+              ontology: 'test-ontology',
+              type: 'email'
+            })
+          })
+        ])
       );
-      expect((container.resolve as jest.Mock)).toHaveBeenCalledWith(Neo4jIngestionService);
-      expect((container.resolve as jest.Mock)).toHaveBeenCalledWith(
-        EmailFixtureGenerationService,
-      );
-      expect((container.resolve as jest.Mock)).toHaveBeenCalledWith(OntologyBuildService);
+      
+      // Verify Neo4j connection handling
+      expect(mockNeo4jIngestionService.initialize).toHaveBeenCalled();
+      expect(mockNeo4jIngestionService.close).toHaveBeenCalled();
     });
   });
 });

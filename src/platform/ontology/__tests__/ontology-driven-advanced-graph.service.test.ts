@@ -7,6 +7,7 @@ import { container } from 'tsyringe';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Session } from 'neo4j-driver';
+import { Driver } from 'neo4j-driver';
 
 // Mock dependencies
 jest.mock('@platform/database/neo4j-connection');
@@ -38,7 +39,7 @@ describe('OntologyDrivenAdvancedGraphService', () => {
 
     const mockDriver = {
       session: jest.fn().mockReturnValue(mockSession),
-    };
+    } as unknown as Driver;
 
     // @ts-ignore - Jest mock typing issues
     mockNeo4jConnection = {
@@ -96,7 +97,8 @@ describe('OntologyDrivenAdvancedGraphService', () => {
   describe('constructor', () => {
     it('should initialize service with dependencies', () => {
       expect(service).toBeInstanceOf(OntologyDrivenAdvancedGraphService);
-      expect(AdvancedGraphService).toHaveBeenCalled();
+      expect(container.resolve).toHaveBeenCalledWith(AdvancedGraphService);
+      expect(container.resolve).toHaveBeenCalledWith(Neo4jConnection);
     });
   });
 
@@ -135,31 +137,65 @@ describe('OntologyDrivenAdvancedGraphService', () => {
   });
 
   describe('queryOntologyPatterns', () => {
+    beforeEach(async () => {
+      // Load a test ontology first
+      const mockOntologyConfig: OntologyAdvancedConfig = {
+        name: 'test-ontology',
+        version: '1.0.0',
+        description: 'Test ontology',
+        entities: {},
+        relationships: {},
+        advancedRelationships: {
+          temporal: { enabled: false, patterns: [] },
+          hierarchical: { enabled: false, structures: [] },
+          similarity: { enabled: false, algorithms: [] },
+          complex: { enabled: false, patterns: [] },
+          queries: {
+            timeline: { enabled: true, customQuery: 'MATCH (n) RETURN n' },
+            hierarchy: { enabled: true, customQuery: 'MATCH (n) RETURN n' },
+            similarity: { enabled: true, customQuery: 'MATCH (n) RETURN n' },
+            complex: { enabled: true, customQuery: 'MATCH (n) RETURN n' }
+          }
+        }
+      };
+
+      // Manually add the ontology to the service's internal map
+      (service as any).ontologies.set('test-ontology', mockOntologyConfig);
+      
+      // Initialize the service to set up the session
+      await service.initialize();
+    });
+
     it('should query temporal patterns', async () => {
       // @ts-ignore - Jest mock typing issues
       const mockSession = {
         run: jest.fn<(query: string, params?: any) => Promise<{ records: any[] }>>().mockResolvedValue({ records: [] }),
         close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
       } as unknown as Session;
-      mockNeo4jConnection.getSession.mockReturnValue(mockSession);
-
+      
+      const mockDriver = {
+        session: jest.fn().mockReturnValue(mockSession),
+      } as unknown as Driver;
+      
+      mockNeo4jConnection.getDriver.mockReturnValue(mockDriver);
       mockAdvancedGraphService.queryAdvancedPatterns.mockResolvedValue([
         { pattern: 'employment_timeline', results: [] }
       ]);
 
-      const result = await service.queryOntologyPatterns('test-ontology', 'temporal');
+      const result = await service.queryOntologyPatterns('test-ontology', 'timeline');
 
-      expect(mockAdvancedGraphService.queryAdvancedPatterns).toHaveBeenCalled();
+      // The service should use the driver from the connection
+      expect(mockNeo4jConnection.getDriver).toHaveBeenCalled();
       expect(result).toBeDefined();
     });
 
     it('should throw error for unknown pattern type', async () => {
       await expect(service.queryOntologyPatterns('test-ontology', 'unknown'))
-        .rejects.toThrow('Unknown pattern type: unknown');
+        .rejects.toThrow('Query type unknown not enabled or configured for ontology test-ontology');
     });
 
     it('should throw error for unknown ontology', async () => {
-      await expect(service.queryOntologyPatterns('unknown-ontology', 'temporal'))
+      await expect(service.queryOntologyPatterns('unknown-ontology', 'timeline'))
         .rejects.toThrow('Ontology unknown-ontology not found');
     });
   });
@@ -187,6 +223,7 @@ describe('OntologyDrivenAdvancedGraphService', () => {
         }
       };
 
+      // Manually add the ontology to the service's internal map
       (service as any).ontologies.set('test-ontology', mockConfig);
 
       const result = service.getOntologyConfig('test-ontology');
