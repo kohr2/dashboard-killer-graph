@@ -13,7 +13,13 @@ jest.mock('@platform/database/neo4j-connection');
 jest.mock('../../processing/advanced-graph.service');
 jest.mock('fs');
 jest.mock('path');
-jest.mock('tsyringe');
+jest.mock('tsyringe', () => ({
+  container: {
+    resolve: jest.fn(),
+  },
+  injectable: () => (constructor: any) => constructor,
+  singleton: () => (constructor: any) => constructor,
+}));
 
 const mockedFs = fs as jest.Mocked<typeof fs>;
 const mockedPath = path as jest.Mocked<typeof path>;
@@ -26,8 +32,8 @@ describe('OntologyDrivenAdvancedGraphService', () => {
   beforeEach(() => {
     // @ts-ignore - Jest mock typing issues
     const mockSession = {
-      run: jest.fn().mockResolvedValue({ records: [] }) as any,
-      close: jest.fn(),
+      run: jest.fn<(query: string, params?: any) => Promise<{ records: any[] }>>().mockResolvedValue({ records: [] }),
+      close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
     } as unknown as Session;
 
     const mockDriver = {
@@ -132,8 +138,8 @@ describe('OntologyDrivenAdvancedGraphService', () => {
     it('should query temporal patterns', async () => {
       // @ts-ignore - Jest mock typing issues
       const mockSession = {
-        run: jest.fn().mockResolvedValue({ records: [] }),
-        close: jest.fn(),
+        run: jest.fn<(query: string, params?: any) => Promise<{ records: any[] }>>().mockResolvedValue({ records: [] }),
+        close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
       } as unknown as Session;
       mockNeo4jConnection.getSession.mockReturnValue(mockSession);
 

@@ -94,6 +94,18 @@ class OntologyUpdateRequest(BaseModel):
     compact_ontology: Optional[Dict[str, Any]] = None
     ontology: Optional[str] = None  # New field to name the ontology
 
+class AnalyzeEntityImportanceRequest(BaseModel):
+    prompt: str
+    context: Optional[str] = None
+    max_entities: Optional[int] = 100
+    entities: List[Dict[str, Any]]
+
+class AnalyzeRelationshipImportanceRequest(BaseModel):
+    prompt: str
+    context: Optional[str] = None
+    max_relationships: Optional[int] = 100
+    relationships: List[Dict[str, Any]]
+
 # --- Global State ---
 VALID_ONTOLOGY_TYPES: List[str] = []
 VALID_RELATIONSHIP_TYPES: List[str] = []
@@ -1185,6 +1197,54 @@ async def search_objects(object_type: Optional[str] = None, value: Optional[str]
         },
         "objects": results
     }
+
+@app.post("/analyze-entity-importance", summary="Analyze entity importance using LLM")
+async def analyze_entity_importance(request: AnalyzeEntityImportanceRequest):
+    if not client:
+        raise HTTPException(status_code=503, detail="OpenAI client not configured.")
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": request.prompt}],
+            temperature=0.2,
+            response_format={"type": "json_object"}
+        )
+        content = response.choices[0].message.content
+        data = json.loads(content)
+        if isinstance(data, dict) and "analysis" in data:
+            analysis = data["analysis"]
+        elif isinstance(data, list):
+            analysis = data
+        else:
+            analysis = []
+        analysis = sorted(analysis, key=lambda x: x.get("importanceScore", 0), reverse=True)[:request.max_entities]
+        return {"analysis": analysis}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error analyzing entity importance: {str(e)}")
+
+@app.post("/analyze-relationship-importance", summary="Analyze relationship importance using LLM")
+async def analyze_relationship_importance(request: AnalyzeRelationshipImportanceRequest):
+    if not client:
+        raise HTTPException(status_code=503, detail="OpenAI client not configured.")
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": request.prompt}],
+            temperature=0.2,
+            response_format={"type": "json_object"}
+        )
+        content = response.choices[0].message.content
+        data = json.loads(content)
+        if isinstance(data, dict) and "analysis" in data:
+            analysis = data["analysis"]
+        elif isinstance(data, list):
+            analysis = data
+        else:
+            analysis = []
+        analysis = sorted(analysis, key=lambda x: x.get("importanceScore", 0), reverse=True)[:request.max_relationships]
+        return {"analysis": analysis}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error analyzing relationship importance: {str(e)}")
 
 if __name__ == "__main__":
     print("🚀 Starting NLP service on http://127.0.0.1:8000")

@@ -21,27 +21,27 @@ describe('EmailParsingService', () => {
     mockParsedMail = {
       messageId: 'test-message-id',
       from: {
-        value: [{ address: 'sender@example.com', name: 'Sender Name' }],
-        html: 'Sender Name &lt;sender@example.com&gt;',
-        text: 'Sender Name <sender@example.com>'
+        value: [{ name: 'Sender Name', address: 'sender@example.com' }],
+        html: '',
+        text: ''
       } as AddressObject,
       to: {
         value: [
-          { address: 'recipient1@example.com', name: 'Recipient 1' },
-          { address: 'recipient2@example.com', name: 'Recipient 2' }
+          { name: 'Recipient 1', address: 'recipient1@example.com' },
+          { name: 'Recipient 2', address: 'recipient2@example.com' }
         ],
-        html: 'Recipient 1 &lt;recipient1@example.com&gt;, Recipient 2 &lt;recipient2@example.com&gt;',
-        text: 'Recipient 1 <recipient1@example.com>, Recipient 2 <recipient2@example.com>'
+        html: '',
+        text: ''
       } as AddressObject,
       cc: {
-        value: [{ address: 'cc@example.com', name: 'CC Recipient' }],
-        html: 'CC Recipient &lt;cc@example.com&gt;',
-        text: 'CC Recipient <cc@example.com>'
+        value: [{ name: 'CC Recipient', address: 'cc@example.com' }],
+        html: '',
+        text: ''
       } as AddressObject,
       bcc: {
-        value: [{ address: 'bcc@example.com', name: 'BCC Recipient' }],
-        html: 'BCC Recipient &lt;bcc@example.com&gt;',
-        text: 'BCC Recipient <bcc@example.com>'
+        value: [{ name: 'BCC Recipient', address: 'bcc@example.com' }],
+        html: '',
+        text: ''
       } as AddressObject,
       subject: 'Test Email Subject',
       text: 'This is the plain text body of the email.',
@@ -271,7 +271,7 @@ describe('EmailParsingService', () => {
         value: [{ address: 'test@example.com', name: 'Test User' }],
         html: 'Test User &lt;test@example.com&gt;',
         text: 'Test User <test@example.com>'
-      } as any;
+      } as AddressObject;
 
       const result = (emailParsingService as any).convertAddressObject(address);
 
@@ -284,12 +284,12 @@ describe('EmailParsingService', () => {
           value: [{ address: 'user1@example.com', name: 'User 1' }],
           html: 'User 1 &lt;user1@example.com&gt;',
           text: 'User 1 <user1@example.com>'
-        } as any,
+        },
         { 
           value: [{ address: 'user2@example.com', name: 'User 2' }],
           html: 'User 2 &lt;user2@example.com&gt;',
           text: 'User 2 <user2@example.com>'
-        } as any
+        }
       ];
 
       const result = (emailParsingService as any).convertAddressObject(addresses);
@@ -329,7 +329,9 @@ describe('EmailParsingService', () => {
 
     it('should handle address with no address property', () => {
       const address: AddressObject = {
-        value: [{ name: 'Test User' }]
+        value: [{ name: 'Test User' }],
+        html: '',
+        text: ''
       };
 
       const result = (emailParsingService as any).convertAddressObject(address);
@@ -343,7 +345,9 @@ describe('EmailParsingService', () => {
           { address: 'valid@example.com', name: 'Valid User' },
           { address: '', name: 'Empty Address' },
           { address: 'another@example.com', name: 'Another User' }
-        ]
+        ],
+        html: '',
+        text: ''
       };
 
       const result = (emailParsingService as any).convertAddressObject(address);
@@ -400,22 +404,24 @@ describe('EmailParsingService', () => {
 
   describe('integration scenarios', () => {
     it('should handle complex email with multiple recipients', async () => {
-      mockParsedMail.to = {
-        value: [
-          { address: 'primary@example.com', name: 'Primary Recipient' },
-          { address: 'secondary@example.com', name: 'Secondary Recipient' },
-          { address: 'tertiary@example.com', name: 'Tertiary Recipient' }
-        ]
-      } as AddressObject;
+      const complexMockMail: Partial<ParsedMail> = {
+        ...mockParsedMail,
+        to: {
+          value: [
+            { address: 'primary@example.com', name: 'Primary Recipient' },
+            { address: 'secondary@example.com', name: 'Secondary Recipient' },
+            { address: 'tertiary@example.com', name: 'Tertiary Recipient' }
+          ]
+        } as AddressObject,
+        cc: {
+          value: [
+            { address: 'cc1@example.com', name: 'CC 1' },
+            { address: 'cc2@example.com', name: 'CC 2' }
+          ]
+        } as AddressObject
+      };
 
-      mockParsedMail.cc = {
-        value: [
-          { address: 'cc1@example.com', name: 'CC 1' },
-          { address: 'cc2@example.com', name: 'CC 2' }
-        ]
-      } as AddressObject;
-
-      mockedSimpleParser.mockResolvedValue(mockParsedMail as ParsedMail);
+      mockedSimpleParser.mockResolvedValue(complexMockMail as ParsedMail);
 
       const result = await emailParsingService.parseEmlFile('/path/to/complex.eml');
 
@@ -429,34 +435,58 @@ describe('EmailParsingService', () => {
     });
 
     it('should handle email with multiple attachments', async () => {
-      mockParsedMail.attachments = [
-        {
-          filename: 'document.pdf',
-          contentType: 'application/pdf',
-          size: 2048,
-          content: Buffer.from('pdf content')
-        },
-        {
-          filename: 'image.jpg',
-          contentType: 'image/jpeg',
-          size: 512,
-          content: Buffer.from('image content')
-        },
-        {
-          filename: 'spreadsheet.xlsx',
-          contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          size: 4096,
-          content: Buffer.from('excel content')
-        }
-      ];
-      mockedSimpleParser.mockResolvedValue(mockParsedMail as ParsedMail);
+      const attachmentsMockMail: Partial<ParsedMail> = {
+        ...mockParsedMail,
+        attachments: [
+          {
+            filename: 'document.pdf',
+            contentType: 'application/pdf',
+            size: 1024,
+            content: Buffer.from('pdf content'),
+            related: false,
+            type: 'attachment',
+            contentDisposition: 'attachment',
+            headers: new Map(),
+            checksum: 'checksum',
+            cid: 'cid',
+            headerLines: []
+          },
+          {
+            filename: 'image.jpg',
+            contentType: 'image/jpeg',
+            size: 2048,
+            content: Buffer.from('image content'),
+            related: false,
+            type: 'attachment',
+            contentDisposition: 'attachment',
+            headers: new Map(),
+            checksum: 'checksum',
+            cid: 'cid',
+            headerLines: []
+          },
+          {
+            filename: 'spreadsheet.xlsx',
+            contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            size: 3072,
+            content: Buffer.from('excel content'),
+            related: false,
+            type: 'attachment',
+            contentDisposition: 'attachment',
+            headers: new Map(),
+            checksum: 'checksum',
+            cid: 'cid',
+            headerLines: []
+          }
+        ]
+      };
+      mockedSimpleParser.mockResolvedValue(attachmentsMockMail as ParsedMail);
 
       const result = await emailParsingService.parseEmlFile('/path/to/attachments.eml');
 
       expect(result.attachments).toHaveLength(3);
       expect(result.attachments[0].filename).toBe('document.pdf');
       expect(result.attachments[0].contentType).toBe('application/pdf');
-      expect(result.attachments[0].size).toBe(2048);
+      expect(result.attachments[0].size).toBe(1024);
       expect(result.attachments[1].filename).toBe('image.jpg');
       expect(result.attachments[1].contentType).toBe('image/jpeg');
       expect(result.attachments[2].filename).toBe('spreadsheet.xlsx');
@@ -478,9 +508,12 @@ describe('EmailParsingService', () => {
         </html>
       `;
 
-      mockParsedMail.html = complexHtml;
-      mockParsedMail.text = undefined;
-      mockedSimpleParser.mockResolvedValue(mockParsedMail as ParsedMail);
+      const htmlMockMail: Partial<ParsedMail> = {
+        ...mockParsedMail,
+        html: complexHtml,
+        text: undefined
+      };
+      mockedSimpleParser.mockResolvedValue(htmlMockMail as ParsedMail);
 
       const result = await emailParsingService.parseEmlFile('/path/to/html.eml');
       const extractedText = emailParsingService.extractTextContent(result);

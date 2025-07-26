@@ -14,6 +14,6 @@
       "@src/*": ["src/*"]
     }
   },
-  "include": ["**/*.ts", "../shared/**/*.ts", "../common/**/*.ts", "../platform/**/*.ts"],
+  "include": ["**/*.ts", "../shared/**/*.ts", "../common/**/*.ts", "../platform/**/*.ts", "../register-ontologies.ts"],
   "exclude": ["**/*.test.ts"]
 } 

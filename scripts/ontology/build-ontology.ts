@@ -1,16 +1,16 @@
 #!/usr/bin/env ts-node
 
 import { OntologyProcessor } from './cli';
-import { OwlSource } from './sources/owl-source';
 import { Config } from './config';
 import * as fs from 'fs';
 import * as path from 'path';
-import { EntityImportanceAnalyzer } from './entity-importance-analyzer';
-import { EntityImportanceAnalysis } from './entity-importance-analyzer';
+import { EntityImportanceAnalyzer, EntityImportanceAnalysis, RelationshipImportanceAnalysis } from './entity-importance-analyzer';
 import { sortNamedArray, sortRecord, sortEntityProperties } from './sort-utils';
 import { pruneRelationshipsByEntities } from './relationship-utils';
 import { compactOntology } from './compact-ontology';
 import { Entity, Relationship } from './ontology-source';
+import { JsonSource } from './sources/json-source';
+import { OwlSource } from './sources/owl-source';
 import * as Handlebars from 'handlebars';
 
 interface BuildOptions {
@@ -102,92 +102,6 @@ async function buildOntology(options: BuildOptions = {}) {
       }
     }
     
-    // Apply optional importance-based filtering
-    if (options.topEntities || options.topRelationships) {
-      console.log('⚙️  Applying importance-based (LLM) filters...');
-      const analyzer = new EntityImportanceAnalyzer();
-      const contextDescription: string | undefined = typeof config.source?.description === 'string' ? config.source.description : undefined;
-      let entityAnalysis: EntityImportanceAnalysis[] = [];
-      
-      if (options.topEntities && result.sourceOntology) {
-        // Prepare entity data for analysis
-        const entityInputs = result.sourceOntology.entities.map((e: Entity) => ({
-          name: e.name,
-          description: typeof e.description === 'string' ? e.description : (e.description as any)?._ || e.description || '',
-          properties: e.properties || {}
-        }));
-        console.log(`🔍 Debug: entityInputs count: ${entityInputs.length}`);
-        entityAnalysis = await analyzer.analyzeEntityImportance(entityInputs, contextDescription, options.topEntities);
-        // Keep only the top entities by importance
-        const topEntityNames = new Set(entityAnalysis.slice(0, options.topEntities).map(e => e.entityName));
-        // Always retain core entities even if not in the topN slice
-        const CORE_ENTITY_WHITELIST = new Set([
-          'Buyer',
-          'Organization'
-        ]);
-        CORE_ENTITY_WHITELIST.forEach(coreName => topEntityNames.add(coreName));
-
-        const allEntityNames = new Set<string>(result.sourceOntology.entities.map((e: Entity) => e.name));
-        const ignoredEntities = Array.from(allEntityNames).filter((name: string) => !topEntityNames.has(name));
-        result.sourceOntology.ignoredEntities = ignoredEntities;
-        result.sourceOntology.entities = result.sourceOntology.entities.filter((e: Entity) => topEntityNames.has(e.name));
-      }
-      if (options.topRelationships && result.sourceOntology) {
-        // Prepare relationship data for analysis
-        const relInputs = result.sourceOntology.relationships.map((r: Relationship) => ({
-          name: r.name,
-          description: typeof r.description === 'string' ? r.description : (r.description as any)?._ || r.description || '',
-          sourceType: r.source || 'Entity',
-          targetType: r.target || 'Entity'
-        }));
-        const relAnalysis = await analyzer.analyzeRelationshipImportance(relInputs, contextDescription, options.topRelationships);
-        // Keep only the top relationships by importance
-        const topRelNames = new Set(relAnalysis.slice(0, options.topRelationships).map(r => r.relationshipName));
-        const allRelNames = new Set<string>(result.sourceOntology.relationships.map((r: Relationship) => r.name));
-        const ignoredRelationships = Array.from(allRelNames).filter((name: string) => !topRelNames.has(name));
-        result.sourceOntology.ignoredRelationships = ignoredRelationships;
-        result.sourceOntology.relationships = result.sourceOntology.relationships.filter((r: Relationship) => topRelNames.has(r.name));
-      }
-      
-      // Add vectorIndex property based on importance analysis
-      if (entityAnalysis.length > 0 && result.finalOntology) {
-        console.log('🔍 Determining vectorIndex properties based on importance analysis...');
-        
-        // Create a map of entity names to their importance scores
-        const importanceScores = new Map<string, number>();
-        entityAnalysis.forEach(analysis => {
-          importanceScores.set(analysis.entityName, analysis.importanceScore);
-        });
-        
-        // Update each entity in the final ontology
-        for (const [entityName, entity] of Object.entries(result.finalOntology.entities)) {
-          const entityObj = entity as any;
-          const hasNameProperty = entityObj.properties && Object.keys(entityObj.properties).some((propName: string) =>
-            propName.toLowerCase() === 'name' || propName.toLowerCase() === 'label'
-          );
-          const importanceScore = importanceScores.get(entityName) || 0;
-          const isVeryImportant = importanceScore >= 0.8;
-
-          // Context relevance: any context keyword present in entity name or description
-          let contextRelevant = false;
-          if (contextDescription) {
-            const contextWords = contextDescription.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
-            const fullText = `${entityName.toLowerCase()} ${(typeof entityObj.description === 'string' ? entityObj.description : (entityObj.description as any)?._ || '').toLowerCase()}`;
-            contextRelevant = contextWords.some(w => fullText.includes(w));
-          }
-
-          // Set vectorIndex true if entity is very important OR context relevant (and has name/label prop)
-          entityObj.vectorIndex = hasNameProperty && (isVeryImportant || contextRelevant);
-
-          const reason = entityObj.vectorIndex
-            ? (isVeryImportant ? 'very important' : 'context match')
-            : (!hasNameProperty ? 'no name/label property' : `low importance (score: ${importanceScore.toFixed(2)})`);
-
-          console.log(`${entityObj.vectorIndex ? '  ✅' : '  ❌'} ${entityName}: vectorIndex = ${entityObj.vectorIndex} (${reason})`);
-        }
-      }
-    }
-
     // After topRelationships filtering add relationship pruning
     if (result.sourceOntology) {
       // Prune any relationships that reference entities that are no longer present
@@ -236,21 +150,19 @@ async function buildOntology(options: BuildOptions = {}) {
     console.log(`📊 Entities kept: ${result.sourceOntology?.entities.length || 0}`);
     console.log(`🔗 Relationships kept: ${result.sourceOntology?.relationships.length || 0}`);
     
-    // Determine output directory - create codegen directory within ontology directory
+    // Single consolidated block for all declarations
     const ontologyDir = path.dirname(configPath);
     const codegenDir = path.join(ontologyDir, 'codegen');
-    
-    // Create codegen directory if it doesn't exist
+
     if (!fs.existsSync(codegenDir)) {
       fs.mkdirSync(codegenDir, { recursive: true });
     }
-    
+
     const outputDir = options.outputDir || codegenDir;
-    
-    // Save source ontology (raw extraction)
+
     const sourceOntologyPath = path.join(outputDir, 'source.ontology.json');
+
     const isValidEntityName = (name: string) => {
-      // Must start with a letter, underscore, or dollar sign
       if (!name || name.length === 0) return false;
       if (/^\d+$/.test(name)) return false;
       if (!/^[a-zA-Z_$]/.test(name)) return false;
@@ -261,9 +173,9 @@ async function buildOntology(options: BuildOptions = {}) {
       if (reservedKeywords.includes(name)) return false;
       return true;
     };
+
     const filteredEntities = result.sourceOntology?.entities ? result.sourceOntology.entities.filter((e: Entity) => isValidEntityName(e.name)) : [];
 
-    // Alphabetically sort ignored lists (deduplicated)
     const alpha = (arr: string[] = []) => [...new Set(arr)].sort((a, b) => a.localeCompare(b));
 
     const sourceOntology = {
@@ -279,6 +191,84 @@ async function buildOntology(options: BuildOptions = {}) {
     fs.writeFileSync(sourceOntologyPath, JSON.stringify(sourceOntology, null, 2));
     console.log(`💾 Source ontology saved to: ${sourceOntologyPath}`);
     
+    // Generate compact ontology
+    if (result.sourceOntology) {
+      console.log('⚙️  Generating compact ontology...');
+      result.compactOntology = compactOntology(result.sourceOntology);
+      console.log(`🔍 Debug: compactOntology: ${JSON.stringify(result.compactOntology, null, 2)}`);
+    }
+
+    // Prune relationships that reference ignored entities
+    if (result.sourceOntology && (result.sourceOntology.ignoredEntities?.length || 0) > 0) {
+      console.log('⚙️  Pruning relationships that reference ignored entities...');
+      const allowedEntities = new Set<string>(result.sourceOntology.entities.map((e: Entity) => e.name));
+      const pruneResult = pruneRelationshipsByEntities(result.sourceOntology.relationships, allowedEntities);
+      result.sourceOntology.relationships = pruneResult.kept;
+      result.sourceOntology.ignoredRelationships = [...(result.sourceOntology.ignoredRelationships || []), ...pruneResult.prunedNames];
+    }
+
+    // Apply optional importance-based filtering
+    if (options.topEntities || options.topRelationships) {
+      console.log('⚙️  Applying importance-based (LLM) filters...');
+      const analyzer = new EntityImportanceAnalyzer();
+      const contextDescription: string | undefined = typeof config.source?.description === 'string' ? config.source.description : undefined;
+      let entityAnalysis: EntityImportanceAnalysis[] = [];
+
+      if (options.topEntities && result.sourceOntology) {
+        // Prepare entity data for analysis
+        const entityInputs = result.sourceOntology.entities.map((e: Entity) => ({
+          name: e.name,
+          description: typeof e.description === 'string' ? e.description : (e.description as any)?._ || e.description || '',
+          properties: e.properties || {}
+        }));
+        console.log(`🔍 Debug: entityInputs count: ${entityInputs.length}`);
+        entityAnalysis = await analyzer.analyzeEntityImportance(entityInputs, contextDescription, options.topEntities);
+        // Keep only the top entities by importance
+        const topEntityNames = new Set(entityAnalysis.slice(0, options.topEntities).map(e => e.entityName));
+        // Remove the CORE_ENTITY_WHITELIST
+
+        const allEntityNames = new Set<string>(result.sourceOntology.entities.map((e: Entity) => e.name));
+        const ignoredEntities = Array.from(allEntityNames).filter((name: string) => !topEntityNames.has(name));
+        result.sourceOntology.ignoredEntities = ignoredEntities;
+        result.sourceOntology.entities = result.sourceOntology.entities.filter((e: Entity) => topEntityNames.has(e.name));
+      }
+
+      let relationshipAnalysis: RelationshipImportanceAnalysis[] = [];
+
+      if (options.topRelationships && result.sourceOntology) {
+        // Prepare relationship data for analysis
+        const relationshipInputs = result.sourceOntology.relationships.map((r: Relationship) => ({
+          name: r.name,
+          description: typeof r.description === 'string' ? r.description : (r.description as any)?._ || r.description || '',
+          sourceType: r.source || '',
+          targetType: r.target || ''
+        }));
+        relationshipAnalysis = await analyzer.analyzeRelationshipImportance(relationshipInputs, contextDescription, options.topRelationships);
+        // Keep only the top relationships by importance
+        const topRelationshipNames = new Set(relationshipAnalysis.slice(0, options.topRelationships).map(r => r.relationshipName));
+        // Remove the CORE_RELATIONSHIP_WHITELIST
+
+        const allRelationshipNames = new Set<string>(result.sourceOntology.relationships.map((r: Relationship) => r.name));
+        const ignoredRelationships = Array.from(allRelationshipNames).filter((name: string) => !topRelationshipNames.has(name));
+        result.sourceOntology.ignoredRelationships = ignoredRelationships;
+        result.sourceOntology.relationships = result.sourceOntology.relationships.filter((r: Relationship) => topRelationshipNames.has(r.name));
+      }
+
+      // Log analysis results
+      if (entityAnalysis.length > 0) {
+        console.log('📊 Entity Analysis Results:');
+        entityAnalysis.forEach(e => {
+          console.log(`  - ${e.entityName}: ${e.importanceScore.toFixed(2)} (${e.businessRelevance})`);
+        });
+      }
+      if (relationshipAnalysis.length > 0) {
+        console.log('📊 Relationship Analysis Results:');
+        relationshipAnalysis.forEach(r => {
+          console.log(`  - ${r.relationshipName}: ${r.importanceScore.toFixed(2)} (${r.businessRelevance})`);
+        });
+      }
+    }
+
     // Generate compact ontology
     // Convert to the format expected by compactOntology function
     const compactOntologyInput = {

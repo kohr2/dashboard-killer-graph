@@ -172,7 +172,7 @@
       }
     }
   },
-  "entityExtractionPatterns": {
+  "entityExtraction": {
     "JobTitle": [
       { "pattern": "\\b(?:Senior|Junior|Lead|Principal|Staff|Associate)\\s+(?:Software\\s+)?(?:Engineer|Developer|Programmer)\\b", "confidence": 0.9 },
       { "pattern": "\\b(?:Data\\s+)?(?:Scientist|Analyst|Engineer)\\b", "confidence": 0.8 },

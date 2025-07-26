@@ -1,5 +1,5 @@
 import { OntologyService } from '../../../platform/ontology/ontology.service';
-import { ChatService } from '../../../platform/chat/chat.service';
+import { ChatService } from '../../../platform/chat/application/services/chat.service';
 import { Neo4jConnection } from '../../../platform/database/neo4j-connection';
 import { ReasoningOrchestratorService } from '../../../platform/reasoning/reasoning-orchestrator.service';
 

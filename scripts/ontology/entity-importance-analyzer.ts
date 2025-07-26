@@ -8,17 +8,6 @@ const logger = {
   debug: (message: string, ...args: any[]) => console.debug(`[DEBUG] ${message}`, ...args)
 };
 
-/**
- * Ontology-agnostic entity importance analysis service.
- *
- * This service analyzes the importance of entities and relationships using LLMs or fallback heuristics.
- * It is designed to work with any ontology, schema, or entity set, regardless of domain.
- *
- * Usage:
- *   - Pass in any array of entities/relationships with at least a name and optional description/properties.
- *   - Optionally provide a domain/context string to guide the LLM (e.g., 'financial', 'procurement', etc.),
- *     or leave blank for generic analysis.
- */
 export interface EntityImportanceAnalysis {
   entityName: string;
   importanceScore: number;
@@ -37,13 +26,10 @@ export interface RelationshipImportanceAnalysis {
 export class EntityImportanceAnalyzer {
   private nlpServiceUrl: string;
 
-  constructor() {
-    this.nlpServiceUrl = process.env.NLP_SERVICE_URL || 'http://localhost:8000';
+  constructor(nlpServiceUrl: string = process.env.NLP_SERVICE_URL || 'http://localhost:8000') {
+    this.nlpServiceUrl = nlpServiceUrl;
   }
 
-  /**
-   * Analyze entity importance using LLM (ontology-agnostic)
-   */
   async analyzeEntityImportance(
     entities: Array<{ name: string; description?: string; properties?: Record<string, any> }>,
     context?: string,
@@ -52,17 +38,14 @@ export class EntityImportanceAnalyzer {
     try {
       logger.info(`Analyzing importance of ${entities.length} entities${context ? ` for context: ${context}` : ''}`);
 
-      // Prepare entity data for LLM analysis
       const entityData = entities.map(entity => ({
         name: entity.name,
         description: entity.description || 'No description available',
         properties: entity.properties || {}
       }));
 
-      // Create prompt for LLM analysis
       const prompt = this.createEntityAnalysisPrompt(entityData, context, maxEntities);
 
-      // Call LLM service for analysis
       const response = await axios.post(
         `${this.nlpServiceUrl}/analyze-entity-importance`,
         {
@@ -74,9 +57,8 @@ export class EntityImportanceAnalyzer {
         { timeout: 120000 }
       );
 
-      const analysis = response.data.analysis as EntityImportanceAnalysis[];
-      
-      // Post-process: apply single-word bonus / composed-name penalty to align with heuristics
+      let analysis = response.data.analysis as EntityImportanceAnalysis[];
+
       analysis.forEach(item => {
         const spacedName = item.entityName.replace(/([a-z])([A-Z])/g, '$1 $2');
         const wordCount = spacedName.split(/[^A-Za-z0-9]+/).filter(Boolean).length;
@@ -87,8 +69,7 @@ export class EntityImportanceAnalyzer {
           item.importanceScore = Math.min(1, item.importanceScore + 0.05);
         }
       });
-      
-      // Sort by importance score (descending)
+
       analysis.sort((a, b) => b.importanceScore - a.importanceScore);
 
       logger.info(`Completed importance analysis for ${analysis.length} entities`);
@@ -96,15 +77,10 @@ export class EntityImportanceAnalyzer {
 
     } catch (error) {
       logger.error('Error analyzing entity importance:', error);
-      
-      // Fallback: return entities with basic scoring based on generic heuristics
       return this.fallbackEntityAnalysis(entities, context, maxEntities);
     }
   }
 
-  /**
-   * Analyze relationship importance using LLM (ontology-agnostic)
-   */
   async analyzeRelationshipImportance(
     relationships: Array<{ name: string; description?: string; sourceType?: string; targetType?: string }>,
     context?: string,
@@ -113,7 +89,6 @@ export class EntityImportanceAnalyzer {
     try {
       logger.info(`Analyzing importance of ${relationships.length} relationships${context ? ` for context: ${context}` : ''}`);
 
-      // Prepare relationship data for LLM analysis
       const relationshipData = relationships.map(rel => ({
         name: rel.name,
         description: rel.description || 'No description available',
@@ -121,10 +96,8 @@ export class EntityImportanceAnalyzer {
         targetType: rel.targetType || 'Unknown'
       }));
 
-      // Create prompt for LLM analysis
       const prompt = this.createRelationshipAnalysisPrompt(relationshipData, context, maxRelationships);
 
-      // Call LLM service for analysis
       const response = await axios.post(
         `${this.nlpServiceUrl}/analyze-relationship-importance`,
         {
@@ -136,9 +109,8 @@ export class EntityImportanceAnalyzer {
         { timeout: 120000 }
       );
 
-      const analysis = response.data.analysis as RelationshipImportanceAnalysis[];
-      
-      // Post-process: apply single-word bonus / composed-name penalty to align with heuristics
+      let analysis = response.data.analysis as RelationshipImportanceAnalysis[];
+
       analysis.forEach(item => {
         const spacedName = item.relationshipName.replace(/([a-z])([A-Z])/g, '$1 $2');
         const wordCount = spacedName.split(/[^A-Za-z0-9]+/).filter(Boolean).length;
@@ -149,8 +121,7 @@ export class EntityImportanceAnalyzer {
           item.importanceScore = Math.min(1, item.importanceScore + 0.05);
         }
       });
-      
-      // Sort by importance score (descending)
+
       analysis.sort((a, b) => b.importanceScore - a.importanceScore);
 
       logger.info(`Completed importance analysis for ${analysis.length} relationships`);
@@ -158,8 +129,6 @@ export class EntityImportanceAnalyzer {
 
     } catch (error) {
       logger.error('Error analyzing relationship importance:', error);
-      
-      // Fallback: return relationships with basic scoring based on generic heuristics
       return this.fallbackRelationshipAnalysis(relationships, context, maxRelationships);
     }
   }
@@ -218,29 +187,18 @@ When analyzing entities, prioritize CORE BUSINESS CONCEPTS over administrative, 
 - **0.1-0.2**: Peripheral or metadata entities (Documentation, History, Note)
 
 **Entities to Analyze:**
-${entities.map((entity, index) => `\n${index + 1}. **${entity.name}**\n   Description: ${entity.description}\n   Properties: ${Object.keys(entity.properties).join(', ') || 'None'}\n`).join('')}
+${entities.map(e => `- **${e.name}**: ${e.description}\n  Properties: ${JSON.stringify(e.properties, null, 2)}`).join('\n')}
 
-**Instructions:**
-- **PRIORITIZE CORE BUSINESS LOGIC**: Focus on entities that are fundamental to the domain's primary operations
-- Analyze each entity based on the criteria above, with emphasis on core business relevance
-- Assign an importance score from 0.0 to 1.0 (1.0 = most important)
-- Provide clear reasoning focusing on business operations and value creation
-- Select the top ${maxEntities} most important entities
-- Consider the context and business use cases if provided
-- **AVOID** prioritizing administrative, regulatory, peripheral, or second-level descriptive entities over core business concepts
-- **DEPRIORITIZE** entities that primarily describe or classify other entities rather than being core business concepts themselves
-
-**Output Format:**
-Return a JSON array of objects with the following structure:
-[
-  {
-    "entityName": "EntityName",
-    "importanceScore": 0.95,
-    "reasoning": "Detailed explanation focusing on core business relevance and operational importance",
-    "businessRelevance": "Specific business use cases, operations, and value creation impact",
-    "domainSignificance": "Role as a fundamental building block in the conceptual model"
-  }
-]`;
+**Task:**
+- Analyze ALL entities listed above (up to ${maxEntities})
+- For each entity, provide:
+  - entityName: The name of the entity
+  - importanceScore: A float between 0.1 and 1.0 based on the scoring guidelines
+  - reasoning: 1-2 sentence explanation
+  - businessRelevance: Short phrase describing business relevance
+  - domainSignificance: Short phrase describing domain significance
+- Output ONLY a JSON array of objects with these fields
+- Sort the array by importanceScore descending`;
   }
 
   private createRelationshipAnalysisPrompt(
@@ -294,27 +252,17 @@ When analyzing relationships, prioritize CORE BUSINESS RELATIONSHIPS over admini
 - **0.1-0.2**: Peripheral or metadata relationships (hasDocumentation, hasHistory)
 
 **Relationships to Analyze:**
-${relationships.map((rel, index) => `\n${index + 1}. **${rel.name}**\n   Description: ${rel.description}\n   Source Type: ${rel.sourceType}\n   Target Type: ${rel.targetType}\n`).join('')}
+${relationships.map(r => `- **${r.name}**: ${r.description}\n  Source: ${r.sourceType}, Target: ${r.targetType}`).join('\n')}
 
-**Instructions:**
-- **PRIORITIZE CORE BUSINESS LOGIC**: Focus on relationships that connect fundamental business entities and represent key operational flows
-- Analyze each relationship based on the criteria above, with emphasis on core business relevance
-- Assign an importance score from 0.0 to 1.0 (1.0 = most important)
-- Provide clear reasoning focusing on business operations and value creation
-- Select the top ${maxRelationships} most important relationships
-- Consider the context and business use cases if provided
-- **AVOID** prioritizing administrative, regulatory, or peripheral relationships over core business concepts
-
-**Output Format:**
-Return a JSON array of objects with the following structure:
-[
-  {
-    "relationshipName": "RelationshipName",
-    "importanceScore": 0.95,
-    "reasoning": "Detailed explanation focusing on core business relevance and operational importance",
-    "businessRelevance": "Specific business use cases, operations, and value creation impact"
-  }
-]`;
+**Task:**
+- Analyze ALL relationships listed above (up to ${maxRelationships})
+- For each relationship, provide:
+  - relationshipName: The name of the relationship
+  - importanceScore: A float between 0.1 and 1.0 based on the scoring guidelines
+  - reasoning: 1-2 sentence explanation
+  - businessRelevance: Short phrase describing business relevance
+- Output ONLY a JSON array of objects with these fields
+- Sort the array by importanceScore descending`;
   }
 
   private fallbackEntityAnalysis(
@@ -351,44 +299,42 @@ Return a JSON array of objects with the following structure:
         'goal', 'termsheet', 'claim', 'commitment', 'agreement', 'duty', 'regulation', 'owner'
       ];
       
-      // Administrative/regulatory keywords (lower priority)
+      // Administrative keywords (penalties)
       const adminKeywords = [
-        'registration', 'identifier', 'address', 'date', 'time', 'compliance', 'regulation', 'authority', 'license',
-        'documentation', 'metadata', 'history', 'note', 'record', 'file', 'certificate', 'permit',
-        'religiouscorporation', 'religious', 'church', 'temple', 'mosque', 'synagogue',
-        'commoninterestdevelopmentcorporation'
+        'registration', 'identifier', 'address', 'date', 'time', 'documentation', 'metadata',
+        'compliance', 'regulation', 'authority', 'license', 'certificate', 'permit',
+        'history', 'note', 'record', 'file', 'status', 'version', 'reference'
       ];
       
-      // Second-level descriptive entity keywords (deprioritized - 0.3 penalty each)
-      const descriptiveEntityKeywords = [
-        // Common descriptive patterns
-        'level', 'status', 'summary', 'term', 'condition', 'validation', 'overview',
-        // Fund types and classifications
-        'fundtype', 'investmentfund', 'hedgefund', 'mutualfund', 'pensionfund', 'privateequityfund'
+      // Descriptive entity keywords (higher penalties for second-level entities)
+      const descriptiveKeywords = [
+        'maturitylevel', 'entitystatus', 'technicalabilitysummary', 'contractterm', 'fundtype',
+        'investmentfund', 'hedgefund', 'mutualfund', 'type', 'status', 'level', 'summary', 'term',
+        'classification', 'category', 'subcategory', 'subtype', 'subclass', 'variant'
       ];
       
       const entityName = entity.name.toLowerCase();
       const description = (entity.description || '').toLowerCase();
       const fullText = `${entityName} ${description}`;
-      
+
       // Check for ultra-high priority keywords first
       const ultraHighMatches = ultraHighPriorityKeywords.filter(keyword => 
-        fullText.includes(keyword)
+        fullText.includes(keyword.toLowerCase())
       ).length;
       
       // Check for core business keywords
       const coreMatches = coreBusinessKeywords.filter(keyword => 
-        fullText.includes(keyword)
+        fullText.includes(keyword.toLowerCase())
       ).length;
       
       // Check for administrative keywords
       const adminMatches = adminKeywords.filter(keyword => 
-        fullText.includes(keyword)
+        fullText.includes(keyword.toLowerCase())
       ).length;
       
-      // Check for descriptive entity keywords (second-level entities)
-      const descriptiveMatches = descriptiveEntityKeywords.filter(keyword => 
-        fullText.includes(keyword)
+      // Check for descriptive keywords
+      const descriptiveMatches = descriptiveKeywords.filter(keyword => 
+        fullText.includes(keyword.toLowerCase())
       ).length;
       
       // Score based on keyword matches with higher weights for core entities
@@ -439,35 +385,26 @@ Return a JSON array of objects with the following structure:
       
       // Boost score for entities with longer descriptions (indicates detailed documentation)
       const descriptionLength = entity.description?.length || 0;
-      score += Math.min(descriptionLength / 2000, 0.1);
-      
-      // Additional boost for key domain pillars if not already sufficiently boosted
-      if (/(^|[^a-z])(person|project|organization)([^a-z]|$)/.test(fullText)) {
-        score += 0.1;
-      }
+      score += Math.min(descriptionLength / 1000, 0.15);
       
       // Cap / floor score to keep within [0.1, 1.0]
       score = Math.min(Math.max(score, 0.1), 1.0);
 
-      const reasoning = `Fallback analysis: ${ultraHighMatches} ultra-high priority keywords, ${coreMatches} core business keywords, ${adminMatches} admin keywords, ${descriptiveMatches} descriptive keywords, contextMatches=${contextMatches}, wordCount=${wordCount}, properties=${propertyCount}, descLen=${descriptionLength}`;
+      const reasoning = `Fallback analysis: ${ultraHighMatches} ultra-high priority keywords, ${coreMatches} core business keywords, ${adminMatches} administrative keywords, ${descriptiveMatches} descriptive keywords, ${propertyCount} properties, ${descriptionLength} chars description`;
       
       const businessRelevance = ultraHighMatches > 0 
         ? `Ultra-high priority entity with ${ultraHighMatches} ultra-high priority keywords - fundamental to domain operations`
         : coreMatches > 0 
         ? `Core business entity with ${coreMatches} business keywords - fundamental to domain operations`
-        : descriptiveMatches > 0
-        ? `Descriptive entity with ${descriptiveMatches} descriptive keywords - second-level entity describing parent entities, lower business priority`
+        : descriptiveMatches > 0 
+        ? `Descriptive entity with ${descriptiveMatches} descriptive keywords - low business priority`
         : adminMatches > 0 
         ? `Administrative entity with ${adminMatches} admin keywords - lower business priority`
         : 'Standard entity - moderate business relevance';
 
-      const domainSignificance = ultraHighMatches > 0 
-        ? `Fundamental building block in the conceptual model with strong business connections`
-        : coreMatches > 0 
-        ? `Fundamental building block in the conceptual model with strong business connections`
-        : descriptiveMatches > 0
-        ? `Supporting descriptive entity used to classify or describe other entities`
-        : 'Supporting entity in the domain model';
+      const domainSignificance = contextMatches > 0 
+        ? `High domain significance with ${contextMatches} context matches`
+        : 'Standard domain significance';
 
       return {
         entityName: entity.name,
@@ -510,51 +447,50 @@ Return a JSON array of objects with the following structure:
         'hasagreement', 'managesagreement', 'ownsagreement', 'signsagreement', 'enforcesagreement',
         'hasduty', 'managesduty', 'ownsduty', 'imposesduty', 'fulfillsduty',
         'hasregulation', 'managesregulation', 'ownsregulation', 'enforcesregulation', 'complieswithregulation',
-        'hasowner', 'managesowner', 'ownsowner', 'appointsowner', 'transfersownership',
-        // Core business operations (high priority - 0.2 boost each)
-        'awardscontract', 'suppliesto', 'purchasesfrom', 'managessupplier',
-        'hascustomer', 'managesaccount', 'createsopportunity', 'closesdeal',
-        'treatspatient', 'prescribesmedication', 'operateson', 'diagnosescondition',
-        // Direct business relationships (medium priority - 0.15 boost each)
-        'manages', 'owns', 'controls', 'operates', 'invests', 'trades', 'sells', 'buys',
-        'leads', 'directs', 'supervises', 'coordinates', 'facilitates', 'enables',
-        'implements', 'executes', 'performs', 'conducts', 'carriesout', 'delivers',
-        'creates', 'develops', 'designs', 'plans', 'strategizes', 'decides', 'approves'
+        'hasowner', 'managesowner', 'ownsowner', 'appointsowner',
+        // Direct connections to core concepts (medium priority - 0.15 boost each)
+        'hasmanager', 'hasowner', 'hasstakeholder', 'hasparticipant', 'hasmember', 'hasemployee', 'hasdirector', 'hasexecutive',
+        'hasteam', 'hasdepartment', 'hasunit', 'hasdivision', 'hassubsidiary', 'haspartner', 'hasclient', 'hasinvestor',
+        'hasstrategy', 'hasplan', 'hasinitiative', 'hascampaign', 'hasoperation', 'hasprocess', 'hasprocedure',
+        'hasactivity', 'hastask', 'hasmilestone', 'hasdeliverable', 'hasoutcome', 'hasresult', 'hasperformance', 'hasmetric',
+        'hasinvestment', 'hasportfolio', 'hasdeal', 'hastransaction', 'hasobjective',
+        'hascontract', 'hassupplier', 'hastender', 'haspurchase', 'hasorder', 'hasagreement', 'hasvendor',
+        'hascustomer', 'haslead', 'hasopportunity', 'hasaccount', 'hascontact', 'hassale',
+        'haspatient', 'hastreatment', 'hasdiagnosis', 'hasprovider', 'hasfacility', 'hasmedication',
+        'hascompany', 'hasenterprise', 'hasfirm', 'hasentity',
+        'hastermsheet', 'hasclaim', 'hascommitment', 'hasduty', 'hasregulation', 'hasowner'
       ];
       
-      // Ultra-high priority relationship keywords (0.4 boost each)
+      // Ultra-high priority keywords (0.4 boost each)
       const ultraHighPriorityKeywords = [
-        'hasproject', 'hasorganization', 'hasperson', 'hasfund', 'hasprogram', 'haslaw',
-        'managesproject', 'managesorganization', 'managesperson', 'managesfund', 'managesprogram',
-        'ownsproject', 'ownsorganization', 'ownsperson', 'ownsfund', 'ownsprogram',
-        'hasgoal', 'hastermsheet', 'hasclaim', 'hascommitment', 'hasagreement', 'hasduty', 'hasregulation', 'hasowner',
-        'managesgoal', 'managestermsheet', 'managesclaim', 'managescommitment', 'managesagreement', 'managesduty', 'managesregulation', 'managesowner',
-        'ownsgoal', 'ownstermsheet', 'ownsclaim', 'ownscommitment', 'ownsagreement', 'ownsduty', 'ownsregulation', 'ownsowner'
+        'hasinvestment', 'managesfund', 'hasgoal', 'ownscorporation', 'hasobjective', 'hasproject',
+        'awardscontract', 'suppliesto', 'purchasesfrom', 'managessupplier', 'hascustomer', 'managesaccount'
       ];
       
-      // Administrative/regulatory keywords (lower priority)
+      // Administrative keywords (penalties)
       const adminKeywords = [
-        'hasregistration', 'hasidentifier', 'hasaddress', 'hasdate', 'complieswith', 'regulatedby', 'licensedby', 'authorizedby',
-        'hasdocumentation', 'hasmetadata', 'hashistory', 'hasnote', 'hasrecord', 'hasfile'
+        'hasregistration', 'hasidentifier', 'hasaddress', 'hasdate', 'hasdocumentation',
+        'complieswith', 'regulatedby', 'licensedby', 'authorizedby', 'hascertificate',
+        'hasmetadata', 'hashistory', 'hasnote', 'hasrecord', 'hasfile', 'hasstatus'
       ];
       
       const relName = rel.name.toLowerCase();
-      const description = (rel.description || '').toLowerCase();
-      const fullText = `${relName} ${description}`;
+      const relDescription = (rel.description || '').toLowerCase();
+      const fullText = `${relName} ${relDescription}`;
       
       // Check for ultra-high priority keywords first
       const ultraHighMatches = ultraHighPriorityKeywords.filter(keyword => 
-        fullText.includes(keyword)
+        fullText.includes(keyword.toLowerCase())
       ).length;
       
       // Check for core business keywords
       const coreMatches = coreBusinessKeywords.filter(keyword => 
-        fullText.includes(keyword)
+        fullText.includes(keyword.toLowerCase())
       ).length;
       
       // Check for administrative keywords
       const adminMatches = adminKeywords.filter(keyword => 
-        fullText.includes(keyword)
+        fullText.includes(keyword.toLowerCase())
       ).length;
       
       // Score based on keyword matches with higher weights for core relationships

@@ -8,11 +8,10 @@ import { pluginRegistry } from '../../../config/ontology/plugins.config';
 import { NLPServiceClient } from '@platform/processing/nlp-service.client';
 import { logger } from '@shared/utils/logger';
 import { ReasoningOrchestratorService } from '@platform/reasoning/reasoning-orchestrator.service';
-import { startApiServer } from './mcp-server-api';
-import { startSocketServer } from './mcp-server-socket';
-import { Express, Request, Response, NextFunction } from 'express';
-import { http } from 'http';
-import { Logger } from '@shared/utils/logger';
+// import { startApiServer } from './mcp-server-api';
+// import { startSocketServer } from './mcp-server-socket';
+import express, { Express, Request, Response, NextFunction } from 'express';
+import * as http from 'http';
 
 console.log('Top level container in mcp-server-core.ts:', container);
 
@@ -358,12 +357,12 @@ export function getServerInfo() {
 export function startServer(): void {
   const ontologyService = container.resolve(OntologyService);
   const chatService = container.resolve(ChatService);
-  const app = Express();
+  const app = express();
   const httpServer = http.createServer(app);
 
   // Configure middleware
-  app.use(Express.json());
-  app.use(Express.urlencoded({ extended: true }));
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
   // Configure CORS
   app.use((req: Request, res: Response, next: NextFunction) => {
@@ -427,7 +426,7 @@ export function startServer(): void {
   const port = process.env.PORT || 3000;
   httpServer.listen(port, () => {
     logger.info(`MCP Server listening on port ${port}`);
-    startApiServer(app);
-    startSocketServer(httpServer);
+    // startApiServer(app);
+    // startSocketServer(httpServer);
   });
 } 

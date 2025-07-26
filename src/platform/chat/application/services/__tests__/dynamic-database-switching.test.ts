@@ -5,6 +5,7 @@ import { OntologyService } from '@platform/ontology/ontology.service';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
 import { QueryTranslator } from '../query-translator.service';
 import { User } from '@platform/security/domain/user';
+import { ConversationTurn } from '../query-translator.types';
 
 // Mock dependencies
 jest.mock('@platform/database/neo4j-connection');
@@ -19,6 +20,7 @@ describe('Dynamic Database Switching', () => {
   let mockAccessControlService: any;
   let mockQueryTranslator: any;
   let mockUser: User;
+  let mockOpenAI: any;
 
   beforeEach(() => {
     // Reset all mocks
@@ -26,12 +28,12 @@ describe('Dynamic Database Switching', () => {
 
     // Create mock instances with simple typing
     const mockSession = {
-      run: jest.fn().mockResolvedValue({ records: [] } as any),
-      close: jest.fn().mockResolvedValue(undefined as any)
-    } as any;
+      run: jest.fn<(query: string, params?: any) => Promise<{ records: any[] }>>().mockResolvedValue({ records: [] }),
+      close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined)
+    };
     
     mockNeo4jConnection = {
-      switchDatabase: jest.fn().mockResolvedValue(undefined as any),
+      switchDatabase: jest.fn<(database: string) => Promise<void>>().mockResolvedValue(undefined),
       getSession: jest.fn().mockReturnValue(mockSession),
       getDatabase: jest.fn().mockReturnValue('procurement'),
       connect: jest.fn(),
@@ -57,10 +59,10 @@ describe('Dynamic Database Switching', () => {
     };
 
     mockQueryTranslator = {
-      translate: jest.fn().mockResolvedValue({
+      translate: jest.fn<(query: string, history: ConversationTurn[]) => Promise<{ command: string; resourceTypes: string[] }>>().mockResolvedValue({
         command: 'show',
         resourceTypes: ['Person'],
-      } as any),
+      }),
     };
 
     mockUser = {
@@ -69,12 +71,15 @@ describe('Dynamic Database Switching', () => {
       roles: [{ name: 'admin', permissions: [{ action: '*', resource: '*' }] }],
     };
 
+    mockOpenAI = { chat: { completions: { create: jest.fn() } } };
+
     // Create ChatService instance
     chatService = new ChatService(
       mockNeo4jConnection,
       mockOntologyService,
       mockAccessControlService,
-      mockQueryTranslator
+      mockQueryTranslator,
+      mockOpenAI
     );
   });
 
@@ -136,7 +141,7 @@ describe('Dynamic Database Switching', () => {
     it('should use current database when database parameter is null', async () => {
       // Arrange
       const query = 'show all persons';
-      const database = null as any;
+      const database = null;
 
       // Act
       await chatService.handleQuery(mockUser, query, database);

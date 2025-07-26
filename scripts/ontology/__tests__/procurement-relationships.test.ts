@@ -31,8 +31,7 @@ describe('Procurement ontology relationships analysis', () => {
     const config: Config = JSON.parse(configContent);
 
     // Add required metadata field
-    config.metadata = config.metadata || {};
-    config.metadata.lastExtraction = new Date().toISOString();
+    config.metadata = config.metadata || { lastExtraction: '', sourceVersion: '', localVersion: '' };
 
     // Initialize processor without external imports
     const owlSource = new OwlSource({ ontologyKey: 'procurement', includeExternalImports: false });
@@ -72,8 +71,7 @@ describe('Procurement ontology relationships analysis', () => {
     const config: Config = JSON.parse(configContent);
 
     // Add required metadata field
-    config.metadata = config.metadata || {};
-    config.metadata.lastExtraction = new Date().toISOString();
+    config.metadata = config.metadata || { lastExtraction: '', sourceVersion: '', localVersion: '' };
 
     // Initialize processor with external imports
     const owlSource = new OwlSource({ ontologyKey: 'procurement', includeExternalImports: true });
@@ -105,8 +103,7 @@ describe('Procurement ontology relationships analysis', () => {
     const config: Config = JSON.parse(configContent);
 
     // Add required metadata field
-    config.metadata = config.metadata || {};
-    config.metadata.lastExtraction = new Date().toISOString();
+    config.metadata = config.metadata || { lastExtraction: '', sourceVersion: '', localVersion: '' };
 
     // Process without external imports
     const owlSourceWithoutExternal = new OwlSource({ ontologyKey: 'procurement', includeExternalImports: false });
