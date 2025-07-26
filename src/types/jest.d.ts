@@ -1,7 +1,7 @@
 // Jest mock type declarations to help with TypeScript compilation
 declare global {
   namespace jest {
-    interface Mock<T = any, Y extends any[] = any> {
+    interface Mock<T = unknown, Y extends unknown[] = unknown> {
       mockResolvedValue(value: T): Mock<Promise<T>, Y>;
       mockResolvedValueOnce(value: T): Mock<Promise<T>, Y>;
       mockReturnValue(value: T): Mock<T, Y>;

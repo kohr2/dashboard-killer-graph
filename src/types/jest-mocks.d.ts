@@ -1,7 +1,7 @@
 // Comprehensive Jest mock type declarations
 declare global {
   namespace jest {
-    interface Mock<T = any, Y extends any[] = any> {
+    interface Mock<T = unknown, Y extends unknown[] = unknown> {
       mockResolvedValue(value: T): Mock<Promise<T>, Y>;
       mockResolvedValueOnce(value: T): Mock<Promise<T>, Y>;
       mockReturnValue(value: T): Mock<T, Y>;
@@ -14,12 +14,12 @@ declare global {
 
 // Mock session type for Neo4j
 interface MockSession {
-  run: jest.Mock<Promise<{ records: any[] }>>;
+  run: jest.Mock<Promise<{ records: unknown[] }>>;
   close: jest.Mock<Promise<void>>;
 }
 
 // Mock connection type for Neo4j
-interface MockNeo4jConnection {
+export interface MockNeo4jConnection {
   switchDatabase: jest.Mock<Promise<void>>;
   getSession: jest.Mock<MockSession>;
   getDatabase: jest.Mock<string>;
@@ -29,11 +29,11 @@ interface MockNeo4jConnection {
   clearDatabase: jest.Mock<Promise<void>>;
   listDatabases: jest.Mock<Promise<string[]>>;
   dropDatabase: jest.Mock<Promise<void>>;
-  findSimilarOrganizationEmbedding: jest.Mock<Promise<any[]>>;
+  findSimilarOrganizationEmbedding: jest.Mock<Promise<unknown[]>>;
 }
 
 // Mock query translator type
-interface MockQueryTranslator {
+export interface MockQueryTranslator {
   translate: jest.Mock<Promise<{
     command: string;
     resourceTypes: string[];
