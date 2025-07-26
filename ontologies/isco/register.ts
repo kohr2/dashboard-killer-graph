@@ -22,4 +22,7 @@ export function registerJobTitles() {
 
 export function registerJobTitlesServices() {
   registerJobTitles();
-} 
+}
+
+// Export the function that the plugin expects
+export const registerIsco = registerJobTitlesServices; 
