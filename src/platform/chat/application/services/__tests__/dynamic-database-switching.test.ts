@@ -26,12 +26,12 @@ describe('Dynamic Database Switching', () => {
 
     // Create mock instances with simple typing
     const mockSession = {
-      run: jest.fn().mockResolvedValue({ records: [] }),
-      close: jest.fn().mockResolvedValue(undefined)
-    };
+      run: jest.fn().mockResolvedValue({ records: [] } as any),
+      close: jest.fn().mockResolvedValue(undefined as any)
+    } as any;
     
     mockNeo4jConnection = {
-      switchDatabase: jest.fn().mockResolvedValue(undefined),
+      switchDatabase: jest.fn().mockResolvedValue(undefined as any),
       getSession: jest.fn().mockReturnValue(mockSession),
       getDatabase: jest.fn().mockReturnValue('procurement'),
       connect: jest.fn(),
@@ -60,7 +60,7 @@ describe('Dynamic Database Switching', () => {
       translate: jest.fn().mockResolvedValue({
         command: 'show',
         resourceTypes: ['Person'],
-      }),
+      } as any),
     };
 
     mockUser = {

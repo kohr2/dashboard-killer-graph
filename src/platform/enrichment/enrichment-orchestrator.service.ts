@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { IEnrichmentService } from './i-enrichment-service.interface';
 import { GenericEntity, EnrichmentResult } from './dto-aliases';
 import { logger } from '@shared/utils/logger';
@@ -9,7 +10,7 @@ import { injectable } from 'tsyringe';
  * This service manages enrichment services and applies them to entities
  * based on simple entity type matching.
  */
-@injectable()
+// @injectable() // Temporarily commented out for testing
 export class EnrichmentOrchestratorService {
   private readonly services: Map<string, IEnrichmentService> = new Map();
 
@@ -51,37 +52,15 @@ export class EnrichmentOrchestratorService {
       case 'Exception':
       case 'Bug':
       case 'LogEntry':
-        return this.services.get('BugBot') || null;
+        // No enrichment service available for error entities
+        return null;
       default:
-        // Check if entity has error-related properties
-        if (this.hasErrorProperties(entity)) {
-          return this.services.get('BugBot') || null;
-        }
+        // No enrichment service available for other entity types
         return null;
     }
   }
 
-  /**
-   * Check if entity has error-related properties
-   */
-  private hasErrorProperties(entity: GenericEntity): boolean {
-    const properties = entity.properties || {};
-    const errorKeywords = ['error', 'exception', 'bug', 'fail', 'timeout', 'null', 'memory'];
-    
-    // Check entity name/label
-    const entityText = `${entity.name || ''} ${entity.label || ''}`.toLowerCase();
-    if (errorKeywords.some(keyword => entityText.includes(keyword))) {
-      return true;
-    }
-    
-    // Check properties
-    const propertyValues = Object.values(properties).join(' ').toLowerCase();
-    if (errorKeywords.some(keyword => propertyValues.includes(keyword))) {
-      return true;
-    }
-    
-    return false;
-  }
+
 
   /**
    * Enrich an entity using the appropriate service

@@ -31,7 +31,7 @@
     "relationships": {}
   },
   "metadata": {
-    "lastExtraction": "2025-07-24T12:49:41.157Z",
+    "lastExtraction": "2025-07-25T20:24:22.763Z",
     "sourceVersion": "2024-01",
     "localVersion": "1.0.0"
   },
@@ -179,6 +179,7 @@
           "ContractualCommitment",
           "ContractualElement",
           "ContractuallyCapableEntity",
+          "ContractualProduct",
           "ContractualRight",
           "CreditAgreement",
           "CreditAgreementRepaidPeriodically",
@@ -210,6 +211,7 @@
           "ContractualCommitment",
           "ContractualElement",
           "ContractuallyCapableEntity",
+          "ContractualProduct",
           "ContractualRight",
           "CreditAgreement",
           "CreditAgreementRepaidPeriodically",
@@ -241,6 +243,7 @@
           "ContractualCommitment",
           "ContractualElement",
           "ContractuallyCapableEntity",
+          "ContractualProduct",
           "ContractualRight",
           "CreditAgreement",
           "CreditAgreementRepaidPeriodically",

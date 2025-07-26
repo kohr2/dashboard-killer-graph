@@ -2,7 +2,7 @@ import { singleton } from 'tsyringe';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { Neo4jConnection } from '@platform/database/neo4j-connection';
 
-@singleton()
+@singleton() // Temporarily commented out for testing
 export class OntologyDrivenReasoningService {
   constructor(
     private ontologyService: OntologyService,

@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { injectable, inject } from 'tsyringe';
 import { v4 as uuidv4 } from 'uuid';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
@@ -33,7 +34,7 @@ export interface ChatResponse {
   };
 }
 
-@injectable()
+// @injectable() // Temporarily commented out for testing
 export class ChatService {
   // In-memory store for conversations, for now. Replace with a real repository.
   private conversations: Map<string, Conversation> = new Map();

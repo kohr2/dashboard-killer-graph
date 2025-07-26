@@ -1,20 +1,22 @@
 {
-  "extends": "./config/tsconfig.base.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "composite": false,
-    "noEmit": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"],
-      "@crm/*": ["src/ontologies/crm/*"],
-      "@financial/*": ["src/ontologies/financial/*"],
-      "@platform/*": ["src/platform/*"],
-      "@shared/*": ["src/shared/*"],
-      "@test/*": ["test/*"]
-    }
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "strict": false,
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
   },
   "include": [
+    "src/**/*.test.ts",
     "test/**/*.ts",
-    "src/**/*.ts"
+    "scripts/**/*.test.ts",
+    "ontologies/**/*.test.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 } 

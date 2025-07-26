@@ -3,6 +3,23 @@
 
 import 'jest-extended';
 
+// Type declaration for global integration mocks
+declare global {
+  var integrationMocks: {
+    neo4j: {
+      driver: jest.Mock;
+      session: jest.Mock;
+    };
+    graphAPI: {
+      getAccessToken: jest.Mock;
+      getEmails: jest.Mock;
+    };
+    externalServices: {
+      isAvailable: boolean;
+    };
+  };
+}
+
 // Set longer timeout for integration tests
 jest.setTimeout(30000);
 

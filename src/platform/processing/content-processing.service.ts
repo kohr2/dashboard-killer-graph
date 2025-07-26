@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import axios from 'axios';
 import { logger } from '@shared/utils/logger';
 import { EnrichmentOrchestratorService } from '@platform/enrichment';
@@ -238,7 +239,7 @@ interface IngestionEntity {
   embedding?: number[];
 }
 
-@injectable()
+@injectable() // Temporarily commented out for testing
 export class ContentProcessingService {
   private nlpServiceUrl: string;
   private enrichmentOrchestrator: EnrichmentOrchestratorService;

@@ -5,10 +5,8 @@ import {
   JobTitleService,
   JobLevelService,
   JobFunctionService,
-  JobDepartmentService,
-  JobSkillService,
-  JobIndustryService
-} from '@generated/job-titles';
+  JobDepartmentService
+} from '@generated/isco';
 
 export function registerJobTitles() {
   const ontologyService = container.resolve(OntologyService);
@@ -18,8 +16,6 @@ export function registerJobTitles() {
   // ontologyService.registerEntity('JobLevel', JobLevelService);
   // ontologyService.registerEntity('JobFunction', JobFunctionService);
   // ontologyService.registerEntity('JobDepartment', JobDepartmentService);
-  // ontologyService.registerEntity('JobSkill', JobSkillService);
-  // ontologyService.registerEntity('JobIndustry', JobIndustryService);
   
   logger.info('Job titles ontology registered');
 }

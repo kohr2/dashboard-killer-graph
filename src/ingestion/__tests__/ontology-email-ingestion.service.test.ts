@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { OntologyEmailIngestionService } from '../ontology-email-ingestion.service';
 import { OntologyService } from '../../platform/ontology/ontology.service';
 import { ContentProcessingService } from '../../platform/processing/content-processing.service';
@@ -10,7 +11,13 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 
 // Mock dependencies
-jest.mock('tsyringe');
+jest.mock('tsyringe', () => ({
+  container: {
+    resolve: jest.fn(),
+  },
+  injectable: () => (constructor: any) => constructor,
+  singleton: () => (constructor: any) => constructor,
+}));
 jest.mock('fs/promises');
 jest.mock('path');
 jest.mock('../../register-ontologies', () => ({
@@ -36,62 +43,71 @@ const mockNeo4jIngestionService = {
 };
 
 const mockEmailFixtureGenerationService = {
-  generateSingleEmailFixture: jest.fn(),
+  generateEmailFixtures: jest.fn(),
 };
-
 const mockOntologyBuildService = {
-  buildOntologyByName: jest.fn(),
+  build: jest.fn(),
 };
 
 const mockGenericIngestionPipeline = {
   run: jest.fn(),
 };
 
+// Get the mocked container from 'tsyringe'
+const tsyringe = jest.requireActual('tsyringe');
+const mockContainer = tsyringe.container;
+
 describe('OntologyEmailIngestionService', () => {
   let service: OntologyEmailIngestionService;
   let mockFs: jest.Mocked<typeof fs>;
   let mockPath: jest.Mocked<typeof path>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
-    
+
     // Setup container mock
-    (container as any).resolve = mockContainer.resolve;
-    
-    // Setup service mocks
-    mockContainer.resolve
-      .mockReturnValueOnce(mockOntologyService)
-      .mockReturnValueOnce(mockContentProcessingService)
-      .mockReturnValueOnce(mockNeo4jIngestionService)
-      .mockReturnValueOnce(mockEmailFixtureGenerationService)
-      .mockReturnValueOnce(mockOntologyBuildService);
+    mockContainer.resolve = jest.fn().mockImplementation((service: any) => {
+      if (service === OntologyService) return mockOntologyService;
+      if (service === ContentProcessingService)
+        return mockContentProcessingService;
+      if (service === Neo4jIngestionService) return mockNeo4jIngestionService;
+      if (service === EmailFixtureGenerationService)
+        return mockEmailFixtureGenerationService;
+      if (service === OntologyBuildService) return mockOntologyBuildService;
+      return new service();
+    });
 
     // Setup fs and path mocks
     mockFs = fs as jest.Mocked<typeof fs>;
     mockPath = path as jest.Mocked<typeof path>;
-    
+
     // Mock path.join to return predictable paths
     mockPath.join.mockImplementation((...args) => args.join('/'));
-    
+
     // Mock fs.readFile to return test email content
     mockFs.readFile.mockResolvedValue('test email content');
-    mockFs.readdir.mockResolvedValue(['test1.eml', 'test2.eml']);
+    mockFs.readdir.mockResolvedValue([
+      'test1.eml',
+      'test2.eml',
+    ] as any);
 
     // Setup ontology service mock
     mockOntologyService.getAllOntologies.mockReturnValue([
-      { name: 'test-ontology', entities: [] }
+      { id: 'test', name: 'Test Ontology' },
     ]);
-
-    service = new OntologyEmailIngestionService();
+    mockOntologyService.getOntology.mockReturnValue({
+      id: 'test',
+      name: 'Test Ontology',
+    });
   });
 
   describe('constructor', () => {
     it('should resolve all required dependencies from container', () => {
-      expect(mockContainer.resolve).toHaveBeenCalledWith('OntologyService');
-      expect(mockContainer.resolve).toHaveBeenCalledWith('ContentProcessingService');
-      expect(mockContainer.resolve).toHaveBeenCalledWith('Neo4jIngestionService');
-      expect(mockContainer.resolve).toHaveBeenCalledWith('EmailFixtureGenerationService');
-      expect(mockContainer.resolve).toHaveBeenCalledWith('OntologyBuildService');
+      expect(mockContainer.resolve).toHaveBeenCalledWith(OntologyService);
+      expect(mockContainer.resolve).toHaveBeenCalledWith(ContentProcessingService);
+      expect(mockContainer.resolve).toHaveBeenCalledWith(Neo4jIngestionService);
+      expect(mockContainer.resolve).toHaveBeenCalledWith(EmailFixtureGenerationService);
+      expect(mockContainer.resolve).toHaveBeenCalledWith(OntologyBuildService);
     });
   });
 
@@ -115,7 +131,7 @@ describe('OntologyEmailIngestionService', () => {
     });
 
     it('should successfully ingest ontology email with build options', async () => {
-      const buildOptions = { maxEntities: 100, maxRelationships: 50 };
+      const buildOptions = { topEntities: 100, topRelationships: 50 };
       mockGenericIngestionPipeline.run.mockResolvedValue(undefined);
 
       await service.ingestOntologyEmail(ontologyName, buildOptions);
@@ -166,7 +182,7 @@ describe('OntologyEmailIngestionService', () => {
       const buildError = new Error('Build failed');
       mockOntologyBuildService.buildOntologyByName.mockRejectedValue(buildError);
 
-      await expect(service.ingestOntologyEmail(ontologyName, { maxEntities: 100 }))
+      await expect(service.ingestOntologyEmail(ontologyName, { topEntities: 100 }))
         .rejects.toThrow('Build failed');
     });
 
@@ -198,22 +214,20 @@ describe('OntologyEmailIngestionService', () => {
     });
 
     it('should register selected ontologies when ontologyName is provided', async () => {
-      const { registerSelectedOntologies } = require('../register-ontologies');
+      const { registerSelectedOntologies } = require('../../register-ontologies');
       mockGenericIngestionPipeline.run.mockResolvedValue(undefined);
 
       await service.ingestOntologyEmail(ontologyName);
 
-                      const { registerSelectedOntologies: registerSelectedOntologies2 } = require('../../register-ontologies');
       expect(registerSelectedOntologies).toHaveBeenCalledWith([ontologyName]);
     });
 
     it('should register all ontologies when ontologyName is not provided', async () => {
-      const { registerAllOntologies } = require('../register-ontologies');
+      const { registerAllOntologies } = require('../../register-ontologies');
       mockGenericIngestionPipeline.run.mockResolvedValue(undefined);
 
       await service.ingestOntologyEmail('');
 
-                      const { registerAllOntologies: registerAllOntologies2 } = require('../../register-ontologies');
       expect(registerAllOntologies).toHaveBeenCalled();
     });
   });
@@ -263,7 +277,7 @@ describe('OntologyEmailIngestionService', () => {
         const result = await (service as any).getFixtureEmail('test-ontology', false);
 
         expect(mockFs.readdir).toHaveBeenCalled();
-        expect(mockFs.readFile).toHaveBeenCalledWith('ontologies/test-ontology/fixtures/emails/test1.eml', 'utf-8');
+        expect(mockFs.readFile).toHaveBeenCalledWith(path.join(process.cwd(), 'ontologies/test-ontology/fixtures/emails/test1.eml'), 'utf-8');
         expect(result).toBe('test email content');
       });
 
@@ -300,6 +314,30 @@ describe('OntologyEmailIngestionService', () => {
         await expect((service as any).processAndIngestEmail('email content', 'test-ontology'))
           .rejects.toThrow('Neo4j init failed');
       });
+    });
+  });
+
+  describe('run', () => {
+    it('should call ingest with correct arguments', async () => {
+      const argv = {
+        scope: 'test-ontology',
+        folder: '/path/to/emails',
+        limit: '10',
+        ci: 'true',
+        llm: 'true',
+        delete: 'false',
+        generate: 'true',
+      };
+      await service.ingestOntologyEmail(argv as any);
+      expect(mockContainer.resolve).toHaveBeenCalledWith(OntologyService);
+      expect(mockContainer.resolve).toHaveBeenCalledWith(
+        ContentProcessingService,
+      );
+      expect(mockContainer.resolve).toHaveBeenCalledWith(Neo4jIngestionService);
+      expect(mockContainer.resolve).toHaveBeenCalledWith(
+        EmailFixtureGenerationService,
+      );
+      expect(mockContainer.resolve).toHaveBeenCalledWith(OntologyBuildService);
     });
   });
 });

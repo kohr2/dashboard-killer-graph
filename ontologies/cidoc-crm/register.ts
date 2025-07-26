@@ -1,4 +1,3 @@
-import { registerOntology } from '../../src/register-ontologies';
-import ontology from './ontology.json';
+import { registerSelectedOntologies } from '../../src/register-ontologies';
 
-registerOntology('cidoc-crm', ontology as any); 
+registerSelectedOntologies(['cidoc-crm']); 

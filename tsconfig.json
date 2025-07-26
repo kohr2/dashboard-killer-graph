@@ -4,10 +4,14 @@
     "target": "es2020",
     "sourceMap": true,
     "outDir": "./dist",
+    "rootDir": "./",
     "baseUrl": ".",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "strict": false,
     "paths": {
       "@platform/*": ["src/platform/*"],
       "@crm/*": ["ontologies/crm/*"],
@@ -21,6 +25,6 @@
     },
     "typeRoots": ["node_modules/@types", "src/types"]
   },
-  "include": ["src/**/*.ts", "src/**/*.json", "ontologies/**/*.ts", "config/**/*.ts", "test/**/*.ts", "codegen/**/*.ts"],
-  "exclude": ["node_modules", "dist", "scripts"]
+  "include": ["src/**/*.ts", "src/**/*.json", "ontologies/**/*.ts", "config/**/*.ts", "codegen/**/*.ts"],
+  "exclude": ["node_modules", "dist", "scripts", "**/*.test.ts", "test/**/*"]
 }

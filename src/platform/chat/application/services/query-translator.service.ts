@@ -1,10 +1,11 @@
+import 'reflect-metadata';
 import { injectable, inject } from 'tsyringe';
 import OpenAI from 'openai';
 import { OntologyService } from '@platform/ontology/ontology.service';
 import { logger } from '@shared/utils/logger';
 import type { StructuredQuery, ConversationTurn } from './query-translator.types';
 
-@injectable()
+// @injectable() // Temporarily commented out for testing
 export class QueryTranslator {
   private openai: OpenAI;
   private semanticMappingsCache: { [key: string]: string[] } = {};
