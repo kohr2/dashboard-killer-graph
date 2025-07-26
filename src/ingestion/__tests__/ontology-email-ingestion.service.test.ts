@@ -328,7 +328,7 @@ describe('OntologyEmailIngestionService', () => {
         delete: 'false',
         generate: 'true',
       };
-      await service.ingestOntologyEmail(argv as any);
+      await service.ingestOntologyEmail(argv.scope, undefined, argv.generate === 'true', argv.folder);
       expect(mockContainer.resolve).toHaveBeenCalledWith(OntologyService);
       expect(mockContainer.resolve).toHaveBeenCalledWith(
         ContentProcessingService,
