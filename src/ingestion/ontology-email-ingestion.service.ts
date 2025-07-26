@@ -79,17 +79,19 @@ export class OntologyEmailIngestionService {
   /**
    * Step 1: Build ontology service
    */
-  private async buildOntologyService(ontologyName: string, buildOptions?: Partial<BuildOptions>): Promise<void> {
+  private async buildOntologyService(ontologyName: string = '', buildOptions?: BuildOptions): Promise<void> {
     logger.info(`🔧 Step 1: Building ontology service for ${ontologyName}`);
     
     try {
       // Register only the selected ontology (plus core) if ontologyName is provided, otherwise register all
-      if (ontologyName) {
-        const { registerSelectedOntologies } = await import('../register-ontologies');
-        registerSelectedOntologies([ontologyName]);
-      } else {
-        const { registerAllOntologies } = await import('../register-ontologies');
+      if (!ontologyName) {
+        const { registerAllOntologies } = await import('@src/register-ontologies');
         registerAllOntologies();
+        logger.info(`✅ Built all ontologies`);
+      } else {
+        const { registerSelectedOntologies } = await import('@src/register-ontologies');
+        registerSelectedOntologies([ontologyName]);
+        logger.info(`✅ Built ontology ${ontologyName}`);
       }
       
       // If build options are provided, use the ontology build service
@@ -98,15 +100,19 @@ export class OntologyEmailIngestionService {
         logger.info(`✅ Built ontology ${ontologyName} with options:`, buildOptions);
       }
       
-      // Verify the ontology exists
-      const ontologies = this.ontologyService.getAllOntologies();
-      const ontology = ontologies.find((o: { name: string }) => o.name.toLowerCase() === ontologyName.toLowerCase());
-      
-      if (!ontology) {
-        throw new Error(`Ontology '${ontologyName}' not found. Available ontologies: ${ontologies.map((o: { name: string }) => o.name).join(', ')}`);
+      // Verify the ontology exists (only if a specific ontology was requested)
+      if (ontologyName) {
+        const ontologies = this.ontologyService.getAllOntologies();
+        const ontology = ontologies.find((o: { name: string }) => o.name.toLowerCase() === ontologyName.toLowerCase());
+        
+        if (!ontology) {
+          throw new Error(`Ontology '${ontologyName}' not found. Available ontologies: ${ontologies.map((o: { name: string }) => o.name).join(', ')}`);
+        }
+        
+        logger.info(`✅ Ontology service built successfully for ${ontologyName}`);
+      } else {
+        logger.info(`✅ All ontologies built successfully`);
       }
-      
-      logger.info(`✅ Ontology service built successfully for ${ontologyName}`);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       logger.error(`❌ Failed to build ontology service for ${ontologyName}: ${errorMessage}`);

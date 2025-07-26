@@ -142,7 +142,7 @@ export class ChatService {
     return accessibleConversations;
   }
 
-  public async handleQuery(user: User, query: string, database?: string): Promise<string> {
+  public async handleQuery(user: User, query: string, database?: string | null): Promise<string> {
     logger.info(`[ChatService] Handling query: "${query}"${database ? ` on database: ${database}` : ''}`);
     
     // Switch database if requested

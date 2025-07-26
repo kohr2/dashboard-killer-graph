@@ -166,9 +166,9 @@ describe('ChatService', () => {
   describe('sendMessage', () => {
     it('should send message to existing conversation', async () => {
       const mockSession = {
-        run: jest.fn().mockResolvedValue({ records: [] }),
-        close: jest.fn(),
-      } as any;
+        run: jest.fn<(query: string, params?: any) => Promise<{ records: any[] }>>().mockResolvedValue({ records: [] }),
+        close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+      };
       mockNeo4jConnection.getSession.mockReturnValue(mockSession as any);
 
       mockAccessControlService.can.mockReturnValue(true);
@@ -213,8 +213,8 @@ describe('ChatService', () => {
   describe('handleQuery', () => {
     it('should handle query with database switching', async () => {
       const mockSession = {
-        run: jest.fn().mockResolvedValue({ records: [] }),
-        close: jest.fn(),
+        run: jest.fn<(query: string, params?: any) => Promise<{ records: any[] }>>().mockResolvedValue({ records: [] }),
+        close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
       };
       mockNeo4jConnection.getSession.mockReturnValue(mockSession as any);
       mockNeo4jConnection.getDatabase.mockReturnValue('procurement');
@@ -237,8 +237,8 @@ describe('ChatService', () => {
 
     it('should handle query without database switching', async () => {
       const mockSession = {
-        run: jest.fn().mockResolvedValue({ records: [] }),
-        close: jest.fn(),
+        run: jest.fn<(query: string, params?: any) => Promise<{ records: any[] }>>().mockResolvedValue({ records: [] }),
+        close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
       };
       mockNeo4jConnection.getSession.mockReturnValue(mockSession as any);
 
@@ -262,8 +262,8 @@ describe('ChatService', () => {
   describe('processQuery', () => {
     it('should process chat query successfully', async () => {
       const mockSession = {
-        run: jest.fn().mockResolvedValue({ records: [] }),
-        close: jest.fn(),
+        run: jest.fn<(query: string, params?: any) => Promise<{ records: any[] }>>().mockResolvedValue({ records: [] }),
+        close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
       };
       mockNeo4jConnection.getSession.mockReturnValue(mockSession as any);
 
@@ -284,8 +284,8 @@ describe('ChatService', () => {
 
     it('should handle query with pagination', async () => {
       const mockSession = {
-        run: jest.fn().mockResolvedValue({ records: [] }),
-        close: jest.fn(),
+        run: jest.fn<(query: string, params?: any) => Promise<{ records: any[] }>>().mockResolvedValue({ records: [] }),
+        close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
       };
       mockNeo4jConnection.getSession.mockReturnValue(mockSession as any);
 

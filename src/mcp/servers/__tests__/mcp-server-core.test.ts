@@ -1,5 +1,5 @@
 import { OntologyService } from '../../../platform/ontology/ontology.service';
-import { ChatService } from '../../../platform/chat/chat.service';
+import { ChatService } from '../../../platform/chat/application/services/chat.service';
 import { Neo4jConnection } from '../../../platform/database/neo4j-connection';
 import { ReasoningOrchestratorService } from '../../../platform/reasoning/reasoning-orchestrator.service';
 
@@ -20,61 +20,85 @@ const mockNeo4jConnection = {
 
 const mockReasoningOrchestratorService = {};
 
-const setupMocks = (neo4jConnectImpl?: () => Promise<void>) => {
-  const mockContainer = {
-    resolve: jest.fn(),
-  };
-
-  jest.mock('tsyringe', () => ({
-    container: mockContainer,
-    injectable: () => (constructor: any) => constructor,
-    singleton: () => (constructor: any) => constructor,
-  }));
-
-  jest.mock('../../../bootstrap', () => ({
-    bootstrap: jest.fn(),
-  }));
-
-  const neo4jMock = {
-    connect: neo4jConnectImpl
-      ? jest.fn(neo4jConnectImpl)
-      : jest.fn().mockResolvedValue(undefined),
-    close: jest.fn(),
-  };
-
-  // The order of resolution in initializeCoreServices is Neo4j, Ontology, Chat.
-  mockContainer.resolve
-    .mockReturnValueOnce(neo4jMock) // For Neo4jConnection
-    .mockReturnValueOnce(mockOntologyService) // For OntologyService
-    .mockReturnValueOnce(mockChatService); // For ChatService
-
-  return { neo4jMock };
-};
-
 describe('MCP Server Core', () => {
   beforeEach(() => {
     jest.resetModules();
+    jest.clearAllMocks();
   });
 
   it('should initialize core services successfully', async () => {
-    setupMocks();
+    const mockContainer = {
+      resolve: jest.fn(),
+    };
+
+    const mockBootstrap = jest.fn();
+    const mockNeo4jConnection = {
+      connect: jest.fn().mockResolvedValue(undefined),
+      close: jest.fn(),
+    };
+
+    // Set up the mocks before importing
+    jest.doMock('tsyringe', () => ({
+      container: mockContainer,
+      injectable: () => (constructor: any) => constructor,
+      singleton: () => (constructor: any) => constructor,
+    }));
+
+    jest.doMock('../../../bootstrap', () => ({
+      bootstrap: mockBootstrap,
+    }));
+
+    // Set up container.resolve to return our mocks
+    mockContainer.resolve
+      .mockReturnValueOnce(mockOntologyService)
+      .mockReturnValueOnce(mockChatService)
+      .mockReturnValueOnce(mockNeo4jConnection);
+
+    // Now import the module
     const { initializeCoreServices } = await import('../mcp-server-core');
-    await initializeCoreServices();
+    
+    const result = await initializeCoreServices();
 
-    const { container } = jest.requireMock('tsyringe');
-    const { bootstrap } = jest.requireMock('../../../bootstrap');
-
-    expect(bootstrap).toHaveBeenCalled();
-
-    const neo4jMock = (container.resolve as jest.Mock).mock.results.find(
-      res => res.value.connect,
-    )?.value;
-    expect(neo4jMock.connect).toHaveBeenCalled();
+    expect(mockBootstrap).toHaveBeenCalled();
+    expect(mockNeo4jConnection.connect).toHaveBeenCalled();
+    expect(result).toEqual({
+      ontologyService: mockOntologyService,
+      chatService: mockChatService,
+      neo4jConnection: mockNeo4jConnection,
+    });
   });
 
   it('should throw an error if neo4j connection fails', async () => {
-    setupMocks(() => Promise.reject(new Error('Connection failed')));
+    const mockContainer = {
+      resolve: jest.fn(),
+    };
+
+    const mockBootstrap = jest.fn();
+    const mockNeo4jConnection = {
+      connect: jest.fn().mockRejectedValue(new Error('Connection failed')),
+      close: jest.fn(),
+    };
+
+    // Set up the mocks before importing
+    jest.doMock('tsyringe', () => ({
+      container: mockContainer,
+      injectable: () => (constructor: any) => constructor,
+      singleton: () => (constructor: any) => constructor,
+    }));
+
+    jest.doMock('../../../bootstrap', () => ({
+      bootstrap: mockBootstrap,
+    }));
+
+    // Set up container.resolve to return our mocks
+    mockContainer.resolve
+      .mockReturnValueOnce(mockOntologyService)
+      .mockReturnValueOnce(mockChatService)
+      .mockReturnValueOnce(mockNeo4jConnection);
+
+    // Now import the module
     const { initializeCoreServices } = await import('../mcp-server-core');
+    
     await expect(initializeCoreServices()).rejects.toThrow('Connection failed');
   });
 }); 

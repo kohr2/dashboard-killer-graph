@@ -6,6 +6,10 @@ import { OntologyService } from '@platform/ontology/ontology.service';
 import { AccessControlService } from '@platform/security/application/services/access-control.service';
 import { QueryTranslator } from '@platform/chat/application/services/query-translator.service';
 import { User } from '@platform/security/domain/user';
+import { Session } from 'neo4j-driver';
+import { PermissionAction, PermissionResource } from '@platform/security/domain/role';
+import { Ontology } from '@platform/ontology/ontology.service';
+import { ConversationTurn } from '@platform/chat/application/services/query-translator.types';
 
 // Mock dependencies
 jest.mock('@platform/database/neo4j-connection');
@@ -27,14 +31,14 @@ describe('MCP Server Dynamic Database Switching', () => {
 
     // Create mock instances
     const mockSession = {
-      run: jest.fn().mockResolvedValue({ records: [] } as any),
-      close: jest.fn().mockResolvedValue(undefined as any)
-    } as any;
+      run: jest.fn<(query: string, params?: any) => Promise<{ records: any[] }>>().mockResolvedValue({ records: [] }),
+      close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined)
+    } as unknown as Session;
     
     mockNeo4jConnection = {
-      switchDatabase: jest.fn().mockResolvedValue(undefined as any),
-      getSession: jest.fn().mockReturnValue(mockSession),
-      getDatabase: jest.fn().mockReturnValue('procurement'),
+      switchDatabase: jest.fn<(database: string) => Promise<void>>().mockResolvedValue(undefined),
+      getSession: jest.fn<(database?: string) => Session>().mockReturnValue(mockSession as Session),
+      getDatabase: jest.fn<() => string>().mockReturnValue('procurement'),
       connect: jest.fn(),
       close: jest.fn(),
       initializeSchema: jest.fn(),
@@ -42,26 +46,26 @@ describe('MCP Server Dynamic Database Switching', () => {
       listDatabases: jest.fn(),
       dropDatabase: jest.fn(),
       findSimilarOrganizationEmbedding: jest.fn(),
-    } as any;
+    } as unknown as jest.Mocked<Neo4jConnection>;
 
     mockOntologyService = {
-      getAllEntityTypes: jest.fn().mockReturnValue(['Person', 'Contract']),
-      getIndexableEntityTypes: jest.fn().mockReturnValue(['Person']),
-      getAllRelationshipTypes: jest.fn().mockReturnValue(['WORKS_FOR']),
-      getAlternativeLabels: jest.fn().mockReturnValue([]),
-      getAllOntologies: jest.fn().mockReturnValue(['procurement']),
-    } as any;
+      getAllEntityTypes: jest.fn<() => string[]>().mockReturnValue(['Person', 'Contract']),
+      getIndexableEntityTypes: jest.fn<() => string[]>().mockReturnValue(['Person']),
+      getAllRelationshipTypes: jest.fn<() => string[]>().mockReturnValue(['WORKS_FOR']),
+      getAlternativeLabels: jest.fn<(entityType: string) => string[]>().mockReturnValue([]),
+      getAllOntologies: jest.fn<() => Ontology[]>().mockReturnValue([{ name: 'procurement' }] as unknown as Ontology[]),
+    } as unknown as jest.Mocked<OntologyService>;
 
     mockAccessControlService = {
-      can: jest.fn().mockReturnValue(true),
-    } as any;
+      can: jest.fn<(user: User, action: PermissionAction, resource: PermissionResource, scope?: 'any' | 'own') => boolean>().mockReturnValue(true),
+    } as unknown as jest.Mocked<AccessControlService>;
 
     mockQueryTranslator = {
-      translate: jest.fn().mockResolvedValue({
+      translate: jest.fn<(query: string, history: ConversationTurn[]) => Promise<any>>().mockResolvedValue({
         command: 'show',
         resourceTypes: ['Person'],
-      } as any),
-    } as any;
+      }),
+    } as unknown as jest.Mocked<QueryTranslator>;
 
     mockUser = {
       id: 'mcp-server-user',
