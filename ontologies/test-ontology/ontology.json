@@ -1,0 +1,290 @@
+{
+  "name": "test-ontology",
+  "source": {
+    "url": "https://example.com/test-ontology",
+    "type": "test",
+    "version": "1.0.0",
+    "description": "Test ontology for unit testing"
+  },
+  "entities": [
+    {
+      "name": "TestEntity",
+      "description": {
+        "_": "A test entity for unit testing",
+        "xml:lang": "en"
+      },
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "http://example.com/test#TestEntity"
+    },
+    {
+      "name": "RelatedEntity",
+      "description": {
+        "_": "An entity that can be related to TestEntity",
+        "xml:lang": "en"
+      },
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "http://example.com/test#RelatedEntity"
+    },
+    {
+      "name": "Contract",
+      "description": {
+        "_": "A contract entity for testing procurement relationships",
+        "xml:lang": "en"
+      },
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "http://example.com/test#Contract"
+    },
+    {
+      "name": "PaymentExecutor",
+      "description": {
+        "_": "A payment executor entity for testing procurement relationships",
+        "xml:lang": "en"
+      },
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "http://example.com/test#PaymentExecutor"
+    },
+    {
+      "name": "Buyer",
+      "description": {
+        "_": "A buyer entity for testing procurement relationships",
+        "xml:lang": "en"
+      },
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "http://example.com/test#Buyer"
+    },
+    {
+      "name": "Winner",
+      "description": {
+        "_": "A winner entity for testing procurement relationships",
+        "xml:lang": "en"
+      },
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "http://example.com/test#Winner"
+    },
+    {
+      "name": "Investor",
+      "description": {
+        "_": "An investor entity for testing financial relationships",
+        "xml:lang": "en"
+      },
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "http://example.com/test#Investor"
+    },
+    {
+      "name": "Company",
+      "description": {
+        "_": "A company entity for testing financial relationships",
+        "xml:lang": "en"
+      },
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "http://example.com/test#Company"
+    },
+    {
+      "name": "FundManager",
+      "description": {
+        "_": "A fund manager entity for testing financial relationships",
+        "xml:lang": "en"
+      },
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "http://example.com/test#FundManager"
+    },
+    {
+      "name": "Portfolio",
+      "description": {
+        "_": "A portfolio entity for testing financial relationships",
+        "xml:lang": "en"
+      },
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Preferred label for this entity"
+        },
+        "definition": {
+          "type": "string",
+          "description": "Detailed definition of this entity"
+        }
+      },
+      "keyProperties": [
+        "name"
+      ],
+      "vectorIndex": true,
+      "documentation": "http://example.com/test#Portfolio"
+    }
+  ],
+  "relationships": [
+    {
+      "name": "definesPaymentExecutor",
+      "description": {
+        "_": "Relation indicating a Contract has a PaymentExecutor.",
+        "xml:lang": "en"
+      },
+      "source": "Contract",
+      "target": "PaymentExecutor",
+      "documentation": "http://example.com/test#definesPaymentExecutor"
+    },
+    {
+      "name": "awardsTo",
+      "description": {
+        "_": "Relation indicating a Buyer awards to a Winner.",
+        "xml:lang": "en"
+      },
+      "source": "Buyer",
+      "target": "Winner",
+      "documentation": "http://example.com/test#awardsTo"
+    },
+    {
+      "name": "investsIn",
+      "description": {
+        "_": "Relation indicating an Investor invests in a Company.",
+        "xml:lang": "en"
+      },
+      "source": "Investor",
+      "target": "Company",
+      "documentation": "http://example.com/test#investsIn"
+    },
+    {
+      "name": "manages",
+      "description": {
+        "_": "Relation indicating a FundManager manages a Portfolio.",
+        "xml:lang": "en"
+      },
+      "source": "FundManager",
+      "target": "Portfolio",
+      "documentation": "http://example.com/test#manages"
+    },
+    {
+      "name": "relatesTo",
+      "description": {
+        "_": "Generic relation between TestEntity and RelatedEntity.",
+        "xml:lang": "en"
+      },
+      "source": "TestEntity",
+      "target": "RelatedEntity",
+      "documentation": "http://example.com/test#relatesTo"
+    }
+  ],
+  "metadata": {
+    "createdAt": "2024-01-01T00:00:00Z",
+    "version": "1.0.0",
+    "description": "Test ontology for unit testing"
+  },
+  "ignoredEntities": [],
+  "ignoredRelationships": []
+} 
