@@ -5,6 +5,8 @@ import net from 'net';
 import { waitForService } from '../src/shared/utils/wait-for-service';
 import { UNIFIED_TEST_DATABASE } from '../src/shared/constants/test-database';
 import { exec, spawn } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
 const NEO4J_PORT = 7687; // Port for the test database
 const NLP_SERVICE_URL = 'http://127.0.0.1:8000/health';
@@ -42,19 +44,34 @@ export default async () => {
     console.log('\nWaiting for dependent services to start...');
     
     const neo4jPromise = checkTcpPort(NEO4J_PORT);
-    const nlpPromise = waitForService(NLP_SERVICE_URL, 1, 1000)
-      .catch(async () => {
-        console.log('Starting NLP service...');
-        const venvPath = require('path').join(__dirname, '..', 'python-services', 'nlp-service', 'venv', 'bin', 'uvicorn');
-        const nlpProcess = spawn(venvPath, ['main:app', '--host', '127.0.0.1', '--port', '8000'], { detached: true, stdio: 'ignore' });
-        nlpProcess.unref();
-        await waitForService(NLP_SERVICE_URL, MAX_RETRIES, RETRY_INTERVAL_MS);
-        console.log('✅ NLP service started and responsive.');
-      });
+    
+    // Check if NLP service virtual environment exists
+    const venvPath = path.join(__dirname, '..', 'python-services', 'nlp-service', 'venv', 'bin', 'uvicorn');
+    const venvExists = fs.existsSync(venvPath);
+    
+    let nlpPromise: Promise<void>;
+    
+    if (venvExists) {
+      // Try to start NLP service if virtual environment exists
+      nlpPromise = waitForService(NLP_SERVICE_URL, 1, 1000)
+        .catch(async () => {
+          console.log('Starting NLP service...');
+          const nlpProcess = spawn(venvPath, ['main:app', '--host', '127.0.0.1', '--port', '8000'], { detached: true, stdio: 'ignore' });
+          nlpProcess.unref();
+          await waitForService(NLP_SERVICE_URL, MAX_RETRIES, RETRY_INTERVAL_MS);
+          console.log('✅ NLP service started and responsive.');
+        });
+    } else {
+      // Skip NLP service if virtual environment doesn't exist (e.g., in CI)
+      console.log('⚠️ NLP service virtual environment not found, skipping NLP service startup.');
+      nlpPromise = Promise.resolve();
+    }
+    
     const results = await Promise.allSettled([
       neo4jPromise.then(() => console.log('✅ Neo4j test database is responsive.')),
       nlpPromise
     ]);
+    
     // If Neo4j check failed, halt tests. NLP is optional.
     const neo4jStatus = results[0];
     if (neo4jStatus.status === 'rejected') {
